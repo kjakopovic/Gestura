@@ -1,0 +1,8 @@
+# TYPESCRIPT/JAVASCRIPT
+**/node_modules/
+
+# AWS SAM
+**/.aws-sam/
+
+# COMMON
+**/.env

@@ -1,0 +1,12 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "My API description.",
+    "title": "My API",
+    "contact": {},
+    "version": "1.0"
+  },
+  "schemes": ["https", "http"],
+  "host": "localhost:8000",
+  "paths": {}
+}

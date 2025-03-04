@@ -1,0 +1,80 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Public API documentation for golang-testing on stage develop",
+    "title": "golang-testing",
+    "contact": {},
+    "version": "1.0"
+  },
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "host": "localhost:8000",
+  "paths": {
+    "/all": {
+      "get": {
+        "description": "Retrieves information for a given user",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user info",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "User ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/hello": {
+      "get": {
+        "description": "Retrieves information for a given user",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user info",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "User ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    }
+  }
+}

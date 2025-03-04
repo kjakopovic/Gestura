@@ -1,0 +1,28 @@
+info:
+  contact: {}
+  description: My API description.
+  title: My API
+  version: "1.0"
+paths:
+  /all:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves information for a given user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Get user info
+      tags:
+      - user
+swagger: "2.0"

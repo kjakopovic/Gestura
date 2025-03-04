@@ -1,0 +1,85 @@
+name: Create and deploy docs
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+env:
+  AWS_REGION: "eu-central-1"
+  ECS_CLUSTER: HandsOfHope-Docs-Prod
+
+  PROD_ECR_REPOSITORY: hands-of-hope-prod/docs
+  PROD_ECS_SERVICE: HandsOfHope-Docs-Prod
+  PROD_ECS_TASK_DEFINITION: .github/task_definitions/HandsOfHope-Docs-Prod.json
+  PROD_CONTAINER_NAME: hands-of-hope-prod-docs
+
+  DEVELOP_ECR_REPOSITORY: hands-of-hope-develop/docs
+  DEVELOP_ECS_SERVICE: HandsOfHope-Docs-Develop
+  DEVELOP_ECS_TASK_DEFINITION: .github/task_definitions/HandsOfHope-Docs-Develop.json
+  DEVELOP_CONTAINER_NAME: hands-of-hope-develop-docs
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build_and_deploy_develop:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Dependencies Setup
+        uses: ./.github/composite/common_build_setup
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
+
+      # Deploy
+      - name: Deploy to ECS
+        uses: ./.github/composite/deploy_ecs_service
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
+          ecr_repository: ${{ env.DEVELOP_ECR_REPOSITORY }}
+          ecs_cluster: ${{ env.ECS_CLUSTER }}
+          ecs_service: ${{ env.DEVELOP_ECS_SERVICE }}
+          ecs_task_definition: ${{ env.DEVELOP_ECS_TASK_DEFINITION }}
+          container_name: ${{ env.DEVELOP_CONTAINER_NAME }}
+          service_dir: app/backend/docs
+          generate_docs_stage_name: develop
+
+  build_and_deploy_prod:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      # Setup
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Dependencies Setup
+        uses: ./.github/composite/common_build_setup
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
+
+      # Deploy
+      - name: Deploy to ECS
+        uses: ./.github/composite/deploy_ecs_service
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
+          ecr_repository: ${{ env.PROD_ECR_REPOSITORY }}
+          ecs_cluster: ${{ env.ECS_CLUSTER }}
+          ecs_service: ${{ env.PROD_ECS_SERVICE }}
+          ecs_task_definition: ${{ env.PROD_ECS_TASK_DEFINITION }}
+          container_name: ${{ env.PROD_CONTAINER_NAME }}
+          service_dir: app/backend/docs
+          generate_docs_stage_name: prod

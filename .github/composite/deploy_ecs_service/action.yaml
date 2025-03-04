@@ -1,0 +1,89 @@
+name: "AWS ECS Service Deployment"
+description: "Deploy a service to AWS ECS"
+
+inputs:
+  aws_access_key_id:
+    description: "AWS Access Key ID"
+    required: true
+  aws_secret_access_key:
+    description: "AWS Secret Access Key"
+    required: true
+  aws_region:
+    description: "AWS Region"
+    required: true
+  ecr_repository:
+    description: "ECR Repository"
+    required: true
+  ecs_cluster:
+    description: "ECS Cluster"
+    required: true
+  ecs_service:
+    description: "ECS Service"
+    required: true
+  ecs_task_definition:
+    description: "Set this to the path to your Amazon ECS task definition json file in this repo"
+    required: true
+  container_name:
+    description: "Set this to the name of the container in the containerDefinitions section of your task definition"
+    required: true
+  service_dir:
+    description: "Set this to the directory where the service is located (it's docker image)"
+    required: true
+  generate_docs_stage_name:
+    description: "Stage Name (prod/develop)"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    # Build docs
+    - name: Run Swagger Docs Generator
+      if: ${{ inputs.generate_docs_stage_name != '' }}
+      working-directory: app
+      run: |
+        make generate-docs
+      shell: bash
+
+    - name: Run Structure Service Docs
+      if: ${{ inputs.generate_docs_stage_name != '' }}
+      working-directory: app
+      run: |
+        make structure-docs stageName=${{ inputs.generate_docs_stage_name }}
+      shell: bash
+
+    # Deploy
+    - name: Build and Push Docker image
+      working-directory: ${{ inputs.service_dir }}
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ inputs.ecr_repository }}
+        IMAGE_TAG: latest
+      run: |
+        docker build --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      shell: bash
+
+    - name: Update Task Definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ inputs.ecs_task_definition }}
+        container-name: ${{ inputs.container_name }}
+        image: ${{ steps.build-image.outputs.image }}
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ inputs.ecs_service }}
+        cluster: ${{ inputs.ecs_cluster }}
+        wait-for-service-stability: true
