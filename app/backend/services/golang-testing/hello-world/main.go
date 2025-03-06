@@ -32,9 +32,6 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}, nil
 }
 
-// @title My API
-// @version 1.0
-// @description My API description.
 func main() {
 	lambda.Start(handler)
 }

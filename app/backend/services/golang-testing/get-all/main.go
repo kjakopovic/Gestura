@@ -1,11 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"github.com/kjakopovic/GoTesting/db"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
+
+func init() {
+}
 
 // @Summary      Get user info
 // @Description  Retrieves information for a given user
@@ -17,24 +20,14 @@ import (
 // @Failure      400
 // @Router       /all [get]
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	var greeting string
-	sourceIP := request.RequestContext.Identity.SourceIP
-
-	if sourceIP == "" {
-		greeting = "Hello, world!\n"
-	} else {
-		greeting = fmt.Sprintf("Hello, %s!\n", sourceIP)
-	}
+	hello := db.GetHelloWorld()
 
 	return events.APIGatewayProxyResponse{
-		Body:       greeting,
+		Body:       hello,
 		StatusCode: 200,
 	}, nil
 }
 
-// @title My API
-// @version 1.0
-// @description My API description.
 func main() {
 	lambda.Start(handler)
 }

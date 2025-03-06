@@ -1,0 +1,25 @@
+name: "Deploy Lambda"
+description: "Build and Deploy Lambda service to AWS"
+
+inputs:
+  service_path:
+    description: "Path to the location of the lambda service"
+    required: true
+  stage_name:
+    description: "Stage name for the lambda service <prod/develop>"
+    required: false
+    default: "develop"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build service
+      working-directory: ${{ inputs.service_path }}
+      run: sam build --parallel --cached
+
+    - name: Deploy service
+      working-directory: ${{ inputs.service_path }}
+      run: sam deploy --stack-name golang-testing-${{ inputs.stage_name }} --parameter-overrides StageName=${{ inputs.stage_name }} --no-confirm-changeset
