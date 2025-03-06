@@ -1,0 +1,85 @@
+name: Build and Deploy web frontend
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "app/web/**"
+      - ".github/composite/deploy_ecs_service/**"
+      - ".github/task_definitions/frontend/**"
+      - ".github/workflows/deploy_frontend.yaml"
+
+env:
+  # Global environment variables
+  AWS_REGION: "eu-central-1"
+  ECS_CLUSTER: HandsOfHope
+
+  # Service paths
+
+  # ECS setup for the docs service
+  # TODO: ovaj data se mora promijeniti kako budem deployao servise
+  PROD_WEB_ECR_REPOSITORY: hands-of-hope-prod/docs
+  PROD_WEB_ECS_SERVICE: HandsOfHope-Docs-Prod
+  PROD_WEB_ECS_TASK_DEFINITION: .github/task_definitions/HandsOfHope-Docs-Prod.json
+  PROD_WEB_CONTAINER_NAME: hands-of-hope-prod-docs
+
+  DEVELOP_WEB_ECR_REPOSITORY: hands-of-hope-develop/docs
+  DEVELOP_WEB_ECS_SERVICE: HandsOfHope-Docs-Develop
+  DEVELOP_WEB_ECS_TASK_DEFINITION: .github/task_definitions/HandsOfHope-Docs-Develop.json
+  DEVELOP_WEB_CONTAINER_NAME: hands-of-hope-develop-docs
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  disabled_pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Waiting 2 seconds
+        run: sleep 2
+
+  # deploy_web_develop:
+  #   if: github.ref == 'refs/heads/develop'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+
+  #     # Deploy
+  #     - name: Deploy to ECS
+  #       uses: ./.github/composite/deploy_ecs_service
+  #       with:
+  #         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws_region: ${{ env.AWS_REGION }}
+  #         ecr_repository: ${{ env.DEVELOP_WEB_ECR_REPOSITORY }}
+  #         ecs_cluster: ${{ env.ECS_CLUSTER }}
+  #         ecs_service: ${{ env.DEVELOP_WEB_ECS_SERVICE }}
+  #         ecs_task_definition: ${{ env.DEVELOP_WEB_ECS_TASK_DEFINITION }}
+  #         container_name: ${{ env.DEVELOP_WEB_CONTAINER_NAME }}
+  #         service_dir: app/web
+
+  # deploy_web_prod:
+  #   if: github.ref == 'refs/heads/main'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     # Setup
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+
+  #     # Deploy
+  #     - name: Deploy to ECS
+  #       uses: ./.github/composite/deploy_ecs_service
+  #       with:
+  #         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws_region: ${{ env.AWS_REGION }}
+  #         ecr_repository: ${{ env.PROD_WEB_ECR_REPOSITORY }}
+  #         ecs_cluster: ${{ env.ECS_CLUSTER }}
+  #         ecs_service: ${{ env.PROD_WEB_ECS_SERVICE }}
+  #         ecs_task_definition: ${{ env.PROD_WEB_ECS_TASK_DEFINITION }}
+  #         container_name: ${{ env.PROD_WEB_CONTAINER_NAME }}
+  #         service_dir: app/web

@@ -10,25 +10,25 @@ on:
       - ".github/composite/common_build_setup/**"
       - ".github/composite/deploy_ecs_service/**"
       - ".github/composite/deploy_lambda_service/**"
-      - ".github/task_definitions/**"
+      - ".github/task_definitions/backend/**"
       - ".github/workflows/deploy_backend.yaml"
 
 env:
   # Global environment variables
   AWS_REGION: "eu-central-1"
-  ECS_CLUSTER: HandsOfHope-Docs-Prod
+  ECS_CLUSTER: HandsOfHope
 
   # Service paths
 
   # ECS setup for the docs service
   PROD_DOCS_ECR_REPOSITORY: hands-of-hope-prod/docs
   PROD_DOCS_ECS_SERVICE: HandsOfHope-Docs-Prod
-  PROD_DOCS_ECS_TASK_DEFINITION: .github/task_definitions/HandsOfHope-Docs-Prod.json
+  PROD_DOCS_ECS_TASK_DEFINITION: .github/task_definitions/backend/HandsOfHope-Docs-Prod.json
   PROD_DOCS_CONTAINER_NAME: hands-of-hope-prod-docs
 
   DEVELOP_DOCS_ECR_REPOSITORY: hands-of-hope-develop/docs
   DEVELOP_DOCS_ECS_SERVICE: HandsOfHope-Docs-Develop
-  DEVELOP_DOCS_ECS_TASK_DEFINITION: .github/task_definitions/HandsOfHope-Docs-Develop.json
+  DEVELOP_DOCS_ECS_TASK_DEFINITION: .github/task_definitions/backend/HandsOfHope-Docs-Develop.json
   DEVELOP_DOCS_CONTAINER_NAME: hands-of-hope-develop-docs
 
 permissions:
