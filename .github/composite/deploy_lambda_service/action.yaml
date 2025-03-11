@@ -5,10 +5,21 @@ inputs:
   service_path:
     description: "Path to the location of the lambda service"
     required: true
+  service_name:
+    description: "Name of the lambda service"
+    required: true
   stage_name:
     description: "Stage name for the lambda service <prod/develop>"
     required: false
     default: "develop"
+  layer_stack_name:
+    description: "Name of the layer stack"
+    required: false
+    default: "none"
+  continue-on-error:
+    description: "Continue on error"
+    required: false
+    default: true
 
 runs:
   using: "composite"
@@ -19,7 +30,9 @@ runs:
     - name: Build service
       working-directory: ${{ inputs.service_path }}
       run: sam build --parallel --cached
+      shell: bash
 
     - name: Deploy service
       working-directory: ${{ inputs.service_path }}
-      run: sam deploy --stack-name golang-testing-${{ inputs.stage_name }} --parameter-overrides StageName=${{ inputs.stage_name }} --no-confirm-changeset
+      run: sam deploy --stack-name ${{ inputs.service_name }}-${{ inputs.stage_name }} --parameter-overrides StageName=${{ inputs.stage_name }} LayerStackName=${{ inputs.layer_stack_name }} --no-confirm-changeset || ${{ inputs.continue-on-error }}
+      shell: bash

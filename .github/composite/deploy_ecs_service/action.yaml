@@ -44,18 +44,11 @@ runs:
       uses: aws-actions/amazon-ecr-login@v1
 
     # Build docs
-    - name: Run Swagger Docs Generator
+    - name: Get Swagger Docs
       if: ${{ inputs.generate_docs_stage_name != '' }}
       working-directory: app
       run: |
-        make generate-docs
-      shell: bash
-
-    - name: Run Structure Service Docs
-      if: ${{ inputs.generate_docs_stage_name != '' }}
-      working-directory: app
-      run: |
-        make structure-docs stageName=${{ inputs.generate_docs_stage_name }}
+        make get-api-docs stageName=${{ inputs.generate_docs_stage_name }}
       shell: bash
 
     # Deploy

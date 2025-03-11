@@ -1,0 +1,8 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "layers"
+resolve_s3 = true
+s3_prefix = "layers"
+region = "eu-central-1"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []

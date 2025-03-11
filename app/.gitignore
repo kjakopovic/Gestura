@@ -7,6 +7,12 @@
 # COMMON
 **/.env
 
+# PYTHON
+**/*venv/
+
+# AI
+**/data/
+
 # Logs
 **/logs
 **/*.log

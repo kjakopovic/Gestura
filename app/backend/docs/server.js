@@ -5,9 +5,9 @@ const swaggerUi = require("swagger-ui-express");
 const app = express();
 
 // Load Swagger document
-let golangTestingDocs;
+let service1Docs;
 try {
-  golangTestingDocs = require(`./utils/golang-testing.json`);
+  service1Docs = require(`./utils/Service1Api.json`);
 } catch (error) {
   console.log("Error loading Swagger document: ", error);
 }
@@ -15,9 +15,9 @@ try {
 const options = {};
 
 app.use(
-  "/golang-testing-docs",
-  swaggerUi.serveFiles(golangTestingDocs, options),
-  swaggerUi.setup(golangTestingDocs)
+  "/service1",
+  swaggerUi.serveFiles(service1Docs, options),
+  swaggerUi.setup(service1Docs)
 );
 
 app.use(express.static(path.join(__dirname, "public")));

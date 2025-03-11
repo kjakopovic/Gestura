@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  service1
+
+  Sample SAM Template for service1
+
+Parameters:
+  StageName:
+    Type: String
+    Description: Stage of app deployment (develop, prod)
+    Default: prod
+  LayerStackName:
+    Type: String
+    Description: Name of the stack where the layer is deployed
+    Default: layers
+
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+
+Resources:
+  Service1Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub "Service1Api-${StageName}"
+      StageName: !Ref StageName
+      Auth:
+        ApiKeyRequired: false
+
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello_world/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !ImportValue
+          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorldEndpoint:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: GET
+            RestApiId: !Ref Service1Api
+
+Outputs:
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${Service1Api}.execute-api.${AWS::Region}.amazonaws.com/prod/hello/"

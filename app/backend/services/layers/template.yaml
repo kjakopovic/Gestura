@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  CommonLayer:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      Content: ./common/
+      CompatibleRuntimes:
+        - python3.12
+    Metadata:
+      BuildMethod: python3.12
+
+Outputs:
+  CommonLayerArn:
+    Description: "ARN of the Layer with all the common code"
+    Value: !Ref CommonLayer
+    Export:
+      Name: !Sub "${AWS::StackName}-CommonLayerArn"
