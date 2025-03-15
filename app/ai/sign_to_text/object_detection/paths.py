@@ -1,0 +1,12 @@
+WORKSPACE_PATH = 'workspace'
+SCRIPTS_PATH = 'scripts'
+APIMODEL_PATH = 'models'
+ANNOTATION_PATH = WORKSPACE_PATH+'/annotations'
+IMAGE_PATH = WORKSPACE_PATH+'/data'
+MODEL_PATH = WORKSPACE_PATH+'/models'
+PRETRAINED_MODEL_PATH = WORKSPACE_PATH+'/pre-trained-models'
+CONFIG_PATH = MODEL_PATH+'/my_ssd_mobnet/pipeline.config'
+CHECKPOINT_PATH = MODEL_PATH+'/my_ssd_mobnet/'
+CUSTOM_MODEL_NAME = 'my_ssd_mobnet'
+
+CONFIG_PATH = MODEL_PATH+'/'+CUSTOM_MODEL_NAME+'/pipeline.config'
