@@ -1,12 +1,12 @@
 import React, { useRef, useEffect } from "react";
 import * as tf from "@tensorflow/tfjs";
 import Webcam from "react-webcam";
-import { detect } from "../utils/model";
+import { detect } from "@/utils/model";
 import {
   DETECTION_INTERVAL_MS,
   MODEL_IMAGE_SIZE,
   MODEL_PATH,
-} from "../constants/model";
+} from "@/constants/model";
 
 const WebCam: React.FC = () => {
   // Annotate the ref types:
