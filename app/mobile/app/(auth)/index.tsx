@@ -8,6 +8,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/schemas/authSchemas";
 import { LoginFormData } from "@/types/types";
+import CustomButton from "@/components/CustomButton";
 
 const Login = () => {
   const {
@@ -62,6 +63,7 @@ const Login = () => {
               icon={icons.lock}
               value={value}
               onChangeText={onChange}
+              secureTextEntry
             />
           )}
         />
@@ -77,14 +79,11 @@ const Login = () => {
           Forgot your password?
         </Link>
       </View>
-      <TouchableOpacity
-        className="w-3/4 self-center py-4 border border-grayscale-400 bg-grayscale-700 rounded-2xl mt-16"
+      <CustomButton
         onPress={handleSubmit(onSubmit)}
-      >
-        <Text className="text-grayscale-100 text-lg font-interExtraBold text-center">
-          LOGIN
-        </Text>
-      </TouchableOpacity>
+        text="LOGIN"
+        style="base"
+      />
 
       <View className="flex-row items-center w-full mt-12 px-4">
         <View className="flex-1 border-t border-grayscale-100" />

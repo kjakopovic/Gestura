@@ -8,6 +8,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "@/schemas/authSchemas";
 import { RegisterFormData } from "@/types/types";
+import CustomButton from "@/components/CustomButton";
 
 const Register = () => {
   const {
@@ -30,7 +31,7 @@ const Register = () => {
   };
 
   return (
-    <ScrollView className="bg-grayscale-800 h-full p-4">
+    <ScrollView className="bg-grayscale-800 h-full">
       <View className="flex flex-col items-center justify-start">
         <Image
           source={icons.logo}
@@ -88,6 +89,7 @@ const Register = () => {
               value={value}
               onChangeText={onChange}
               icon={icons.lock}
+              secureTextEntry
             />
           )}
         />
@@ -105,6 +107,7 @@ const Register = () => {
               value={value}
               onChangeText={onChange}
               icon={icons.lock}
+              secureTextEntry
             />
           )}
         />
@@ -113,14 +116,11 @@ const Register = () => {
         )}
       </View>
 
-      <TouchableOpacity
-        className="w-3/4 self-center py-4 border border-grayscale-400 bg-grayscale-700 rounded-2xl mt-8"
+      <CustomButton
+        text="REGISTER"
         onPress={handleSubmit(onSubmit)}
-      >
-        <Text className="text-grayscale-100 text-lg font-interExtraBold text-center">
-          REGISTER
-        </Text>
-      </TouchableOpacity>
+        style="base"
+      />
 
       <View className="flex-row items-center w-full mt-12 px-4">
         <View className="flex-1 border-t border-grayscale-100" />
