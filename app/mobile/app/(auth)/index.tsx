@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import * as icons from "@/constants/icons";
@@ -11,6 +11,8 @@ import { LoginFormData } from "@/types/types";
 import CustomButton from "@/components/CustomButton";
 
 const Login = () => {
+  const router = useRouter();
+
   const {
     control,
     handleSubmit,
@@ -22,6 +24,7 @@ const Login = () => {
 
   const onSubmit = (data: LoginFormData) => {
     console.log(data);
+    router.replace("/(root)/(tabs)/Home");
     // ...handle login...
   };
 
