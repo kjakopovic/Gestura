@@ -99,9 +99,14 @@ def lambda_handler(event, context):
   if not is_user_found:
     logger.info('User does not exist, creating a new user')
 
+    if len(user_name) >= 2:
+      username = f"{user_name[0]}_{user_name[1]}"
+    else:
+      username = user_email.split('@')[0]  # Fallback to email prefix if name is not valid
+
     add_user_to_the_table(dynamodb, {
       'email': user_email,
-      'username': f"${user_name[0]}_{user_name[1]}",
+      'username': username,
     })
 
   logger.info('Generating tokens')
