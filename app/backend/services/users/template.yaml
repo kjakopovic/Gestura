@@ -111,6 +111,9 @@ Resources:
       CodeUri: thirdPartyRequestLogin/
       Handler: app.lambda_handler
       Runtime: python3.12
+      Layers:
+        - !ImportValue
+          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
       Environment:
         Variables:
           THIRD_PARTY_CLIENTS_SECRET_NAME: !Ref ThirdPartyClientsSecretName
@@ -136,9 +139,12 @@ Resources:
   ThirdPartyLoginValidateFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./
+      CodeUri: thirdPartyConfirmLogin/
       Handler: app.lambda_handler
       Runtime: python3.12
+      Layers:
+        - !ImportValue
+          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
       Environment:
         Variables:
           USERS_TABLE_NAME: !Ref UsersTable
