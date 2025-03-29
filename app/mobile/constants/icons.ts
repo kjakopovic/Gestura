@@ -6,5 +6,24 @@ import lock from "@/assets/icons/lock.png";
 import logoText from "@/assets/icons/logo-text.png";
 import logo from "@/assets/icons/logo.png";
 import person from "@/assets/icons/person.png";
+import home from "@/assets/icons/home.png";
+import profile from "@/assets/icons/profile.png";
+import nonPremium from "@/assets/icons/non-premium.png";
+import chest from "@/assets/icons/chest.png";
+import shop from "@/assets/icons/shop.png";
 
-export { apple, envelope, facebook, google, lock, logoText, logo, person };
+export {
+  apple,
+  envelope,
+  facebook,
+  google,
+  lock,
+  logoText,
+  logo,
+  person,
+  home,
+  profile,
+  nonPremium,
+  chest,
+  shop,
+};
