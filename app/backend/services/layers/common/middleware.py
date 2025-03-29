@@ -11,7 +11,7 @@ logger = logging.getLogger("middleware")
 logger.setLevel(logging.INFO)
 
 @lambda_handler_decorator
-def lambda_middleware(handler, event, context):
+def middleware(handler, event, context):
   event_headers = event.get('headers')
   authorization = event_headers.get('Authorization') or event_headers.get('authorization')
   

@@ -1,9 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  service1
-
-  Sample SAM Template for service1
+  This service contains all apis related to auth and user management.
 
 Parameters:
   StageName:
@@ -14,41 +12,97 @@ Parameters:
     Type: String
     Description: Name of the stack where the layer is deployed
     Default: layers
+  JwtSecretName:
+    Type: String
+    Description: Name of the secret in Secrets Manager that contains the JWT secret
+    Default: python-lambda-app/prod/jwt-secret
+  ThirdPartyClientsSecretName:
+    Type: String
+    Description: Name of the secret in Secrets Manager that contains the third party clients secrets
+    Default: python-lambda-app/prod/third-party-secrets
+  SecretsRegionName:
+    Type: String
+    Description: Region name where the secrets are stored
+    Default: eu-central-1
 
 Globals:
   Function:
-    Timeout: 3
-    MemorySize: 128
+    Timeout: 60
+    MemorySize: 512
 
 Resources:
-  Service1Api:
+  UsersApi:
     Type: AWS::Serverless::Api
     Properties:
-      Name: !Sub "Service1Api-${StageName}"
+      Name: !Sub "UsersApi-${StageName}"
       StageName: !Ref StageName
       Auth:
         ApiKeyRequired: false
 
-  HelloWorldFunction:
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "users-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  # Lambdas
+  HealthCheckFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: hello_world/
+      CodeUri: healthcheck/
       Handler: app.lambda_handler
       Runtime: python3.12
+      Architectures:
+        - x86_64
+      Events:
+        HealthCheckEndpoint:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId: !Ref UsersApi
+
+  LoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: login/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTable
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
         - !ImportValue
           Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
       Architectures:
         - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
       Events:
-        HelloWorldEndpoint:
+        LoginEndpoint:
           Type: Api
           Properties:
-            Path: /hello
-            Method: GET
-            RestApiId: !Ref Service1Api
+            Path: /login
+            Method: POST
+            RestApiId: !Ref UsersApi
 
 Outputs:
-  HelloWorldApi:
+  UsersApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${Service1Api}.execute-api.${AWS::Region}.amazonaws.com/prod/hello/"
+    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
