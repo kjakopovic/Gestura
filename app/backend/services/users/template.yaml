@@ -105,6 +105,66 @@ Resources:
             Method: POST
             RestApiId: !Ref UsersApi
 
+  ThirdPartyLoginRequestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: thirdPartyRequestLogin/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          THIRD_PARTY_CLIENTS_SECRET_NAME: !Ref ThirdPartyClientsSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        ThirdPartyLoginRequestEndpoint:
+          Type: Api
+          Properties:
+            Path: /login/third-party
+            Method: GET
+            RestApiId: !Ref UsersApi
+
+  ThirdPartyLoginValidateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTable
+          THIRD_PARTY_CLIENTS_SECRET_NAME: !Ref ThirdPartyClientsSecretName
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          FRONTEND_CALLBACK_URL: http://localhost:5173/callback
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+                - "s3:*"
+              Resource: "*"
+      Events:
+        ThirdPartyLoginValidateEndpoint:
+          Type: Api
+          Properties:
+            Path: /login/third-party/confirm
+            Method: GET
+            RestApiId: !Ref UsersApi
+
 Outputs:
   UsersApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
