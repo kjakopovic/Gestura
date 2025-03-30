@@ -5,6 +5,7 @@
   --breakpoint-xs: 500px;
   --breakpoint-sm: 700px;
   --breakpoint-md: 850px;
+  --breakpoint-xl: 1325px;
   --breakpoint-xxl: 1500px;
   --breakpoint-xxxl: 1800px;
   --color-primary: #ffc800;
@@ -34,6 +35,24 @@
     font-size: 18px;
     font-weight: 600;
   }
+
+  .text-landing-title {
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    line-height: 14px;
+  }
+
+  .text-landing-subtitle {
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    line-height: 60px;
+  }
+}
+
+body,
+#root {
+  min-height: 100vh;
+  color: white;
 }
 
 /* Global scrollbar styles */

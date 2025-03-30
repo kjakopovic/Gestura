@@ -1,15 +1,44 @@
-import { Navbar, Button, ButtonType } from "@/components/common";
+import {
+  Navbar,
+  Button,
+  ButtonType,
+  Typography,
+  TypographyType,
+} from "@/components/common";
 import { images } from "@/constants/images";
 
 const LandingPage = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-full w-full">
-      <Navbar styles="z-10" />
-      <Button
-        text="Get started"
-        type={ButtonType.SECONDARY_OUTLINE}
-        styles="z-10"
-      />
+    <div className="flex flex-col items-center justify-center w-full">
+      <Navbar styles="z-10 -mt-15" />
+      <div className="z-10 flex flex-col items-start justify-end gap-4 mt-10 mb-10 w-full h-[70%]">
+        <div className="flex h-full w-full xs:w-[70%] flex-col items-center justify-center">
+          <Typography
+            type={TypographyType.LANDING_TITLE}
+            text="Sign language made easy"
+            styles="text-white -mb-2 sm:mb-1 md:mb-4 lg:mb-6 2xl:mb-8"
+          />
+
+          <Typography
+            type={TypographyType.LANDING_SUBTITLE}
+            text="Learn with Gestura"
+            styles="text-primary"
+          />
+        </div>
+
+        <div className="flex flex-row items-center justify-center gap-4 ml-0 sm:ml-[10%] w-[100%] xs:[70%] sm:w-[50%] md:w-[40%] lg:w-[32%]">
+          <Button
+            text="Get started"
+            type={ButtonType.PRIMARY_OUTLINE}
+            styles="w-full"
+          />
+          <Button
+            text="Pricing"
+            type={ButtonType.SECONDARY_OUTLINE}
+            styles="w-full"
+          />
+        </div>
+      </div>
       <button onClick={() => (window.location.href = "/login")}>Login</button>
       <div className="absolute top-0 left-0 w-full h-full ">
         <img
