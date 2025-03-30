@@ -1,0 +1,31 @@
+import { cn } from "@/utils/lib";
+import { ButtonType } from "./types";
+import { getButtonStyles } from "./utils";
+
+interface Props {
+  styles?: string;
+  onClick?: () => void;
+  type?: ButtonType;
+  text?: string;
+  icon?: string;
+}
+
+const Button = ({ styles, onClick, text, type, icon }: Props) => {
+  const defaultStyles = getButtonStyles(type || ButtonType.PRIMARY_OUTLINE);
+
+  return (
+    <button className={cn(defaultStyles.button, styles)} onClick={onClick}>
+      {icon ? (
+        <img
+          src={icon}
+          className={defaultStyles.icon}
+          alt="Icon for a button from Gestura app"
+        />
+      ) : (
+        <span className={defaultStyles.text}>{text}</span>
+      )}
+    </button>
+  );
+};
+
+export default Button;
