@@ -21,6 +21,21 @@
   --color-background-900: #000000;
 }
 
+@layer base {
+  .text-button-normal {
+    font-family: "Inter", sans-serif;
+    font-size: 24px;
+    font-weight: normal;
+  }
+
+  .text-button-bold {
+    font-family: "DM Sans", sans-serif;
+    line-height: 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+}
+
 /* Global scrollbar styles */
 *::-webkit-scrollbar {
   width: 8px;
