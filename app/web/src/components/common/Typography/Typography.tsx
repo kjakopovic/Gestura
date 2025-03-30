@@ -1,4 +1,3 @@
-import { cn } from "@/utils/lib";
 import { TypographyType } from "./types";
 import { getTypographyStyles } from "./utils";
 
@@ -15,14 +14,14 @@ const Typography = ({ styles, type, text }: Props) => {
 
   if (type === TypographyType.H1) {
     return (
-      <h1 className={cn(defaultStyles, styles)}>
+      <h1 className={`${defaultStyles} ${styles}`}>
         {text || DEFAULT_EMPTY_TEXT}
       </h1>
     );
   }
 
   return (
-    <p className={cn(defaultStyles, styles)}>{text || DEFAULT_EMPTY_TEXT}</p>
+    <p className={`${defaultStyles} ${styles}`}>{text || DEFAULT_EMPTY_TEXT}</p>
   );
 };
 

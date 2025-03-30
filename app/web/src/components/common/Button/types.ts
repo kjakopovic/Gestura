@@ -1,3 +1,5 @@
+import { TypographyType } from "../Typography";
+
 export enum ButtonType {
   PRIMARY_OUTLINE = "primary_outline",
   SECONDARY_OUTLINE = "secondary_outline",
@@ -9,5 +11,6 @@ export enum ButtonType {
 export interface ButtonStyles {
   button?: string;
   text?: string;
+  textType?: TypographyType;
   icon?: string;
 }

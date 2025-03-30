@@ -7,7 +7,7 @@ const LandingPage = () => {
       <Navbar styles="z-10" />
       <Button
         text="Get started"
-        type={ButtonType.PRIMARY_OUTLINE}
+        type={ButtonType.SECONDARY_OUTLINE}
         styles="z-10"
       />
       <button onClick={() => (window.location.href = "/login")}>Login</button>

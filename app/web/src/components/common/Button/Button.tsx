@@ -1,6 +1,7 @@
 import { cn } from "@/utils/lib";
 import { ButtonType } from "./types";
 import { getButtonStyles } from "./utils";
+import { Typography } from "../Typography";
 
 interface Props {
   styles?: string;
@@ -22,7 +23,11 @@ const Button = ({ styles, onClick, text, type, icon }: Props) => {
           alt="Icon for a button from Gestura app"
         />
       ) : (
-        <span className={defaultStyles.text}>{text}</span>
+        <Typography
+          text={text}
+          styles={defaultStyles.text}
+          type={defaultStyles.textType}
+        />
       )}
     </button>
   );
