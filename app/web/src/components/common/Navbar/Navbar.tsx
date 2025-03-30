@@ -1,12 +1,19 @@
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import StoreBadge from "../StoreBadge";
+import { cn } from "@/utils/lib";
 
-const Navbar = () => {
+interface Props {
+  styles?: string;
+}
+
+const Navbar = ({ styles }: Props) => {
   return (
     <div
-      className="navbar flex flex-row w-full bg-transparent justify-between 
-        items-center py-7 px-5"
+      className={cn(
+        "navbar flex flex-row w-full bg-transparent justify-between items-center py-7 px-5",
+        styles
+      )}
     >
       <img
         src={icons.logoText}
