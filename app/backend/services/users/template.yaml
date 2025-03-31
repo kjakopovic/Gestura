@@ -105,10 +105,10 @@ Resources:
             Method: POST
             RestApiId: !Ref UsersApi
 
-  SignUpFunction:
+  RegisterFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: signup/
+      CodeUri: register/
       Handler: app.lambda_handler
       Runtime: python3.12
       Environment:
@@ -133,7 +133,7 @@ Resources:
         LoginEndpoint:
           Type: Api
           Properties:
-            Path: /signup
+            Path: /register
             Method: POST
             RestApiId: !Ref UsersApi
 
