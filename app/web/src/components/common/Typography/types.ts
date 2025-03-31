@@ -4,4 +4,6 @@ export enum TypographyType {
   H1 = "h1",
   LANDING_TITLE = "landing_title",
   LANDING_SUBTITLE = "landing_subtitle",
+  FOOTER_OPTIONS = "footer_options",
+  FOOTER_COPYRIGHT = "footer_copyright",
 }

@@ -4,6 +4,7 @@ import {
   ButtonType,
   Typography,
   TypographyType,
+  Footer,
 } from "@/components/common";
 import { images } from "@/constants/images";
 
@@ -105,7 +106,7 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <div className="z-10 flex flex-row items-center justify-between mt-10 w-full h-[300px] bg-red-500"></div>
+      <Footer styles="z-10 " />
 
       {/* Background */}
       <div className="absolute top-0 left-0 w-full h-full ">
@@ -127,7 +128,7 @@ const LandingPage = () => {
         <img
           src={images.bgImage}
           alt="Gestura background image"
-          className="object-cover w-full h-screen transform rotate-180 scale-x-[-1] bg-background-600 -mt-1"
+          className="object-cover w-full h-[115vh] transform rotate-180 scale-x-[-1] bg-background-600 -mt-1"
         />
       </div>
     </div>

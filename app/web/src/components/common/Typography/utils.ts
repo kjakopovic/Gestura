@@ -18,6 +18,14 @@ export const getTypographyStyles = (type: TypographyType): string => {
       styles +=
         "text-landing-subtitle text-[12px] xs:text-[15px] sm:text-[20px] md:text-[25px] lg:text-[30px] 2xl:text-[35px]";
       break;
+    case TypographyType.FOOTER_OPTIONS:
+      styles +=
+        "text-footer text-[10px] xs:text-[10px] sm:text-[12px] md:text-[12px] lg:text-[14px] 2xl:text-[16px]";
+      break;
+    case TypographyType.FOOTER_COPYRIGHT:
+      styles +=
+        "text-footer text-background-200 text-[8px] xs:text-[8px] sm:text-[10px] md:text-[10px] lg:text-[12px] 2xl:text-[14px]";
+      break;
   }
 
   return styles;
