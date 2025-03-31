@@ -7,6 +7,8 @@ schema = {
         },
         "username": {
             "type": "string",
+            "minLength": 1,
+            "maxLength": 20,
         },
         "password": {
             "type": "string",
