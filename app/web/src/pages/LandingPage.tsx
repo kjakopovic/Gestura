@@ -10,8 +10,9 @@ import { images } from "@/constants/images";
 const LandingPage = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full">
-      <Navbar styles="z-10 -mt-15" />
-      <div className="z-10 flex flex-col items-start justify-end gap-4 mt-10 mb-10 w-full h-[70%]">
+      <Navbar styles="z-10" />
+
+      <div className="z-10 flex flex-col items-start justify-end gap-4 mt-10 mb-10 w-full h-[70vh]">
         <div className="flex h-full w-full xs:w-[70%] flex-col items-center justify-center">
           <Typography
             type={TypographyType.LANDING_TITLE}
@@ -39,7 +40,32 @@ const LandingPage = () => {
           />
         </div>
       </div>
-      <button onClick={() => (window.location.href = "/login")}>Login</button>
+
+      <div className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-[90vh]">
+        <div className="flex h-full w-full flex-col items-center justify-center">
+          <img
+            src={images.phoneMockup}
+            alt="Gestura app on phone mockup"
+            className="w-full h-full"
+          />
+        </div>
+
+        <div className="flex h-full w-full flex-col items-center justify-center text-center">
+          <Typography
+            type={TypographyType.LANDING_TITLE}
+            text="Learn sign language in a fun and interactive way!"
+            styles="text-white -mb-2 sm:mb-1 md:mb-4 lg:mb-6 2xl:mb-8"
+          />
+
+          <Typography
+            type={TypographyType.LANDING_SUBTITLE}
+            text="Our mobile app allows for a very smooth and motivating experience."
+            styles="text-primary"
+          />
+        </div>
+      </div>
+
+      {/* Background */}
       <div className="absolute top-0 left-0 w-full h-full ">
         <img
           src={images.bgImage}
@@ -54,7 +80,7 @@ const LandingPage = () => {
         <img
           src={images.bgImage}
           alt="Gestura background image"
-          className="object-cover w-full h-screen bg-background-600 transform scale-x-[-1]"
+          className="object-cover w-full h-screen bg-background-600 transform scale-x-[-1] -mt-1"
         />
         <img
           src={images.bgImage}
