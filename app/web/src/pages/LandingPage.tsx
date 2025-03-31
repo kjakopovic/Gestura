@@ -65,6 +65,48 @@ const LandingPage = () => {
         </div>
       </div>
 
+      <div className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-[90vh]">
+        <div className="flex h-full w-full flex-col items-center justify-center text-center">
+          <Typography
+            type={TypographyType.LANDING_TITLE}
+            text="Communicate live no matter of your sign language knowledge"
+            styles="text-white -mb-2 sm:mb-1 md:mb-4 lg:mb-6 2xl:mb-8"
+          />
+
+          <Typography
+            type={TypographyType.LANDING_SUBTITLE}
+            text="Don’t let language to be your barrier."
+            styles="text-primary"
+          />
+        </div>
+
+        <div className="flex h-full w-full flex-col items-center justify-center">
+          <img
+            src={images.phoneMockup2}
+            alt="Gestura app on phone mockup"
+            className="w-full h-full"
+          />
+        </div>
+      </div>
+
+      <div className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-[90vh]">
+        <div className="flex h-full w-full flex-col items-center justify-center text-center">
+          <Typography
+            type={TypographyType.LANDING_TITLE}
+            text="TODO:"
+            styles="text-white -mb-2 sm:mb-1 md:mb-4 lg:mb-6 2xl:mb-8"
+          />
+
+          <Typography
+            type={TypographyType.LANDING_SUBTITLE}
+            text="I need to add pricing here"
+            styles="text-primary"
+          />
+        </div>
+      </div>
+
+      <div className="z-10 flex flex-row items-center justify-between mt-10 w-full h-[300px] bg-red-500"></div>
+
       {/* Background */}
       <div className="absolute top-0 left-0 w-full h-full ">
         <img
