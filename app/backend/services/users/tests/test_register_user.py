@@ -10,11 +10,9 @@ if 'validation_schema' in sys.modules:
 
 new_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'signUp'))
 
-
 sys.path.append(new_path)
 
-#from signUp.lambda_handler import lambda_handler
-from app import lambda_handler
+from signUp.app import lambda_handler
 
 @mock_aws
 class TestRegisterUser(BaseTestSetup):
