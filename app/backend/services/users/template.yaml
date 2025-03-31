@@ -105,6 +105,38 @@ Resources:
             Method: POST
             RestApiId: !Ref UsersApi
 
+  SignUpFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: signup/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTable
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !ImportValue
+          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        LoginEndpoint:
+          Type: Api
+          Properties:
+            Path: /signup
+            Method: POST
+            RestApiId: !Ref UsersApi
+
   ThirdPartyLoginRequestFunction:
     Type: AWS::Serverless::Function
     Properties:
