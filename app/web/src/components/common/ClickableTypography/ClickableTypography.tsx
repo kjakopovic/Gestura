@@ -8,12 +8,10 @@ interface Props {
   type?: TypographyType;
 }
 
-const ClickableTypography = ({ styles, onClick, text, type }: Props) => {
-  return (
-    <button className={cn("hover:cursor-pointer", styles)} onClick={onClick}>
-      <Typography text={text} type={type} />
-    </button>
-  );
-};
+const ClickableTypography = ({ styles, onClick, text, type }: Props) => (
+  <button className={cn("hover:cursor-pointer", styles)} onClick={onClick}>
+    <Typography text={text} type={type} />
+  </button>
+);
 
 export default ClickableTypography;

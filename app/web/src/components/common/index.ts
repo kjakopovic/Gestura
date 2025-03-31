@@ -4,6 +4,7 @@ import { Button, ButtonType } from "./Button";
 import { Typography, TypographyType } from "./Typography";
 import Footer from "./Footer";
 import ClickableTypography from "./ClickableTypography";
+import { Pricing, PricingType, PricingFeature } from "./Pricing";
 
 export {
   Navbar,
@@ -14,4 +15,7 @@ export {
   TypographyType,
   Footer,
   ClickableTypography,
+  Pricing,
+  PricingType,
+  PricingFeature,
 };

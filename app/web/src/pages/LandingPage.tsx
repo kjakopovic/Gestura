@@ -5,6 +5,8 @@ import {
   Typography,
   TypographyType,
   Footer,
+  Pricing,
+  PricingType,
 } from "@/components/common";
 import { images } from "@/constants/images";
 
@@ -90,23 +92,15 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <div className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-[90vh]">
-        <div className="flex h-full w-full flex-col items-center justify-center text-center">
-          <Typography
-            type={TypographyType.LANDING_TITLE}
-            text="TODO:"
-            styles="text-white -mb-2 sm:mb-1 md:mb-4 lg:mb-6 2xl:mb-8"
-          />
-
-          <Typography
-            type={TypographyType.LANDING_SUBTITLE}
-            text="I need to add pricing here"
-            styles="text-primary"
-          />
+      <div className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-full sm:h-[85vh]">
+        <div className="h-full flex flex-col sm:flex-row w-full lg:w-[90%] items-center justify-between text-center">
+          <Pricing type={PricingType.FREE} />
+          <Pricing type={PricingType.PREMIUM_PLUS} />
+          <Pricing type={PricingType.PREMIUM} />
         </div>
       </div>
 
-      <Footer styles="z-10 " />
+      <Footer styles="z-10 bg-background-800" />
 
       {/* Background */}
       <div className="absolute top-0 left-0 w-full h-full ">
@@ -128,7 +122,12 @@ const LandingPage = () => {
         <img
           src={images.bgImage}
           alt="Gestura background image"
-          className="object-cover w-full h-[115vh] transform rotate-180 scale-x-[-1] bg-background-600 -mt-1"
+          className="object-cover w-full h-screen transform rotate-180 scale-x-[-1] bg-background-600 -mt-1"
+        />
+        <img
+          src={images.bgImage}
+          alt="Gestura background image"
+          className="object-cover w-full h-[130vh] bg-background-600 sm:hidden"
         />
       </div>
     </div>
