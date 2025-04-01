@@ -1,18 +1,53 @@
-from base_test_setups import BaseTestSetup
-from moto import mock_aws
-
 import json
 import sys
 import os
+import unittest
 
-if 'validation_schema' in sys.modules:
-    del sys.modules['validation_schema']
+# TODO: Beautify this
 
-new_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'register'))
+# Save original path
+original_path = sys.path.copy()
 
-sys.path.append(new_path)
+# Build paths
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, '..', '..', '..', '..', '..'))
+backend_dir = os.path.join(project_root, 'app', 'backend')
+services_dir = os.path.join(backend_dir, 'services')
+layers_dir = os.path.join(services_dir, 'layers')
+common_dir = os.path.join(layers_dir, 'common')
+users_dir = os.path.join(services_dir, 'users')
+register_dir = os.path.join(users_dir, 'register')
 
+# Add paths in proper order (most specific first)
+paths_to_add = [
+    register_dir,  # For validation_schema.py
+    common_dir,    # For common module
+    layers_dir,    # For other layers
+    users_dir,
+    services_dir,
+    backend_dir,
+    project_root,
+    current_dir
+]
+
+for path in paths_to_add:
+    if os.path.exists(path):
+        print(f"Adding path: {path}")
+        sys.path.insert(0, path)
+
+# Clear cached imports if needed
+for module in ['validation_schema', 'common', 'register.app']:
+    if module in sys.modules:
+        del sys.modules[module]
+
+# Import test dependencies
+from base_test_setups import BaseTestSetup
+from moto import mock_aws
+
+# Now import the handler
 from register.app import lambda_handler
+
+#python -m unittest discover -s tests -p "test*.py" -v
 
 @mock_aws
 class TestRegisterUser(BaseTestSetup):
@@ -148,4 +183,11 @@ class TestRegisterUser(BaseTestSetup):
         self.assertEqual(body['message'], "User created successfully")
 
 
-sys.path.remove(new_path)
+if __name__ == "__main__":
+    try:
+        unittest.main()
+    finally:
+        # Restore original path when done
+        sys.path = original_path
+
+# sys.path.remove(new_path)

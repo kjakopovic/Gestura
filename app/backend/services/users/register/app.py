@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from aws_lambda_powertools.utilities.validation import SchemaValidationError, validate
 from common import build_response, hash_string
 from auth import generate_jwt_token, generate_refresh_token
-from boto import LamdbaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
+from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
 
 logger = logging.getLogger("SignUpUser")
 logger.setLevel(logging.DEBUG)
