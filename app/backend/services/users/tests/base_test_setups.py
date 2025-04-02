@@ -49,8 +49,27 @@ class BaseTestSetup(unittest.TestCase):
         self.dynamodb = resource('dynamodb', region_name='eu-central-1')
         self.table = self.dynamodb.create_table(
             TableName = os.environ["USERS_TABLE_NAME"],
-            KeySchema = [{"AttributeName": "email", "AttributeType": "S"}],
-            BillingMode = "PAY_PER_REQUEST"
+            AttributeDefinitions = [
+                {"AttributeName": "email", "AttributeType": "S"},
+                {"AttributeName": "username", "AttributeType": "S"}
+            ],
+            KeySchema = [
+                {"AttributeName": "email", "KeyType": "HASH"}
+            ],
+            GlobalSecondaryIndexes=[
+                {
+                    'IndexName': 'username-index',
+                    'KeySchema': [
+                        {"AttributeName": "username", "KeyType": "HASH"}
+                    ],
+                    'Projection': {'ProjectionType': 'ALL'},
+                    'ProvisionedThroughput': {
+                        'ReadCapacityUnits': 5,
+                        'WriteCapacityUnits': 5
+                    }
+                }
+            ],
+            BillingMode="PAY_PER_REQUEST"
         )
         self.table.meta.client.get_waiter('table_exists').wait(TableName = os.environ["USERS_TABLE_NAME"])
 

@@ -7,6 +7,7 @@ from aws_lambda_powertools.utilities.validation import SchemaValidationError, va
 from common import build_response, hash_string
 from auth import generate_jwt_token, generate_refresh_token
 from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
+import boto3
 
 logger = logging.getLogger("SignUpUser")
 logger.setLevel(logging.DEBUG)
@@ -32,7 +33,7 @@ def lambda_handler(event, context):
     request = Request(**request_body)
 
     global _LAMBDA_USERS_TABLE_RESOURCE
-    dynamodb = LamdbaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
+    dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
 
     return sign_up_user(dynamodb, request.email, request.username,request.password)
 
@@ -41,7 +42,7 @@ def sign_up_user(dynamodb, email, username, password):
     existing_username_user = get_user_by_username(dynamodb, username)
 
     if existing_email_user:
-        logger.debug(f"User with email {existing_email_user.email} already exists")
+        logger.debug(f"User with email {email} already exists")
         return build_response(
             400,
             {
@@ -49,7 +50,7 @@ def sign_up_user(dynamodb, email, username, password):
             }
         )
     if existing_username_user:
-        logger.debug(f"User with username {existing_username_user.username} already exists")
+        logger.debug(f"User with username {username} already exists")
         return build_response(
             400,
             {
@@ -91,13 +92,12 @@ def get_user_by_email(dynamodb, email):
 
 def get_user_by_username(dynamodb, username):
     logger.info(f"Getting user by username: {username}")
-    user = dynamodb.table.get_item(
-        Key={
-            'username': username
-        }
+    response = dynamodb.table.query(
+        IndexName='username-index',
+        KeyConditionExpression=boto3.dynamodb.conditions.Key('username').eq(username)
     )
-
-    return user.get('Item')
+    items = response.get('Items', [])
+    return items[0] if items else None
 
 def add_user_to_the_table(dynamodb, user):
     logger.info(f"Adding user with email: {user['email']} to the table")

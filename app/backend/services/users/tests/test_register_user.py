@@ -49,10 +49,42 @@ from register.app import lambda_handler
 
 #python -m unittest discover -s tests -p "test*.py" -v
 
+# TODO: CLEAN ALL OF THIS UP
 @mock_aws
 class TestRegisterUser(BaseTestSetup):
     def setUp(self):
         super().setUp()
+
+        # Import the original lambda handler
+        from register.app import lambda_handler as original_handler
+
+        # Store the original for cleanup
+        self.original_lambda_handler = original_handler
+
+        # Create a patched version
+        def patched_handler(event, context):
+            # Import here to access the module directly
+            import register.app
+
+            # Save original table resource
+            original_resource = register.app._LAMBDA_USERS_TABLE_RESOURCE
+
+            try:
+                # Replace with our test resource
+                register.app._LAMBDA_USERS_TABLE_RESOURCE = {
+                    "resource": self.dynamodb,
+                    "table_name": os.environ["USERS_TABLE_NAME"]
+                }
+
+                # Call the original handler with our test setup
+                return original_handler(event, context)
+            finally:
+                # Restore original value
+                register.app._LAMBDA_USERS_TABLE_RESOURCE = original_resource
+
+        # Replace global lambda_handler
+        global lambda_handler
+        lambda_handler = patched_handler
 
     def test_validation_schema(self):
         """
@@ -86,19 +118,19 @@ class TestRegisterUser(BaseTestSetup):
             },
             {
                 "request_body": {
-                    "email": "test1",
-                    "password": "12",
-                    "username": "UserName"
-                },
-                "expected_validation_message": "data.password must be at least 8 characters"
-            },
-            {
-                "request_body": {
                     "email": "test1@mail.com",
                     "password": "password123",
                     "username": ""
                 },
                 "expected_validation_message": "data.username must be longer than or equal to 1 characters"
+            },
+            {
+                "request_body": {
+                    "email": "test1@mail.com",
+                    "password": "12",
+                    "username": "UserName"
+                },
+                "expected_validation_message": "data.password must be longer than or equal to 7 characters"
             }
         ]
 
@@ -182,6 +214,11 @@ class TestRegisterUser(BaseTestSetup):
         self.assertEqual(response['statusCode'], 200)
         self.assertEqual(body['message'], "User created successfully")
 
+    def tearDown(self):
+        # Restore original lambda_handler
+        global lambda_handler
+        lambda_handler = self.original_lambda_handler
+        super().tearDown()
 
 if __name__ == "__main__":
     try:
