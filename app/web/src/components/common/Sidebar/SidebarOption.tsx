@@ -1,13 +1,13 @@
 import React from "react";
 
-interface SidebarOptionProps {
-    icon: React.ReactNode;
+interface Props {
+    icon: string;
     label: string;
     onClick?: () => void;
     isSelected: boolean;
 }
 
-const SidebarOption: React.FC<SidebarOptionProps> = ({
+const SidebarOption: React.FC<Props> = ({
     icon,
     label,
     onClick,
@@ -22,7 +22,7 @@ const SidebarOption: React.FC<SidebarOptionProps> = ({
             }`}
             onClick={onClick}
         >
-            <div className="text-white text-xl">{icon}</div>
+            <img src={icon} alt={label} className="w-6 h-6" />
             <span className="text-white text-xl">{label}</span>
         </div>
     );
