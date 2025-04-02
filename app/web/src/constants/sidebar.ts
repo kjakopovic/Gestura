@@ -1,24 +1,24 @@
-import { images } from "@/constants/images";
+import { icons } from "@/constants/icons";
 export const options = [
 
             {
-                icon: images.home_2,
+                icon: icons.home_2,
                 label: "Home",
             },
             {
-                icon: images.create,
+                icon: icons.create,
                 label: "Create Room",
             },
             {
-                icon: images.join,
+                icon: icons.join,
                 label: "Join Room",
             },
             {
-                icon: images.invite,
+                icon: icons.invite,
                 label: "Invite Friends",
             },
             {
-                icon: images.logout,
+                icon: icons.logout,
                 label: "Log out",
             },
         ];

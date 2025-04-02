@@ -7,7 +7,7 @@ const Sidebar = () => {
     const [selected, setSelected] = useState("Home");
 
     return (
-        <div className="w-[75%] sm:w-[50%] md:w-[40%] lg:w-[25%] h-full bg-background-800 p-4 fixed top-0 left-0 rounded-r-4xl">
+        <div className="w-[50%] sm:w-[45%] md:w-[40%] lg:w-[25%] h-full bg-background-800 p-4 fixed top-0 left-0 rounded-r-4xl">
             {" "}
             <img
                 src={icons.logoText}
