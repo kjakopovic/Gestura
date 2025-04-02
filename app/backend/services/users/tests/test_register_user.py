@@ -2,49 +2,35 @@ import json
 import sys
 import os
 import unittest
+from unittest.mock import patch
 
-# TODO: Beautify this
+# Setup path resolution
+def setup_paths():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(current_dir, '..', '..', '..', '..', '..'))
 
-# Save original path
+    paths = [
+        os.path.join(project_root, 'app', 'backend', 'services', 'users', 'register'),
+        os.path.join(project_root, 'app', 'backend', 'services', 'layers', 'common'),
+        os.path.join(project_root, 'app', 'backend', 'services', 'users'),
+        current_dir
+    ]
+
+    for path in paths:
+        if path not in sys.path and os.path.exists(path):
+            sys.path.insert(0, path)
+
+    # Clear cache of potentially imported modules
+    for module in ['validation_schema', 'common', 'register.app']:
+        if module in sys.modules:
+            del sys.modules[module]
+
+
 original_path = sys.path.copy()
+setup_paths()
 
-# Build paths
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.abspath(os.path.join(current_dir, '..', '..', '..', '..', '..'))
-backend_dir = os.path.join(project_root, 'app', 'backend')
-services_dir = os.path.join(backend_dir, 'services')
-layers_dir = os.path.join(services_dir, 'layers')
-common_dir = os.path.join(layers_dir, 'common')
-users_dir = os.path.join(services_dir, 'users')
-register_dir = os.path.join(users_dir, 'register')
-
-# Add paths in proper order (most specific first)
-paths_to_add = [
-    register_dir,  # For validation_schema.py
-    common_dir,    # For common module
-    layers_dir,    # For other layers
-    users_dir,
-    services_dir,
-    backend_dir,
-    project_root,
-    current_dir
-]
-
-for path in paths_to_add:
-    if os.path.exists(path):
-        print(f"Adding path: {path}")
-        sys.path.insert(0, path)
-
-# Clear cached imports if needed
-for module in ['validation_schema', 'common', 'register.app']:
-    if module in sys.modules:
-        del sys.modules[module]
-
-# Import test dependencies
 from base_test_setups import BaseTestSetup
 from moto import mock_aws
-
-# Now import the handler
 from register.app import lambda_handler
 
 #python -m unittest discover -s tests -p "test*.py" -v
@@ -55,36 +41,12 @@ class TestRegisterUser(BaseTestSetup):
     def setUp(self):
         super().setUp()
 
-        # Import the original lambda handler
-        from register.app import lambda_handler as original_handler
-
-        # Store the original for cleanup
-        self.original_lambda_handler = original_handler
-
-        # Create a patched version
-        def patched_handler(event, context):
-            # Import here to access the module directly
-            import register.app
-
-            # Save original table resource
-            original_resource = register.app._LAMBDA_USERS_TABLE_RESOURCE
-
-            try:
-                # Replace with our test resource
-                register.app._LAMBDA_USERS_TABLE_RESOURCE = {
-                    "resource": self.dynamodb,
-                    "table_name": os.environ["USERS_TABLE_NAME"]
-                }
-
-                # Call the original handler with our test setup
-                return original_handler(event, context)
-            finally:
-                # Restore original value
-                register.app._LAMBDA_USERS_TABLE_RESOURCE = original_resource
-
-        # Replace global lambda_handler
-        global lambda_handler
-        lambda_handler = patched_handler
+        # Create patcher for the DynamoDB resource in the lambda handler
+        self.resource_patcher = patch('register.app._LAMBDA_USERS_TABLE_RESOURCE', {
+            "resource": self.dynamodb,
+            "table_name": os.environ["USERS_TABLE_NAME"]
+        })
+        self.resource_patcher.start()
 
     def test_validation_schema(self):
         """
@@ -215,9 +177,7 @@ class TestRegisterUser(BaseTestSetup):
         self.assertEqual(body['message'], "User created successfully")
 
     def tearDown(self):
-        # Restore original lambda_handler
-        global lambda_handler
-        lambda_handler = self.original_lambda_handler
+        self.resource_patcher.stop()
         super().tearDown()
 
 if __name__ == "__main__":
@@ -226,5 +186,3 @@ if __name__ == "__main__":
     finally:
         # Restore original path when done
         sys.path = original_path
-
-# sys.path.remove(new_path)
