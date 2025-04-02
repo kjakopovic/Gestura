@@ -41,18 +41,14 @@ permissions:
   contents: read
 
 jobs:
-  disabled_pipeline:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Waiting 2 seconds
-        run: sleep 2
-
   deploy_layer_develop:
     if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          submodules: false
 
       - name: Run Dependencies Setup
         uses: ./.github/composite/common_build_setup
@@ -75,6 +71,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          submodules: false
 
       - name: Run Dependencies Setup
         uses: ./.github/composite/common_build_setup
@@ -99,6 +97,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          submodules: false
 
       - name: Run Dependencies Setup
         uses: ./.github/composite/common_build_setup
@@ -124,6 +124,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          submodules: false
 
       - name: Run Dependencies Setup
         uses: ./.github/composite/common_build_setup
