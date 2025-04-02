@@ -7,9 +7,9 @@ from aws_lambda_powertools.utilities.validation import SchemaValidationError, va
 from common import build_response, hash_string
 from auth import generate_jwt_token, generate_refresh_token
 from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
-import boto3
+from boto3.dynamodb.conditions import Key
 
-logger = logging.getLogger("SignUpUser")
+logger = logging.getLogger("RegisterUser")
 logger.setLevel(logging.DEBUG)
 
 @dataclass
@@ -94,7 +94,7 @@ def get_user_by_username(dynamodb, username):
     logger.info(f"Getting user by username: {username}")
     response = dynamodb.table.query(
         IndexName='username-index',
-        KeyConditionExpression=boto3.dynamodb.conditions.Key('username').eq(username)
+        KeyConditionExpression=Key('username').eq(username)
     )
     items = response.get('Items', [])
     return items[0] if items else None

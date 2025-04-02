@@ -34,9 +34,6 @@ from base_test_setups import BaseTestSetup
 from moto import mock_aws
 from register.app import lambda_handler
 
-#python -m unittest discover -s tests -p "test*.py" -v
-
-# TODO: CLEAN ALL OF THIS UP
 @mock_aws
 class TestRegisterUser(BaseTestSetup):
     def setUp(self):
@@ -90,7 +87,7 @@ class TestRegisterUser(BaseTestSetup):
             {
                 "request_body": {
                     "email": "test1@mail.com",
-                    "password": "12",
+                    "password": "short",
                     "username": "UserName"
                 },
                 "expected_validation_message": "data.password must be longer than or equal to 7 characters"

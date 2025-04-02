@@ -41,7 +41,7 @@ class BaseTestSetup(unittest.TestCase):
                 })
         )
 
-        self.secrets_manager.get_secret_value = {
+        self.secrets_manager.get_secret_value = lambda SecretId: {
             'SecretString': json.dumps({
                 'jwt_secret': 'value1',
                 'refresh_secret': 'value2'
