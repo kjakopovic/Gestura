@@ -20,6 +20,9 @@ class LambdaDynamoDBClass:
 @mock_aws
 class BaseTestSetup(unittest.TestCase):
     def setUp(self):
+        """
+        Set up the environment for the tests.
+        """
         # Environment variables
         os.environ["USERS_TABLE_NAME"] = "test_table"
         os.environ["JWT_SECRET_NAME"] = "secret"

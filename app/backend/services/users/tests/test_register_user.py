@@ -25,7 +25,8 @@ def setup_paths():
         if module in sys.modules:
             del sys.modules[module]
 
-
+# Save original path and setup test paths
+# Otherwise unittest will not find the modules
 original_path = sys.path.copy()
 setup_paths()
 
@@ -99,12 +100,8 @@ class TestRegisterUser(BaseTestSetup):
         for case in test_cases:
             with self.subTest(request_body=case["request_body"],
                               expected_validation_message=case["expected_validation_message"]):
-                # Arrange
-                event = {
-                    "body": json.dumps(case["request_body"])
-                }
+                event = {"body": json.dumps(case["request_body"])}
 
-                # Act
                 response = lambda_handler(event, {})
                 body = json.loads(response['body'])
 
@@ -115,8 +112,6 @@ class TestRegisterUser(BaseTestSetup):
         """
         Test response when username is already taken.
         """
-
-        # Arrange
         event = {
             "body": json.dumps({
                 "email": "test2@mail.com",
@@ -125,11 +120,9 @@ class TestRegisterUser(BaseTestSetup):
             })
         }
 
-        # Act
         response = lambda_handler(event, {})
         body = json.loads(response['body'])
 
-        # Assert
         self.assertEqual(response['statusCode'], 400)
         self.assertEqual(body['message'], "Username already in use.")
 
@@ -137,7 +130,6 @@ class TestRegisterUser(BaseTestSetup):
         """
         Test response when email is already in use.
         """
-        # Arrange
         event = {
             "body": json.dumps({
                 "email": "test@mail.com",
@@ -146,11 +138,9 @@ class TestRegisterUser(BaseTestSetup):
             })
         }
 
-        # Act
         response = lambda_handler(event, {})
         body = json.loads(response['body'])
 
-        # Assert
         self.assertEqual(response['statusCode'], 400)
         self.assertEqual(body['message'], "Email already in use.")
 
@@ -158,8 +148,6 @@ class TestRegisterUser(BaseTestSetup):
         """
         Test response when user registers successfully.
         """
-
-        # Arrange
         event = {
             "body": json.dumps({
                 "email": "test2@mail.com",
@@ -168,11 +156,9 @@ class TestRegisterUser(BaseTestSetup):
             })
         }
 
-        # Act
         response = lambda_handler(event, {})
         body = json.loads(response['body'])
 
-        # Assert
         self.assertEqual(response['statusCode'], 200)
         self.assertEqual(body['message'], "User created successfully")
 
