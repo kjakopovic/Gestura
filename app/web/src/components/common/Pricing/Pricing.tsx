@@ -3,7 +3,7 @@ import { getPricingStyles } from "./utils";
 import { Typography, TypographyType } from "../Typography";
 import { Button } from "../Button";
 import PricingFeature from "./PricingFeature";
-import { cn } from "@/utils/lib";
+import { cn } from "@/lib/utils";
 
 interface Props {
   onStartClick?: () => void;

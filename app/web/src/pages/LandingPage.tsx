@@ -8,10 +8,13 @@ import {
   Pricing,
   PricingType,
 } from "@/components/common";
+import { Dialog } from "@/components/elements";
 import { images } from "@/constants/images";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+  const [openDialog, setOpenDialog] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -113,13 +116,53 @@ const LandingPage = () => {
         className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-full sm:h-[85vh]"
       >
         <div className="h-full flex flex-col sm:flex-row w-full lg:w-[90%] items-center justify-between text-center">
-          <Pricing type={PricingType.FREE} />
-          <Pricing type={PricingType.PREMIUM_PLUS} />
-          <Pricing type={PricingType.PREMIUM} />
+          <Pricing
+            type={PricingType.FREE}
+            onStartClick={() => {
+              setOpenDialog(true);
+            }}
+          />
+          <Pricing
+            type={PricingType.PREMIUM_PLUS}
+            onStartClick={() => {
+              navigate("/buy");
+            }}
+          />
+          <Pricing
+            type={PricingType.PREMIUM}
+            onStartClick={() => {
+              navigate("/buy");
+            }}
+          />
         </div>
       </section>
 
       <Footer styles="z-10 bg-background-800" />
+
+      <Dialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        title="Please choose your platform"
+        show={{
+          firstButton: true,
+          secondButton: true,
+          close: true,
+        }}
+        firstButton={{
+          type: ButtonType.PRIMARY_FULL,
+          text: "Mobile",
+          onClick: () => {
+            window.open("https://play.google.com/store/apps", "_blank");
+          },
+        }}
+        secondButton={{
+          type: ButtonType.SECONDARY_FULL,
+          text: "Web",
+          onClick: () => {
+            navigate("/login");
+          },
+        }}
+      />
 
       {/* Background */}
       <div className="absolute top-0 left-0 w-full h-full ">

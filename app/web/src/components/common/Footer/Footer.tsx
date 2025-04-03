@@ -1,9 +1,9 @@
-import { cn } from "@/utils/lib";
 import { icons } from "@/constants/icons";
 import { Typography, TypographyType } from "../Typography";
 import ClickableTypography from "../ClickableTypography";
 import StoreBadge from "../StoreBadge";
 import { images } from "@/constants/images";
+import { cn } from "@/lib/utils";
 
 interface Props {
   styles?: string;

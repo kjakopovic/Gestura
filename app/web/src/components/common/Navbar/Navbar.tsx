@@ -1,7 +1,7 @@
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import StoreBadge from "../StoreBadge/StoreBadge";
-import { cn } from "@/utils/lib";
+import { cn } from "@/lib/utils";
 
 interface Props {
   styles?: string;
