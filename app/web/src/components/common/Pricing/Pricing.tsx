@@ -16,7 +16,9 @@ const Pricing = ({ type, onStartClick }: Props) => {
   return (
     <div
       className={`flex flex-col items-center justify-center w-full h-full ${
-        type === PricingType.PREMIUM_PLUS && "mb-30 mt-30 sm:mt-0"
+        type === PricingType.PREMIUM_PLUS
+          ? "mb-10 mt-10 sm:mt-0"
+          : "mb-0 sm:-mb-30"
       }`}
     >
       {type === PricingType.PREMIUM_PLUS && (

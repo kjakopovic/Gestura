@@ -56,6 +56,10 @@ body,
   min-height: 100vh;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Global scrollbar styles */
 *::-webkit-scrollbar {
   width: 8px;
@@ -69,5 +73,4 @@ body,
 
 *::-webkit-scrollbar-track {
   background: #2e2e2e;
-  border-radius: 10px;
 }
