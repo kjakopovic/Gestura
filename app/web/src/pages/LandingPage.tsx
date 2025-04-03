@@ -10,6 +10,11 @@ import {
 } from "@/components/common";
 import { Dialog } from "@/components/elements";
 import { images } from "@/constants/images";
+import {
+  redirectToGoogleStore,
+  redirectToBuy,
+  redirectToLogin,
+} from "@/utils/common";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -44,9 +49,7 @@ const LandingPage = () => {
             text="Get started"
             type={ButtonType.PRIMARY_OUTLINE}
             styles="w-full"
-            onClick={() => {
-              navigate("/login");
-            }}
+            onClick={() => redirectToLogin(navigate)}
           />
           <Button
             text="Pricing"
@@ -124,20 +127,16 @@ const LandingPage = () => {
           />
           <Pricing
             type={PricingType.PREMIUM_PLUS}
-            onStartClick={() => {
-              navigate("/buy");
-            }}
+            onStartClick={() => redirectToBuy(navigate)}
           />
           <Pricing
             type={PricingType.PREMIUM}
-            onStartClick={() => {
-              navigate("/buy");
-            }}
+            onStartClick={() => redirectToBuy(navigate)}
           />
         </div>
       </section>
 
-      <Footer styles="z-10 bg-background-800" />
+      <Footer styles="z-10 bg-background-800" navigate={navigate} />
 
       <Dialog
         open={openDialog}
@@ -151,16 +150,12 @@ const LandingPage = () => {
         firstButton={{
           type: ButtonType.PRIMARY_FULL,
           text: "Mobile",
-          onClick: () => {
-            window.open("https://play.google.com/store/apps", "_blank");
-          },
+          onClick: redirectToGoogleStore,
         }}
         secondButton={{
           type: ButtonType.SECONDARY_FULL,
           text: "Web",
-          onClick: () => {
-            navigate("/login");
-          },
+          onClick: () => redirectToLogin(navigate),
         }}
       />
 

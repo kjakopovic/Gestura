@@ -13,6 +13,11 @@ const AppRoutes = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/webcam" element={<WebCam />} />
       <Route path="/buy" element={<p>Buy Gestura</p>} />
+      <Route path="/license" element={<p>license</p>} />
+      <Route path="/about" element={<p>about</p>} />
+      <Route path="/news" element={<p>news</p>} />
+      <Route path="/help" element={<p>help</p>} />
+      <Route path="/contact" element={<p>contact</p>} />
       <Route path="/" element={<LandingPage />} />
       <Route path="*" element={<p>Not Found</p>} />
     </Routes>

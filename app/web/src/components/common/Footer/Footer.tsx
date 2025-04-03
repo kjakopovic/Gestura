@@ -4,12 +4,19 @@ import ClickableTypography from "../ClickableTypography";
 import StoreBadge from "../StoreBadge";
 import { images } from "@/constants/images";
 import { cn } from "@/lib/utils";
+import {
+  redirectToAppleStore,
+  redirectToGoogleStore,
+  redirectToOtherPage,
+} from "@/utils/common";
+import { NavigateFunction } from "react-router-dom";
 
 interface Props {
   styles?: string;
+  navigate?: NavigateFunction;
 }
 
-const Footer = ({ styles }: Props) => (
+const Footer = ({ styles, navigate }: Props) => (
   <footer
     className={cn(
       "flex flex-row items-center justify-between w-full bg-transparent p-4",
@@ -24,12 +31,16 @@ const Footer = ({ styles }: Props) => (
           type={TypographyType.FOOTER_OPTIONS}
           text="Download now"
           styles="text-primary hover:text-primary/80"
+          onClick={redirectToGoogleStore}
         />
 
         <ClickableTypography
           type={TypographyType.FOOTER_OPTIONS}
           text="License"
           styles="text-white hover:text-white/80"
+          onClick={() => {
+            redirectToOtherPage("/license", navigate);
+          }}
         />
       </div>
 
@@ -38,36 +49,36 @@ const Footer = ({ styles }: Props) => (
           type={TypographyType.FOOTER_OPTIONS}
           text="About"
           styles="text-white hover:text-white/80"
-        />
-
-        <ClickableTypography
-          type={TypographyType.FOOTER_OPTIONS}
-          text="Features"
-          styles="text-white hover:text-white/80"
-        />
-
-        <ClickableTypography
-          type={TypographyType.FOOTER_OPTIONS}
-          text="Pricing"
-          styles="text-white hover:text-white/80"
+          onClick={() => {
+            redirectToOtherPage("/about", navigate);
+          }}
         />
 
         <ClickableTypography
           type={TypographyType.FOOTER_OPTIONS}
           text="News"
           styles="text-white hover:text-white/80"
+          onClick={() => {
+            redirectToOtherPage("/news", navigate);
+          }}
         />
 
         <ClickableTypography
           type={TypographyType.FOOTER_OPTIONS}
           text="Help"
           styles="text-white hover:text-white/80"
+          onClick={() => {
+            redirectToOtherPage("/help", navigate);
+          }}
         />
 
         <ClickableTypography
           type={TypographyType.FOOTER_OPTIONS}
           text="Contact"
           styles="text-white hover:text-white/80"
+          onClick={() => {
+            redirectToOtherPage("/contact", navigate);
+          }}
         />
       </div>
 
@@ -87,10 +98,12 @@ const Footer = ({ styles }: Props) => (
       <StoreBadge
         alt="Gestura badge for redirection to google play store"
         src={images.googleStoreBadge}
+        onClick={redirectToGoogleStore}
       />
       <StoreBadge
         alt="Gestura badge for redirection to app store"
         src={images.appStoreBadge}
+        onClick={redirectToAppleStore}
       />
     </div>
   </footer>
