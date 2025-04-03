@@ -1,7 +1,8 @@
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import StoreBadge from "../StoreBadge/StoreBadge";
-import { cn } from "@/utils/lib";
+import { cn } from "@/lib/utils";
+import { redirectToAppleStore, redirectToGoogleStore } from "@/utils/common";
 
 interface Props {
   styles?: string;
@@ -24,10 +25,12 @@ const Navbar = ({ styles }: Props) => (
       <StoreBadge
         alt="Gestura badge for redirection to google play store"
         src={images.googleStoreBadge}
+        onClick={redirectToGoogleStore}
       />
       <StoreBadge
         alt="Gestura badge for redirection to app store"
         src={images.appStoreBadge}
+        onClick={redirectToAppleStore}
       />
     </div>
   </div>
