@@ -1,12 +1,14 @@
 import axios from "axios";
 import { APP_STAGE, BACKEND_AUTH_API } from "./common";
 import { NavigateFunction } from "react-router-dom";
+import { APP_ROUTES } from "@/constants/common";
 
 export const handleLogin = async (
   email: string,
   password: string,
   navigate: NavigateFunction,
-  auth: AuthContextType | undefined
+  auth: AuthContextType | undefined,
+  setErrors: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
   try {
     const { data, status } = await axios.post(
@@ -20,15 +22,23 @@ export const handleLogin = async (
     );
 
     if (status !== 200 || !auth) {
-      throw new Error("Login failed");
+      setErrors((prev) => [...prev, data.message || "Login failed"]);
+      return;
     }
 
     const { access_token, refresh_token } = data;
     auth.saveTokensToCookies(access_token, refresh_token);
 
-    navigate("/main-page", { replace: true });
+    navigate(APP_ROUTES.MAIN_PAGE, { replace: true });
   } catch (error) {
-    console.error("Error during login:", error);
+    if (axios.isAxiosError(error)) {
+      setErrors((prev) => [
+        ...prev,
+        error?.response?.data.message || "Register failed",
+      ]);
+    } else {
+      setErrors((prev) => [...prev, `Error during register: ${error}`]);
+    }
   }
 };
 
@@ -38,11 +48,12 @@ export const handleRegister = async (
   confirmPassword: string,
   username: string,
   navigate: NavigateFunction,
-  auth: AuthContextType | undefined
+  auth: AuthContextType | undefined,
+  setErrors: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
   try {
     if (password !== confirmPassword) {
-      throw new Error("Passwords do not match");
+      setErrors((prev) => [...prev, "Passwords do not match"]);
     }
 
     const { data, status } = await axios.post(
@@ -56,14 +67,22 @@ export const handleRegister = async (
     );
 
     if (status !== 200 || !auth) {
-      throw new Error("Register failed");
+      setErrors((prev) => [...prev, data.message || "Register failed"]);
+      return;
     }
 
     const { access_token, refresh_token } = data;
     auth.saveTokensToCookies(access_token, refresh_token);
 
-    navigate("/main-page", { replace: true });
+    navigate(APP_ROUTES.MAIN_PAGE, { replace: true });
   } catch (error) {
-    console.error("Error during login:", error);
+    if (axios.isAxiosError(error)) {
+      setErrors((prev) => [
+        ...prev,
+        error?.response?.data.message || "Register failed",
+      ]);
+    } else {
+      setErrors((prev) => [...prev, `Error during register: ${error}`]);
+    }
   }
 };

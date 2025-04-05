@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Button,
   ButtonType,
+  ErrorMessage,
   Typography,
   TypographyType,
 } from "@/components/common";
@@ -17,6 +18,7 @@ import { APP_ROUTES } from "@/constants/common";
 const SignUp = () => {
   const auth = useAuth();
   const navigate = useNavigate();
+  const [errors, setErrors] = useState<string[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [user, setUser] = useState<{
@@ -40,6 +42,20 @@ const SignUp = () => {
           }}
         />
       </div>
+
+      {errors.length > 0 && (
+        <div className="flex flex-col items-center justify-center h-full w-full z-10">
+          {errors.map((error, index) => (
+            <ErrorMessage
+              key={index}
+              message={error}
+              onClick={() => {
+                setErrors((prev) => prev.filter((_, i) => i !== index));
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="flex flex-col items-center justify-center h-full w-1/2 md:w-1/4 sm:w-1/3 z-10">
         <div className="flex flex-col items-start w-full justify-center">
@@ -131,7 +147,8 @@ const SignUp = () => {
                 user.confirm_password,
                 user.username,
                 navigate,
-                auth
+                auth,
+                setErrors
               );
             }}
           />
