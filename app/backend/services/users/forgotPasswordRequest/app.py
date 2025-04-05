@@ -14,7 +14,7 @@ from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
 logger = logging.getLogger("ForgotPasswordRequest")
 logger.setLevel(logging.DEBUG)
 
-client = boto3.client('ses', region_name='eu-central-1')
+client = boto3.client('ses', region_name=os.environ.get('SECRETS_REGION_NAME'))
 
 
 @dataclass
@@ -91,9 +91,8 @@ def send_email(dynamodb, email):
             },
         )
 
-
     except Exception as e:
-        logger.error(f"Error saving reset code: {e}")
+        logger.error(f"Error sending email: {e}")
         return build_response(500, {"message": "Error sending email."})
 
 
@@ -109,7 +108,7 @@ def save_reset_code(dynamodb, email, random_code):
     try:
         response = dynamodb.table.update_item(
             Key={'email': email},
-            UpdateExpression='SET reset_code = :code, code_expiration_time = :exp_time',
+            UpdateExpression='SET reset_code = :code, code_expiration_time = :code_exp_time',
             ExpressionAttributeValues={':code': random_code, ':code_exp_time': expiration_time},
             ReturnValues='UPDATED_NEW'
         )
@@ -123,7 +122,9 @@ def save_reset_code(dynamodb, email, random_code):
 
 def check_user_exists(dynamodb, email):
     logger.info(f"Getting user by email {email}")
-    user = dynamodb.table.get_item(Key={"email": email})
+    response = dynamodb.table.get_item(Key={"email": email})
+
+    user = response.get("Item")
     if not user:
         logger.debug(f"User with email {email} does not exist")
         return False
