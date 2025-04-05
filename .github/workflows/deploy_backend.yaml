@@ -22,8 +22,8 @@ env:
   LAYER_SERVICE_PATH: app/backend/services/layers
   LAYER_SERVICE_NAME: layers
 
-  SERVICE1_SERVICE_PATH: app/backend/services/service1
-  SERVICE1_SERVICE_NAME: service1
+  USERS_SERVICE_PATH: app/backend/services/users
+  USERS_SERVICE_NAME: users
 
   # ECS setup for the docs service
   PROD_DOCS_ECR_REPOSITORY: hands-of-hope-prod/docs
@@ -41,105 +41,107 @@ permissions:
   contents: read
 
 jobs:
-  disabled_pipeline:
+  deploy_layer_develop:
+    if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     steps:
-      - name: Waiting 2 seconds
-        run: sleep 2
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: false
 
-  # deploy_layer_develop:
-  #   if: github.ref == 'refs/heads/develop'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
+      - name: Run Dependencies Setup
+        uses: ./.github/composite/common_build_setup
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
 
-  #     - name: Run Dependencies Setup
-  #       uses: ./.github/composite/common_build_setup
-  #       with:
-  #         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws_region: ${{ env.AWS_REGION }}
+      - name: Deploy layer
+        uses: ./.github/composite/deploy_lambda_service
+        with:
+          service_path: ${{ env.LAYER_SERVICE_PATH }}
+          service_name: ${{ env.LAYER_SERVICE_NAME }}
+          stage_name: "develop"
+          continue-on-error: true
 
-  #     - name: Deploy layer
-  #       uses: ./.github/composite/deploy_lambda_service
-  #       with:
-  #         service_path: ${{ env.LAYER_SERVICE_PATH }}
-  #         service_name: ${{ env.LAYER_SERVICE_NAME }}
-  #         stage_name: "develop"
-  #         continue-on-error: true
+  deploy_layer_prod:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: false
 
-  # deploy_layer_prod:
-  #   if: github.ref == 'refs/heads/main'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
+      - name: Run Dependencies Setup
+        uses: ./.github/composite/common_build_setup
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
 
-  #     - name: Run Dependencies Setup
-  #       uses: ./.github/composite/common_build_setup
-  #       with:
-  #         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws_region: ${{ env.AWS_REGION }}
+      - name: Deploy layer
+        uses: ./.github/composite/deploy_lambda_service
+        with:
+          service_path: ${{ env.LAYER_SERVICE_PATH }}
+          service_name: ${{ env.LAYER_SERVICE_NAME }}
+          stage_name: "prod"
+          continue-on-error: true
 
-  #     - name: Deploy layer
-  #       uses: ./.github/composite/deploy_lambda_service
-  #       with:
-  #         service_path: ${{ env.LAYER_SERVICE_PATH }}
-  #         service_name: ${{ env.LAYER_SERVICE_NAME }}
-  #         stage_name: "prod"
-  #         continue-on-error: true
+  deploy_users_develop:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    needs:
+      - deploy_layer_develop
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: false
 
-  # deploy_service1_develop:
-  #   if: github.ref == 'refs/heads/develop'
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - deploy_layer_develop
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
+      - name: Run Dependencies Setup
+        uses: ./.github/composite/common_build_setup
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
 
-  #     - name: Run Dependencies Setup
-  #       uses: ./.github/composite/common_build_setup
-  #       with:
-  #         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws_region: ${{ env.AWS_REGION }}
+      - name: Deploy Service
+        uses: ./.github/composite/deploy_lambda_service
+        with:
+          service_path: ${{ env.USERS_SERVICE_PATH }}
+          service_name: ${{ env.USERS_SERVICE_NAME }}
+          layer_stack_name: ${{ env.LAYER_SERVICE_NAME }}
+          stage_name: "develop"
+          continue-on-error: true
 
-  #     - name: Deploy Service
-  #       uses: ./.github/composite/deploy_lambda_service
-  #       with:
-  #         service_path: ${{ env.SERVICE1_SERVICE_PATH }}
-  #         service_name: ${{ env.SERVICE1_SERVICE_NAME }}
-  #         layer_stack_name: ${{ env.LAYER_SERVICE_NAME }}
-  #         stage_name: "develop"
-  #         continue-on-error: true
+  deploy_users_prod:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs:
+      - deploy_layer_prod
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: false
 
-  # deploy_service1_prod:
-  #   if: github.ref == 'refs/heads/main'
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - deploy_layer_prod
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
+      - name: Run Dependencies Setup
+        uses: ./.github/composite/common_build_setup
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
 
-  #     - name: Run Dependencies Setup
-  #       uses: ./.github/composite/common_build_setup
-  #       with:
-  #         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws_region: ${{ env.AWS_REGION }}
-
-  #     - name: Deploy Service
-  #       uses: ./.github/composite/deploy_lambda_service
-  #       with:
-  #         service_path: ${{ env.SERVICE1_SERVICE_PATH }}
-  #         service_name: ${{ env.SERVICE1_SERVICE_NAME }}
-  #         layer_stack_name: ${{ env.LAYER_SERVICE_NAME }}
-  #         stage_name: "prod"
-  #         continue-on-error: true
+      - name: Deploy Service
+        uses: ./.github/composite/deploy_lambda_service
+        with:
+          service_path: ${{ env.USERS_SERVICE_PATH }}
+          service_name: ${{ env.USERS_SERVICE_NAME }}
+          layer_stack_name: ${{ env.LAYER_SERVICE_NAME }}
+          stage_name: "prod"
+          continue-on-error: true
 
   # deploy_docs_develop:
   #   if: github.ref == 'refs/heads/develop'

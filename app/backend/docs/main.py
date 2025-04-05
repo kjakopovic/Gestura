@@ -10,17 +10,17 @@ import uvicorn
 app = FastAPI(docs_url=None, redoc_url=None)
 
 # Loading swagger json files
-with open(os.path.join("utils", "Service1Api.json"), "r") as f:
+with open(os.path.join("utils", "UsersApi.json"), "r") as f:
   service1_docs = json.load(f)
 
 # Adding routes for swagger files
-@app.get("/Service1Api.json", include_in_schema=False)
+@app.get("/UsersApi.json", include_in_schema=False)
 async def custom_openapi():
   return JSONResponse(service1_docs)
 
-@app.get("/service1", include_in_schema=False)
+@app.get("/users", include_in_schema=False)
 async def custom_swagger_ui():
-  return get_swagger_ui_html(openapi_url="/Service1Api.json", title="docs")
+  return get_swagger_ui_html(openapi_url="/UsersApi.json", title="docs")
 
 # Mounting static files from the "public" directory
 app.mount("/", StaticFiles(directory="public", html=True), name="public")

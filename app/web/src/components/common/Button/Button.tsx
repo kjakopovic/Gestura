@@ -1,7 +1,7 @@
-import { cn } from "@/utils/lib";
 import { ButtonType } from "./types";
 import { getButtonStyles } from "./utils";
 import { Typography } from "../Typography";
+import { cn } from "@/lib/utils";
 
 interface Props {
   styles?: string;

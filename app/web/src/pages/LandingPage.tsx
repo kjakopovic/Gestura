@@ -8,14 +8,28 @@ import {
   Pricing,
   PricingType,
 } from "@/components/common";
+import { Dialog } from "@/components/elements";
 import { images } from "@/constants/images";
+import {
+  redirectToGoogleStore,
+  redirectToBuy,
+  redirectToLogin,
+} from "@/utils/common";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+  const [openDialog, setOpenDialog] = useState(false);
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col items-center justify-center w-full">
       <Navbar styles="z-10" />
 
-      <div className="z-10 flex flex-col items-start justify-end gap-4 mt-10 mb-10 w-full h-[70vh]">
+      <section
+        id="welcome"
+        className="z-10 flex flex-col items-start justify-end gap-4 mt-10 mb-10 w-full h-[70vh]"
+      >
         <div className="flex h-full w-full xs:w-[70%] flex-col items-center justify-center">
           <Typography
             type={TypographyType.LANDING_TITLE}
@@ -35,16 +49,21 @@ const LandingPage = () => {
             text="Get started"
             type={ButtonType.PRIMARY_OUTLINE}
             styles="w-full"
+            onClick={() => redirectToLogin(navigate)}
           />
           <Button
             text="Pricing"
             type={ButtonType.SECONDARY_OUTLINE}
             styles="w-full"
+            onClick={() => document.getElementById("pricing")?.scrollIntoView()}
           />
         </div>
-      </div>
+      </section>
 
-      <div className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-[90vh]">
+      <section
+        id="marketing-1"
+        className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-[90vh]"
+      >
         <div className="flex h-full w-full flex-col items-center justify-center">
           <img
             src={images.phoneMockup}
@@ -66,9 +85,12 @@ const LandingPage = () => {
             styles="text-primary"
           />
         </div>
-      </div>
+      </section>
 
-      <div className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-[90vh]">
+      <section
+        id="marketing-2"
+        className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-[90vh]"
+      >
         <div className="flex h-full w-full flex-col items-center justify-center text-center">
           <Typography
             type={TypographyType.LANDING_TITLE}
@@ -90,17 +112,52 @@ const LandingPage = () => {
             className="w-full h-full"
           />
         </div>
-      </div>
+      </section>
 
-      <div className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-full sm:h-[85vh]">
+      <section
+        id="pricing"
+        className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-full sm:h-[85vh]"
+      >
         <div className="h-full flex flex-col sm:flex-row w-full lg:w-[90%] items-center justify-between text-center">
-          <Pricing type={PricingType.FREE} />
-          <Pricing type={PricingType.PREMIUM_PLUS} />
-          <Pricing type={PricingType.PREMIUM} />
+          <Pricing
+            type={PricingType.FREE}
+            onStartClick={() => {
+              setOpenDialog(true);
+            }}
+          />
+          <Pricing
+            type={PricingType.PREMIUM_PLUS}
+            onStartClick={() => redirectToBuy(navigate)}
+          />
+          <Pricing
+            type={PricingType.PREMIUM}
+            onStartClick={() => redirectToBuy(navigate)}
+          />
         </div>
-      </div>
+      </section>
 
-      <Footer styles="z-10 bg-background-800" />
+      <Footer styles="z-10 bg-background-800" navigate={navigate} />
+
+      <Dialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        title="Please choose your platform"
+        show={{
+          firstButton: true,
+          secondButton: true,
+          close: true,
+        }}
+        firstButton={{
+          type: ButtonType.PRIMARY_FULL,
+          text: "Mobile",
+          onClick: redirectToGoogleStore,
+        }}
+        secondButton={{
+          type: ButtonType.SECONDARY_FULL,
+          text: "Web",
+          onClick: () => redirectToLogin(navigate),
+        }}
+      />
 
       {/* Background */}
       <div className="absolute top-0 left-0 w-full h-full ">

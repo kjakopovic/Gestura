@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --breakpoint-xxs: 300px;
@@ -23,29 +26,29 @@
 }
 
 @layer base {
-  .text-button-normal {
+  .gestura-text-button-normal {
     font-family: "Inter", sans-serif;
     font-size: 18px;
     font-weight: normal;
   }
 
-  .text-button-bold {
-    font-family: "DM Sans", sans-serif;
+  .gestura-text-button-bold {
+    font-family: "Inter", sans-serif;
     font-size: 15px;
     font-weight: 600;
   }
 
-  .text-landing-title {
+  .gestura-text-landing-title {
     font-family: "Inter", sans-serif;
     font-weight: 500;
   }
 
-  .text-landing-subtitle {
+  .gestura-text-landing-subtitle {
     font-family: "Inter", sans-serif;
     font-weight: 500;
   }
 
-  .text-footer {
+  .gestura-text-footer {
     font-family: "Inter", sans-serif;
     font-weight: 400;
   }
@@ -54,6 +57,10 @@
 body,
 #root {
   min-height: 100vh;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 /* Global scrollbar styles */
@@ -69,5 +76,4 @@ body,
 
 *::-webkit-scrollbar-track {
   background: #2e2e2e;
-  border-radius: 10px;
 }
