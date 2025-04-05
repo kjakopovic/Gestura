@@ -10,8 +10,8 @@ def build_response(status_code, body, headers=None):
     default_headers = {
         "Content-Type": "application/json",
         "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-        "Access-Control-Allow-Origin": "DELETE,GET,HEAD,OPTIONS,PUT,POST,PATCH",
-        "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "DELETE,GET,HEAD,OPTIONS,PUT,POST,PATCH",
     }
 
     if headers:
