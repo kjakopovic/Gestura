@@ -1,4 +1,3 @@
-import axios from "axios";
 import { NavigateFunction } from "react-router-dom";
 
 const BACKEND_AUTH_API = import.meta.env.VITE_BACKEND_AUTH_API || "";
@@ -29,9 +28,8 @@ export const redirectToOtherPage = (
 };
 
 export const handleThirdPartyLogin = async (type_of_service: string) => {
-  console.log("type_of_service", type_of_service);
-  console.log("BACKEND_AUTH_API", BACKEND_AUTH_API);
-  await axios.get(
-    `${BACKEND_AUTH_API}/auth/login/third-party?type_of_service=${type_of_service}&platform=web`
+  window.open(
+    `${BACKEND_AUTH_API}/login/third-party?type_of_service=${type_of_service}&platform=web`,
+    "_self"
   );
 };
