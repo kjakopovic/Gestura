@@ -4,7 +4,7 @@ interface Props {
 }
 
 const ErrorMessage = ({ message, onClick }: Props) => (
-  <div className="flex items-center bg-red-500/50 text-white px-4 py-2 rounded-lg shadow-lg mt-[25%] xxs:mt-[7%] xs:mt-0">
+  <div className="flex items-center bg-red-500/50 text-white px-4 py-2 rounded-lg shadow-lg mt-[25%] xxs:mt-[7%] xs:mt-0 w-full">
     <button
       onClick={onClick}
       className="mr-3 p-1 rounded-full hover:cursor-pointer transition"

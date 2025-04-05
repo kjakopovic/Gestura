@@ -2,6 +2,21 @@ import axios from "axios";
 import { APP_STAGE, BACKEND_AUTH_API } from "./common";
 import { NavigateFunction } from "react-router-dom";
 import { APP_ROUTES } from "@/constants/common";
+import * as Yup from "yup";
+import { LOGIN_SCHEMA, REGISTER_SCHEMA } from "@/constants/auth";
+
+const validate = async (values: any, schema: Yup.ObjectSchema<any>) => {
+  try {
+    const validData = await schema.validate(values, { abortEarly: false });
+    return { validData, errors: null };
+  } catch (err: any) {
+    const errors = err.inner.reduce((acc: any, error: any) => {
+      acc[error.path] = error.message;
+      return acc;
+    }, {});
+    return { validData: null, errors };
+  }
+};
 
 export const handleLogin = async (
   email: string,
@@ -10,6 +25,12 @@ export const handleLogin = async (
   auth: AuthContextType | undefined,
   setErrors: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
+  const { errors } = await validate({ email, password }, LOGIN_SCHEMA);
+  if (errors) {
+    setErrors((prev) => [...prev, ...Object.values(errors as string)]);
+    return;
+  }
+
   try {
     const { data, status } = await axios.post(
       `${BACKEND_AUTH_API}/${APP_STAGE}/login`,
@@ -51,6 +72,15 @@ export const handleRegister = async (
   auth: AuthContextType | undefined,
   setErrors: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
+  const { errors } = await validate(
+    { email, password, confirmPassword, username },
+    REGISTER_SCHEMA
+  );
+  if (errors) {
+    setErrors((prev) => [...prev, ...Object.values(errors as string)]);
+    return;
+  }
+
   try {
     if (password !== confirmPassword) {
       setErrors((prev) => [...prev, "Passwords do not match"]);

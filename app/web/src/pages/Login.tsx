@@ -36,7 +36,7 @@ const Login = () => {
       </div>
 
       {errors.length > 0 && (
-        <div className="flex flex-col items-center justify-center h-full w-full z-10">
+        <div className="flex flex-col items-center justify-center h-full w-[50vw] z-10 gap-2 mb-10">
           {errors.map((error, index) => (
             <ErrorMessage
               key={index}
