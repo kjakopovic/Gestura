@@ -109,8 +109,8 @@ def save_reset_code(dynamodb, email, random_code):
     try:
         response = dynamodb.table.update_item(
             Key={'email': email},
-            UpdateExpression='SET reset_code = :code, expiration_time = :exp_time',
-            ExpressionAttributeValues={':code': random_code, ':exp_time': expiration_time},
+            UpdateExpression='SET reset_code = :code, code_expiration_time = :exp_time',
+            ExpressionAttributeValues={':code': random_code, ':code_exp_time': expiration_time},
             ReturnValues='UPDATED_NEW'
         )
         logger.info(f"Reset code saved for {email}")
