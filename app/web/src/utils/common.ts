@@ -1,6 +1,6 @@
 import { NavigateFunction } from "react-router-dom";
 
-const BACKEND_AUTH_API = import.meta.env.VITE_BACKEND_AUTH_API || "";
+export const BACKEND_AUTH_API = import.meta.env.VITE_BACKEND_AUTH_API || "";
 
 export const redirectToLogin = (navigate: NavigateFunction) => {
   navigate("/login");

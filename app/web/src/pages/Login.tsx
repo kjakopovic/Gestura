@@ -1,11 +1,45 @@
 import { useState } from "react";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
-import { handleThirdPartyLogin } from "@/utils/common";
+import { BACKEND_AUTH_API, handleThirdPartyLogin } from "@/utils/common";
 import { GOOGLE_TYPE_OF_SERVICE } from "@/constants/auth";
+import axios from "axios";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const auth = useAuth();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [user, setUser] = useState<{ email: string; password: string }>({
+    email: "",
+    password: "",
+  });
+
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      const { data, status, headers } = await axios.post(
+        `${BACKEND_AUTH_API}/login`,
+        { email, password },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (status !== 200 || !auth) {
+        throw new Error("Login failed");
+      }
+
+      const { access_token, refresh_token } = data;
+      auth.saveTokensToCookies(access_token, refresh_token);
+
+      navigate("/main-page", { replace: true });
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center relative w-full">
@@ -28,7 +62,7 @@ const Login = () => {
             </a>
           </p>
         </div>
-        <form className="flex flex-col items-start w-full justify-center mt-4">
+        <div className="flex flex-col items-start w-full justify-center mt-4">
           <p className="text-background-300 text-sm font-medium">Email</p>
           <div className="relative w-full">
             <img
@@ -39,6 +73,10 @@ const Login = () => {
             <input
               type="email"
               placeholder="Enter your email address"
+              onChange={(e) =>
+                setUser((prev) => ({ ...prev, email: e.target.value }))
+              }
+              value={user.email}
               className="w-full h-10 pl-10 p-4 text-background-100 border-b border-background-300 focus:ring-0 focus:outline-none focus:border-b-2 focus:border-background-100"
             />
           </div>
@@ -54,6 +92,10 @@ const Login = () => {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
+              onChange={(e) =>
+                setUser((prev) => ({ ...prev, password: e.target.value }))
+              }
+              value={user.password}
               className="w-full h-10 pl-10 pr-10 p-4 text-background-100 border-b border-background-300 focus:ring-0 focus:outline-none focus:border-b-2 focus:border-background-100"
             />
             <img
@@ -78,10 +120,16 @@ const Login = () => {
             </a>
           </div>
 
-          <button className="w-full py-2 mt-4 justify-center text-background-100 font-medium text-lg bg-background-600 border border-background-400 rounded-full hover:cursor-pointer hover:bg-background-500">
+          <button
+            className="w-full py-2 mt-4 justify-center text-background-100 font-medium text-lg bg-background-600 border border-background-400 rounded-full hover:cursor-pointer hover:bg-background-500"
+            onClick={() => {
+              handleLogin(user.email, user.password);
+            }}
+            disabled={!user.email || !user.password}
+          >
             Login
           </button>
-        </form>
+        </div>
         <div className="flex flex-col items-center justify-center w-full mt-12">
           <p className="text-background-300">Or sign in with</p>
           <div className="flex flex-row items-center justify-center w-full gap-x-4 mt-2">
