@@ -12,6 +12,7 @@ import {
 import { AuthFooter } from "@/components/auth";
 import { handleRegister } from "@/utils/auth";
 import { useAuth } from "@/hooks/useAuth";
+import { APP_ROUTES } from "@/constants/common";
 
 const SignUp = () => {
   const auth = useAuth();
@@ -51,7 +52,7 @@ const SignUp = () => {
             If you already have an account, <br />
             You can{" "}
             <a
-              href="/login"
+              href={APP_ROUTES.LOGIN}
               className="text-primary gestura-text-landing-title"
             >
               Log in here!

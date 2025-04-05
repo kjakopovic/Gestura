@@ -1,4 +1,5 @@
 import { Typography, TypographyType } from "@/components/common";
+import { APP_ROUTES } from "@/constants/common";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +19,7 @@ const LoginCallback = () => {
       auth.saveTokensToCookies(token, refreshToken);
     }
 
-    navigate("/main-page");
+    navigate(APP_ROUTES.MAIN_PAGE);
   }, [navigate]);
 
   return (

@@ -1,14 +1,15 @@
+import { APP_ROUTES } from "@/constants/common";
 import { NavigateFunction } from "react-router-dom";
 
 export const BACKEND_AUTH_API = import.meta.env.VITE_BACKEND_AUTH_API || "";
 export const APP_STAGE = import.meta.env.VITE_STAGE || "";
 
 export const redirectToLogin = (navigate: NavigateFunction) => {
-  navigate("/login");
+  navigate(APP_ROUTES.LOGIN);
 };
 
 export const redirectToBuy = (navigate: NavigateFunction) => {
-  navigate("/buy");
+  navigate(APP_ROUTES.BUY);
 };
 
 export const redirectToGoogleStore = () => {

@@ -12,6 +12,7 @@ import {
 } from "@/components/common";
 import { AuthFooter } from "@/components/auth";
 import { handleLogin } from "@/utils/auth";
+import { APP_ROUTES } from "@/constants/common";
 
 const Login = () => {
   const auth = useAuth();
@@ -27,7 +28,7 @@ const Login = () => {
       <div className="flex flex-row items-start justify-between w-full p-5 z-10">
         <ClickableLogo
           onClick={() => {
-            navigate("/");
+            navigate(APP_ROUTES.LANDING_PAGE);
           }}
         />
       </div>
@@ -43,7 +44,7 @@ const Login = () => {
             If you don't have an account, <br />
             You can{" "}
             <a
-              href="/signup"
+              href={APP_ROUTES.SIGNUP}
               className="text-primary gestura-text-landing-title"
             >
               Register here!
@@ -89,7 +90,7 @@ const Login = () => {
               </p>
             </div>
             <a
-              href="/forgot-password"
+              href={APP_ROUTES.FORGOT_PASSWORD}
               className="text-primary font-light text-xs mt-2 gestura-text-landing-title"
             >
               Forgot password?
