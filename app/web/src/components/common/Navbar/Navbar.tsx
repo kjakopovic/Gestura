@@ -11,14 +11,14 @@ interface Props {
 const Navbar = ({ styles }: Props) => (
   <div
     className={cn(
-      "navbar flex flex-row w-full bg-transparent justify-between items-center py-7 px-5",
+      "navbar flex flex-row w-full bg-transparent justify-between items-center py-4 px-5",
       styles
     )}
   >
     <img
       src={icons.logoText}
       alt="Gestura logo image with a hand showing OK but G instead of O"
-      className="w-[150px] xs:w-[200px] lg:w-1/6 h-auto"
+      className="w-[150px] xs:w-[150px] lg:w-1/8 h-auto"
     />
 
     <div className="flex flex-col xs:flex-row gap-5 items-center justify-center h-[20px] xs:h-[30px]">

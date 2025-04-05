@@ -5,6 +5,7 @@ import { Typography, TypographyType } from "./Typography";
 import Footer from "./Footer";
 import ClickableTypography from "./ClickableTypography";
 import { Pricing, PricingType, PricingFeature } from "./Pricing";
+import { Sidebar, SidebarOption } from "./Sidebar";
 
 export {
   Navbar,
@@ -18,4 +19,6 @@ export {
   Pricing,
   PricingType,
   PricingFeature,
+  Sidebar,
+  SidebarOption,
 };

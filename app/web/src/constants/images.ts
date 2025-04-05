@@ -7,6 +7,7 @@ import freePlanLogo from "@/assets/images/free_plan_logo.svg";
 import premiumPlanLogo from "@/assets/images/premium_plan_logo.svg";
 import premiumPlusPlanLogo from "@/assets/images/premium_plus_plan_logo.svg";
 
+
 export const images = {
   bgImage,
   googleStoreBadge,
@@ -16,4 +17,5 @@ export const images = {
   freePlanLogo,
   premiumPlanLogo,
   premiumPlusPlanLogo,
+
 };

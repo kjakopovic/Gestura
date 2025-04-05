@@ -4,6 +4,7 @@ import Login from "@/pages/Login";
 import SignUp from "@/pages/SignUp";
 import ForgotPassword from "@/pages/ForgotPassword";
 import LandingPage from "@/pages/LandingPage";
+import MainPage from "@/pages/MainPage";
 
 const AppRoutes = () => {
   return (
@@ -19,6 +20,7 @@ const AppRoutes = () => {
       <Route path="/help" element={<p>help</p>} />
       <Route path="/contact" element={<p>contact</p>} />
       <Route path="/" element={<LandingPage />} />
+      <Route path="/main-page" element={<MainPage />} />
       <Route path="*" element={<p>Not Found</p>} />
     </Routes>
   );

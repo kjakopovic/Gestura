@@ -9,6 +9,11 @@ import person from "@/assets/icons/person.svg";
 import logo from "@/assets/icons/logo.svg";
 import basePlanCheck from "@/assets/icons/base_plan_check.svg";
 import premiumPlanCheck from "@/assets/icons/premium_plan_check.svg";
+import home_2 from "@/assets/icons/home_2.svg";
+import create from "@/assets/icons/create.svg";
+import join from "@/assets/icons/join.svg";
+import invite from "@/assets/icons/invite.svg";
+import logout from "@/assets/icons/logout.svg";
 
 export const icons = {
   apple,
@@ -22,4 +27,9 @@ export const icons = {
   logo,
   basePlanCheck,
   premiumPlanCheck,
+  home_2,
+  create,
+  join,
+  invite,
+  logout,
 };
