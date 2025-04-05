@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
-import { BACKEND_AUTH_API, handleThirdPartyLogin } from "@/utils/common";
+import {
+  APP_STAGE,
+  BACKEND_AUTH_API,
+  handleThirdPartyLogin,
+} from "@/utils/common";
 import { GOOGLE_TYPE_OF_SERVICE } from "@/constants/auth";
 import axios from "axios";
 import { useAuth } from "@/hooks/useAuth";
@@ -18,8 +22,8 @@ const Login = () => {
 
   const handleLogin = async (email: string, password: string) => {
     try {
-      const { data, status, headers } = await axios.post(
-        `${BACKEND_AUTH_API}/login`,
+      const { data, status } = await axios.post(
+        `${BACKEND_AUTH_API}/${APP_STAGE}/login`,
         { email, password },
         {
           headers: {
