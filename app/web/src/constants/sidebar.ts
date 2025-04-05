@@ -25,8 +25,4 @@ export const options = [
     icon: icons.invite,
     label: SideBarOptions.INVITE_FRIENDS,
   },
-  {
-    icon: icons.logout,
-    label: SideBarOptions.LOGOUT,
-  },
 ];
