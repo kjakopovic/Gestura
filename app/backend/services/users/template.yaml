@@ -24,6 +24,14 @@ Parameters:
     Type: String
     Description: Region name where the secrets are stored
     Default: eu-central-1
+  FrontendCallbackUrl:
+    Type: String
+    Description: When third party login is used, this is the url where the user will be redirected after login on web platform
+    Default: http://localhost:5173
+  MobileCallbackUrl:
+    Type: String
+    Description: When third party login is used, this is the url where the user will be redirected after login on mobile platform
+    Default: http://localhost:5173
 
 Globals:
   Function:
@@ -195,7 +203,8 @@ Resources:
           THIRD_PARTY_CLIENTS_SECRET_NAME: !Ref ThirdPartyClientsSecretName
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
-          FRONTEND_CALLBACK_URL: http://localhost:5173/callback
+          FRONTEND_CALLBACK_URL: !Ref FrontendCallbackUrl
+          MOBILE_CALLBACK_URL: !Ref MobileCallbackUrl
       Architectures:
         - x86_64
       Policies:
