@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
+import { handleThirdPartyLogin } from "@/utils/common";
+import { GOOGLE_TYPE_OF_SERVICE } from "@/constants/auth";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -97,6 +99,7 @@ const Login = () => {
               src={icons.google}
               alt="Google Icon"
               className="w-8 h-8 cursor-pointer"
+              onClick={() => handleThirdPartyLogin(GOOGLE_TYPE_OF_SERVICE)}
             />
           </div>
         </div>

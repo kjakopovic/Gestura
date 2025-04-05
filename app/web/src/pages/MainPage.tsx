@@ -1,6 +1,5 @@
 import { images } from "@/constants/images";
 import { Sidebar } from "@/components/common/";
-//import React from "react";
 
 const MainPage = () => {
   return (
