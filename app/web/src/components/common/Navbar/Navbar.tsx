@@ -1,8 +1,8 @@
-import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import StoreBadge from "../StoreBadge/StoreBadge";
 import { cn } from "@/lib/utils";
 import { redirectToAppleStore, redirectToGoogleStore } from "@/utils/common";
+import { ClickableLogo } from "@/components/elements";
 
 interface Props {
   styles?: string;
@@ -15,11 +15,7 @@ const Navbar = ({ styles }: Props) => (
       styles
     )}
   >
-    <img
-      src={icons.logoText}
-      alt="Gestura logo image with a hand showing OK but G instead of O"
-      className="w-[150px] xs:w-[150px] lg:w-1/8 h-auto"
-    />
+    <ClickableLogo />
 
     <div className="flex flex-col xs:flex-row gap-5 items-center justify-center h-[20px] xs:h-[30px]">
       <StoreBadge

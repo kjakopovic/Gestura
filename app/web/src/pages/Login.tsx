@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
-import {
-  APP_STAGE,
-  BACKEND_AUTH_API,
-  handleThirdPartyLogin,
-} from "@/utils/common";
-import { GOOGLE_TYPE_OF_SERVICE } from "@/constants/auth";
-import axios from "axios";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { ClickableLogo, Input } from "@/components/elements";
+import {
+  Button,
+  ButtonType,
+  Typography,
+  TypographyType,
+} from "@/components/common";
+import { AuthFooter } from "@/components/auth";
+import { handleLogin } from "@/utils/auth";
 
 const Login = () => {
   const auth = useAuth();
@@ -20,142 +22,97 @@ const Login = () => {
     password: "",
   });
 
-  const handleLogin = async (email: string, password: string) => {
-    try {
-      const { data, status } = await axios.post(
-        `${BACKEND_AUTH_API}/${APP_STAGE}/login`,
-        { email, password },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (status !== 200 || !auth) {
-        throw new Error("Login failed");
-      }
-
-      const { access_token, refresh_token } = data;
-      auth.saveTokensToCookies(access_token, refresh_token);
-
-      navigate("/main-page", { replace: true });
-    } catch (error) {
-      console.error("Error during login:", error);
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col items-center relative w-full">
-      <img
-        src={images.bgImage}
-        alt="Background image"
-        className="absolute z-0 object-cover w-full h-full"
-      />
       <div className="flex flex-row items-start justify-between w-full p-5 z-10">
-        <img src={icons.logoText} alt="Logo" className="w-60" />
+        <ClickableLogo
+          onClick={() => {
+            navigate("/");
+          }}
+        />
       </div>
+
       <div className="flex flex-col items-center justify-center h-full w-1/2 md:w-1/4 sm:w-1/3 z-10">
         <div className="flex flex-col items-start w-full justify-center">
-          <h1 className="text-3xl font-medium text-background-100">Sign in</h1>
-          <p className="text-lg text-background-100 my-4">
+          <Typography
+            type={TypographyType.H1}
+            text="Sign in"
+            styles="text-3xl text-background-100"
+          />
+          <p className="text-lg gestura-text-landing-title text-background-100 my-4">
             If you don't have an account, <br />
             You can{" "}
-            <a href="/signup" className="text-primary">
+            <a
+              href="/signup"
+              className="text-primary gestura-text-landing-title"
+            >
               Register here!
             </a>
           </p>
         </div>
-        <div className="flex flex-col items-start w-full justify-center mt-4">
-          <p className="text-background-300 text-sm font-medium">Email</p>
-          <div className="relative w-full">
-            <img
-              src={icons.envelope}
-              alt="Email Icon"
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4"
-            />
-            <input
-              type="email"
-              placeholder="Enter your email address"
-              onChange={(e) =>
-                setUser((prev) => ({ ...prev, email: e.target.value }))
-              }
-              value={user.email}
-              className="w-full h-10 pl-10 p-4 text-background-100 border-b border-background-300 focus:ring-0 focus:outline-none focus:border-b-2 focus:border-background-100"
-            />
-          </div>
-          <p className="text-background-300 mt-4 text-sm font-medium">
-            Password
-          </p>
-          <div className="relative w-full">
-            <img
-              src={icons.lock}
-              alt="Password Icon"
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4"
-            />
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
-              onChange={(e) =>
-                setUser((prev) => ({ ...prev, password: e.target.value }))
-              }
-              value={user.password}
-              className="w-full h-10 pl-10 pr-10 p-4 text-background-100 border-b border-background-300 focus:ring-0 focus:outline-none focus:border-b-2 focus:border-background-100"
-            />
-            <img
-              src={showPassword ? icons.eyeCross : icons.eyeCross}
-              alt="Toggle Password Visibility"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 cursor-pointer"
-              onClick={() => setShowPassword(!showPassword)}
-            />
-          </div>
+
+        <div className="flex flex-col items-start w-full justify-center">
+          <Input
+            className="w-full"
+            type="text"
+            label="Email"
+            icon={icons.envelope}
+            iconAlt="White email icon, little envelope"
+            placeholder="Enter your email address"
+            value={user.email}
+            onChange={(e) =>
+              setUser((prev) => ({ ...prev, email: e.target.value }))
+            }
+          />
+          <Input
+            className="w-full mb-4"
+            type={showPassword ? "text" : "password"}
+            label="Password"
+            icon={icons.lock}
+            iconAlt="White password icon, little locked lock"
+            placeholder="Enter your password"
+            value={user.password}
+            onChange={(e) =>
+              setUser((prev) => ({ ...prev, password: e.target.value }))
+            }
+            rightIcon={showPassword ? icons.eyeCross : icons.eyeCross}
+            rightIconAlt={
+              showPassword ? "White eye icon" : "White, crossed eye icon"
+            }
+            onRightIconClick={() => setShowPassword((prev) => !prev)}
+          />
           <div className="flex flex-row items-center justify-between w-full mt-1">
             <div className="flex flex-row items-center">
               <input type="checkbox" className="h-4 w-4" />
-              <p className="text-background-300 font-light text-xs ml-2">
+              <p className="text-background-300 font-light text-xs ml-2 gestura-text-landing-title">
                 Remember me
               </p>
             </div>
             <a
               href="/forgot-password"
-              className="text-primary font-light text-xs mt-2"
+              className="text-primary font-light text-xs mt-2 gestura-text-landing-title"
             >
               Forgot password?
             </a>
           </div>
-
-          <button
-            className="w-full py-2 mt-4 justify-center text-background-100 font-medium text-lg bg-background-600 border border-background-400 rounded-full hover:cursor-pointer hover:bg-background-500"
+          <Button
+            type={ButtonType.SECONDARY_OUTLINE}
+            text="Login"
+            styles="w-full rounded-full p-3 mt-4"
             onClick={() => {
-              handleLogin(user.email, user.password);
+              handleLogin(user.email, user.password, navigate, auth);
             }}
-            disabled={!user.email || !user.password}
-          >
-            Login
-          </button>
+          />
         </div>
-        <div className="flex flex-col items-center justify-center w-full mt-12">
-          <p className="text-background-300">Or sign in with</p>
-          <div className="flex flex-row items-center justify-center w-full gap-x-4 mt-2">
-            <img
-              src={icons.facebook}
-              alt="Facebook Icon"
-              className="w-10 h-10 cursor-pointer"
-            />
-            <img
-              src={icons.apple}
-              alt="Apple Icon"
-              className="w-8 h-8 cursor-pointer"
-            />
-            <img
-              src={icons.google}
-              alt="Google Icon"
-              className="w-8 h-8 cursor-pointer"
-              onClick={() => handleThirdPartyLogin(GOOGLE_TYPE_OF_SERVICE)}
-            />
-          </div>
-        </div>
+        <AuthFooter label="Or sign in with" />
       </div>
+
+      {/* Background Image */}
+      <img
+        src={images.bgImage}
+        alt="Background image"
+        className="absolute z-0 object-cover w-full h-full"
+      />
     </div>
   );
 };
