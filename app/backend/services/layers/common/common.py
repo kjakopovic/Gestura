@@ -17,11 +17,15 @@ def build_response(status_code, body, headers=None):
     if headers:
         default_headers.update(headers)
 
-    return {
+    response = {
         "statusCode": status_code,
         "headers": default_headers,
         "body": json.dumps(body),
     }
+
+    logger.info(f"Response: {response}")
+
+    return response
 
 
 def hash_string(password, salt_rounds=5):
