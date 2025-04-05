@@ -55,8 +55,5 @@ def lambda_handler(event, context):
         "statusCode": 302,
         "headers": {
             "Location": authorization_url,
-            "Access-Control-Allow-Headers": "*",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*",
         },
     }
