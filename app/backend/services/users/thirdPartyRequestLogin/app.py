@@ -51,4 +51,12 @@ def lambda_handler(event, context):
             500, {"message": f"Failed to construct authorization URL: {str(e)}"}
         )
 
-    return {"statusCode": 302, "headers": {"Location": authorization_url}}
+    return {
+        "statusCode": 302,
+        "headers": {
+            "Location": authorization_url,
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+        },
+    }
