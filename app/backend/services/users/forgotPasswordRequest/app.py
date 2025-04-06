@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 from validation_schema import schema
 from dataclasses import dataclass
 from aws_lambda_powertools.utilities.validation import SchemaValidationError, validate
-from common import build_response, verify_hash_string
+from common import build_response
 from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
 
 logger = logging.getLogger("ForgotPasswordRequest")
@@ -97,7 +97,6 @@ def send_email(dynamodb, email):
 
 
 def generate_code():
-    # Generate a random 6-digit code
     return str(random.randint(100000, 999999))
 
 

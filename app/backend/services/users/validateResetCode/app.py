@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 from validation_schema import schema
 from dataclasses import dataclass
 from aws_lambda_powertools.utilities.validation import SchemaValidationError, validate
-from common import build_response, verify_hash_string
+from common import build_response
 from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
 
 logger = logging.getLogger("ValidateResetCode")
@@ -68,6 +68,11 @@ def validate_reset_code(dynamodb, email, code):
         return build_response(500, {"message": "Internal server error."})
 
     if code_valid:
+        cleared_code = clear_reset_code(dynamodb, email)
+        if not cleared_code:
+            logger.error(f"Error clearing reset code for user {email}")
+            return build_response(500, {"message": "Error clearing reset code."})
+
         return build_response(200, {"message": "Reset code is valid."})
     else:
         return build_response(400, {"message": "Invalid reset code."})
@@ -94,3 +99,17 @@ def verify_reset_code(email, code, saved_code, expiration_time):
 
     logger.info(f"Reset code matches for user {email}")
     return True
+
+
+def clear_reset_code(dynamodb, email):
+    try:
+        dynamodb.table.upate_item(
+            Key={'email': email},
+            UpdateExpression="REMOVE reset_code, code_expiration_time",
+            ReturnValues="UPDATED_NEW"
+        )
+        logger.info(f"Reset code cleared for user {email}")
+        return True
+    except Exception as e:
+        logger.error(f"Error clearing reset code: {e}")
+        return False
