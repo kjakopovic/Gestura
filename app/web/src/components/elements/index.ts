@@ -1,3 +1,5 @@
 import Dialog from "./Dialog";
+import ClickableLogo from "./ClickableLogo";
+import Input from "./Input";
 
-export { Dialog };
+export { Dialog, ClickableLogo, Input };

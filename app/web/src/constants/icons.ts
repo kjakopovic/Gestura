@@ -5,6 +5,7 @@ import google from "@/assets/icons/google.svg";
 import lock from "@/assets/icons/lock.svg";
 import logoText from "@/assets/icons/logo-text.svg";
 import eyeCross from "@/assets/icons/eye-cross.svg";
+import eye from "@/assets/icons/eye.svg";
 import person from "@/assets/icons/person.svg";
 import logo from "@/assets/icons/logo.svg";
 import basePlanCheck from "@/assets/icons/base_plan_check.svg";
@@ -23,6 +24,7 @@ export const icons = {
   lock,
   logoText,
   eyeCross,
+  eye,
   person,
   logo,
   basePlanCheck,

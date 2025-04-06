@@ -1,11 +1,15 @@
+import { APP_ROUTES } from "@/constants/common";
 import { NavigateFunction } from "react-router-dom";
 
+export const BACKEND_AUTH_API = import.meta.env.VITE_BACKEND_AUTH_API || "";
+export const APP_STAGE = import.meta.env.VITE_STAGE || "";
+
 export const redirectToLogin = (navigate: NavigateFunction) => {
-  navigate("/login");
+  navigate(APP_ROUTES.LOGIN);
 };
 
 export const redirectToBuy = (navigate: NavigateFunction) => {
-  navigate("/buy");
+  navigate(APP_ROUTES.BUY);
 };
 
 export const redirectToGoogleStore = () => {
@@ -23,4 +27,11 @@ export const redirectToOtherPage = (
   if (navigate) {
     navigate(path);
   }
+};
+
+export const handleThirdPartyLogin = async (type_of_service: string) => {
+  window.open(
+    `${BACKEND_AUTH_API}/login/third-party?type_of_service=${type_of_service}&platform=web`,
+    "_self"
+  );
 };

@@ -63,6 +63,17 @@ html {
   scroll-behavior: smooth;
 }
 
+:-webkit-autofill,
+:-webkit-autofill:hover,
+:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff !important;
+
+  -webkit-box-shadow: 0 0 0 1000px #1e1e1e inset !important;
+  box-shadow: 0 0 0 1000px #1e1e1e inset !important;
+
+  border: none !important;
+}
+
 /* Global scrollbar styles */
 *::-webkit-scrollbar {
   width: 8px;

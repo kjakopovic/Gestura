@@ -6,6 +6,7 @@ import Footer from "./Footer";
 import ClickableTypography from "./ClickableTypography";
 import { Pricing, PricingType, PricingFeature } from "./Pricing";
 import { Sidebar, SidebarOption } from "./Sidebar";
+import ErrorMessage from "./ErrorMessage";
 
 export {
   Navbar,
@@ -21,4 +22,5 @@ export {
   PricingFeature,
   Sidebar,
   SidebarOption,
+  ErrorMessage,
 };

@@ -4,8 +4,10 @@ import SidebarOption from "./SidebarOption";
 import { options, SideBarOptions } from "@/constants/sidebar";
 import useMediaQuery from "@/hooks/useMediaQuery";
 import SidebarToggleButton from "./SidebarToggleButton";
+import { useAuth } from "@/hooks/useAuth";
 
 const Sidebar = () => {
+  const auth = useAuth();
   const [selected, setSelected] = useState(SideBarOptions.HOME);
   const isBigScreen = useMediaQuery("(min-width: 500px)");
   const [isOpen, setIsOpen] = useState(false);
@@ -42,6 +44,12 @@ const Sidebar = () => {
             isSelected={selected === option.label}
           />
         ))}
+        <SidebarOption
+          icon={icons.logout}
+          label={SideBarOptions.LOGOUT}
+          onClick={() => auth?.removeTokensFromCookies()}
+          isSelected={false}
+        />
       </aside>
 
       {!isOpen && (
