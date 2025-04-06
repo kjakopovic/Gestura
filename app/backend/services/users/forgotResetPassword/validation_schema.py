@@ -4,8 +4,12 @@ schema = {
         "email": {
             "type": "string",
             "format": "email"
+        },
+        "password": {
+            "type": "string",
+            "minLength": 7
         }
     },
-    "required": ["email"],
+    "required": ["email", "password"],
     "additionalProperties": False
 }
