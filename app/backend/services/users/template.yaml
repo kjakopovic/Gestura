@@ -32,6 +32,10 @@ Parameters:
     Type: String
     Description: When third party login is used, this is the url where the user will be redirected after login on mobile platform
     Default: http://localhost:5173
+  SourceEmail:
+    Type: String
+    Description: The email address that will be used as the sender for the password reset emails
+    Default: nolanilisic@gmail.com
 
 Globals:
   Function:
@@ -154,6 +158,102 @@ Resources:
           Type: Api
           Properties:
             Path: /register
+            Method: POST
+            RestApiId: !Ref UsersApi
+
+  ForgotPasswordRequestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: forgotPasswordRequest/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTable
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          SOURCE_EMAIL: !Ref SourceEmail
+      Layers:
+        - !ImportValue
+          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+                - ses:SendEmail
+                - ses:SendRawEmail
+              Resource: "*"
+      Events:
+        ForgotPasswordRequestEndpoint:
+          Type: Api
+          Properties:
+            Path: /forgot-password/request
+            Method: POST
+            RestApiId: !Ref UsersApi
+
+  ValidateResetCodeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: validateResetCode/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTable
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !ImportValue
+          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        ForgotPasswordRequestEndpoint:
+          Type: Api
+          Properties:
+            Path: /forgot-password/validate
+            Method: POST
+            RestApiId: !Ref UsersApi
+
+  ForgotResetPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: forgotResetPassword/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTable
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !ImportValue
+          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        ForgotPasswordRequestEndpoint:
+          Type: Api
+          Properties:
+            Path: /forgot-password/reset
             Method: POST
             RestApiId: !Ref UsersApi
 
