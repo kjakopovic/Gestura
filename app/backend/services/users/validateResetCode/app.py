@@ -59,7 +59,11 @@ def validate_reset_code(dynamodb, email, code):
             logger.debug(f"No reset code found for user {email}")
             return build_response(400, {"message": "No reset code found."})
 
-        code_valid = verify_reset_code(email, code, saved_code, saved_expiration_time)
+        code_valid, error_message = verify_reset_code(email, code, saved_code, saved_expiration_time)
+
+        if not code_valid:
+            logger.debug(f"Reset code is invalid for user {email}: {error_message}")
+            return build_response(400, {"message": error_message})
     except Exception as e:
         logger.error(f"Error verifying reset code: {e}")
         return build_response(500, {"message": "Internal server error."})
@@ -87,15 +91,15 @@ def verify_reset_code(email, code, saved_code, expiration_time):
 
     if code != saved_code:
         logger.debug(f"Reset code does not match for user {email}")
-        return False
+        return False, "Invalid reset code"
 
     current_time = int(datetime.now(timezone.utc).timestamp())
     if current_time > expiration_time:
         logger.debug(f"Reset code has expired for user {email}")
-        return False
+        return False, "Reset code has expired"
 
     logger.info(f"Reset code matches for user {email}")
-    return True
+    return True, None
 
 
 def clear_reset_code(dynamodb, email):
