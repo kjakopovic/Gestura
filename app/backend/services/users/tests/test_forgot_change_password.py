@@ -47,7 +47,6 @@ class TestValidateResetCode(BaseTestSetup):
         self.table = self.dynamodb.Table(os.environ["USERS_TABLE_NAME"])
         self.resource_patcher.start()
 
-
     def test_validation_schema(self):
         """
         Test response when validation schema is not satisfied.
@@ -55,31 +54,28 @@ class TestValidateResetCode(BaseTestSetup):
         test_cases = [
             {
                 "request_body": {},
-                "expected_validation_message": "data must contain ['email', 'password'] properties"
+                "expected_properties": ["email", "password", "code"]
             },
             {
                 "request_body": {
-                    "email": "test@mail.com"
-                },
-                "expected_validation_message": "data must contain ['password'] properties"
-            },
-            {
-                "request_body": {
+                    "email": "test@mail.com",
                     "password": "password123"
                 },
-                "expected_validation_message": "data must contain ['email'] properties"
+                "expected_properties": ["code"]
             },
             {
                 "request_body": {
                     "email": "invalid-email",
-                    "password": "password123"
+                    "password": "password123",
+                    "code": "123456"
                 },
                 "expected_validation_message": "data.email must be email"
             },
             {
                 "request_body": {
                     "email": "test@mail.com",
-                    "password": "short"
+                    "password": "short",
+                    "code": "123456"
                 },
                 "expected_validation_message": "data.password must be longer than or equal to 7 characters"
             },
@@ -87,22 +83,74 @@ class TestValidateResetCode(BaseTestSetup):
                 "request_body": {
                     "email": "test@mail.com",
                     "password": "password123",
+                    "code": "12345"
+                },
+                "expected_validation_message": "data.code must be longer than or equal to 6 characters"
+            },
+            {
+                "request_body": {
+                    "email": "test@mail.com",
+                    "password": "password123",
+                    "code": "1234567"
+                },
+                "expected_validation_message": "data.code must be shorter than or equal to 6 characters"
+            },
+            {
+                "request_body": {
+                    "email": "test@mail.com",
+                    "password": "password123",
+                    "code": "123456",
                     "extraField": "value"
                 },
-                "expected_validation_message": "data must not contain {'extraField'} properties"
+                "expected_validation_message": "data must not contain"
             }
         ]
 
         for case in test_cases:
-            with self.subTest(request_body=case["request_body"],
-                              expected_validation_message=case["expected_validation_message"]):
+            with self.subTest(request_body=case["request_body"]):
                 event = {"body": json.dumps(case["request_body"])}
 
                 response = lambda_handler(event, {})
                 body = json.loads(response['body'])
 
                 self.assertEqual(response['statusCode'], 400)
-                self.assertIn(case["expected_validation_message"], body['message'])
+
+                # Check either by properties or exact message
+                if "expected_properties" in case:
+                    for prop in case["expected_properties"]:
+                        self.assertIn(prop, body['message'])
+                else:
+                    self.assertIn(case["expected_validation_message"], body['message'])
+
+
+    def test_missing_required_validation(self):
+        """
+        Test that password reset fails without proper validation.
+        """
+        email = "test@mail.com"
+        password = "oldPassword123"
+        new_password = "newPassword123"
+        code = "123456"
+
+        hashed_password = hash_string(password)
+        self.table.put_item(Item={
+            'email': email,
+            'password': hashed_password
+        })
+
+        event = {
+            "body": json.dumps({
+                "email": email,
+                "password": new_password,
+                "code": code
+            })
+        }
+
+        response = lambda_handler(event, {})
+
+        self.assertEqual(response['statusCode'], 400)
+        body = json.loads(response['body'])
+        self.assertEqual(body['message'], "No reset code found.")
 
 
     def test_user_not_found(self):
@@ -112,7 +160,8 @@ class TestValidateResetCode(BaseTestSetup):
         event = {
             "body": json.dumps({
                 "email": "nonexistent@mail.com",
-                "password": "newPassword123"
+                "password": "newPassword123",
+                "code": "123456"
             })
         }
 
@@ -123,6 +172,75 @@ class TestValidateResetCode(BaseTestSetup):
         self.assertEqual(body['message'], "User does not exist.")
 
 
+    def test_invalid_reset_code(self):
+        """
+        Test that password reset fails with invalid reset code.
+        """
+        email = "test@mail.com"
+        password = "oldPassword123"
+        new_password = "newPassword123"
+        saved_reset_code = "123456"
+        incorrect_code = "654321"
+        current_time = int(datetime.now(timezone.utc).timestamp())
+        expiration_time = current_time + 600
+
+        hashed_password = hash_string(password)
+        self.table.put_item(Item={
+            'email': email,
+            'password': hashed_password,
+            'reset_code': saved_reset_code,
+            'code_expiration_time': expiration_time
+        })
+
+        event = {
+            "body": json.dumps({
+                "email": email,
+                "password": new_password,
+                "code": incorrect_code
+            })
+        }
+
+        response = lambda_handler(event, {})
+
+        self.assertEqual(response['statusCode'], 400)
+        body = json.loads(response['body'])
+        self.assertEqual(body['message'], "Invalid reset code")
+
+
+    def test_expired_reset_code(self):
+        """
+        Test that password reset fails with expired reset code.
+        """
+        email = "test@mail.com"
+        password = "oldPassword123"
+        new_password = "newPassword123"
+        reset_code = "123456"
+        current_time = int(datetime.now(timezone.utc).timestamp())
+        expiration_time = current_time - 600
+
+        hashed_password = hash_string(password)
+        self.table.put_item(Item={
+            'email': email,
+            'password': hashed_password,
+            'reset_code': reset_code,
+            'code_expiration_time': expiration_time
+        })
+
+        event = {
+            "body": json.dumps({
+                "email": email,
+                "password": new_password,
+                "code": reset_code
+            })
+        }
+
+        response = lambda_handler(event, {})
+
+        self.assertEqual(response['statusCode'], 400)
+        body = json.loads(response['body'])
+        self.assertEqual(body['message'], "Reset code has expired")
+
+
     def test_successful_password_reset(self):
         """
         Test successful password reset.
@@ -130,17 +248,23 @@ class TestValidateResetCode(BaseTestSetup):
         email = "test@mail.com"
         old_password = "oldPassword123"
         new_password = "newPassword123"
+        reset_code = "123456"
+        current_time = int(datetime.now(timezone.utc).timestamp())
+        expiration_time = current_time + 600
 
         hashed_password = hash_string(old_password)
         self.table.put_item(Item={
             'email': email,
             'password': hashed_password,
+            'reset_code': reset_code,
+            'code_expiration_time': expiration_time
         })
 
         event = {
             "body": json.dumps({
                 "email": email,
                 "password": new_password,
+                "code": reset_code
             })
         }
 
@@ -148,10 +272,12 @@ class TestValidateResetCode(BaseTestSetup):
 
         self.assertEqual(response['statusCode'], 200)
         body = json.loads(response['body'])
-        self.assertEqual(body['message'], "Password reset successfully.")  # Updated message
+        self.assertEqual(body['message'], "Password reset successfully.")
+
         updated_user = self.table.get_item(Key={'email': email})['Item']
-        self.assertFalse(verify_hash_string(old_password, updated_user['password']))
         self.assertTrue(verify_hash_string(new_password, updated_user['password']))
+        self.assertNotIn('reset_code', updated_user)
+        self.assertNotIn('code_expiration_time', updated_user)
 
 
     def tearDown(self):

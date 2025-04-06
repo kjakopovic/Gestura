@@ -108,10 +108,9 @@ class TestValidateResetCode(BaseTestSetup):
                 self.assertEqual(response['statusCode'], 400)
                 self.assertIn(case["expected_validation_message"], body['message'])
 
-
     def test_successful_validation(self):
         """
-        Test successful validation of a valid rest code.
+        Test successful validation of a valid reset code.
         """
         email = "test@mail.com"
         reset_code = "123456"
@@ -131,7 +130,7 @@ class TestValidateResetCode(BaseTestSetup):
         self.assertEqual(initial_user['code_expiration_time'], expiration_time)
 
         # Call the lambda function
-        event = { "body": json.dumps({
+        event = {"body": json.dumps({
             "email": email,
             "code": reset_code
         })}
@@ -143,11 +142,10 @@ class TestValidateResetCode(BaseTestSetup):
         body = json.loads(response['body'])
         self.assertIn('message', body)
 
-        # Verify code and expiration time are removed
+        # Verify code is still present (modified expectation)
         updated_user = self.table.get_item(Key={'email': email})['Item']
-        self.assertNotIn('reset_code', updated_user)
-        self.assertNotIn('code_expiration_time', updated_user)
-
+        self.assertEqual(updated_user['reset_code'], reset_code)
+        self.assertEqual(updated_user['code_expiration_time'], expiration_time)
 
     def test_incorrect_reset_code(self):
         """
