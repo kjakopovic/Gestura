@@ -64,19 +64,17 @@ def validate_reset_code(dynamodb, email, code):
         if not code_valid:
             logger.debug(f"Reset code is invalid for user {email}: {error_message}")
             return build_response(400, {"message": error_message})
-    except Exception as e:
-        logger.error(f"Error verifying reset code: {e}")
-        return build_response(500, {"message": "Internal server error."})
 
-    if code_valid:
         cleared_code = clear_reset_code(dynamodb, email)
+
         if not cleared_code:
             logger.error(f"Error clearing reset code for user {email}")
             return build_response(500, {"message": "Error clearing reset code."})
 
         return build_response(200, {"message": "Reset code is valid."})
-    else:
-        return build_response(400, {"message": "Invalid reset code."})
+    except Exception as e:
+        logger.error(f"Error verifying reset code: {e}")
+        return build_response(500, {"message": "Internal server error."})
 
 
 def fetch_user(dynamodb, email):

@@ -32,6 +32,7 @@ setup_paths()
 from base_test_setups import BaseTestSetup
 from moto import mock_aws
 from forgotResetPassword.app import lambda_handler
+from common import hash_string, verify_hash_string
 
 
 @mock_aws
@@ -130,7 +131,7 @@ class TestValidateResetCode(BaseTestSetup):
         old_password = "oldPassword123"
         new_password = "newPassword123"
 
-        hashed_password = hash_password(old_password)
+        hashed_password = hash_string(old_password)
         self.table.put_item(Item={
             'email': email,
             'password': hashed_password,
@@ -149,30 +150,14 @@ class TestValidateResetCode(BaseTestSetup):
         body = json.loads(response['body'])
         self.assertEqual(body['message'], "Password reset successfully.")  # Updated message
         updated_user = self.table.get_item(Key={'email': email})['Item']
-        self.assertFalse(verify_password(old_password, updated_user['password']))
-        self.assertTrue(verify_password(new_password, updated_user['password']))
+        self.assertFalse(verify_hash_string(old_password, updated_user['password']))
+        self.assertTrue(verify_hash_string(new_password, updated_user['password']))
 
 
     def tearDown(self):
         self.resource_patcher.stop()
         super().tearDown()
 
-
-def hash_password(password):
-    """Hash a password for storing."""
-    import bcrypt
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
-    return hashed.decode('utf-8')
-
-
-def verify_password(plain_password, hashed_password):
-    """Verify a stored password against one provided by user."""
-    import bcrypt
-    return bcrypt.checkpw(
-        plain_password.encode('utf-8'),
-        hashed_password.encode('utf-8')
-    )
 
 if __name__ == "__main__":
     try:

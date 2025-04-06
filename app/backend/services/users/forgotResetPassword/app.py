@@ -63,7 +63,7 @@ def reset_password(dynamodb, email, password):
         return build_response(200, {"message": "Password reset successfully."})
     except Exception as e:
         logger.error(f"Error resetting password for user {email}: {e}")
-        return build_response(500, {"message": "Internal server error."})
+        return build_response(500, {"message": "An error happened while resetting the password."})
 
 
 def fetch_user(dynamodb, email):

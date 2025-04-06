@@ -32,6 +32,10 @@ Parameters:
     Type: String
     Description: When third party login is used, this is the url where the user will be redirected after login on mobile platform
     Default: http://localhost:5173
+  SourceEmail:
+    Type: String
+    Description: The email address that will be used as the sender for the password reset emails
+    Default: nolanilisic@gmail.com
 
 Globals:
   Function:
@@ -167,7 +171,7 @@ Resources:
         Variables:
           USERS_TABLE_NAME: !Ref UsersTable
           SECRETS_REGION_NAME: !Ref SecretsRegionName
-          SOURCE_EMAIL: nolanilisic@gmail.com
+          SOURCE_EMAIL: !Ref SourceEmail
       Layers:
         - !ImportValue
           Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
@@ -187,7 +191,7 @@ Resources:
         ForgotPasswordRequestEndpoint:
           Type: Api
           Properties:
-            Path: /forgot-password-request
+            Path: /forgot-password/request
             Method: POST
             RestApiId: !Ref UsersApi
 
@@ -218,7 +222,7 @@ Resources:
         ForgotPasswordRequestEndpoint:
           Type: Api
           Properties:
-            Path: /validate-reset-code
+            Path: /forgot-password/validate
             Method: POST
             RestApiId: !Ref UsersApi
 
@@ -249,7 +253,7 @@ Resources:
         ForgotPasswordRequestEndpoint:
           Type: Api
           Properties:
-            Path: /forgot-reset-password
+            Path: /forgot-password/reset
             Method: POST
             RestApiId: !Ref UsersApi
 

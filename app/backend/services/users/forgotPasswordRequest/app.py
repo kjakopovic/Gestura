@@ -115,7 +115,7 @@ def save_reset_code(dynamodb, email, random_code):
         return response
 
     except Exception as e:
-        logger.error("Error saving reset code: %s", e)
+        logger.error(f"Error saving reset code: {e}")
         raise
 
 def check_user_exists(dynamodb, email):
