@@ -92,9 +92,9 @@ const Login = () => {
             onChange={(e) =>
               setUser((prev) => ({ ...prev, password: e.target.value }))
             }
-            rightIcon={showPassword ? icons.eyeCross : icons.eyeCross}
+            rightIcon={showPassword ? icons.eyeCross : icons.eye}
             rightIconAlt={
-              showPassword ? "White eye icon" : "White, crossed eye icon"
+              showPassword ? "White, crossed eye icon" : "White eye icon"
             }
             onRightIconClick={() => setShowPassword((prev) => !prev)}
           />

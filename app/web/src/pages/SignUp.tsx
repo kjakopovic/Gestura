@@ -112,9 +112,9 @@ const SignUp = () => {
             onChange={(e) =>
               setUser((prev) => ({ ...prev, password: e.target.value }))
             }
-            rightIcon={showPassword ? icons.eyeCross : icons.eyeCross}
+            rightIcon={showPassword ? icons.eyeCross : icons.eye}
             rightIconAlt={
-              showPassword ? "White eye icon" : "White, crossed eye icon"
+              showPassword ? "White, crossed eye icon" : "White eye icon"
             }
             onRightIconClick={() => setShowPassword((prev) => !prev)}
           />
@@ -129,9 +129,9 @@ const SignUp = () => {
             onChange={(e) =>
               setUser((prev) => ({ ...prev, confirm_password: e.target.value }))
             }
-            rightIcon={showConfirmPassword ? icons.eyeCross : icons.eyeCross}
+            rightIcon={showConfirmPassword ? icons.eyeCross : icons.eye}
             rightIconAlt={
-              showConfirmPassword ? "White eye icon" : "White, crossed eye icon"
+              showConfirmPassword ? "White, crossed eye icon" : "White eye icon"
             }
             onRightIconClick={() => setShowConfirmPassword((prev) => !prev)}
           />
