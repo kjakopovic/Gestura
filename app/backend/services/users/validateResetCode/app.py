@@ -1,9 +1,6 @@
 import json
-import boto3
-import os
 import logging
-import random
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 
 from validation_schema import schema
 from dataclasses import dataclass
