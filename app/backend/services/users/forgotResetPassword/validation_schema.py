@@ -8,8 +8,13 @@ schema = {
         "password": {
             "type": "string",
             "minLength": 7
+        },
+        "code": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 6
         }
     },
-    "required": ["email", "password"],
+    "required": ["email", "password", "code"],
     "additionalProperties": False
 }

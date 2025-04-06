@@ -65,12 +65,6 @@ def validate_reset_code(dynamodb, email, code):
             logger.debug(f"Reset code is invalid for user {email}: {error_message}")
             return build_response(400, {"message": error_message})
 
-        cleared_code = clear_reset_code(dynamodb, email)
-
-        if not cleared_code:
-            logger.error(f"Error clearing reset code for user {email}")
-            return build_response(500, {"message": "Error clearing reset code."})
-
         return build_response(200, {"message": "Reset code is valid."})
     except Exception as e:
         logger.error(f"Error verifying reset code: {e}")
@@ -98,17 +92,3 @@ def verify_reset_code(email, code, saved_code, expiration_time):
 
     logger.info(f"Reset code matches for user {email}")
     return True, None
-
-
-def clear_reset_code(dynamodb, email):
-    try:
-        dynamodb.table.update_item(
-            Key={'email': email},
-            UpdateExpression="REMOVE reset_code, code_expiration_time",
-            ReturnValues="UPDATED_NEW"
-        )
-        logger.info(f"Reset code cleared for user {email}")
-        return True
-    except Exception as e:
-        logger.error(f"Error clearing reset code: {e}")
-        return False

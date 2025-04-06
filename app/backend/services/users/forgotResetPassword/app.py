@@ -1,14 +1,14 @@
 import json
 import logging
+from datetime import datetime, timezone
 
 from validation_schema import schema
 from dataclasses import dataclass
 from aws_lambda_powertools.utilities.validation import SchemaValidationError, validate
 from common import build_response, hash_string
-from auth import generate_jwt_token, generate_refresh_token
 from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
 
-logger = logging.getLogger("ForgotResetPassword")
+logger = logging.getLogger("forgotResetPassword")
 logger.setLevel(logging.DEBUG)
 
 
@@ -16,6 +16,7 @@ logger.setLevel(logging.DEBUG)
 class Request:
     email: str
     password: str
+    code: str
 
 
 def lambda_handler(event, context):
@@ -40,10 +41,10 @@ def lambda_handler(event, context):
     global _LAMBDA_USERS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
 
-    return reset_password(dynamodb, request.email, request.password)
+    return validate_and_reset(dynamodb, request.email, request.password, request.code)
 
 
-def reset_password(dynamodb, email, password):
+def validate_and_reset(dynamodb, email, password, code):
     user = fetch_user(dynamodb, email)
 
     if not user:
@@ -51,6 +52,26 @@ def reset_password(dynamodb, email, password):
         return build_response(400, {"message": "User does not exist."})
 
     try:
+        logger.info(f"Verifying reset code for user {email}")
+        saved_code = user.get("reset_code")
+        saved_expiration_time = user.get("code_expiration_time")
+
+        if not saved_code or not saved_expiration_time:
+            logger.debug(f"No reset code found for user {email}")
+            return build_response(400, {"message": "No reset code found."})
+
+        code_valid, error_message = verify_reset_code(email, code, saved_code, saved_expiration_time)
+
+        if not code_valid:
+            logger.debug(f"Reset code is invalid for user {email}: {error_message}")
+            return build_response(400, {"message": error_message})
+
+        cleared_code = clear_reset_code(dynamodb, email)
+
+        if not cleared_code:
+            logger.error(f"Error clearing reset code for user {email}")
+            return build_response(500, {"message": "Error clearing reset code."})
+
         hashed_password = hash_string(password)
 
         dynamodb.table.update_item(
@@ -61,9 +82,10 @@ def reset_password(dynamodb, email, password):
 
         logger.info(f"Password reset successfully for user {email}")
         return build_response(200, {"message": "Password reset successfully."})
+
     except Exception as e:
-        logger.error(f"Error resetting password for user {email}: {e}")
-        return build_response(500, {"message": "An error happened while resetting the password."})
+        logger.error(f"Error verifying reset code: {e}")
+        return build_response(500, {"message": "Internal server error."})
 
 
 def fetch_user(dynamodb, email):
@@ -71,3 +93,33 @@ def fetch_user(dynamodb, email):
     user = dynamodb.table.get_item(Key={"email": email})
 
     return user.get("Item")
+
+
+def verify_reset_code(email, code, saved_code, expiration_time):
+    logger.info(f"Verifying reset code for user {email}")
+
+    if code != saved_code:
+        logger.debug(f"Reset code does not match for user {email}")
+        return False, "Invalid reset code"
+
+    current_time = int(datetime.now(timezone.utc).timestamp())
+    if current_time > expiration_time:
+        logger.debug(f"Reset code has expired for user {email}")
+        return False, "Reset code has expired"
+
+    logger.info(f"Reset code matches for user {email}")
+    return True, None
+
+
+def clear_reset_code(dynamodb, email):
+    try:
+        dynamodb.table.update_item(
+            Key={'email': email},
+            UpdateExpression="REMOVE reset_code, code_expiration_time",
+            ReturnValues="UPDATED_NEW"
+        )
+        logger.info(f"Reset code cleared for user {email}")
+        return True
+    except Exception as e:
+        logger.error(f"Error clearing reset code: {e}")
+        return False
