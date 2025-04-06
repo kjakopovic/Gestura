@@ -100,7 +100,7 @@ def verify_reset_code(email, code, saved_code, expiration_time):
 
 def clear_reset_code(dynamodb, email):
     try:
-        dynamodb.table.upate_item(
+        dynamodb.table.update_item(
             Key={'email': email},
             UpdateExpression="REMOVE reset_code, code_expiration_time",
             ReturnValues="UPDATED_NEW"
