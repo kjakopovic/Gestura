@@ -198,7 +198,6 @@ export const handleForgotPasswordValidate = async (
     );
 
     if (status !== 200) {
-      console.log("status is not 200", status);
       setErrors((prev) => [
         ...prev,
         data.message || "Code you entered is invalid",
