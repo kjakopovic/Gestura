@@ -15,6 +15,7 @@ import create from "@/assets/icons/create.svg";
 import join from "@/assets/icons/join.svg";
 import invite from "@/assets/icons/invite.svg";
 import logout from "@/assets/icons/logout.svg";
+import back from "@/assets/icons/back.svg";
 
 export const icons = {
   apple,
@@ -34,4 +35,5 @@ export const icons = {
   join,
   invite,
   logout,
+  back,
 };
