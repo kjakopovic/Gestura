@@ -160,6 +160,7 @@ const ForgotPassword = () => {
                   email,
                   code.join(""),
                   password,
+                  confirmPassword,
                   setErrors
                 );
 

@@ -227,6 +227,7 @@ export const handlePasswordChange = async (
   email: string,
   code: string,
   password: string,
+  confirmPassword: string,
   setErrors: React.Dispatch<React.SetStateAction<string[]>>
 ): Promise<HelperFunctionResponse> => {
   const { errors } = await validate(
@@ -239,6 +240,11 @@ export const handlePasswordChange = async (
   }
 
   try {
+    if (password !== confirmPassword) {
+      setErrors((prev) => [...prev, "Passwords do not match"]);
+      return HelperFunctionResponse.ERROR;
+    }
+
     const { data, status } = await axios.post(
       `${BACKEND_AUTH_API}/${APP_STAGE}/forgot-password/reset`,
       { email, code, password },
