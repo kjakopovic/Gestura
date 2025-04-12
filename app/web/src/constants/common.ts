@@ -14,3 +14,8 @@ export const APP_ROUTES = {
   CONTACT: "/contact",
   NOT_FOUND: "*",
 };
+
+export enum HelperFunctionResponse {
+  SUCCESS = "success",
+  ERROR = "error",
+}

@@ -1,8 +1,26 @@
 import { useState, useRef } from "react";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
+import { ClickableLogo, Input } from "@/components/elements";
+import { useNavigate } from "react-router-dom";
+import { APP_ROUTES, HelperFunctionResponse } from "@/constants/common";
+import {
+  Button,
+  ButtonType,
+  ErrorMessage,
+  Typography,
+  TypographyType,
+} from "@/components/common";
+import {
+  handleForgotPasswordRequest,
+  handleForgotPasswordValidate,
+  handlePasswordChange,
+} from "@/utils/auth";
 
 const ForgotPassword = () => {
+  const navigate = useNavigate();
+
+  const [errors, setErrors] = useState<string[]>([]);
   const [step, setStep] = useState(0);
   const [email, setEmail] = useState("");
   const [code, setCode] = useState(["", "", "", "", "", ""]);
@@ -17,9 +35,11 @@ const ForgotPassword = () => {
 
   const handleCodeChange = (index: number, value: string) => {
     if (value.length > 1) return;
+
     const newCode = [...code];
     newCode[index] = value;
     setCode(newCode);
+
     if (value && index < 5) {
       inputRefs[index + 1].current?.focus();
     }
@@ -29,36 +49,42 @@ const ForgotPassword = () => {
     switch (step) {
       case 0:
         return (
-          <div className="flex flex-col items-start w-full justify-center">
-            <p className="text-background-300 text-sm font-medium">Email</p>
-            <div className="relative w-full">
-              <img
-                src={icons.envelope}
-                alt="Email Icon"
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4"
-              />
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-10 pl-10 p-4 text-background-100 border-b border-background-300 focus:ring-0 focus:outline-none focus:border-b-2 focus:border-background-100"
-              />
-            </div>
-            <button
-              className="w-full py-2 mt-4 text-background-100 font-medium text-lg bg-background-600 border border-background-400 rounded-full hover:cursor-pointer hover:bg-background-500"
-              onClick={() => setStep(1)}
-            >
-              Next
-            </button>
-          </div>
+          <>
+            <Input
+              className="w-full mb-4"
+              type="text"
+              label="Email"
+              icon={icons.envelope}
+              iconAlt="White email icon, little envelope"
+              placeholder="Enter your email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Button
+              type={ButtonType.SECONDARY_OUTLINE}
+              text="Next"
+              styles="w-full rounded-full p-3 mt-4"
+              onClick={async () => {
+                const result = await handleForgotPasswordRequest(
+                  email,
+                  setErrors
+                );
+
+                if (result === HelperFunctionResponse.SUCCESS) {
+                  setStep(1);
+                }
+              }}
+            />
+          </>
         );
       case 1:
         return (
           <>
-            <p className="text-background-300 text-sm font-medium">
-              Enter the 6-digit code sent to your email
-            </p>
+            <Typography
+              type={TypographyType.FOOTER_OPTIONS}
+              styles="text-background-300 mb-4 font-medium"
+              text="Enter the 6-digit code sent to your email"
+            />
             <div className="flex flex-row gap-2 mt-4">
               {code.map((digit, index) => (
                 <input
@@ -72,73 +98,76 @@ const ForgotPassword = () => {
                 />
               ))}
             </div>
-            <button
-              className="w-full py-2 mt-4 text-background-100 font-medium text-lg bg-background-600 border border-background-400 rounded-full hover:cursor-pointer hover:bg-background-500"
-              onClick={() => setStep(2)}
-            >
-              Verify Code
-            </button>
+            <Button
+              type={ButtonType.SECONDARY_OUTLINE}
+              text="Verify Code"
+              styles="w-full rounded-full p-3 mt-4"
+              onClick={async () => {
+                const result = await handleForgotPasswordValidate(
+                  email,
+                  code.join(""),
+                  setErrors
+                );
+
+                if (result === HelperFunctionResponse.SUCCESS) {
+                  setStep(2);
+                }
+              }}
+            />
           </>
         );
       case 2:
         return (
           <>
-            <p className="text-background-300 text-sm font-medium">
-              New Password
-            </p>
-            <div className="relative w-full mt-2">
-              <img
-                src={icons.lock}
-                alt="Password Icon"
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4"
-              />
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter new password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full h-10 pl-10 pr-10 p-4 text-background-100 border-b border-background-300 focus:ring-0 focus:outline-none focus:border-b-2 focus:border-background-100"
-              />
-              <img
-                src={showPassword ? icons.eyeCross : icons.eyeCross}
-                alt="Toggle Password Visibility"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 cursor-pointer"
-                onClick={() => setShowPassword(!showPassword)}
-              />
-            </div>
-            <p className="text-background-300 text-sm font-medium mt-4">
-              Confirm New Password
-            </p>
-            <div className="relative w-full mt-2">
-              <img
-                src={icons.lock}
-                alt="Confirm Password Icon"
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4"
-              />
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm new password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full h-10 pl-10 pr-10 p-4 text-background-100 border-b border-background-300 focus:ring-0 focus:outline-none focus:border-b-2 focus:border-background-100"
-              />
-              <img
-                src={showConfirmPassword ? icons.eyeCross : icons.eyeCross}
-                alt="Toggle Confirm Password Visibility"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 cursor-pointer"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              />
-            </div>
-            <button
-              className="w-full py-2 mt-4 text-background-100 font-medium text-lg bg-background-600 border border-background-400 rounded-full hover:cursor-pointer hover:bg-background-500"
-              onClick={() => {
-                /* Reset password logic */
-                window.alert("Password reset successfully!");
-                window.location.href = "/login";
+            <Input
+              className="w-full mb-4"
+              type={showPassword ? "text" : "password"}
+              label="Password"
+              icon={icons.lock}
+              iconAlt="White password icon, little locked lock"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              rightIcon={showPassword ? icons.eyeCross : icons.eye}
+              rightIconAlt={
+                showPassword ? "White, crossed eye icon" : "White eye icon"
+              }
+              onRightIconClick={() => setShowPassword((prev) => !prev)}
+            />
+            <Input
+              className="w-full mb-4"
+              type={showConfirmPassword ? "text" : "password"}
+              label="Confirm Password"
+              icon={icons.lock}
+              iconAlt="White password icon, little locked lock"
+              placeholder="Confirm your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              rightIcon={showConfirmPassword ? icons.eyeCross : icons.eye}
+              rightIconAlt={
+                showConfirmPassword
+                  ? "White, crossed eye icon"
+                  : "White eye icon"
+              }
+              onRightIconClick={() => setShowConfirmPassword((prev) => !prev)}
+            />
+            <Button
+              type={ButtonType.SECONDARY_OUTLINE}
+              text="Reset Password"
+              styles="w-full rounded-full p-3 mt-4"
+              onClick={async () => {
+                const result = await handlePasswordChange(
+                  email,
+                  code.join(""),
+                  password,
+                  setErrors
+                );
+
+                if (result === HelperFunctionResponse.SUCCESS) {
+                  navigate(APP_ROUTES.LOGIN);
+                }
               }}
-            >
-              Reset Password
-            </button>
+            />
           </>
         );
       default:
@@ -148,20 +177,51 @@ const ForgotPassword = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center relative w-full">
+      <div className="flex flex-row items-start justify-between w-full p-5 z-10">
+        <ClickableLogo
+          onClick={() => {
+            navigate(APP_ROUTES.LANDING_PAGE);
+          }}
+        />
+      </div>
+      <div className="w-full lg:w-1/2 h-full flex flex-col items-center justify-between">
+        <div className="flex flex-col items-center justify-center h-auto w-[50vw] z-10">
+          {errors.length > 0 &&
+            errors.map((error, index) => (
+              <ErrorMessage
+                key={index}
+                message={error}
+                onClick={() => {
+                  setErrors((prev) => prev.filter((_, i) => i !== index));
+                }}
+              />
+            ))}
+        </div>
+        <div className="flex flex-col items-center justify-between mb-10 lg:mb-[150px] h-1/2 w-1/2 z-10">
+          <div className="flex flex-row items-center justify-between mb-4 w-full px-3">
+            <img
+              alt="White left arrow representing back icon"
+              src={icons.back}
+              className="w-6 h-6 cursor-pointer"
+              onClick={() => {
+                setStep((prev) => (prev > 0 ? prev - 1 : prev));
+              }}
+            />
+            <Typography
+              type={TypographyType.LANDING_SUBTITLE}
+              styles="text-background-100"
+              text="Forgot Password?"
+            />
+          </div>
+          {renderStep()}
+        </div>
+      </div>
+      {/* Background Image */}
       <img
         src={images.bgImage}
         alt="Background image"
         className="absolute z-0 object-cover w-full h-full"
       />
-      <div className="flex flex-row items-start justify-between w-full p-5 z-10">
-        <img src={icons.logoText} alt="Logo" className="w-60" />
-      </div>
-      <div className="flex flex-col items-center justify-center h-full w-1/2 md:w-1/4 sm:w-1/3 z-10">
-        <h1 className="text-3xl font-medium text-background-100 mb-4">
-          Forgot Password
-        </h1>
-        {renderStep()}
-      </div>
     </div>
   );
 };
