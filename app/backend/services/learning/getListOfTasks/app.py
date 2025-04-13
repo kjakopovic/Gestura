@@ -43,40 +43,40 @@ def lambda_handler(event, context):
     global _LAMBDA_TASKS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_TASKS_TABLE_RESOURCE)
 
-    # Number of tasks to return
-    limit_of_tasks = 10
-
     # Every 10 levels = 1 section
     # 0-9 = section 10, 10-19 = section 20, etc.
     section = (request.level // 10 + 1) * 10
 
-    return get_list_of_tasks(dynamodb, section, limit_of_tasks)
+    return get_list_of_tasks(dynamodb, section)
 
 
-def get_list_of_tasks(dynamodb, section, limit_of_tasks):
+def get_list_of_tasks(dynamodb, section):
     logger.info(f"Getting list of tasks for section {section}")
 
     tasks = get_tasks_for_section(dynamodb, section)
+    selected_tasks = chose_tasks(tasks, 4, 4, 2)
 
-    current_section = section
-    while len(tasks) < limit_of_tasks and current_section > 10:
-        current_section -= 10
-        logger.info(f"Not enough tasks, getting tasks from previous section {current_section}")
+    if section == 10:
+        selected_tasks.append(random.choice(tasks))
+    if section == 20:
+        tasks = get_tasks_for_section(dynamodb, 10)
+        prev_section_tasks = chose_tasks(tasks, 2, 2, 1)
+        selected_tasks.extend(prev_section_tasks)
+    else:
+        prev_tasks_1 = get_tasks_for_section(dynamodb, section - 10)
+        prev_tasks_2 = get_tasks_for_section(dynamodb, section - 20)
 
-        previous_tasks = get_tasks_for_section(dynamodb, current_section)
-        tasks.extend(previous_tasks)
+        prev_section_tasks_1 = chose_tasks(prev_tasks_1, 1, 1, 1)
+        prev_section_tasks_2 = chose_tasks(prev_tasks_2, 1, 1, 0)
 
-        if len(tasks) > limit_of_tasks:
-            break
-
-    random.shuffle(tasks)
-    tasks = tasks[:limit_of_tasks]
+        selected_tasks.extend(prev_section_tasks_1)
+        selected_tasks.extend(prev_section_tasks_2)
 
     return build_response(
         200,
         {
             "message": "Tasks fetched successfully",
-            "tasks": tasks
+            "tasks": selected_tasks
         }
     )
 
@@ -93,3 +93,26 @@ def get_tasks_for_section(dynamodb, section):
     )
 
     return response.get("Items", [])
+
+
+def chose_tasks(tasks, num_v1, num_v2, num_v3):
+    tasks_by_version = {1: [], 2: [], 3: []}
+
+    for task in tasks:
+        version = task.get("version")
+        if version in tasks_by_version:
+            tasks_by_version[version].append(task)
+
+    # Shuffle tasks by version
+    for version in tasks_by_version:
+        random.shuffle(tasks_by_version[version])
+
+    # Take required number from each version
+    chosen_tasks = []
+    chosen_tasks.extend(tasks_by_version[1][:num_v1])
+    chosen_tasks.extend(tasks_by_version[2][:num_v2])
+    chosen_tasks.extend(tasks_by_version[3][:num_v3])
+
+    random.shuffle(chosen_tasks)
+
+    return chosen_tasks
