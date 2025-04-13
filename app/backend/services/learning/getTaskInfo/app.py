@@ -14,7 +14,7 @@ logger.setLevel(logging.DEBUG)
 
 @dataclass
 class Request:
-    taskId: str
+    taskId: int
 
 
 @middleware
