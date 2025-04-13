@@ -20,14 +20,6 @@ Parameters:
     Type: String
     Description: Region name where the secrets are stored
     Default: eu-central-1
-  FrontendCallbackUrl:
-    Type: String
-    Description: When third party login is used, this is the url where the user will be redirected after login on web platform
-    Default: http://localhost:5173
-  MobileCallbackUrl:
-    Type: String
-    Description: When third party login is used, this is the url where the user will be redirected after login on mobile platform
-    Default: http://localhost:5173
 
 Globals:
   Function:
@@ -49,7 +41,7 @@ Resources:
       TableName: !Sub "tasks-${StageName}"
       AttributeDefinitions:
         - AttributeName: taskId
-          AttributeType: N
+          AttributeType: S
         - AttributeName: question
           AttributeType: S
       KeySchema:
@@ -92,7 +84,7 @@ Resources:
   GetListOfTasksFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: listOfTasks/
+      CodeUri: getListOfTasks/
       Handler: app.lambda_handler
       Runtime: python3.12
       Environment:
@@ -117,14 +109,14 @@ Resources:
         GetListOfTasksEndpoint:
           Type: Api
           Properties:
-            Path: /tasks/list
+            Path: /tasks
             Method: GET
             RestApiId: !Ref LearningApi
 
   GetTaskInfoFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: taskInfo/
+      CodeUri: getTaskInfo/
       Handler: app.lambda_handler
       Runtime: python3.12
       Environment:
@@ -149,7 +141,7 @@ Resources:
         RegisterEndpoint:
           Type: Api
           Properties:
-            Path: /tasks/info
+            Path: /tasks/{taskId}
             Method: GET
             RestApiId: !Ref LearningApi
 
