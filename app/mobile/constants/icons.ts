@@ -11,6 +11,8 @@ import profile from "@/assets/icons/profile.png";
 import nonPremium from "@/assets/icons/non-premium.png";
 import chest from "@/assets/icons/chest.png";
 import shop from "@/assets/icons/shop.png";
+import coin from "@/assets/icons/coin.png";
+import experience_token from "@/assets/icons/experience_token.png";
 
 
 export {
@@ -27,4 +29,6 @@ export {
   nonPremium,
   chest,
   shop,
+  coin,
+  experience_token,
 };
