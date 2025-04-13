@@ -84,7 +84,8 @@ def get_list_of_tasks(dynamodb, section, limit_of_tasks):
 def get_tasks_for_section(dynamodb, section):
     logger.info(f"Getting tasks for section {section}")
 
-    response = dynamodb.table.scan(
+    response = dynamodb.table.query(
+        IndexName="section-index",
         FilterExpression="section = :section",
         ExpressionAttributeValues={
             ":section": section
