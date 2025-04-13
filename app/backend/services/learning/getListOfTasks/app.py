@@ -1,5 +1,8 @@
 import json
 import logging
+import random
+
+from moto.dynamodb.parsing.ast_nodes import ExpressionAttributeValue
 
 from validation_schema import schema
 from dataclasses import dataclass
@@ -14,7 +17,7 @@ logger.setLevel(logging.DEBUG)
 
 @dataclass
 class Request:
-    taskId: int
+    level: int
 
 
 @middleware
@@ -40,30 +43,52 @@ def lambda_handler(event, context):
     global _LAMBDA_TASKS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_TASKS_TABLE_RESOURCE)
 
+    # Number of tasks to return
     limit_of_tasks = 10
 
-    return get_list_of_tasks(dynamodb, request.taskId, limit_of_tasks)
+    # Every 10 levels = 1 section
+    # 0-9 = section 10, 10-19 = section 20, etc.
+    section = (request.level // 10 + 1) * 10
+
+    return get_list_of_tasks(dynamodb, section, limit_of_tasks)
 
 
-def get_list_of_tasks(dynamodb, taskId, limit_of_tasks):
-    logger.info(f"Getting list of tasks from {taskId} to {taskId + limit_of_tasks}")
+def get_list_of_tasks(dynamodb, section, limit_of_tasks):
+    logger.info(f"Getting list of tasks for section {section}")
 
-    response = dynamodb.table.query(
-        KeyConditionExpression="taskId BETWEEN :start_id AND :end_id",
-        ExpressionAttributeValues={
-            ":start_id": int(taskId),
-            ":end_id": int(taskId) + limit_of_tasks,
-        },
-        ProjectionExpression="taskId, question"
-    )
+    tasks = get_tasks_for_section(dynamodb, section)
 
-    list_of_tasks = response["Items"]
+    current_section = section
+    while len(tasks) < limit_of_tasks and current_section > 10:
+        current_section -= 10
+        logger.info(f"Not enough tasks, getting tasks from previous section {current_section}")
+
+        previous_tasks = get_tasks_for_section(dynamodb, current_section)
+        tasks.extend(previous_tasks)
+
+        if len(tasks) > limit_of_tasks:
+            break
+
+    random.shuffle(tasks)
+    tasks = tasks[:limit_of_tasks]
 
     return build_response(
         200,
         {
-            "message": "Successfully fetched tasks",
-            "tasks": list_of_tasks
+            "message": "Tasks fetched successfully",
+            "tasks": tasks
         }
     )
 
+
+def get_tasks_for_section(dynamodb, section):
+    logger.info(f"Getting tasks for section {section}")
+
+    response = dynamodb.table.scan(
+        FilterExpression="section = :section",
+        ExpressionAttributeValues={
+            ":section": section
+        }
+    )
+
+    return response.get("Items", [])

@@ -1,10 +1,10 @@
 schema = {
     "type": "object",
     "properties": {
-        "taskId": {
+        "level": {
             "type": "number"
         }
     },
-    "required": ["taskId"],
+    "required": ["level"],
     "additionalProperties": False
 }

@@ -42,25 +42,15 @@ Resources:
       AttributeDefinitions:
         - AttributeName: taskId
           AttributeType: S
-        - AttributeName: question
-          AttributeType: S
-        - AttributeName: taskSection
+        - AttributeName: section
           AttributeType: N
-        - AttributeName: answer
-          AttributeType: S
-        - AttributeName: incorrectAnswer1
-          AttributeType: S
-        - AttributeName: incorrectAnswer2
-          AttributeType: S
-        - AttributeName: incorrectAnswer3
-          AttributeType: S
       KeySchema:
         - AttributeName: taskId
           KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: question-index
+        - IndexName: section-index
           KeySchema:
-            - AttributeName: question
+            - AttributeName: section
               KeyType: HASH
           Projection:
             ProjectionType: ALL
