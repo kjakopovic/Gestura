@@ -150,7 +150,7 @@ Resources:
           Type: Api
           Properties:
             Path: /tasks/info
-            Method: POST
+            Method: GET
             RestApiId: !Ref LearningApi
 
 Outputs:
