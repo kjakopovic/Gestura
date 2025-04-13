@@ -44,6 +44,16 @@ Resources:
           AttributeType: S
         - AttributeName: question
           AttributeType: S
+        - AttributeName: taskSection
+          AttributeType: N
+        - AttributeName: answer
+          AttributeType: S
+        - AttributeName: incorrectAnswer1
+          AttributeType: S
+        - AttributeName: incorrectAnswer2
+          AttributeType: S
+        - AttributeName: incorrectAnswer3
+          AttributeType: S
       KeySchema:
         - AttributeName: taskId
           KeyType: HASH
