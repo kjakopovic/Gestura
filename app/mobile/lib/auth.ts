@@ -125,8 +125,6 @@ export const requestPasswordReset = async (data: {
     });
     const json = await response.json();
     if (!response.ok) {
-      console.log("Error:", json.error);
-      console.log("Response:", response);
       return {
         success: false,
         error: { message: json.error || "Failed to send reset email." },

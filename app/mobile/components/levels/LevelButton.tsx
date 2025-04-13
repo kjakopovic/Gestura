@@ -6,6 +6,7 @@ import {
   ImageSourcePropType,
 } from "react-native";
 import { LevelType, LevelState } from "@/types/levels";
+import { getButtonStyle } from "./styles";
 
 interface LevelButtonProps {
   level: number;
@@ -24,24 +25,7 @@ const LevelButton = ({
   icon,
   style,
 }: LevelButtonProps) => {
-  const getButtonStyle = () => {
-    switch (type) {
-      case "normal":
-        return ` ${
-          state === "locked" ? "bg-grayscale-400" : "bg-secondary"
-        } w-24 h-24 rounded-full`;
-      case "special":
-        return `${
-          state === "locked"
-            ? "border-grayscale-400"
-            : style === "battlepass"
-            ? "border-primary"
-            : "border-secondary"
-        }
-        rounded-2xl bg-grayscale-700 border`;
-    }
-  };
-  const buttonStyle = getButtonStyle();
+  const buttonStyle = getButtonStyle(type, state, style);
 
   return type === "normal" ? (
     <TouchableOpacity

@@ -2,6 +2,10 @@ import { View, Dimensions } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { LevelData } from "@/types/levels";
 import LevelButton from "./LevelButton";
+import {
+  generatePathData,
+  generatePathDataUpToLevel,
+} from "@/utils/levelPathUtils";
 
 // Getting the width of the device screen
 const { width: screenWidth } = Dimensions.get("window");
@@ -17,38 +21,38 @@ const LevelMap = ({ levels, onLevelPress }: LevelMapProps) => {
   const levelSpacing = 230;
   const zigzagWidth = pathWidth - 32;
 
-  // Centering handles the margins for us
+  // Find the index of the last unlocked level
+  const lastUnlockedIndex = levels.map((l) => l.state).lastIndexOf("unlocked");
 
   const renderLevelPath = () => {
-    // Building the zigzag line for our level path
-    let pathData = `M 16,0`;
-
     // Determining how many rows we need based on level count
     const rows = Math.ceil(levels.length / 2);
 
-    // Creating the zigzag pattern for the level path
-    for (let i = 0; i < rows; i++) {
-      // For rows starting with 0, 2, 4, etc.
-      if (i % 2 === 0) {
-        // Draw line to the right side
-        pathData += ` H ${zigzagWidth + 16}`;
-        // Add vertical line if there are more rows below
-        if (i < rows - 1) {
-          pathData += ` V ${(i + 1) * levelSpacing}`;
-        }
-      } else {
-        // Draw line to the left side
-        pathData += ` H 16`;
-        // Add vertical line if there are more rows below
-        if (i < rows - 1) {
-          pathData += ` V ${(i + 1) * levelSpacing}`;
-        }
-      }
-    }
+    // Path data for unlocked and locked portions
+    const unlockedPathData =
+      lastUnlockedIndex >= 0
+        ? generatePathDataUpToLevel(
+            lastUnlockedIndex,
+            zigzagWidth,
+            levelSpacing
+          )
+        : "";
+    const fullPathData = generatePathData(rows, zigzagWidth, levelSpacing);
 
     return (
       <Svg width={pathWidth} height={rows * levelSpacing}>
-        <Path d={pathData} stroke="#4A4A4A" strokeWidth={4} fill="none" />
+        {/* Render the full path in gray (locked) */}
+        <Path d={fullPathData} stroke="#4A4A4A" strokeWidth={4} fill="none" />
+
+        {/* Render the unlocked portion of the path in a different color */}
+        {lastUnlockedIndex >= 0 && (
+          <Path
+            d={unlockedPathData}
+            stroke="#A162FF"
+            strokeWidth={4}
+            fill="none"
+          />
+        )}
       </Svg>
     );
   };
@@ -67,7 +71,6 @@ const LevelMap = ({ levels, onLevelPress }: LevelMapProps) => {
         {/* Placing level buttons on top of the path */}
         <View style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
           {levels.map((level, index) => {
-            // Calculating position of each level button
             const zigzagWidth = pathWidth - 30;
 
             // Determining which row the level belongs to (2 levels per row)
