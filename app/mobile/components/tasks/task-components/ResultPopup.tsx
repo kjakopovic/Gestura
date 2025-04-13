@@ -1,4 +1,11 @@
-import { View, Text, Modal, AppState } from "react-native";
+import {
+  View,
+  Text,
+  Modal,
+  AppState,
+  Image,
+  ImageSourcePropType,
+} from "react-native";
 import React, { useEffect } from "react";
 import { router } from "expo-router";
 
@@ -8,6 +15,7 @@ type PopupProps = {
   visible: boolean;
   isSuccess: boolean;
   correctAnswer?: string; //da se moze proslijediti correct answer
+  correctImage?: ImageSourcePropType; //da se moze proslijediti correct image
   onDismiss?: () => void; //da kad se app refocusa da se popup ne otvori opet
   buttonStyle?: string;
 };
@@ -21,6 +29,7 @@ const ResultPopup = ({
   isSuccess,
   onDismiss,
   correctAnswer,
+  correctImage,
 }: PopupProps) => {
   const buttonStyle = isSuccess ? "success" : "error";
   const popupText = isSuccess
@@ -58,10 +67,17 @@ const ResultPopup = ({
             {popupText}
           </Text>
           <View className="flex items-center justify-center border border-grayscale-400 rounded-xl w-40 h-40">
-            {/* morao sam manually pt-6 jer ne kuzim zas ga ne centrira */}
-            <Text className="text-center text-9xl text-white font-interBold pt-6">
-              {correctAnswer}
-            </Text>
+            {correctImage ? (
+              <Image
+                source={correctImage}
+                className="w-100% h-100%"
+                resizeMode="contain"
+              />
+            ) : (
+              <Text className="text-white text-9xl font-interBold pt-6">
+                {correctAnswer}
+              </Text>
+            )}
           </View>
           <CustomButton
             onPress={closePopup}

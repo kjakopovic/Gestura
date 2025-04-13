@@ -11,8 +11,9 @@ const task = () => {
     <ScrollView className="w-full h-full bg-grayscale-800">
       <SafeAreaView className="flex-1 justify-center bg-grayscale-800">
         <StatusBar style="light" />
-        <Task1 />
-        {/* <Task2 /> */}
+        {/* trenutno je active task 2, salje se na index.tsx */}
+        {/* <Task1 /> */}
+        <Task2 />
       </SafeAreaView>
     </ScrollView>
   );

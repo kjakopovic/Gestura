@@ -18,6 +18,7 @@ const Task1 = () => {
   };
 
   const correctAnswer = "C";
+  const correctImage = hands.letter_c;
 
   const [selectedAnswer, setSelectedAnswer] = React.useState<string | null>(
     null
@@ -53,7 +54,7 @@ const Task1 = () => {
       <View className="w-full flex-row justify-center items-end">
         <Image className="m-8 mt-4 mb-0 w-50%" source={characters.character1} />
         {/* ako nekako nema slike, defaulta se na error_testing.png */}
-        <TaskBox image={hands.letter_c} />
+        <TaskBox image={correctImage} />
       </View>
 
       <View className="w-full h-[1px] bg-grayscale-400 mb-8" />
@@ -63,11 +64,13 @@ const Task1 = () => {
           <AnswerBox
             onPress={handleAnswerPress}
             text="A"
+            answerValue="A"
             isSelected={selectedAnswer === "A"}
           />
           <AnswerBox
             onPress={handleAnswerPress}
             text="B"
+            answerValue="B"
             isSelected={selectedAnswer === "B"}
           />
         </View>
@@ -75,11 +78,13 @@ const Task1 = () => {
           <AnswerBox
             onPress={handleAnswerPress}
             text="C"
+            answerValue="C"
             isSelected={selectedAnswer === "C"}
           />
           <AnswerBox
             onPress={handleAnswerPress}
             text="D"
+            answerValue="D"
             isSelected={selectedAnswer === "D"}
           />
         </View>
