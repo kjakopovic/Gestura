@@ -167,8 +167,8 @@ jobs:
       - name: Deploy Service
         uses: ./.github/composite/deploy_lambda_service
         with:
-          service_path: ${{ env.USERS_SERVICE_PATH }}
-          service_name: ${{ env.USERS_SERVICE_NAME }}
+          service_path: ${{ env.LEARNING_SERVICE_PATH }}
+          service_name: ${{ env.LEARNING_SERVICE_NAME }}
           layer_stack_name: ${{ env.LAYER_SERVICE_NAME }}
           stage_name: "develop"
           continue-on-error: true
@@ -194,11 +194,11 @@ jobs:
       - name: Deploy Service
         uses: ./.github/composite/deploy_lambda_service
         with:
-          service_path: ${{ env.USERS_SERVICE_PATH }}
-          service_name: ${{ env.USERS_SERVICE_NAME }}
+          service_path: ${{ env.LEARNING_SERVICE_PATH }}
+          service_name: ${{ env.LEARNING_SERVICE_NAME }}
           layer_stack_name: ${{ env.LAYER_SERVICE_NAME }}
           stage_name: "prod"
-          continue-on-error: true          
+          continue-on-error: true
 
   # deploy_docs_develop:
   #   if: github.ref == 'refs/heads/develop'
