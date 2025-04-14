@@ -14,7 +14,7 @@ from typing import List
 logger = logging.getLogger("CreateTask")
 logger.setLevel(logging.DEBUG)
 
-# TODO: Check if this class has correct elements
+
 @dataclass
 class Request:
     section: int
