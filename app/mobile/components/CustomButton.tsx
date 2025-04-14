@@ -5,9 +5,15 @@ type CustomButtonProps = {
   onPress: () => void;
   text: string;
   style?: string;
+  marginTop?: number;
 };
 
-const CustomButton = ({ onPress, text, style }: CustomButtonProps) => {
+const CustomButton = ({
+  onPress,
+  text,
+  style,
+  marginTop,
+}: CustomButtonProps) => {
   return (
     <TouchableOpacity
       className={`w-3/4 self-center py-4 border ${
@@ -16,7 +22,9 @@ const CustomButton = ({ onPress, text, style }: CustomButtonProps) => {
           : style === "success"
           ? "border-success"
           : "border-error"
-      } bg-grayscale-700 rounded-2xl mt-16`}
+      } bg-grayscale-700 rounded-2xl ${
+        marginTop ? `mt-${marginTop}` : "mt-16"
+      }`}
       onPress={onPress}
     >
       <Text

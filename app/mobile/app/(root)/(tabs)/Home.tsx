@@ -4,7 +4,7 @@ import { router } from "expo-router";
 
 const Home = () => {
   const goToTask = () => {
-    router.push("/task"); //redirect na task
+    router.push("/level"); //redirect na task
   };
   return (
     <ScrollView className="bg-grayscale-800">

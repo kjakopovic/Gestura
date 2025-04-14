@@ -5,7 +5,7 @@ import * as hands from "@/constants/hand-signs";
 
 type TaskBoxProps = {
   text?: string;
-  image?: ImageSourcePropType;
+  image?: string;
 };
 
 const TaskBox = ({ text, image }: TaskBoxProps) => {
