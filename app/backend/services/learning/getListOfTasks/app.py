@@ -1,15 +1,15 @@
-import json
 import logging
 import random
-
-from moto.dynamodb.parsing.ast_nodes import ExpressionAttributeValue
+import decimal
+import json
 
 from validation_schema import schema
 from dataclasses import dataclass
-from aws_lambda_powertools.utilities.validation import SchemaValidationError, validate
-from common import build_response
+from aws_lambda_powertools.utilities.validation import validate
+from common import build_response, ValidationError
 from boto import LambdaDynamoDBClass, _LAMBDA_TASKS_TABLE_RESOURCE
 from middleware import middleware
+from boto3.dynamodb.conditions import Key
 
 logger = logging.getLogger("GetListOfTasks")
 logger.setLevel(logging.DEBUG)
@@ -24,28 +24,23 @@ class Request:
 def lambda_handler(event, context):
     logger.debug(f"Received event {event}")
 
-    body = event.get("body")
-    if body is not None:
-        request_body = json.loads(body)
-    else:
-        request_body = event
-
+    query_params = event.get("queryStringParameters", {})
     try:
-        logger.debug(f"Validating request {request_body}")
-        validate(event=request_body, schema=schema)
-    except SchemaValidationError as e:
-        logger.error(f"Validation failed: {e}")
-        return build_response(400, {"message": str(e)})
+        logger.debug(f"Validating query params: {query_params}")
 
-    logger.info("Parsing request body")
-    request = Request(**request_body)
+        validate(event=query_params, schema=schema)
+    except Exception as e:
+        logger.error(f"Validation error: {str(e)}")
+
+        raise ValidationError(str(e))
 
     global _LAMBDA_TASKS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_TASKS_TABLE_RESOURCE)
 
     # Every 10 levels = 1 section
     # 0-9 = section 10, 10-19 = section 20, etc.
-    section = (request.level // 10 + 1) * 10
+    level = int(query_params.get("level"))
+    section = (level // 10 + 1) * 10
 
     return get_list_of_tasks(dynamodb, section)
 
@@ -72,6 +67,9 @@ def get_list_of_tasks(dynamodb, section):
         selected_tasks.extend(prev_section_tasks_1)
         selected_tasks.extend(prev_section_tasks_2)
 
+    # Convert Decimal to float for JSON serialization
+    selected_tasks = convert_decimal_to_float(selected_tasks)
+
     return build_response(
         200,
         {
@@ -81,15 +79,24 @@ def get_list_of_tasks(dynamodb, section):
     )
 
 
+def convert_decimal_to_float(obj):
+    """Convert Decimal objects to floats for JSON serialization"""
+    if isinstance(obj, list):
+        return [convert_decimal_to_float(i) for i in obj]
+    elif isinstance(obj, dict):
+        return {key: convert_decimal_to_float(value) for key, value in obj.items()}
+    elif isinstance(obj, decimal.Decimal):
+        return float(obj) if obj % 1 else int(obj)
+    else:
+        return obj
+
+
 def get_tasks_for_section(dynamodb, section):
     logger.info(f"Getting tasks for section {section}")
 
     response = dynamodb.table.query(
         IndexName="section-index",
-        FilterExpression="section = :section",
-        ExpressionAttributeValues={
-            ":section": section
-        }
+        KeyConditionExpression=Key("section").eq(section)
     )
 
     return response.get("Items", [])
