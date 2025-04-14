@@ -16,6 +16,23 @@ Resources:
     Metadata:
       BuildMethod: python3.12
 
+  # Apis
+  UsersApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub "UsersApi-${StageName}"
+      StageName: !Ref StageName
+      Auth:
+        ApiKeyRequired: false
+
+  LearningApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub "LearningApi-${StageName}"
+      StageName: !Ref StageName
+      Auth:
+        ApiKeyRequired: false
+
   # Tables
   UsersTable:
     Type: AWS::DynamoDB::Table
