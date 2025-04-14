@@ -8,6 +8,7 @@ from aws_lambda_powertools.utilities.validation import validate, SchemaValidatio
 from common import build_response
 from boto import LambdaDynamoDBClass, _LAMBDA_TASKS_TABLE_RESOURCE
 from middleware import middleware
+from typing import List
 
 
 logger = logging.getLogger("CreateTask")
@@ -20,7 +21,7 @@ class Request:
     sectionName: str
     version: int
     question: str
-    possibleAnswers: list
+    possibleAnswers: List[str]
     correctAnswerIndex: int
 
 # TODO: Check how will it be for RBAC
@@ -47,29 +48,11 @@ def lambda_handler(event, context):
     global _LAMBDA_TASKS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_TASKS_TABLE_RESOURCE)
 
-    section = request.section
-    if section // 10 != 0:
-        return build_response(
-            400,
-            {
-                "message": "Section must be a multiple of 10",
-            }
-        )
-
-    correct_answer_index = request.correctAnswerIndex
-    if correct_answer_index < 0 or correct_answer_index > 3:
-        return build_response(
-            400,
-            {
-                "message": "Correct answer index must be between 0 and 3",
-            }
-        )
-
     logger.info(f"Saving a task into database: {request}")
     task_id = str(uuid.uuid4())
 
     new_task ={
-        "id": task_id,
+        "taskId": task_id,
         "section": request.section,
         "sectionName": request.sectionName,
         "version": request.version,
