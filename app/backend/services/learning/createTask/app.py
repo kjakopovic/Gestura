@@ -65,7 +65,7 @@ def lambda_handler(event, context):
         dynamodb.table.put_item(Item=new_task)
     except Exception as e:
         logger.error("Error saving task to DynamoDB: %s", e)
-        return build_response(500, {"message": "Error saving news to DynamoDB"})
+        return build_response(500, {"message": "Error saving task to DynamoDB"})
 
     return build_response(
         200,
