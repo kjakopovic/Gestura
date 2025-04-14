@@ -51,32 +51,6 @@ Resources:
       Auth:
         ApiKeyRequired: false
 
-  UsersTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub "users-${StageName}"
-      AttributeDefinitions:
-        - AttributeName: email
-          AttributeType: S
-        - AttributeName: username
-          AttributeType: S
-      KeySchema:
-        - AttributeName: email
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: username-index
-          KeySchema:
-            - AttributeName: username
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 5
-            WriteCapacityUnits: 5
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
-
   # Lambdas
   HealthCheckFunction:
     Type: AWS::Serverless::Function
@@ -105,7 +79,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
@@ -137,7 +112,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
@@ -169,7 +145,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           SECRETS_REGION_NAME: !Ref SecretsRegionName
           SOURCE_EMAIL: !Ref SourceEmail
       Layers:
@@ -203,7 +180,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
         - !ImportValue
@@ -234,7 +212,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
         - !ImportValue
@@ -299,7 +278,8 @@ Resources:
           Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           THIRD_PARTY_CLIENTS_SECRET_NAME: !Ref ThirdPartyClientsSecretName
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName

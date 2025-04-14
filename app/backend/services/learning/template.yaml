@@ -35,32 +35,6 @@ Resources:
       Auth:
         ApiKeyRequired: false
 
-  TasksTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub "tasks-${StageName}"
-      AttributeDefinitions:
-        - AttributeName: taskId
-          AttributeType: S
-        - AttributeName: section
-          AttributeType: N
-      KeySchema:
-        - AttributeName: taskId
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: section-index
-          KeySchema:
-            - AttributeName: section
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 5
-            WriteCapacityUnits: 5
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
-
   # Lambdas
   HealthCheckFunction:
     Type: AWS::Serverless::Function
@@ -89,7 +63,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          TASKS_TABLE_NAME: !Ref TasksTable
+          TASKS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-TasksTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
@@ -121,7 +96,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          TASKS_TABLE_NAME: !Ref TasksTable
+          TASKS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-TasksTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
