@@ -43,40 +43,6 @@ Globals:
     MemorySize: 512
 
 Resources:
-  UsersApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      Name: !Sub "UsersApi-${StageName}"
-      StageName: !Ref StageName
-      Auth:
-        ApiKeyRequired: false
-
-  UsersTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub "users-${StageName}"
-      AttributeDefinitions:
-        - AttributeName: email
-          AttributeType: S
-        - AttributeName: username
-          AttributeType: S
-      KeySchema:
-        - AttributeName: email
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: username-index
-          KeySchema:
-            - AttributeName: username
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 5
-            WriteCapacityUnits: 5
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
-
   # Lambdas
   HealthCheckFunction:
     Type: AWS::Serverless::Function
@@ -95,7 +61,8 @@ Resources:
           Properties:
             Path: /
             Method: GET
-            RestApiId: !Ref UsersApi
+            RestApiId: !ImportValue
+              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
 
   LoginFunction:
     Type: AWS::Serverless::Function
@@ -105,7 +72,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
@@ -127,7 +95,8 @@ Resources:
           Properties:
             Path: /login
             Method: POST
-            RestApiId: !Ref UsersApi
+            RestApiId: !ImportValue
+              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
 
   RegisterFunction:
     Type: AWS::Serverless::Function
@@ -137,7 +106,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
@@ -159,7 +129,8 @@ Resources:
           Properties:
             Path: /register
             Method: POST
-            RestApiId: !Ref UsersApi
+            RestApiId: !ImportValue
+              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
 
   ForgotPasswordRequestFunction:
     Type: AWS::Serverless::Function
@@ -169,7 +140,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           SECRETS_REGION_NAME: !Ref SecretsRegionName
           SOURCE_EMAIL: !Ref SourceEmail
       Layers:
@@ -193,7 +165,8 @@ Resources:
           Properties:
             Path: /forgot-password/request
             Method: POST
-            RestApiId: !Ref UsersApi
+            RestApiId: !ImportValue
+              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
 
   ValidateResetCodeFunction:
     Type: AWS::Serverless::Function
@@ -203,7 +176,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
         - !ImportValue
@@ -224,7 +198,8 @@ Resources:
           Properties:
             Path: /forgot-password/validate
             Method: POST
-            RestApiId: !Ref UsersApi
+            RestApiId: !ImportValue
+              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
 
   ForgotResetPasswordFunction:
     Type: AWS::Serverless::Function
@@ -234,7 +209,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
         - !ImportValue
@@ -255,7 +231,8 @@ Resources:
           Properties:
             Path: /forgot-password/reset
             Method: POST
-            RestApiId: !Ref UsersApi
+            RestApiId: !ImportValue
+              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
 
   ThirdPartyLoginRequestFunction:
     Type: AWS::Serverless::Function
@@ -286,7 +263,8 @@ Resources:
           Properties:
             Path: /login/third-party
             Method: GET
-            RestApiId: !Ref UsersApi
+            RestApiId: !ImportValue
+              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
 
   ThirdPartyLoginValidateFunction:
     Type: AWS::Serverless::Function
@@ -299,7 +277,8 @@ Resources:
           Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           THIRD_PARTY_CLIENTS_SECRET_NAME: !Ref ThirdPartyClientsSecretName
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
@@ -322,7 +301,8 @@ Resources:
           Properties:
             Path: /login/third-party/confirm
             Method: GET
-            RestApiId: !Ref UsersApi
+            RestApiId: !ImportValue
+              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
 
 Outputs:
   UsersApi:
