@@ -2,7 +2,8 @@ schema = {
     "type": "object",
     "properties": {
         "level": {
-            "type": "number"
+            "type": "number",
+            "minimum": 0
         }
     },
     "required": ["level"],

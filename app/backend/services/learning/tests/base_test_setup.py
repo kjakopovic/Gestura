@@ -64,7 +64,7 @@ class BaseTestSetup(unittest.TestCase):
             TableName = os.environ["TASKS_TABLE_NAME"],
             AttributeDefinitions = [
                 {"AttributeName": "taskId", "AttributeType": "S"},
-                {"AttributeName": "section", "AttributeType": "S"}
+                {"AttributeName": "section", "AttributeType": "N"}
             ],
             KeySchema = [
                 {"AttributeName": "taskId", "KeyType": "HASH"}
@@ -85,6 +85,3 @@ class BaseTestSetup(unittest.TestCase):
             BillingMode="PAY_PER_REQUEST"
         )
         self.table.meta.client.get_waiter('table_exists').wait(TableName = os.environ["TASKS_TABLE_NAME"])
-
-        # Sample data
-        # TODO: Add sample tasks for testing

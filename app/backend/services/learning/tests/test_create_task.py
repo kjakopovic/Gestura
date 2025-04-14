@@ -281,6 +281,7 @@ class TestCreateTask(BaseTestSetup):
         self.resource_patcher.stop()
         super().tearDown()
 
+
 if __name__ == "__main__":
     try:
         unittest.main()
