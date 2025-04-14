@@ -34,7 +34,7 @@ setup_paths()
 from base_test_setup import BaseTestSetup
 from moto import mock_aws
 from createTask.app import lambda_handler
-from auth import get_expiration_time, generate_jwt_token
+from auth import generate_jwt_token
 
 
 @mock_aws
@@ -48,11 +48,6 @@ class TestCreateTask(BaseTestSetup):
             "table_name": os.environ["TASKS_TABLE_NAME"]
         })
         self.resource_patcher.start()
-
-        # TODO: Remove this later
-        # Add patcher for middleware to skip authorization
-        self.auth_patcher = patch('createTask.app.middleware', lambda f: f)
-        self.auth_patcher.start()
 
 
     def test_when_user_not_authorized(self):
@@ -284,7 +279,6 @@ class TestCreateTask(BaseTestSetup):
 
     def tearDown(self):
         self.resource_patcher.stop()
-        self.auth_patcher.stop()
         super().tearDown()
 
 if __name__ == "__main__":
