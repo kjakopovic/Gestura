@@ -141,7 +141,7 @@ Resources:
         GetListOfTasksEndpoint:
           Type: Api
           Properties:
-            Path: /tasks/create
+            Path: /tasks
             Method: POST
             RestApiId: !Ref LearningApi
 
