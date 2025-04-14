@@ -53,7 +53,7 @@ def get_list_of_tasks(dynamodb, section):
 
     if section == 10:
         selected_tasks.append(random.choice(tasks))
-    if section == 20:
+    elif section == 20:
         tasks = get_tasks_for_section(dynamodb, 10)
         prev_section_tasks = chose_tasks(tasks, 2, 2, 1)
         selected_tasks.extend(prev_section_tasks)
