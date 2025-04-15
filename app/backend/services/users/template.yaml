@@ -75,8 +75,7 @@ Resources:
           Properties:
             Path: /login
             Method: POST
-            RestApiId: !ImportValue
-              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
 
   RegisterFunction:
     Type: AWS::Serverless::Function
@@ -109,8 +108,7 @@ Resources:
           Properties:
             Path: /register
             Method: POST
-            RestApiId: !ImportValue
-              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
 
   ForgotPasswordRequestFunction:
     Type: AWS::Serverless::Function
@@ -145,8 +143,7 @@ Resources:
           Properties:
             Path: /forgot-password/request
             Method: POST
-            RestApiId: !ImportValue
-              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
 
   ValidateResetCodeFunction:
     Type: AWS::Serverless::Function
@@ -178,8 +175,7 @@ Resources:
           Properties:
             Path: /forgot-password/validate
             Method: POST
-            RestApiId: !ImportValue
-              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
 
   ForgotResetPasswordFunction:
     Type: AWS::Serverless::Function
@@ -211,8 +207,7 @@ Resources:
           Properties:
             Path: /forgot-password/reset
             Method: POST
-            RestApiId: !ImportValue
-              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
 
   ThirdPartyLoginRequestFunction:
     Type: AWS::Serverless::Function
@@ -243,8 +238,7 @@ Resources:
           Properties:
             Path: /login/third-party
             Method: GET
-            RestApiId: !ImportValue
-              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
 
   ThirdPartyLoginValidateFunction:
     Type: AWS::Serverless::Function
@@ -281,5 +275,4 @@ Resources:
           Properties:
             Path: /login/third-party/confirm
             Method: GET
-            RestApiId: !ImportValue
-              Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
