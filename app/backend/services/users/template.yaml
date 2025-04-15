@@ -284,3 +284,8 @@ Resources:
             Path: /login/third-party/confirm
             Method: GET
             RestApiId: !Ref UsersApi
+
+Outputs:
+  UsersApiUrl:
+    Description: "API Gateway endpoint URL for Users microservice apis"
+    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"

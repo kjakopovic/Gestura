@@ -101,3 +101,8 @@ Resources:
             Path: /tasks
             Method: POST
             RestApiId: !Ref LearningApi
+
+Outputs:
+  LearningApiUrl:
+    Description: "API Gateway endpoint URL for Learning microservice apis"
+    Value: !Sub "https://${LearningApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"
