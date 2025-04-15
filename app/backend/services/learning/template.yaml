@@ -27,6 +27,7 @@ Globals:
     MemorySize: 512
 
 Resources:
+<<<<<<< HEAD
   LearningApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -35,26 +36,9 @@ Resources:
       Auth:
         ApiKeyRequired: false
 
+=======
+>>>>>>> 91c8abdba811ccb2b21d4631f06e22c52d2252e8
   # Lambdas
-  HealthCheckFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: healthcheck/
-      Handler: app.lambda_handler
-      Runtime: python3.12
-      Layers:
-        - !ImportValue
-          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
-      Architectures:
-        - x86_64
-      Events:
-        HealthCheckEndpoint:
-          Type: Api
-          Properties:
-            Path: /
-            Method: GET
-            RestApiId: !Ref LearningApi
-
   GetListOfTasksFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -86,7 +70,8 @@ Resources:
           Properties:
             Path: /tasks
             Method: GET
-            RestApiId: !Ref LearningApi
+            RestApiId: !ImportValue
+              Fn::Sub: "${LayerStackName}-${StageName}-LearningApi"
 
   CreateTaskFunction:
     Type: AWS::Serverless::Function
@@ -119,9 +104,5 @@ Resources:
           Properties:
             Path: /tasks
             Method: POST
-            RestApiId: !Ref LearningApi
-
-Outputs:
-  LearningApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${LearningApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+            RestApiId: !ImportValue
+              Fn::Sub: "${LayerStackName}-${StageName}-LearningApi"

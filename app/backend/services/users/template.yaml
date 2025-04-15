@@ -52,25 +52,6 @@ Resources:
         ApiKeyRequired: false
 
   # Lambdas
-  HealthCheckFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: healthcheck/
-      Handler: app.lambda_handler
-      Runtime: python3.12
-      Layers:
-        - !ImportValue
-          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
-      Architectures:
-        - x86_64
-      Events:
-        HealthCheckEndpoint:
-          Type: Api
-          Properties:
-            Path: /
-            Method: GET
-            RestApiId: !Ref UsersApi
-
   LoginFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -102,7 +83,7 @@ Resources:
           Properties:
             Path: /login
             Method: POST
-            RestApiId: !Ref UsersApi
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
 
   RegisterFunction:
     Type: AWS::Serverless::Function
@@ -135,7 +116,7 @@ Resources:
           Properties:
             Path: /register
             Method: POST
-            RestApiId: !Ref UsersApi
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
 
   ForgotPasswordRequestFunction:
     Type: AWS::Serverless::Function
@@ -170,7 +151,7 @@ Resources:
           Properties:
             Path: /forgot-password/request
             Method: POST
-            RestApiId: !Ref UsersApi
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
 
   ValidateResetCodeFunction:
     Type: AWS::Serverless::Function
@@ -202,7 +183,7 @@ Resources:
           Properties:
             Path: /forgot-password/validate
             Method: POST
-            RestApiId: !Ref UsersApi
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
 
   ForgotResetPasswordFunction:
     Type: AWS::Serverless::Function
@@ -234,7 +215,7 @@ Resources:
           Properties:
             Path: /forgot-password/reset
             Method: POST
-            RestApiId: !Ref UsersApi
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
 
   ThirdPartyLoginRequestFunction:
     Type: AWS::Serverless::Function
@@ -265,7 +246,7 @@ Resources:
           Properties:
             Path: /login/third-party
             Method: GET
-            RestApiId: !Ref UsersApi
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
 
   ThirdPartyLoginValidateFunction:
     Type: AWS::Serverless::Function
@@ -302,9 +283,4 @@ Resources:
           Properties:
             Path: /login/third-party/confirm
             Method: GET
-            RestApiId: !Ref UsersApi
-
-Outputs:
-  UsersApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
