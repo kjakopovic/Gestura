@@ -28,26 +28,6 @@ Globals:
 
 Resources:
   # Lambdas
-  HealthCheckFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: healthcheck/
-      Handler: app.lambda_handler
-      Runtime: python3.12
-      Layers:
-        - !ImportValue
-          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
-      Architectures:
-        - x86_64
-      Events:
-        HealthCheckEndpoint:
-          Type: Api
-          Properties:
-            Path: /
-            Method: GET
-            RestApiId: !ImportValue
-              Fn::Sub: "${LayerStackName}-${StageName}-LearningApi"
-
   GetListOfTasksFunction:
     Type: AWS::Serverless::Function
     Properties:

@@ -87,6 +87,43 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
+  # Healthcheck
+  LearningHealthCheckFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: healthchecks/learning/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !Ref CommonLayer
+      Architectures:
+        - x86_64
+      Events:
+        LearningHealthCheckEndpoint:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId: !Ref LearningApi
+
+  UsersHealthCheckFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: healthchecks/users/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !Ref CommonLayer
+      Architectures:
+        - x86_64
+      Events:
+        UsersHealthCheckEndpoint:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId: !Ref UsersApi
+
 Outputs:
   CommonLayerArn:
     Description: "ARN of the Layer with all the common code"
