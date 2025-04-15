@@ -27,7 +27,6 @@ Globals:
     MemorySize: 512
 
 Resources:
-<<<<<<< HEAD
   LearningApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -36,8 +35,6 @@ Resources:
       Auth:
         ApiKeyRequired: false
 
-=======
->>>>>>> 91c8abdba811ccb2b21d4631f06e22c52d2252e8
   # Lambdas
   GetListOfTasksFunction:
     Type: AWS::Serverless::Function
@@ -70,8 +67,7 @@ Resources:
           Properties:
             Path: /tasks
             Method: GET
-            RestApiId: !ImportValue
-              Fn::Sub: "${LayerStackName}-${StageName}-LearningApi"
+            RestApiId: !Ref LearningApi
 
   CreateTaskFunction:
     Type: AWS::Serverless::Function
@@ -104,5 +100,4 @@ Resources:
           Properties:
             Path: /tasks
             Method: POST
-            RestApiId: !ImportValue
-              Fn::Sub: "${LayerStackName}-${StageName}-LearningApi"
+            RestApiId: !Ref LearningApi

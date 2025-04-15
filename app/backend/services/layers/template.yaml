@@ -86,13 +86,3 @@ Outputs:
     Value: !Ref TasksTable
     Export:
       Name: !Sub "${AWS::StackName}-TasksTable"
-  UsersApi:
-    Description: "API Gateway endpoint URL for Users API"
-    Value: !Ref UsersApi
-    Export:
-      Name: !Sub "${AWS::StackName}-UsersApi"
-  LearningApi:
-    Description: "API Gateway endpoint URL for Learning API"
-    Value: !Ref LearningApi
-    Export:
-      Name: !Sub "${AWS::StackName}-LearningApi"

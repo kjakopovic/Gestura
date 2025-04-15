@@ -83,7 +83,7 @@ Resources:
           Properties:
             Path: /login
             Method: POST
-            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Ref UsersApi
 
   RegisterFunction:
     Type: AWS::Serverless::Function
@@ -116,7 +116,7 @@ Resources:
           Properties:
             Path: /register
             Method: POST
-            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Ref UsersApi
 
   ForgotPasswordRequestFunction:
     Type: AWS::Serverless::Function
@@ -151,7 +151,7 @@ Resources:
           Properties:
             Path: /forgot-password/request
             Method: POST
-            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Ref UsersApi
 
   ValidateResetCodeFunction:
     Type: AWS::Serverless::Function
@@ -183,7 +183,7 @@ Resources:
           Properties:
             Path: /forgot-password/validate
             Method: POST
-            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Ref UsersApi
 
   ForgotResetPasswordFunction:
     Type: AWS::Serverless::Function
@@ -215,7 +215,7 @@ Resources:
           Properties:
             Path: /forgot-password/reset
             Method: POST
-            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Ref UsersApi
 
   ThirdPartyLoginRequestFunction:
     Type: AWS::Serverless::Function
@@ -246,7 +246,7 @@ Resources:
           Properties:
             Path: /login/third-party
             Method: GET
-            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Ref UsersApi
 
   ThirdPartyLoginValidateFunction:
     Type: AWS::Serverless::Function
@@ -283,4 +283,4 @@ Resources:
           Properties:
             Path: /login/third-party/confirm
             Method: GET
-            RestApiId: !Sub "${LayerStackName}-${StageName}-UsersApi"
+            RestApiId: !Ref UsersApi
