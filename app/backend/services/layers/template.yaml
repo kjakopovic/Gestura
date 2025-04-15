@@ -1,4 +1,11 @@
 AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  StageName:
+    Type: String
+    Description: Stage of app deployment (develop, prod)
+    Default: prod
 
 Resources:
   CommonLayer:
@@ -10,9 +17,82 @@ Resources:
     Metadata:
       BuildMethod: python3.12
 
+  # Tables
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "users-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+        - AttributeName: username
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: username-index
+          KeySchema:
+            - AttributeName: username
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  TasksTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "tasks-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: taskId
+          AttributeType: S
+        - AttributeName: section
+          AttributeType: N
+      KeySchema:
+        - AttributeName: taskId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: section-index
+          KeySchema:
+            - AttributeName: section
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
 Outputs:
   CommonLayerArn:
     Description: "ARN of the Layer with all the common code"
     Value: !Ref CommonLayer
     Export:
       Name: !Sub "${AWS::StackName}-CommonLayerArn"
+  UsersTable:
+    Description: "DynamoDB table for users"
+    Value: !Ref UsersTable
+    Export:
+      Name: !Sub "${AWS::StackName}-UsersTable"
+  TasksTable:
+    Description: "DynamoDB table for tasks"
+    Value: !Ref TasksTable
+    Export:
+      Name: !Sub "${AWS::StackName}-TasksTable"
+  UsersApi:
+    Description: "API Gateway endpoint URL for Users API"
+    Value: !Ref UsersApi
+    Export:
+      Name: !Sub "${AWS::StackName}-UsersApi"
+  LearningApi:
+    Description: "API Gateway endpoint URL for Learning API"
+    Value: !Ref LearningApi
+    Export:
+      Name: !Sub "${AWS::StackName}-LearningApi"
