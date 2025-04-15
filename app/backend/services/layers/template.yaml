@@ -150,3 +150,9 @@ Outputs:
     Value: !Ref LearningApi
     Export:
       Name: !Sub "${AWS::StackName}-LearningApi"
+  UsersApiUrl:
+    Description: "API Gateway endpoint URL for users microservice apis"
+    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+  LearningApiUrl:
+    Description: "API Gateway endpoint URL for learning microservice apis"
+    Value: !Sub "https://${LearningApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"

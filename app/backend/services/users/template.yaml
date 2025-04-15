@@ -283,8 +283,3 @@ Resources:
             Method: GET
             RestApiId: !ImportValue
               Fn::Sub: "${LayerStackName}-${StageName}-UsersApi"
-
-Outputs:
-  UsersApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
