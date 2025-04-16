@@ -43,7 +43,7 @@ def lambda_handler(event, context):
         200,
         {
             "message": "User info fetched successfully",
-            "info": user
+            "data": user
         }
     )
 

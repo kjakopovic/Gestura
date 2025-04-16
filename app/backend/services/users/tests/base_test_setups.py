@@ -81,8 +81,6 @@ class BaseTestSetup(unittest.TestCase):
 
         self.sample_user = {
             "email": "test@mail.com",
-            "first_name": "John",
-            "last_name": "Doe",
             "username": "TestUser",
             "password": bcrypt.hashpw(self.sample_user_pass.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
         }
