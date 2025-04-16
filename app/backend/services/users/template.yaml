@@ -245,7 +245,7 @@ Resources:
         ForgotPasswordRequestEndpoint:
           Type: Api
           Properties:
-            Path: /{email}
+            Path: /info
             Method: GET
             RestApiId: !Ref UsersApi
 

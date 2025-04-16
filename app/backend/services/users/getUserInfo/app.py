@@ -1,39 +1,33 @@
 import logging
 
-from validation_schema import schema
-from dataclasses import dataclass
-from aws_lambda_powertools.utilities.validation import validate
-from common import build_response, ValidationError
+from common import build_response
 from middleware import middleware
 from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
+from auth import get_email_from_jwt_token
 
 logger = logging.getLogger("GetUserInfo")
 logger.setLevel(logging.DEBUG)
-
-
-@dataclass
-class Request:
-    email: str
 
 
 @middleware
 def lambda_handler(event, context):
     logger.debug(f"Received event {event}")
 
-    path_params = event.get("pathParameters", {})
-    try:
-        logger.debug(f"Validating path params: {path_params}")
+    jwt_token = event.get('headers').get('x-access-token')
+    email = get_email_from_jwt_token(jwt_token)
 
-        validate(event=path_params, schema=schema)
-    except Exception as e:
-        logger.error(f"Validation error: {str(e)}")
-
-        raise ValidationError(str(e))
+    if not email:
+        logger.error(f"Invalid email in jwt token {email}")
+        return build_response(
+            400,
+            {
+                'message': 'Invalid email in jwt token'
+            }
+        )
 
     global _LAMBDA_USERS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
 
-    email = path_params.get("email")
     user = get_user_by_email(dynamodb, email)
 
     if not user:
