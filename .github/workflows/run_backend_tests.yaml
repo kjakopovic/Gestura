@@ -57,4 +57,4 @@ jobs:
       - name: Run Tests
         uses: ./.github/composite/run_backend_tests
         with:
-          service_path: ${{ env.USERS_SERVICE_PATH }}
+          service_path: ${{ env.LEARNING_SERVICE_PATH }}
