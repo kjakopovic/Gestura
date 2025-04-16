@@ -103,7 +103,6 @@ class TestGetUserInfo(BaseTestSetup):
 
         self.assertEqual(response['statusCode'], 200)
         self.assertIn('message', body)
-        print(response['body'])
 
 
     def tearDown(self):
