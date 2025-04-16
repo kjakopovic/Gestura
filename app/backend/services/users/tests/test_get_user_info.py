@@ -64,50 +64,6 @@ class TestGetUserInfo(BaseTestSetup):
         self.assertEqual(body['message'], "Invalid token, please login again")
 
 
-    def test_validation_schema(self):
-        """
-        Test response when validation schema is not satisfied.
-        """
-        jwt_token = generate_jwt_token(self.sample_user["email"])
-
-        test_cases = [
-            {
-                "request_path": {},
-                "expected_status_code": 500,
-            },
-            {
-                "request_path": {
-                    "email": "invalid_mail"
-                },
-                "expected_status_code": 500,
-            },
-            {
-                "request_path": {
-                    "email": "valid@mail.com",
-                    "extra_field": "extra_value"
-                },
-                "expected_status_code": 500
-            }
-        ]
-
-        for case in test_cases:
-            with self.subTest(request_path=case["request_path"],
-                              expected_status_code=case["expected_status_code"]):
-                event = {
-                    'headers': {
-                        'Authorization': jwt_token
-                    },
-                    "pathParameters": case["request_path"]
-                }
-
-                response = lambda_handler(event, {})
-                body = json.loads(response['body'])
-
-                self.assertEqual(response['statusCode'], case["expected_status_code"])
-                self.assertIn('message', body)
-                self.assertEqual(body['message'], 'Internal server error')
-
-
     def test_user_not_found(self):
         """
         Test response when user is not found.
@@ -117,9 +73,6 @@ class TestGetUserInfo(BaseTestSetup):
         event = {
             'headers': {
                 'Authorization': jwt_token
-            },
-            'pathParameters': {
-                "email": "random@mail.com"
             }
         }
 
@@ -142,9 +95,6 @@ class TestGetUserInfo(BaseTestSetup):
         event = {
             'headers': {
                 'Authorization': jwt_token
-            },
-            'pathParameters': {
-                "email": email
             }
         }
 
@@ -154,3 +104,15 @@ class TestGetUserInfo(BaseTestSetup):
         self.assertEqual(response['statusCode'], 200)
         self.assertIn('message', body)
         print(response['body'])
+
+
+    def tearDown(self):
+        self.resource_patcher.stop()
+        super().tearDown()
+
+
+if __name__ == "__main__":
+    try:
+        unittest.main()
+    finally:
+        sys.path = original_path
