@@ -24,7 +24,7 @@ class Request:
     possibleAnswers: List[str]
     correctAnswerIndex: int
 
-# TODO: Check how will it be for RBAC
+
 @middleware
 def lambda_handler(event, context):
     logger.debug(f"Received event: {event}")
@@ -51,7 +51,7 @@ def lambda_handler(event, context):
     logger.info(f"Saving a task into database: {request}")
     task_id = str(uuid.uuid4())
 
-    new_task ={
+    new_task = {
         "taskId": task_id,
         "section": request.section,
         "sectionName": request.sectionName,
@@ -71,5 +71,5 @@ def lambda_handler(event, context):
         200,
         {
             "message": "Task created successfully",
-        }
+        },
     )

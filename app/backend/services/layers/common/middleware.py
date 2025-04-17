@@ -42,11 +42,10 @@ def middleware(handler, event, context):
     try:
         logger.debug(f"Authorization header: {authorization}")
 
-        if authorization:
-            event["headers"]["x-access-token"] = access_token
+        event["headers"]["x-access-token"] = access_token
 
-            event["headers"].pop("Authorization", None)
-            event["headers"].pop("authorization", None)
+        event["headers"].pop("Authorization", None)
+        event["headers"].pop("authorization", None)
 
         return handler(event, context)
     except TypeError as e:
