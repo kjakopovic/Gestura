@@ -15,7 +15,7 @@ Parameters:
   JwtSecretName:
     Type: String
     Description: Name of the secret in Secrets Manager that contains the JWT secret
-    Default: python-lambda-app/prod/jwt-secret
+    Default: auth
   ThirdPartyClientsSecretName:
     Type: String
     Description: Name of the secret in Secrets Manager that contains the third party clients secrets
@@ -246,6 +246,7 @@ Resources:
         Variables:
           USERS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
         - !ImportValue

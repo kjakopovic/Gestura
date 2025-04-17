@@ -15,7 +15,7 @@ Parameters:
   JwtSecretName:
     Type: String
     Description: Name of the secret in Secrets Manager that contains the JWT secret
-    Default: python-lambda-app/prod/jwt-secret
+    Default: auth
   SecretsRegionName:
     Type: String
     Description: Region name where the secrets are stored
