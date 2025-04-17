@@ -15,7 +15,7 @@ Parameters:
   JwtSecretName:
     Type: String
     Description: Name of the secret in Secrets Manager that contains the JWT secret
-    Default: python-lambda-app/prod/jwt-secret
+    Default: auth
   ThirdPartyClientsSecretName:
     Type: String
     Description: Name of the secret in Secrets Manager that contains the third party clients secrets
@@ -51,34 +51,8 @@ Resources:
       Auth:
         ApiKeyRequired: false
 
-  UsersTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub "users-${StageName}"
-      AttributeDefinitions:
-        - AttributeName: email
-          AttributeType: S
-        - AttributeName: username
-          AttributeType: S
-      KeySchema:
-        - AttributeName: email
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: username-index
-          KeySchema:
-            - AttributeName: username
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 5
-            WriteCapacityUnits: 5
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
-
   # Lambdas
-  HealthCheckFunction:
+  HealthcheckFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: healthcheck/
@@ -90,7 +64,7 @@ Resources:
       Architectures:
         - x86_64
       Events:
-        HealthCheckEndpoint:
+        HealthcheckEndpoint:
           Type: Api
           Properties:
             Path: /
@@ -105,7 +79,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
@@ -137,7 +112,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
@@ -169,7 +145,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           SECRETS_REGION_NAME: !Ref SecretsRegionName
           SOURCE_EMAIL: !Ref SourceEmail
       Layers:
@@ -203,7 +180,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
         - !ImportValue
@@ -234,7 +212,8 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
         - !ImportValue
@@ -255,6 +234,39 @@ Resources:
           Properties:
             Path: /forgot-password/reset
             Method: POST
+            RestApiId: !Ref UsersApi
+
+  GetUserInfoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: getUserInfo/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !ImportValue
+          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        GetUserInfoEndpoint:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: GET
             RestApiId: !Ref UsersApi
 
   ThirdPartyLoginRequestFunction:
@@ -299,7 +311,8 @@ Resources:
           Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
       Environment:
         Variables:
-          USERS_TABLE_NAME: !Ref UsersTable
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           THIRD_PARTY_CLIENTS_SECRET_NAME: !Ref ThirdPartyClientsSecretName
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
@@ -325,6 +338,6 @@ Resources:
             RestApiId: !Ref UsersApi
 
 Outputs:
-  UsersApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+  UsersApiUrl:
+    Description: "API Gateway endpoint URL for Users microservice apis"
+    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"

@@ -3,6 +3,7 @@ import { useFonts } from "expo-font";
 import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import "./globals.css";
+import { StatusBar } from "expo-status-bar";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -26,9 +27,12 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="(root)" options={{ headerShown: false }} />
-    </Stack>
+    <>
+      <StatusBar style="light" />
+      <Stack>
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(root)" options={{ headerShown: false }} />
+      </Stack>
+    </>
   );
 }
