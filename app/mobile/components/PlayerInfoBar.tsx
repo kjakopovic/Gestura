@@ -2,6 +2,7 @@ import { View, Text, Image } from "react-native";
 import React from "react";
 
 import * as icons from "@/constants/icons";
+import LineProgressIndicator from "./progress_indicators/LineProgressIndicator";
 
 const PlayerInfoBar = () => {
   const progress = 50; // Progress state (value between 0 and 100)
@@ -20,12 +21,7 @@ const PlayerInfoBar = () => {
         <Text className="text-secondary text-2xl font-interExtraBold mb-1">
           23
         </Text>
-        <View className="h-4 w-full bg-grayscale-500 rounded-full">
-          <View
-            className="h-full bg-secondary rounded-full"
-            style={{ width: `${progress}%` }}
-          ></View>
-        </View>
+        <LineProgressIndicator style="xp" progress={progress} />
       </View>
 
       <View className="flex flex-row items-center mb-5">
