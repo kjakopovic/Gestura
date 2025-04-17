@@ -1,19 +1,18 @@
-import { Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 
 type CustomButtonProps = {
   onPress: () => void;
   text: string;
   style?: string;
-  disabled?: boolean;
+  marginTop?: number;
 };
 
 const CustomButton = ({
   onPress,
   text,
   style,
-  disabled,
-  ...rest
+  marginTop,
 }: CustomButtonProps) => {
   return (
     <TouchableOpacity
@@ -23,12 +22,10 @@ const CustomButton = ({
           : style === "success"
           ? "border-success"
           : "border-error"
-      } bg-grayscale-700 rounded-2xl mt-16 ${
-        disabled ? "opacity-50" : "opacity-100"
+      } bg-grayscale-700 rounded-2xl ${
+        marginTop ? `mt-${marginTop}` : "mt-16"
       }`}
       onPress={onPress}
-      disabled={disabled}
-      {...rest}
     >
       <Text
         className={`${

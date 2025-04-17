@@ -25,9 +25,6 @@ env:
   USERS_SERVICE_PATH: app/backend/services/users
   USERS_SERVICE_NAME: users
 
-  LEARNING_SERVICE_PATH: app/backend/services/learning
-  LEARNING_SERVICE_NAME: learning
-
   # ECS setup for the docs service
   PROD_DOCS_ECR_REPOSITORY: hands-of-hope-prod/docs
   PROD_DOCS_ECS_SERVICE: HandsOfHope-Docs-Prod
@@ -142,60 +139,6 @@ jobs:
         with:
           service_path: ${{ env.USERS_SERVICE_PATH }}
           service_name: ${{ env.USERS_SERVICE_NAME }}
-          layer_stack_name: ${{ env.LAYER_SERVICE_NAME }}
-          stage_name: "prod"
-          continue-on-error: true
-
-  deploy_learning_develop:
-    if: github.ref == 'refs/heads/develop'
-    runs-on: ubuntu-latest
-    needs:
-      - deploy_layer_develop
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: false
-
-      - name: Run Dependencies Setup
-        uses: ./.github/composite/common_build_setup
-        with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: ${{ env.AWS_REGION }}
-
-      - name: Deploy Service
-        uses: ./.github/composite/deploy_lambda_service
-        with:
-          service_path: ${{ env.LEARNING_SERVICE_PATH }}
-          service_name: ${{ env.LEARNING_SERVICE_NAME }}
-          layer_stack_name: ${{ env.LAYER_SERVICE_NAME }}
-          stage_name: "develop"
-          continue-on-error: true
-
-  deploy_learning_prod:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    needs:
-      - deploy_layer_prod
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: false
-
-      - name: Run Dependencies Setup
-        uses: ./.github/composite/common_build_setup
-        with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: ${{ env.AWS_REGION }}
-
-      - name: Deploy Service
-        uses: ./.github/composite/deploy_lambda_service
-        with:
-          service_path: ${{ env.LEARNING_SERVICE_PATH }}
-          service_name: ${{ env.LEARNING_SERVICE_NAME }}
           layer_stack_name: ${{ env.LAYER_SERVICE_NAME }}
           stage_name: "prod"
           continue-on-error: true
