@@ -1,6 +1,5 @@
 import { View, Image, TextInput } from "react-native";
 import React from "react";
-
 import { CustomInputProps } from "@/types/types";
 
 const CustomInput = ({
@@ -22,8 +21,6 @@ const CustomInput = ({
       />
       <TextInput
         autoCapitalize="none"
-        autoCorrect={false}
-        autoComplete="off"
         placeholder={placeholder}
         placeholderTextColor={"#5F5F5F"}
         value={value}

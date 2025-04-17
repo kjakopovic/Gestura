@@ -1,5 +1,5 @@
-import { View, Image, Text } from "react-native";
-import React from "react";
+import { View, Image, Text, ActivityIndicator } from "react-native";
+import React, { useEffect } from "react";
 import { router } from "expo-router";
 import { CameraCapturedPicture } from "expo-camera";
 
@@ -30,7 +30,12 @@ const Task = (task: Task) => {
   };
 
   const correctAnswer = task.possibleAnswers[task.correctAnswerIndex];
-  const correctImage = hands.letter_c; // This would need to be determined dynamically in a real app
+  const correctImage =
+    task.version === 2
+      ? { uri: task.possibleAnswers[task.correctAnswerIndex] }
+      : task.version === 3
+      ? hands.letter_c // This would need to be determined dynamically in a real app
+      : null;
 
   const [selectedAnswer, setSelectedAnswer] = React.useState<string | null>(
     null
@@ -42,9 +47,13 @@ const Task = (task: Task) => {
   const [showCamera, setShowCamera] = React.useState(true);
 
   const showResults = () => {
-    const resultinfo =
-      task.version === 3 ? true : selectedAnswer === correctAnswer;
-    setIsSuccess(resultinfo);
+    if (task.version === 3) {
+      const success = Math.random() > 0.5;
+      setIsSuccess(success);
+    } else {
+      setIsSuccess(selectedAnswer === correctAnswer);
+    }
+
     setPopupVisible(true);
   };
 
@@ -60,8 +69,7 @@ const Task = (task: Task) => {
   const handleSavePhoto = (photo: CameraCapturedPicture) => {
     console.log("Photo saved:", photo.uri);
     setCapturedPhoto(photo);
-    setShowCamera(false);
-    // Here you would typically send the photo to an API for analysis
+    // Don't close the camera view here - we want to keep showing the photo in CameraComponent
   };
 
   const handleCloseCamera = () => {
@@ -70,6 +78,14 @@ const Task = (task: Task) => {
 
   const goToHome = () => {
     router.push("/(root)/(tabs)/Home");
+  };
+
+  const isButtonDisabled = () => {
+    if (task.version === 3) {
+      return capturedPhoto === null;
+    } else {
+      return selectedAnswer === null;
+    }
   };
 
   const buttonStyle = selectedAnswer === correctAnswer ? "success" : "fail";
@@ -95,7 +111,12 @@ const Task = (task: Task) => {
           />
         ))}
       </View>
-      <CustomButton onPress={handleContinue} text="CONTINUE" style="base" />
+      <CustomButton
+        onPress={handleContinue}
+        text="CONTINUE"
+        style="base"
+        disabled={isButtonDisabled()}
+      />
 
       <ResultPopup
         visible={popupVisible}
@@ -128,7 +149,12 @@ const Task = (task: Task) => {
           ))}
         </View>
       </View>
-      <CustomButton onPress={handleContinue} text="CONTINUE" style="base" />
+      <CustomButton
+        onPress={handleContinue}
+        text="CONTINUE"
+        style="base"
+        disabled={isButtonDisabled()}
+      />
 
       <ResultPopup
         visible={popupVisible}
@@ -148,16 +174,19 @@ const Task = (task: Task) => {
 
       <View className="w-full h-[1px] bg-grayscale-400 mb-8" />
 
+      {/* Always show CameraComponent, but it will internally display either the camera or the taken photo */}
       <CameraComponent
         onSavePhoto={handleSavePhoto}
         onCloseCamera={handleCloseCamera}
       />
+
       <View className="w-full items-center mt-5">
         <CustomButton
           marginTop={1}
           onPress={handleContinue}
           text="CONTINUE"
           style="base"
+          disabled={isButtonDisabled()}
         />
       </View>
 
@@ -166,7 +195,8 @@ const Task = (task: Task) => {
         isSuccess={isSuccess}
         correctImage={correctImage}
         onDismiss={() => setPopupVisible(false)}
-        buttonStyle={buttonStyle}
+        buttonStyle={isSuccess ? "success" : "error"}
+        taskVersion={task.version}
       />
     </View>
   ) : (
