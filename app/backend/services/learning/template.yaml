@@ -1,0 +1,151 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  This service contains all apis related to learning functionalities and tasks.
+
+Parameters:
+  StageName:
+    Type: String
+    Description: Stage of app deployment (develop, prod)
+    Default: prod
+  LayerStackName:
+    Type: String
+    Description: Name of the stack where the layer is deployed
+    Default: layers
+  JwtSecretName:
+    Type: String
+    Description: Name of the secret in Secrets Manager that contains the JWT secret
+    Default: python-lambda-app/prod/jwt-secret
+  SecretsRegionName:
+    Type: String
+    Description: Region name where the secrets are stored
+    Default: eu-central-1
+
+Globals:
+  Function:
+    Timeout: 60
+    MemorySize: 512
+
+Resources:
+  LearningApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub "LearningApi-${StageName}"
+      StageName: !Ref StageName
+      Auth:
+        ApiKeyRequired: false
+
+  TasksTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "tasks-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: taskId
+          AttributeType: S
+        - AttributeName: section
+          AttributeType: N
+      KeySchema:
+        - AttributeName: taskId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: section-index
+          KeySchema:
+            - AttributeName: section
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  # Lambdas
+  HealthCheckFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: healthcheck/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !ImportValue
+          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+      Architectures:
+        - x86_64
+      Events:
+        HealthCheckEndpoint:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId: !Ref LearningApi
+
+  GetListOfTasksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: getListOfTasks/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          TASKS_TABLE_NAME: !Ref TasksTable
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !ImportValue
+          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        GetListOfTasksEndpoint:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: GET
+            RestApiId: !Ref LearningApi
+
+  CreateTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: createTask/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          TASKS_TABLE_NAME: !Ref TasksTable
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !ImportValue
+          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        GetListOfTasksEndpoint:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: POST
+            RestApiId: !Ref LearningApi
+
+Outputs:
+  LearningApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${LearningApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"

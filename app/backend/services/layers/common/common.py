@@ -6,6 +6,12 @@ logger = logging.getLogger("common")
 logger.setLevel(logging.INFO)
 
 
+class ValidationError(Exception):
+    """An error that should be thrown when validation on the request fails."""
+    def __init__(self, message="Invalid request data"):
+        super().__init__(message)
+
+
 def build_response(status_code, body, headers=None):
     default_headers = {
         "Content-Type": "application/json",
