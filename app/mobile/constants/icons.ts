@@ -13,7 +13,10 @@ import chest from "@/assets/icons/chest.png";
 import shop from "@/assets/icons/shop.png";
 import coin from "@/assets/icons/coin.png";
 import experience_token from "@/assets/icons/experience_token.png";
-
+import heart from "@/assets/icons/heart.png";
+import star1 from "@/assets/icons/star1.png";
+import star2 from "@/assets/icons/star2.png";
+import starTrophy from "@/assets/icons/star-trophy.png";
 
 export {
   apple,
@@ -31,4 +34,8 @@ export {
   shop,
   coin,
   experience_token,
+  heart,
+  star1,
+  star2,
+  starTrophy,
 };

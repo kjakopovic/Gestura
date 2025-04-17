@@ -13,6 +13,7 @@
 
 # AI
 **/data/
+**/workspace/models/*
 
 # Logs
 **/logs
