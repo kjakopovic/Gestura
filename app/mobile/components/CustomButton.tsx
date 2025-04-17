@@ -6,6 +6,7 @@ type CustomButtonProps = {
   text: string;
   style?: string;
   marginTop?: number;
+  disabled?: boolean;
 };
 
 const CustomButton = ({
@@ -13,6 +14,7 @@ const CustomButton = ({
   text,
   style,
   marginTop,
+  disabled = false,
 }: CustomButtonProps) => {
   return (
     <TouchableOpacity
@@ -22,10 +24,13 @@ const CustomButton = ({
           : style === "success"
           ? "border-success"
           : "border-error"
+      } ${
+        disabled ? "opacity-50" : "opacity-100"
       } bg-grayscale-700 rounded-2xl ${
         marginTop ? `mt-${marginTop}` : "mt-16"
       }`}
       onPress={onPress}
+      disabled={disabled}
     >
       <Text
         className={`${

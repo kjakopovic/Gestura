@@ -1,11 +1,14 @@
 import { ScrollView, View } from "react-native";
 import { useState } from "react";
+import { useRouter } from "expo-router";
+
 import PlayerInfoBar from "@/components/PlayerInfoBar";
 import LevelMap from "@/components/levels/LevelMap";
 import { LevelData } from "@/types/levels";
 import * as icons from "@/constants/icons";
 
 const Home = () => {
+  const router = useRouter();
   // Levels data with their types and states
   const [levels, setLevels] = useState<LevelData[]>([
     {
@@ -68,6 +71,7 @@ const Home = () => {
 
   const handleLevelPress = (levelId: number) => {
     console.log(`Level ${levelId} pressed`);
+    router.push(`/level`);
     // Here you can navigate to the level or show a modal
   };
 
@@ -75,7 +79,7 @@ const Home = () => {
     <View className="bg-grayscale-800 flex-1">
       <PlayerInfoBar />
       <ScrollView
-        className="flex-1"
+        className="h-full w-full"
         contentContainerStyle={{
           paddingBottom: 100,
           paddingHorizontal: 20,
