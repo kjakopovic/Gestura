@@ -13,17 +13,13 @@ logger.setLevel(logging.DEBUG)
 def lambda_handler(event, context):
     logger.debug(f"Received event {event}")
 
-    jwt_token = event.get('headers').get('x-access-token')
+    jwt_token = event.get("headers").get("x-access-token")
+    print(f"JWT token: {jwt_token}")
     email = get_email_from_jwt_token(jwt_token)
 
     if not email:
         logger.error(f"Invalid email in jwt token {email}")
-        return build_response(
-            400,
-            {
-                'message': 'Invalid email in jwt token'
-            }
-        )
+        return build_response(400, {"message": "Invalid email in jwt token"})
 
     global _LAMBDA_USERS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
@@ -32,19 +28,10 @@ def lambda_handler(event, context):
 
     if not user:
         logger.debug(f"User with email {email} not found.")
-        return build_response(
-            404,
-            {
-                "message": "User not found."
-            }
-        )
+        return build_response(404, {"message": "User not found."})
 
     return build_response(
-        200,
-        {
-            "message": "User info fetched successfully",
-            "data": user
-        }
+        200, {"message": "User info fetched successfully", "data": user}
     )
 
 
