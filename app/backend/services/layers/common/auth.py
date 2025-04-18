@@ -3,6 +3,7 @@ import jwt
 from os import environ
 from datetime import datetime, timedelta, timezone
 from boto import get_secrets_from_aws_secrets_manager
+from common import parse_utc_isoformat
 
 logger = logging.getLogger("auth")
 logger.setLevel(logging.INFO)
@@ -78,12 +79,32 @@ def check_users_subscription(user, wanted_status: int) -> bool:
         logger.warning("User is not found")
         return False
 
-    if user.get("subscription") is None:
+    subscription = user.get("subscription")
+    if subscription is None:
         logger.warning("User subscription status is not found")
         return False
 
-    if user.get("subscription") < wanted_status:
-        logger.warning("User subscription status is not valid")
+    exp_str = user.get("subscription_expiration_date")
+    if not exp_str:
+        logger.warning("User subscription_expiration_date is missing")
         return False
 
-    return True
+    try:
+        exp_dt = parse_utc_isoformat(exp_str)
+    except Exception as e:
+        logger.error(f"Failed to parse subscription_expiration_date '{exp_str}': {e}")
+        return False
+
+    now = datetime.now(timezone.utc)
+
+    if subscription < wanted_status:
+        logger.info(
+            f"User subscription ({subscription}) is below required ({wanted_status})"
+        )
+        return False
+
+    if exp_dt < now:
+        logger.info(
+            f"Subscription expired at {exp_dt.isoformat()}, now is {now.isoformat()}"
+        )
+        return False
