@@ -28,7 +28,6 @@ def lambda_handler(event, context):
     # After that, check if user is present in the database
     # Only after that, validate the request
     jwt_token = event.get("headers").get("x-access-token")
-    # print(f"JWT token: {jwt_token}")
     email = get_email_from_jwt_token(jwt_token)
 
     if not email:
@@ -43,6 +42,7 @@ def lambda_handler(event, context):
         logger.debug(f"User with email {email} does not exist")
         return build_response(404, {"message": "User not found."})
 
+    logger.debug(f"User with email {email} exists, proceeding with update")
 
     body = event.get("body")
     if body is not None:
@@ -87,7 +87,7 @@ def update_user(dynamodb, email, settings):
             update_parts.append("username = :username")
             expression_attribute_values[":username"] = username
 
-    # TODO: Change this!!!
+    # Handle email update
     if "profile" in settings and settings["profile"].get("email"):
         new_email = settings["profile"].get("email")
         if new_email:
@@ -111,9 +111,10 @@ def update_user(dynamodb, email, settings):
             if isinstance(properties, dict):
                 if section not in current_settings:
                     current_settings[section] = {}
+
                 # Remove username from profile if it exists (since we handle it separately)
                 if section == "profile" and "username" in properties:
-                    # We're making a copy to avoid modifying the input directly
+                    # A copy is being made to avoid modifying the original dictionary
                     properties_copy = properties.copy()
                     properties_copy.pop("username")
                     current_settings[section].update(properties_copy)
@@ -123,6 +124,7 @@ def update_user(dynamodb, email, settings):
         update_parts.append("settings = :settings")
         expression_attribute_values[":settings"] = current_settings
 
+    # Handle update without email change
     if update_parts and not need_email_update:
         update_expression = "SET " + ", ".join(update_parts)
         logger.debug(f"Updating user {email} with settings {expression_attribute_values}")
@@ -143,6 +145,7 @@ def update_user(dynamodb, email, settings):
         new_user = user.copy()
         new_user["email"] = new_email
 
+        # Check if username needs to be updated
         if username:
             new_user["username"] = username
         if "settings" in expression_attribute_values:
