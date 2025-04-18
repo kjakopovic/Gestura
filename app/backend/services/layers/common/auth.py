@@ -67,6 +67,13 @@ def get_expiration_time(time: timedelta) -> int:
 
 
 def check_users_subscription(user, wanted_status: int) -> bool:
+    """
+    Check if the user has a valid subscription status.
+    :param user: User object to check the subscription status for.
+    :param wanted_status: The subscription status to check against (0 -> free, 1 -> premium, 2 -> live).
+    :return: True if the user has a valid subscription status, False otherwise.
+    """
+
     if user is None:
         logger.warning("User is not found")
         return False
