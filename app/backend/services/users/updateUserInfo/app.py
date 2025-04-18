@@ -32,7 +32,7 @@ def lambda_handler(event, context):
 
     if not email:
         logger.error(f"Invalid email in jwt token {email}")
-        return build_response(400, {"message": "Invalid email in jwt token"})
+        return build_response(401, {"message": "Invalid email in jwt token"})
 
     global _LAMBDA_USERS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
@@ -70,8 +70,6 @@ def update_user(dynamodb, email, settings):
 
     update_parts = []
     expression_attribute_values = {}
-    need_email_update = False
-    new_email = None
     username = None
 
     # Handle username update
@@ -87,21 +85,6 @@ def update_user(dynamodb, email, settings):
             update_parts.append("username = :username")
             expression_attribute_values[":username"] = username
 
-    # Handle email update
-    if "profile" in settings and settings["profile"].get("email"):
-        new_email = settings["profile"].get("email")
-        if new_email:
-            if new_email == email:
-                logger.debug(f"New email is same as old email {new_email}")
-                return build_response(400, {"message": "New email is same as old email"})
-
-            existing_user = get_user_by_email(dynamodb, new_email)
-            if existing_user and existing_user.get("email") != email:
-                logger.debug(f"Email {new_email} is already taken")
-                return build_response(400, {"message": "Email is already taken"})
-
-            need_email_update = True
-
     if settings:
         # Get current settings or initialize empty dict
         current_settings = user.get("settings", {})
@@ -112,7 +95,7 @@ def update_user(dynamodb, email, settings):
                 if section not in current_settings:
                     current_settings[section] = {}
 
-                # Remove username from profile if it exists (since we handle it separately)
+                # Remove username from profile if it exists, since it is handled separately
                 if section == "profile" and "username" in properties:
                     # A copy is being made to avoid modifying the original dictionary
                     properties_copy = properties.copy()
@@ -125,7 +108,7 @@ def update_user(dynamodb, email, settings):
         expression_attribute_values[":settings"] = current_settings
 
     # Handle update without email change
-    if update_parts and not need_email_update:
+    if update_parts:
         update_expression = "SET " + ", ".join(update_parts)
         logger.debug(f"Updating user {email} with settings {expression_attribute_values}")
 
@@ -136,29 +119,6 @@ def update_user(dynamodb, email, settings):
         )
 
         return build_response(200, {"message": "User updated successfully"})
-
-    # If email needs to be updated, we need to create a new item and delete the old one
-    # This is because DynamoDB does not allow updating the primary key
-    if need_email_update:
-        logger.info(f"Updating email for user {email} to {new_email}")
-
-        new_user = user.copy()
-        new_user["email"] = new_email
-
-        # Check if username needs to be updated
-        if username:
-            new_user["username"] = username
-        if "settings" in expression_attribute_values:
-            new_user["settings"] = expression_attribute_values[":settings"]
-
-        # Create the new record
-        dynamodb.table.put_item(Item=new_user)
-
-        # Delete the old record
-        dynamodb.table.delete_item(Key={"email": email})
-
-        logger.info(f"Email updated successfully from {email} to {new_email}")
-        return build_response(200, {"message": "User updated successfully", "new_email": new_email})
 
     # If no updates were made
     return build_response(200, {"message": "No changes were made"})
