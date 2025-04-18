@@ -299,7 +299,7 @@ Resources:
           Type: Api
           Properties:
             Path: /users/update
-            Method: POST
+            Method: PATCH
             RestApiId: !Ref UsersApi
 
   ThirdPartyLoginRequestFunction:
