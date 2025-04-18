@@ -109,15 +109,15 @@ class TestRegisterUser(BaseTestSetup):
                 "request_body": {"settings": {"languageSettings": {"language": 123}}},
                 "expected_validation_message": "data.settings.languageSettings.language must be string"
             },
-            # Invalid email format
-            {
-                "request_body": {"settings": {"profile": {"email": "not-an-email"}}},
-                "expected_validation_message": "data.settings.profile.email must be email"
-            },
             # Invalid phone format
             {
                 "request_body": {"settings": {"profile": {"phone": "abc"}}},
                 "expected_validation_message": "data.settings.profile.phone must match pattern"
+            },
+            # Invalid language enum value
+            {
+                "request_body": {"settings": {"languageSettings": {"language": "ru"}}},
+                "expected_validation_message": "data.settings.languageSettings.language must be one of ['en', 'es', 'fr', 'de']"
             },
             # Extra properties in nested objects
             {
@@ -190,42 +190,6 @@ class TestRegisterUser(BaseTestSetup):
         self.assertEqual(user.get("settings", {}).get("preferences", {}).get("soundEffects"), False)
 
 
-    def test_update_user_email(self):
-        """Test updating a user's email address."""
-        jwt_token = generate_jwt_token("test@mail.com")
-
-        update_data = {
-            "settings": {
-                "profile": {
-                    "email": "new_email@mail.com"
-                }
-            }
-        }
-
-        event = {
-            'headers': {
-                'Authorization': jwt_token
-            },
-            "body": json.dumps(update_data)
-        }
-
-        response = lambda_handler(event, {})
-        body = json.loads(response['body'])
-
-        self.assertEqual(response['statusCode'], 200)
-        self.assertIn("new_email", body)
-        self.assertEqual(body["new_email"], "new_email@mail.com")
-
-        # Old user should not exist
-        users_table = self.dynamodb.Table(os.environ["USERS_TABLE_NAME"])
-        old_result = users_table.get_item(Key={"email": "test@mail.com"})
-        self.assertNotIn("Item", old_result)
-
-        # New user should exist
-        new_result = users_table.get_item(Key={"email": "new_email@mail.com"})
-        self.assertIn("Item", new_result)
-
-
     def test_update_user_comprehensive_schema_valid(self):
         """
         Test changing multiple user properties according to the validation schema.
@@ -257,12 +221,11 @@ class TestRegisterUser(BaseTestSetup):
 
         jwt_token = generate_jwt_token("test1@mail.com")
 
-        # Create update data that strictly follows the validation schema
+        # Create update data without email change
         update_data = {
             "settings": {
                 "profile": {
                     "username": "updated_username",
-                    "email": "updated@mail.com",
                     "phone": "+9876543210"
                 },
                 "preferences": {
@@ -294,18 +257,12 @@ class TestRegisterUser(BaseTestSetup):
         self.assertEqual(response['statusCode'], 200)
         self.assertIn("message", body)
         self.assertIn("User updated successfully", body['message'])
-        self.assertIn("new_email", body)
-        self.assertEqual(body["new_email"], "updated@mail.com")
 
-        # Old user should not exist
-        old_result = users_table.get_item(Key={"email": "test1@mail.com"})
-        self.assertNotIn("Item", old_result)
+        # User should still exist at the same email
+        result = users_table.get_item(Key={"email": "test1@mail.com"})
+        self.assertIn("Item", result)
 
-        # New user should exist with all updated properties
-        new_result = users_table.get_item(Key={"email": "updated@mail.com"})
-        self.assertIn("Item", new_result)
-
-        user = new_result["Item"]
+        user = result["Item"]
         settings = user.get("settings", {})
 
         # Verify all updates were applied correctly according to schema

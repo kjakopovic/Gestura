@@ -25,7 +25,10 @@ schema = {
         "languageSettings": {
           "type": "object",
           "properties": {
-            "language": {"type": "string"},
+            "language": {
+              "type": "string",
+              "enum": ["en", "es", "fr", "de"]
+            },
           },
           "additionalProperties": False
         },
@@ -33,7 +36,6 @@ schema = {
           "type": "object",
           "properties": {
             "username": {"type": "string"},
-            "email": {"type": "string", "format": "email"},
             "phone": {"type": "string", "pattern": "^[0-9\\+\\-\\s\\(\\)]+$"},
           },
           "additionalProperties": False
