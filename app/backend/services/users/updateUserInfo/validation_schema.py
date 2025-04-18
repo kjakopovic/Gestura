@@ -30,18 +30,13 @@ schema = {
       "profile": {
         "type": "object",
         "properties": {
-          "name": {"type": "string"},
+          "username": {"type": "string"},
           "email": {"type": "string", "format": "email"},
           "phone": {"type": "string", "pattern": "^[0-9\\+\\-\\s\\(\\)]+$"},
         },
         "additionalProperties": False
       }
-    },
-    "email": {
-      "type": "string",
-      "format": "email"
-    },
+    }
   },
-  "required": ["email"],
   "additionalProperties": False
 }
