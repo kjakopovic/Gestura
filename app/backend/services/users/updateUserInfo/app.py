@@ -24,13 +24,25 @@ class Request:
 def lambda_handler(event, context):
     logger.debug(f"Received event {event}")
 
+    # Check if email is present in the event
+    # After that, check if user is present in the database
+    # Only after that, validate the request
     jwt_token = event.get("headers").get("x-access-token")
-    print(f"JWT token: {jwt_token}")
+    # print(f"JWT token: {jwt_token}")
     email = get_email_from_jwt_token(jwt_token)
 
     if not email:
         logger.error(f"Invalid email in jwt token {email}")
         return build_response(400, {"message": "Invalid email in jwt token"})
+
+    global _LAMBDA_USERS_TABLE_RESOURCE
+    dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
+    user = get_user_by_email(dynamodb, email)
+
+    if not user:
+        logger.debug(f"User with email {email} does not exist")
+        return build_response(404, {"message": "User not found."})
+
 
     body = event.get("body")
     if body is not None:
@@ -48,9 +60,6 @@ def lambda_handler(event, context):
     logger.info("Parsing request body")
     request = Request(**request_body)
 
-    global _LAMBDA_USERS_TABLE_RESOURCE
-    dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
-
     return update_user(dynamodb, email, request.settings)
 
 
@@ -59,19 +68,14 @@ def update_user(dynamodb, email, settings):
 
     user = get_user_by_email(dynamodb, email)
 
-    if not user:
-        logger.debug(f"User with email {email} does not exist")
-        return build_response(400, {"message": "User does not exist"})
+    update_parts = []
+    expression_attribute_values = {}
+    need_email_update = False
+    new_email = None
+    username = None
 
-    if settings["profile"].get("email"):
-        new_email = settings["profile"].get("email")
-        if new_email:
-            existing_user = get_user_by_email(dynamodb, new_email)
-            if existing_user and existing_user.get("email") != email:
-                logger.debug(f"Email {new_email} is already taken")
-                return build_response(400, {"message": "Email is already taken"})
-
-    if settings["profile"].get("username"):
+    # Handle username update
+    if "profile" in settings and settings["profile"].get("username"):
         username = settings["profile"].get("username")
         if username:
             existing_user = get_user_by_username(dynamodb, username)
@@ -79,41 +83,82 @@ def update_user(dynamodb, email, settings):
                 logger.debug(f"Username {username} is already taken")
                 return build_response(400, {"message": "Username is already taken"})
 
-    # Create update expression
-    update_expression = "SET "
-    expression_attribute_values = {}
-    expression_attribute_names = {}
+            # Add username to update expression at root level
+            update_parts.append("username = :username")
+            expression_attribute_values[":username"] = username
 
-    counter = 0
-    for section, properties in settings.items():
-        if isinstance(properties, dict):
-            for prop, value in properties.items():
-                counter += 1
-                name_placeholder = f"#n{counter}"
-                section_placeholder = f"#s{counter}"
-                value_placeholder = f":v{counter}"
+    # TODO: Change this!!!
+    if "profile" in settings and settings["profile"].get("email"):
+        new_email = settings["profile"].get("email")
+        if new_email:
+            if new_email == email:
+                logger.debug(f"New email is same as old email {new_email}")
+                return build_response(400, {"message": "New email is same as old email"})
 
-                expression_attribute_names[section_placeholder] = section
-                expression_attribute_names[name_placeholder] = prop
-                expression_attribute_values[value_placeholder] = value
+            existing_user = get_user_by_email(dynamodb, new_email)
+            if existing_user and existing_user.get("email") != email:
+                logger.debug(f"Email {new_email} is already taken")
+                return build_response(400, {"message": "Email is already taken"})
 
-                update_expression += f"{section_placeholder}.{name_placeholder} = {value_placeholder}, "
+            need_email_update = True
 
-    # Remove trailing comma and space
-    if update_expression.endswith(", "):
-        update_expression = update_expression[:-2]
+    if settings:
+        # Get current settings or initialize empty dict
+        current_settings = user.get("settings", {})
 
-    # Execute update if there are changes
-    if counter > 0:
-        logger.info(f"Updating user with expression: {update_expression}")
+        # Update current settings with new values
+        for section, properties in settings.items():
+            if isinstance(properties, dict):
+                if section not in current_settings:
+                    current_settings[section] = {}
+                # Remove username from profile if it exists (since we handle it separately)
+                if section == "profile" and "username" in properties:
+                    # We're making a copy to avoid modifying the input directly
+                    properties_copy = properties.copy()
+                    properties_copy.pop("username")
+                    current_settings[section].update(properties_copy)
+                else:
+                    current_settings[section].update(properties)
+
+        update_parts.append("settings = :settings")
+        expression_attribute_values[":settings"] = current_settings
+
+    if update_parts and not need_email_update:
+        update_expression = "SET " + ", ".join(update_parts)
+        logger.debug(f"Updating user {email} with settings {expression_attribute_values}")
+
         dynamodb.table.update_item(
             Key={"email": email},
             UpdateExpression=update_expression,
-            ExpressionAttributeNames=expression_attribute_names,
-            ExpressionAttributeValues=expression_attribute_values,
+            ExpressionAttributeValues=expression_attribute_values
         )
 
-    return build_response(200, {"message": "User updated successfully"})
+        return build_response(200, {"message": "User updated successfully"})
+
+    # If email needs to be updated, we need to create a new item and delete the old one
+    # This is because DynamoDB does not allow updating the primary key
+    if need_email_update:
+        logger.info(f"Updating email for user {email} to {new_email}")
+
+        new_user = user.copy()
+        new_user["email"] = new_email
+
+        if username:
+            new_user["username"] = username
+        if "settings" in expression_attribute_values:
+            new_user["settings"] = expression_attribute_values[":settings"]
+
+        # Create the new record
+        dynamodb.table.put_item(Item=new_user)
+
+        # Delete the old record
+        dynamodb.table.delete_item(Key={"email": email})
+
+        logger.info(f"Email updated successfully from {email} to {new_email}")
+        return build_response(200, {"message": "User updated successfully", "new_email": new_email})
+
+    # If no updates were made
+    return build_response(200, {"message": "No changes were made"})
 
 
 def get_user_by_email(dynamodb, email):
