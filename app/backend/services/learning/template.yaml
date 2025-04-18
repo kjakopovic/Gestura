@@ -15,7 +15,7 @@ Parameters:
   JwtSecretName:
     Type: String
     Description: Name of the secret in Secrets Manager that contains the JWT secret
-    Default: python-lambda-app/prod/jwt-secret
+    Default: auth
   SecretsRegionName:
     Type: String
     Description: Region name where the secrets are stored
@@ -36,6 +36,25 @@ Resources:
         ApiKeyRequired: false
 
   # Lambdas
+  HealthcheckFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: healthcheck/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !ImportValue
+          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+      Architectures:
+        - x86_64
+      Events:
+        HealthcheckEndpoint:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId: !Ref LearningApi
+
   GetListOfTasksFunction:
     Type: AWS::Serverless::Function
     Properties:

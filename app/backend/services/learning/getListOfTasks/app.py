@@ -1,12 +1,11 @@
 import logging
 import random
 import decimal
-import json
 
 from validation_schema import schema
 from dataclasses import dataclass
-from aws_lambda_powertools.utilities.validation import validate
-from common import build_response, ValidationError
+from aws_lambda_powertools.utilities.validation import SchemaValidationError, validate
+from common import build_response
 from boto import LambdaDynamoDBClass, _LAMBDA_TASKS_TABLE_RESOURCE
 from middleware import middleware
 from boto3.dynamodb.conditions import Key
@@ -29,10 +28,9 @@ def lambda_handler(event, context):
         logger.debug(f"Validating query params: {query_params}")
 
         validate(event=query_params, schema=schema)
-    except Exception as e:
-        logger.error(f"Validation error: {str(e)}")
-
-        raise ValidationError(str(e))
+    except SchemaValidationError as e:
+        logger.error(f"Validation failed: {e}")
+        return build_response(400, {"message": str(e)})
 
     global _LAMBDA_TASKS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_TASKS_TABLE_RESOURCE)
@@ -71,11 +69,7 @@ def get_list_of_tasks(dynamodb, section):
     selected_tasks = convert_decimal_to_float(selected_tasks)
 
     return build_response(
-        200,
-        {
-            "message": "Tasks fetched successfully",
-            "tasks": selected_tasks
-        }
+        200, {"message": "Tasks fetched successfully", "tasks": selected_tasks}
     )
 
 
@@ -95,8 +89,7 @@ def get_tasks_for_section(dynamodb, section):
     logger.info(f"Getting tasks for section {section}")
 
     response = dynamodb.table.query(
-        IndexName="section-index",
-        KeyConditionExpression=Key("section").eq(section)
+        IndexName="section-index", KeyConditionExpression=Key("section").eq(section)
     )
 
     return response.get("Items", [])
