@@ -19,6 +19,8 @@ import starTrophy from "@/assets/icons/star-trophy.png";
 import arrowBack from "@/assets/icons/arrow-back.png";
 import gb from "@/assets/icons/GB.png";
 import germany from "@/assets/icons/germany.png";
+import book from "@/assets/icons/book.png";
+import trophy from "@/assets/icons/trophy.png";
 
 export {
   apple,
@@ -42,4 +44,6 @@ export {
   arrowBack,
   gb,
   germany,
+  book,
+  trophy,
 };
