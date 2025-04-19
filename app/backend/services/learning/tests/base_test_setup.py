@@ -3,6 +3,7 @@ import os
 import json
 from moto import mock_aws
 from boto3 import resource, client
+import bcrypt
 
 
 class LambdaS3Class:
@@ -35,6 +36,8 @@ class BaseTestSetup(unittest.TestCase):
     def setUp(self):
         # Environment variables
         os.environ["TASKS_TABLE_NAME"] = "test_tasks_table"
+        os.environ["LANGUAGES_TABLE_NAME"] = "test_languages_table"
+        os.environ["USERS_TABLE_NAME"] = "test_users_table"
         os.environ["JWT_SECRET_NAME"] = "secret"
         os.environ["SECRETS_REGION_NAME"] = "eu-central-1"
         os.environ["AWS_REGION"] = "eu-central-1"
@@ -59,8 +62,9 @@ class BaseTestSetup(unittest.TestCase):
         }
 
         # Mocked DynamoDB
+        # Tasks table
         self.dynamodb = resource('dynamodb', region_name='eu-central-1')
-        self.table = self.dynamodb.create_table(
+        self.tasks_table = self.dynamodb.create_table(
             TableName = os.environ["TASKS_TABLE_NAME"],
             AttributeDefinitions = [
                 {"AttributeName": "taskId", "AttributeType": "S"},
@@ -84,4 +88,80 @@ class BaseTestSetup(unittest.TestCase):
             ],
             BillingMode="PAY_PER_REQUEST"
         )
-        self.table.meta.client.get_waiter('table_exists').wait(TableName = os.environ["TASKS_TABLE_NAME"])
+        self.tasks_table.meta.client.get_waiter('table_exists').wait(TableName = os.environ["TASKS_TABLE_NAME"])
+
+        # Users table
+        self.users_table = self.dynamodb.create_table(
+            TableName=os.environ["USERS_TABLE_NAME"],
+            AttributeDefinitions=[
+                {"AttributeName": "email", "AttributeType": "S"},
+                {"AttributeName": "username", "AttributeType": "S"}
+            ],
+            KeySchema=[
+                {"AttributeName": "email", "KeyType": "HASH"}
+            ],
+            GlobalSecondaryIndexes=[
+                {
+                    'IndexName': 'username-index',
+                    'KeySchema': [
+                        {"AttributeName": "username", "KeyType": "HASH"}
+                    ],
+                    'Projection': {'ProjectionType': 'ALL'},
+                    'ProvisionedThroughput': {
+                        'ReadCapacityUnits': 5,
+                        'WriteCapacityUnits': 5
+                    }
+                }
+            ],
+            BillingMode="PAY_PER_REQUEST"
+        )
+        self.users_table.meta.client.get_waiter('table_exists').wait(TableName=os.environ["USERS_TABLE_NAME"])
+
+        # Languages table
+        self.languages_table = self.dynamodb.create_table(
+            TableName=os.environ["LANGUAGES_TABLE_NAME"],
+            AttributeDefinitions=[
+                {"AttributeName": "id", "AttributeType": "S"},
+            ],
+            KeySchema=[
+                {"AttributeName": "id", "KeyType": "HASH"}
+            ],
+            BillingMode="PAY_PER_REQUEST"
+        )
+        self.languages_table.meta.client.get_waiter('table_exists').wait(TableName=os.environ["LANGUAGES_TABLE_NAME"])
+
+        # Sample user data
+        self.sample_user_pass = "password123"
+
+        self.sample_user = {
+            "email": "test@mail.com",
+            "username": "TestUser",
+            "password": bcrypt.hashpw(self.sample_user_pass.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"),
+            "letters_learned": {},
+            "task_level": 0,
+            "time_played": 0,
+            "xp": 0,
+            "battlepass_xp": 0,
+            "coins": 0
+        }
+
+        self.users_table.put_item(Item=self.sample_user)
+
+        # Sample language data
+        self.sample_languages = [
+            {
+                "id": "en",
+                "name": "English"
+            },
+            {
+                "id": "fr",
+                "name": "French"
+            },
+            {
+                "id": "es",
+                "name": "Spanish"
+            }
+        ]
+
+        for language in self.sample_languages:
+            self.languages_table.put_item(Item=language)
