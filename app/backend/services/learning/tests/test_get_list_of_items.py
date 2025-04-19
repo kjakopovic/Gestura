@@ -116,7 +116,7 @@ class TestGetListOfTasks(BaseTestSetup):
 
         for version in [1, 2, 3]:
             for i in range(5):  # Add multiple items per version
-                self.table.put_item(Item={
+                self.tasks_table.put_item(Item={
                     "taskId": f"special-task-10-{version}-{i}",
                     "section": 10,
                     "sectionName": "Test Section 10",
@@ -172,7 +172,7 @@ class TestGetListOfTasks(BaseTestSetup):
 
         for version in [1, 2, 3]:
             for i in range(5):
-                self.table.put_item(Item={
+                self.tasks_table.put_item(Item={
                     "taskId": f"special-task-10-{version}-{i}",
                     "section": 10,
                     "sectionName": "Test Section 10",
@@ -183,7 +183,7 @@ class TestGetListOfTasks(BaseTestSetup):
                 })
 
             for i in range(5):
-                self.table.put_item(Item={
+                self.tasks_table.put_item(Item={
                     "taskId": f"special-task-20-{version}-{i}",
                     "section": 20,
                     "sectionName": "Test Section 20",
@@ -246,7 +246,7 @@ class TestGetListOfTasks(BaseTestSetup):
         # Add test data for sections 10, 20, and 30
         for version in [1, 2, 3]:
             for i in range(5):  # Add multiple items per version
-                self.table.put_item(Item={
+                self.tasks_table.put_item(Item={
                     "taskId": f"special-task-10-{version}-{i}",
                     "section": 10,
                     "sectionName": "Test Section 10",
@@ -256,7 +256,7 @@ class TestGetListOfTasks(BaseTestSetup):
                     "correctAnswerIndex": 0
                 })
 
-                self.table.put_item(Item={
+                self.tasks_table.put_item(Item={
                     "taskId": f"special-task-20-{version}-{i}",
                     "section": 20,
                     "sectionName": "Test Section 20",
@@ -266,7 +266,7 @@ class TestGetListOfTasks(BaseTestSetup):
                     "correctAnswerIndex": 0
                 })
 
-                self.table.put_item(Item={
+                self.tasks_table.put_item(Item={
                     "taskId": f"special-task-30-{version}-{i}",
                     "section": 30,
                     "sectionName": "Test Section 30",
