@@ -47,7 +47,9 @@ def parse_utc_isoformat(ts: str) -> datetime:
     """
     if not isinstance(ts, str):
         raise ValueError(f"Expected string for timestamp, got {type(ts)}")
+
     # Replace trailing Z with +00:00 so fromisoformat can handle it
     if ts.endswith("Z"):
         ts = ts[:-1] + "+00:00"
+
     return datetime.fromisoformat(ts)

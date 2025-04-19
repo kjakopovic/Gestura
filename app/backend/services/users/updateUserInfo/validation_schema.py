@@ -29,7 +29,9 @@ schema = {
             "type": "string",
             "pattern": "^[0-9\\+\\-\\s\\(\\)]+$"
         },
+        "chosen_language": {
+            "type": "string",
+        }
     },
-    "required": [],
     "additionalProperties": False
 }
