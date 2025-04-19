@@ -298,7 +298,7 @@ Resources:
         GetUserInfoEndpoint:
           Type: Api
           Properties:
-            Path: /users/update
+            Path: /users
             Method: PATCH
             RestApiId: !Ref UsersApi
 

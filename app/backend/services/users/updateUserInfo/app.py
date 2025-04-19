@@ -9,6 +9,7 @@ from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
 from middleware import middleware
 from boto3.dynamodb.conditions import Key
 from auth import get_email_from_jwt_token
+from typing import Optional
 
 
 logger = logging.getLogger("UpdateUserInfo")
@@ -17,16 +18,21 @@ logger.setLevel(logging.DEBUG)
 
 @dataclass
 class Request:
-    settings: dict
+    sound_effects: Optional[bool] = None
+    haptic_feedback: Optional[bool] = None
+    push_notifications: Optional[bool] = None
+    heart_refill: Optional[bool] = None
+    daily_reminder: Optional[bool] = None
+    subscription: Optional[bool] = None
+    chosen_language: Optional[str] = None
+    username: Optional[str] = None
+    phone_number: Optional[str] = None
 
 
 @middleware
 def lambda_handler(event, context):
     logger.debug(f"Received event {event}")
 
-    # Check if email is present in the event
-    # After that, check if user is present in the database
-    # Only after that, validate the request
     jwt_token = event.get("headers").get("x-access-token")
     email = get_email_from_jwt_token(jwt_token)
 
@@ -60,54 +66,51 @@ def lambda_handler(event, context):
     logger.info("Parsing request body")
     request = Request(**request_body)
 
-    return update_user(dynamodb, email, request.settings)
+    return update_user(dynamodb, email, request, user)
 
 
-def update_user(dynamodb, email, settings):
-    logger.info(f"Updating user {email} with settings {settings}")
-
-    user = get_user_by_email(dynamodb, email)
+def update_user(dynamodb, email, request, user):
+    logger.info(f"Updating user {email} with settings {request}")
 
     update_parts = []
     expression_attribute_values = {}
-    username = None
 
-    # Handle username update
-    if "profile" in settings and settings["profile"].get("username"):
-        username = settings["profile"].get("username")
-        if username:
-            existing_user = get_user_by_username(dynamodb, username)
-            if existing_user and existing_user.get("email") != email:
-                logger.debug(f"Username {username} is already taken")
-                return build_response(400, {"message": "Username is already taken"})
+    if request.sound_effects is not None:
+        update_parts.append("sound_effects = :sound_effects")
+        expression_attribute_values[":sound_effects"] = request.sound_effects
 
-            # Add username to update expression at root level
-            update_parts.append("username = :username")
-            expression_attribute_values[":username"] = username
+    if request.haptic_feedback is not None:
+        update_parts.append("haptic_feedback = :haptic_feedback")
+        expression_attribute_values[":haptic_feedback"] = request.haptic_feedback
 
-    if settings:
-        # Get current settings or initialize empty dict
-        current_settings = user.get("settings", {})
+    if request.push_notifications is not None:
+        update_parts.append("push_notifications = :push_notifications")
+        expression_attribute_values[":push_notifications"] = request.push_notifications
 
-        # Update current settings with new values
-        for section, properties in settings.items():
-            if isinstance(properties, dict):
-                if section not in current_settings:
-                    current_settings[section] = {}
+    if request.heart_refill is not None:
+        update_parts.append("heart_refill = :heart_refill")
+        expression_attribute_values[":heart_refill"] = request.heart_refill
 
-                # Remove username from profile if it exists, since it is handled separately
-                if section == "profile" and "username" in properties:
-                    # A copy is being made to avoid modifying the original dictionary
-                    properties_copy = properties.copy()
-                    properties_copy.pop("username")
-                    current_settings[section].update(properties_copy)
-                else:
-                    current_settings[section].update(properties)
+    if request.daily_reminder is not None:
+        update_parts.append("daily_reminder = :daily_reminder")
+        expression_attribute_values[":daily_reminder"] = request.daily_reminder
 
-        update_parts.append("settings = :settings")
-        expression_attribute_values[":settings"] = current_settings
+    if request.subscription is not None:
+        update_parts.append("subscription = :subscription")
+        expression_attribute_values[":subscription"] = request.subscription
 
-    # Handle update without email change
+    if request.chosen_language is not None:
+        update_parts.append("chosen_language = :chosen_language")
+        expression_attribute_values[":chosen_language"] = request.chosen_language
+
+    if request.username is not None:
+        update_parts.append("username = :username")
+        expression_attribute_values[":username"] = request.username
+
+    if request.phone_number is not None:
+        update_parts.append("phone_number = :phone_number")
+        expression_attribute_values[":phone_number"] = request.phone_number
+
     if update_parts:
         update_expression = "SET " + ", ".join(update_parts)
         logger.debug(f"Updating user {email} with settings {expression_attribute_values}")
@@ -120,7 +123,7 @@ def update_user(dynamodb, email, settings):
 
         return build_response(200, {"message": "User updated successfully"})
 
-    # If no updates were made
+    # If no update parts were provided
     return build_response(200, {"message": "No changes were made"})
 
 
