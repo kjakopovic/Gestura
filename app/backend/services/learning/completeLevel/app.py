@@ -70,7 +70,7 @@ def lambda_handler(event, context):
     logger.info("Calculating time played")
     time_played = seconds_between(request.startedAt, request.finishedAt)
 
-    logger.info(f"Updating users letters learned {user["letters_learned"]}")
+    logger.info(f"Updating users letters learned {user['letters_learned']}")
     lettersLearned = update_letters_learned(
         user["letters_learned"], request.languageId, request.lettersLearned
     )
