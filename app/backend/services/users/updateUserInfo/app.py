@@ -63,6 +63,7 @@ def lambda_handler(event, context):
         logger.error(f"Validation failed: {e}")
         return build_response(400, {"message": str(e)})
 
+    # TODO: Check if language exists in the languages table
     logger.info("Parsing request body")
     request = Request(**request_body)
 
@@ -98,10 +99,6 @@ def update_user(dynamodb, email, request, user):
     if request.subscription is not None:
         update_parts.append("subscription = :subscription")
         expression_attribute_values[":subscription"] = request.subscription
-
-    if request.chosen_language is not None:
-        update_parts.append("chosen_language = :chosen_language")
-        expression_attribute_values[":chosen_language"] = request.chosen_language
 
     if request.username is not None:
         update_parts.append("username = :username")

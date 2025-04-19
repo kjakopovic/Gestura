@@ -20,10 +20,6 @@ schema = {
             "type": "integer",
             "enum": [0, 1, 2]
         },
-        "chosen_language": {
-            "type": "string",
-            "enum": ["en", "es", "fr", "de"]
-        },
         "username": {
             "type": "string",
             "minLength": 1,

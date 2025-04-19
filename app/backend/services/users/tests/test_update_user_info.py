@@ -101,19 +101,10 @@ class TestRegisterUser(BaseTestSetup):
                 "request_body": {"sound_effects": "not-a-boolean"},
                 "expected_validation_message": "data.sound_effects must be boolean"
             },
-            {
-                "request_body": {"chosen_language": 123},
-                "expected_validation_message": "data.chosen_language must be string"
-            },
             # Invalid phone format
             {
                 "request_body": {"phone_number": "abc"},
                 "expected_validation_message": "data.phone_number must match pattern"
-            },
-            # Invalid language enum value
-            {
-                "request_body": {"chosen_language": "ru"},
-                "expected_validation_message": "data.chosen_language must be one of ['en', 'es', 'fr', 'de']"
             },
             # Invalid subscription enum value
             {
@@ -191,7 +182,6 @@ class TestRegisterUser(BaseTestSetup):
             "heart_refill": True,
             "daily_reminder": False,
             "subscription": 0,
-            "chosen_language": "en",
             "phone_number": "+1234567890"
         })
 
@@ -207,7 +197,6 @@ class TestRegisterUser(BaseTestSetup):
             "heart_refill": False,
             "daily_reminder": True,
             "subscription": 1,
-            "chosen_language": "fr"
         }
 
         event = {
@@ -239,7 +228,6 @@ class TestRegisterUser(BaseTestSetup):
         self.assertEqual(user["heart_refill"], False)
         self.assertEqual(user["daily_reminder"], True)
         self.assertEqual(user["subscription"], 1)
-        self.assertEqual(user["chosen_language"], "fr")
 
 
     def tearDown(self):
