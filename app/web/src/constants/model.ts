@@ -1,6 +1,6 @@
 import { LabelMap } from "../types/model";
 
-export const MODEL_IMAGE_SIZE = [640, 480];
+export const MODEL_IMAGE_SIZE = [224, 224];
 
 export const DETECTION_THRESHOLD = 0.7;
 

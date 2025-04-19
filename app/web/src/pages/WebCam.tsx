@@ -1,26 +1,29 @@
 import React, { useRef, useEffect } from "react";
-import * as tf from "@tensorflow/tfjs";
+import * as ort from "onnxruntime-web";
+
 import Webcam from "react-webcam";
 import { detect } from "@/utils/model";
-import {
-  DETECTION_INTERVAL_MS,
-  MODEL_IMAGE_SIZE,
-  MODEL_PATH,
-} from "@/constants/model";
+import { DETECTION_INTERVAL_MS, MODEL_IMAGE_SIZE } from "@/constants/model";
 
 const WebCam: React.FC = () => {
-  // Annotate the ref types:
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sessionRef = useRef<ort.InferenceSession | null>(null);
 
   useEffect(() => {
     let intervalId: number;
 
     const runModel = async () => {
-      const model = await tf.loadGraphModel(MODEL_PATH);
+      // Initialize ONNX inference session
+      sessionRef.current = await ort.InferenceSession.create(
+        "/yolo/yolo11n-cls.onnx",
+        { executionProviders: ["wasm"], graphOptimizationLevel: "all" }
+      );
 
       intervalId = window.setInterval(() => {
-        detect(webcamRef, canvasRef, model);
+        if (sessionRef.current) {
+          detect(webcamRef, canvasRef, sessionRef.current);
+        }
       }, DETECTION_INTERVAL_MS);
     };
 

@@ -13,9 +13,6 @@
 
 # AI
 **/data/
-**/train.record
-**/test.record
-**/workspace/models/
 
 # Logs
 **/logs
