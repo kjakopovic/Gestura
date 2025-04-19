@@ -5,7 +5,11 @@ from validation_schema import schema
 from dataclasses import dataclass
 from aws_lambda_powertools.utilities.validation import SchemaValidationError, validate
 from common import build_response
-from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
+from boto import (
+    LambdaDynamoDBClass,
+    _LAMBDA_USERS_TABLE_RESOURCE,
+    _LAMBDA_LANGUAGES_TABLE_RESOURCE,
+)
 from middleware import middleware
 from boto3.dynamodb.conditions import Key
 from auth import get_email_from_jwt_token
@@ -40,16 +44,6 @@ def lambda_handler(event, context):
         logger.error(f"Invalid email in jwt token {email}")
         return build_response(401, {"message": "Invalid email in jwt token"})
 
-    global _LAMBDA_USERS_TABLE_RESOURCE
-    dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
-    user = get_user_by_email(dynamodb, email)
-
-    if not user:
-        logger.debug(f"User with email {email} does not exist")
-        return build_response(404, {"message": "User not found."})
-
-    logger.debug(f"User with email {email} exists, proceeding with update")
-
     body = event.get("body")
     if body is not None:
         request_body = json.loads(body)
@@ -63,14 +57,30 @@ def lambda_handler(event, context):
         logger.error(f"Validation failed: {e}")
         return build_response(400, {"message": str(e)})
 
-    # TODO: Check if language exists in the languages table
     logger.info("Parsing request body")
     request = Request(**request_body)
 
-    return update_user(dynamodb, email, request, user)
+    global _LAMBDA_USERS_TABLE_RESOURCE
+    global _LAMBDA_LANGUAGES_TABLE_RESOURCE
+    dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
+    languagesTable = LambdaDynamoDBClass(_LAMBDA_LANGUAGES_TABLE_RESOURCE)
+
+    user = get_user_by_email(dynamodb, email)
+    if not user:
+        logger.debug(f"User with email {email} does not exist")
+        return build_response(404, {"message": "User not found."})
+
+    language = get_language_by_id(languagesTable, request.chosen_language)
+    if not language:
+        logger.error(f"Language with id {request.chosen_language} not found")
+        return build_response(404, {"message": "Language not found"})
+
+    logger.debug(f"User with email {email} exists, proceeding with update")
+
+    return update_user(dynamodb, email, request)
 
 
-def update_user(dynamodb, email, request, user):
+def update_user(dynamodb, email, request):
     logger.info(f"Updating user {email} with settings {request}")
 
     update_parts = []
@@ -110,18 +120,29 @@ def update_user(dynamodb, email, request, user):
 
     if update_parts:
         update_expression = "SET " + ", ".join(update_parts)
-        logger.debug(f"Updating user {email} with settings {expression_attribute_values}")
+        logger.debug(
+            f"Updating user {email} with settings {expression_attribute_values}"
+        )
 
         dynamodb.table.update_item(
             Key={"email": email},
             UpdateExpression=update_expression,
-            ExpressionAttributeValues=expression_attribute_values
+            ExpressionAttributeValues=expression_attribute_values,
         )
 
         return build_response(200, {"message": "User updated successfully"})
 
     # If no update parts were provided
     return build_response(200, {"message": "No changes were made"})
+
+
+def get_language_by_id(dynamodb, id: str):
+    logger.info(f"Getting language by id {id}")
+    language = dynamodb.table.get_item(Key={"id": id})
+
+    language_item = language.get("Item", {})
+
+    return language_item
 
 
 def get_user_by_email(dynamodb, email):
