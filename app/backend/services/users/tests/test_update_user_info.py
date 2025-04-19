@@ -42,11 +42,16 @@ class TestRegisterUser(BaseTestSetup):
         super().setUp()
 
         # Create patcher for the DynamoDB resource in the lambda handler
-        self.resource_patcher = patch('updateUserInfo.app._LAMBDA_USERS_TABLE_RESOURCE', {
+        self.users_resource_patcher = patch('updateUserInfo.app._LAMBDA_USERS_TABLE_RESOURCE', {
             "resource": self.dynamodb,
             "table_name": os.environ["USERS_TABLE_NAME"]
         })
-        self.resource_patcher.start()
+        self.languages_resource_patcher = patch('updateUserInfo.app._LAMBDA_LANGUAGES_TABLE_RESOURCE', {
+            "resource": self.dynamodb,
+            "table_name": os.environ["LANGUAGES_TABLE_NAME"]
+        })
+        self.users_resource_patcher.start()
+        self.languages_resource_patcher.start()
 
 
     def test_when_user_not_authorized(self):
@@ -73,7 +78,10 @@ class TestRegisterUser(BaseTestSetup):
         event = {
             'headers': {
                 'Authorization': jwt_token
-            }
+            },
+            "body": json.dumps({
+                "chosen_language": "en"
+            })
         }
 
         response = lambda_handler(event, {})
@@ -93,22 +101,22 @@ class TestRegisterUser(BaseTestSetup):
 
         test_cases = [
             {
-                "request_body": {"invalid_field": "value"},
+                "request_body": {"invalid_field": "value", "chosen_language": "en"},
                 "expected_validation_message": "data must not contain {'invalid_field'} properties"
             },
             # Invalid types
             {
-                "request_body": {"sound_effects": "not-a-boolean"},
+                "request_body": {"sound_effects": "not-a-boolean", "chosen_language": "en"},
                 "expected_validation_message": "data.sound_effects must be boolean"
             },
             # Invalid phone format
             {
-                "request_body": {"phone_number": "abc"},
+                "request_body": {"phone_number": "abc", "chosen_language": "en"},
                 "expected_validation_message": "data.phone_number must match pattern"
             },
             # Invalid subscription enum value
             {
-                "request_body": {"subscription": 3},
+                "request_body": {"subscription": 3, "chosen_language": "en"},
                 "expected_validation_message": "data.subscription must be one of [0, 1, 2]"
             },
         ]
@@ -140,7 +148,8 @@ class TestRegisterUser(BaseTestSetup):
         # Update to flat structure to match the Request dataclass
         update_data = {
             "username": "new_username",
-            "sound_effects": False
+            "sound_effects": False,
+            "chosen_language": "en"
         }
 
         event = {
@@ -182,7 +191,8 @@ class TestRegisterUser(BaseTestSetup):
             "heart_refill": True,
             "daily_reminder": False,
             "subscription": 0,
-            "phone_number": "+1234567890"
+            "phone_number": "+1234567890",
+            "chosen_language": "en",
         })
 
         jwt_token = generate_jwt_token("test1@mail.com")
@@ -197,6 +207,7 @@ class TestRegisterUser(BaseTestSetup):
             "heart_refill": False,
             "daily_reminder": True,
             "subscription": 1,
+            "chosen_language": "en"
         }
 
         event = {
@@ -207,7 +218,16 @@ class TestRegisterUser(BaseTestSetup):
         }
 
         response = lambda_handler(event, {})
+
+        # Add debugging to see what's in the error response
+        print(f"Response status: {response['statusCode']}")
+        print(f"Response body: {response['body']}")
+
         body = json.loads(response['body'])
+
+        # Check if there's an error message before asserting status code
+        if response['statusCode'] != 200:
+            self.fail(f"Update failed with status {response['statusCode']}: {body.get('message', 'No message')}")
 
         self.assertEqual(response['statusCode'], 200)
         self.assertIn("message", body)
@@ -231,7 +251,8 @@ class TestRegisterUser(BaseTestSetup):
 
 
     def tearDown(self):
-        self.resource_patcher.stop()
+        self.users_resource_patcher.stop()
+        self.languages_resource_patcher.stop()
         super().tearDown()
 
 
