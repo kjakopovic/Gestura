@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from validation_schema import schema
 from dataclasses import dataclass
 from aws_lambda_powertools.utilities.validation import validate, SchemaValidationError
-from common import build_response
+from common import build_response, parse_utc_isoformat
 from auth import get_email_from_jwt_token
 from boto import (
     LambdaDynamoDBClass,
@@ -156,20 +156,6 @@ def update_user(
     )
 
 
-def parse_utc_timestamp(ts: str) -> datetime:
-    """
-    Parse an ISO‑8601 UTC timestamp string ending in 'Z' into
-    a timezone‑aware datetime in UTC.
-    Examples:
-      '2025-04-18T14:30:00Z'
-      '2025-04-18T14:30:00.123456Z'
-    """
-    # Replace trailing Z with +00:00 to satisfy fromisoformat
-    if ts.endswith("Z"):
-        ts = ts[:-1] + "+00:00"
-    return datetime.fromisoformat(ts)
-
-
 def seconds_between(started_at: str, finished_at: str) -> float:
     """
     Calculate how many seconds elapsed between two UTC timestamp strings.
@@ -178,8 +164,8 @@ def seconds_between(started_at: str, finished_at: str) -> float:
     :param finished_at: same format
     :return: difference in seconds (finished_at – started_at)
     """
-    start_dt = parse_utc_timestamp(started_at)
-    end_dt = parse_utc_timestamp(finished_at)
+    start_dt = parse_utc_isoformat(started_at)
+    end_dt = parse_utc_isoformat(finished_at)
 
     # Ensure both are timezone‑aware and in UTC
     if start_dt.tzinfo is None:
