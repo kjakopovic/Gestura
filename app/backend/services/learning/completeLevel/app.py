@@ -14,6 +14,7 @@ from boto import (
 )
 from middleware import middleware
 from typing import List
+from decimal import Decimal
 
 logger = logging.getLogger("CompleteLevel")
 logger.setLevel(logging.DEBUG)
@@ -68,7 +69,7 @@ def lambda_handler(event, context):
         return build_response(404, {"message": "Language not found"})
 
     logger.info("Calculating time played")
-    time_played = seconds_between(request.startedAt, request.finishedAt)
+    time_played = Decimal(str(seconds_between(request.startedAt, request.finishedAt)))
 
     logger.info(f"Updating users letters learned {user['letters_learned']}")
     lettersLearned = update_letters_learned(
@@ -76,6 +77,8 @@ def lambda_handler(event, context):
     )
 
     xp, coins = calculate_xp_and_coins(request.correctAnswersVersions)
+    xp = Decimal(str(xp))
+    coins = Decimal(str(coins))
 
     logger.info(
         f"Updating user {email} with time played: {time_played}, task level: {user['task_level'] + 1}, letters learned: {lettersLearned}"
