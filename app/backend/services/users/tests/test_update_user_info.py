@@ -114,7 +114,12 @@ class TestRegisterUser(BaseTestSetup):
             {
                 "request_body": {"chosen_language": "ru"},
                 "expected_validation_message": "data.chosen_language must be one of ['en', 'es', 'fr', 'de']"
-            }
+            },
+            # Invalid subscription enum value
+            {
+                "request_body": {"subscription": 3},
+                "expected_validation_message": "data.subscription must be one of [0, 1, 2]"
+            },
         ]
 
         for case in test_cases:
@@ -185,7 +190,7 @@ class TestRegisterUser(BaseTestSetup):
             "push_notifications": True,
             "heart_refill": True,
             "daily_reminder": False,
-            "subscription": True,
+            "subscription": 0,
             "chosen_language": "en",
             "phone_number": "+1234567890"
         })
@@ -201,7 +206,7 @@ class TestRegisterUser(BaseTestSetup):
             "push_notifications": False,
             "heart_refill": False,
             "daily_reminder": True,
-            "subscription": False,
+            "subscription": 1,
             "chosen_language": "fr"
         }
 
@@ -233,7 +238,7 @@ class TestRegisterUser(BaseTestSetup):
         self.assertEqual(user["push_notifications"], False)
         self.assertEqual(user["heart_refill"], False)
         self.assertEqual(user["daily_reminder"], True)
-        self.assertEqual(user["subscription"], False)
+        self.assertEqual(user["subscription"], 1)
         self.assertEqual(user["chosen_language"], "fr")
 
 

@@ -17,7 +17,8 @@ schema = {
             "type": "boolean"
         },
         "subscription": {
-            "type": "boolean"
+            "type": "integer",
+            "enum": [0, 1, 2]
         },
         "chosen_language": {
             "type": "string",
