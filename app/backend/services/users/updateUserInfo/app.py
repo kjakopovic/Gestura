@@ -118,6 +118,10 @@ def update_user(dynamodb, email, request):
         update_parts.append("phone_number = :phone_number")
         expression_attribute_values[":phone_number"] = request.phone_number
 
+    if request.chosen_language is not None:
+        update_parts.append("language_id = :language_id")
+        expression_attribute_values[":language_id"] = request.chosen_language
+
     if update_parts:
         update_expression = "SET " + ", ".join(update_parts)
         logger.debug(
