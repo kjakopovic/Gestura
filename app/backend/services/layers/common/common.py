@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import bcrypt
 import logging
@@ -36,3 +37,17 @@ def hash_string(password, salt_rounds=5):
 def verify_hash_string(string, hashed_string):
     logger.info("Verifying hash")
     return bcrypt.checkpw(string.encode("utf-8"), hashed_string.encode("utf-8"))
+
+
+def parse_utc_isoformat(ts: str) -> datetime:
+    """
+    Parse an ISO‑8601 UTC timestamp ending in 'Z' into
+    a timezone‑aware datetime in UTC.
+    e.g. "2025-04-18T14:30:00Z" or "2025-04-18T14:30:00.123456Z"
+    """
+    if not isinstance(ts, str):
+        raise ValueError(f"Expected string for timestamp, got {type(ts)}")
+    # Replace trailing Z with +00:00 so fromisoformat can handle it
+    if ts.endswith("Z"):
+        ts = ts[:-1] + "+00:00"
+    return datetime.fromisoformat(ts)
