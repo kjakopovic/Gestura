@@ -96,37 +96,24 @@ class TestRegisterUser(BaseTestSetup):
                 "request_body": {"invalid_field": "value"},
                 "expected_validation_message": "data must not contain {'invalid_field'} properties"
             },
-            {
-                "request_body": {"settings": {"invalid_section": {}}},
-                "expected_validation_message": "data.settings must not contain {'invalid_section'} properties"
-            },
             # Invalid types
             {
-                "request_body": {"settings": {"preferences": {"soundEffects": "not-a-boolean"}}},
-                "expected_validation_message": "data.settings.preferences.soundEffects must be boolean"
+                "request_body": {"sound_effects": "not-a-boolean"},
+                "expected_validation_message": "data.sound_effects must be boolean"
             },
             {
-                "request_body": {"settings": {"languageSettings": {"language": 123}}},
-                "expected_validation_message": "data.settings.languageSettings.language must be string"
+                "request_body": {"chosen_language": 123},
+                "expected_validation_message": "data.chosen_language must be string"
             },
             # Invalid phone format
             {
-                "request_body": {"settings": {"profile": {"phone": "abc"}}},
-                "expected_validation_message": "data.settings.profile.phone must match pattern"
+                "request_body": {"phone_number": "abc"},
+                "expected_validation_message": "data.phone_number must match pattern"
             },
             # Invalid language enum value
             {
-                "request_body": {"settings": {"languageSettings": {"language": "ru"}}},
-                "expected_validation_message": "data.settings.languageSettings.language must be one of ['en', 'es', 'fr', 'de']"
-            },
-            # Extra properties in nested objects
-            {
-                "request_body": {"settings": {"profile": {"extra_field": "value"}}},
-                "expected_validation_message": "data.settings.profile must not contain {'extra_field'} properties"
-            },
-            {
-                "request_body": {"settings": {"notifications": {"extra_setting": True}}},
-                "expected_validation_message": "data.settings.notifications must not contain {'extra_setting'} properties"
+                "request_body": {"chosen_language": "ru"},
+                "expected_validation_message": "data.chosen_language must be one of ['en', 'es', 'fr', 'de']"
             }
         ]
 
@@ -154,15 +141,10 @@ class TestRegisterUser(BaseTestSetup):
         """
         jwt_token = generate_jwt_token("test@mail.com")
 
+        # Update to flat structure to match the Request dataclass
         update_data = {
-            "settings": {
-                "profile": {
-                    "username": "new_username"
-                },
-                "preferences": {
-                    "soundEffects": False
-                }
-            }
+            "username": "new_username",
+            "sound_effects": False
         }
 
         event = {
@@ -180,14 +162,13 @@ class TestRegisterUser(BaseTestSetup):
         self.assertIn("User updated successfully", body['message'])
 
         # Verify the update was applied by fetching the user
-        # You might need to directly query DynamoDB for this
         users_table = self.dynamodb.Table(os.environ["USERS_TABLE_NAME"])
         result = users_table.get_item(Key={"email": "test@mail.com"})
         user = result.get('Item', {})
 
         # Check if specific fields were updated
         self.assertEqual(user.get("username"), "new_username")
-        self.assertEqual(user.get("settings", {}).get("preferences", {}).get("soundEffects"), False)
+        self.assertEqual(user.get("sound_effects"), False)
 
 
     def test_update_user_comprehensive_schema_valid(self):
@@ -199,49 +180,29 @@ class TestRegisterUser(BaseTestSetup):
         users_table.put_item(Item={
             "email": "test1@mail.com",
             "username": "original_username",
-            "settings": {
-                "preferences": {
-                    "soundEffects": True,
-                    "hapticFeedback": False
-                },
-                "notifications": {
-                    "pushNotifications": True,
-                    "heartRefill": True,
-                    "dailyReminder": False,
-                    "subscription": True
-                },
-                "languageSettings": {
-                    "language": "en"
-                },
-                "profile": {
-                    "phone": "+1234567890"
-                }
-            }
+            "sound_effects": True,
+            "haptic_feedback": False,
+            "push_notifications": True,
+            "heart_refill": True,
+            "daily_reminder": False,
+            "subscription": True,
+            "chosen_language": "en",
+            "phone_number": "+1234567890"
         })
 
         jwt_token = generate_jwt_token("test1@mail.com")
 
-        # Create update data without email change
+        # Update with flat structure
         update_data = {
-            "settings": {
-                "profile": {
-                    "username": "updated_username",
-                    "phone": "+9876543210"
-                },
-                "preferences": {
-                    "soundEffects": False,
-                    "hapticFeedback": True
-                },
-                "notifications": {
-                    "pushNotifications": False,
-                    "heartRefill": False,
-                    "dailyReminder": True,
-                    "subscription": False
-                },
-                "languageSettings": {
-                    "language": "fr"
-                }
-            }
+            "username": "updated_username",
+            "phone_number": "+9876543210",
+            "sound_effects": False,
+            "haptic_feedback": True,
+            "push_notifications": False,
+            "heart_refill": False,
+            "daily_reminder": True,
+            "subscription": False,
+            "chosen_language": "fr"
         }
 
         event = {
@@ -263,18 +224,17 @@ class TestRegisterUser(BaseTestSetup):
         self.assertIn("Item", result)
 
         user = result["Item"]
-        settings = user.get("settings", {})
 
         # Verify all updates were applied correctly according to schema
         self.assertEqual(user["username"], "updated_username")
-        self.assertEqual(settings["profile"]["phone"], "+9876543210")
-        self.assertEqual(settings["preferences"]["soundEffects"], False)
-        self.assertEqual(settings["preferences"]["hapticFeedback"], True)
-        self.assertEqual(settings["notifications"]["pushNotifications"], False)
-        self.assertEqual(settings["notifications"]["heartRefill"], False)
-        self.assertEqual(settings["notifications"]["dailyReminder"], True)
-        self.assertEqual(settings["notifications"]["subscription"], False)
-        self.assertEqual(settings["languageSettings"]["language"], "fr")
+        self.assertEqual(user["phone_number"], "+9876543210")
+        self.assertEqual(user["sound_effects"], False)
+        self.assertEqual(user["haptic_feedback"], True)
+        self.assertEqual(user["push_notifications"], False)
+        self.assertEqual(user["heart_refill"], False)
+        self.assertEqual(user["daily_reminder"], True)
+        self.assertEqual(user["subscription"], False)
+        self.assertEqual(user["chosen_language"], "fr")
 
 
     def tearDown(self):
