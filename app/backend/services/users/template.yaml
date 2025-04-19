@@ -269,6 +269,39 @@ Resources:
             Method: GET
             RestApiId: !Ref UsersApi
 
+  UpdateUserInfoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: updateUserInfo/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !ImportValue
+          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        GetUserInfoEndpoint:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: PATCH
+            RestApiId: !Ref UsersApi
+
   ThirdPartyLoginRequestFunction:
     Type: AWS::Serverless::Function
     Properties:

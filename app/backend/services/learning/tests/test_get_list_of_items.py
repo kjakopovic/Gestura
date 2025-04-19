@@ -73,20 +73,20 @@ class TestGetListOfTasks(BaseTestSetup):
         test_cases = [
             {
                 "request_query": {},
-                "expected_status_code": 500  # Accepting 500 status code
+                "expected_status_code": 400  # Accepting 500 status code
             },
             {
                 "request_query": {
                     "level": "string-instead-of-number"  # String instead of number
                 },
-                "expected_status_code": 500  # Accepting 500 status code
+                "expected_status_code": 400  # Accepting 500 status code
             },
             {
                 "request_query": {
                     "level": 1,
                     "extra_field": "not-allowed"  # Extra field
                 },
-                "expected_status_code": 500  # Accepting 500 status code
+                "expected_status_code": 400  # Accepting 500 status code
             }
         ]
 
@@ -105,7 +105,7 @@ class TestGetListOfTasks(BaseTestSetup):
 
                 self.assertEqual(response['statusCode'], case["expected_status_code"])
                 self.assertIn('message', body)
-                self.assertEqual(body['message'], 'Internal server error')
+                self.assertTrue("Failed schema validation" in body['message'])
 
 
     def test_get_list_section_10(self):
