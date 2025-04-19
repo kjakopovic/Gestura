@@ -1,48 +1,38 @@
 schema = {
-  "type": "object",
-  "properties": {
-    "settings": {
-      "type": "object",
-      "properties": {
-        "preferences": {
-          "type": "object",
-          "properties": {
-            "soundEffects": {"type": "boolean"},
-            "hapticFeedback": {"type": "boolean"},
-          },
-          "additionalProperties": False
+    "type": "object",
+    "properties": {
+        "sound_effects": {
+            "type": "boolean"
         },
-        "notifications": {
-          "type": "object",
-          "properties": {
-            "pushNotifications": {"type": "boolean"},
-            "heartRefill": {"type": "boolean"},
-            "dailyReminder": {"type": "boolean"},
-            "subscription": {"type": "boolean"},
-          },
-          "additionalProperties": False
+        "haptic_feedback": {
+            "type": "boolean"
         },
-        "languageSettings": {
-          "type": "object",
-          "properties": {
-            "language": {
-              "type": "string",
-              "enum": ["en", "es", "fr", "de"]
-            },
-          },
-          "additionalProperties": False
+        "push_notifications": {
+            "type": "boolean"
         },
-        "profile": {
-          "type": "object",
-          "properties": {
-            "username": {"type": "string"},
-            "phone": {"type": "string", "pattern": "^[0-9\\+\\-\\s\\(\\)]+$"},
-          },
-          "additionalProperties": False
-        }
-      },
-      "additionalProperties": False
-    }
-  },
-  "additionalProperties": False
+        "heart_refill": {
+            "type": "boolean"
+        },
+        "daily_reminder": {
+            "type": "boolean"
+        },
+        "subscription": {
+            "type": "boolean"
+        },
+        "chosen_language": {
+            "type": "string",
+            "enum": ["en", "es", "fr", "de"]
+        },
+        "username": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20
+        },
+        "phone_number": {
+            "type": "string",
+            "pattern": "^[0-9\\+\\-\\s\\(\\)]+$"
+        },
+    },
+    "required": [],
+    "additionalProperties": False
 }
