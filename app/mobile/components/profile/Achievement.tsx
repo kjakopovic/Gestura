@@ -1,7 +1,7 @@
 import { View, Text, Image, ImageSourcePropType } from "react-native";
 import React from "react";
 
-type achievementProps = {
+type AchievementProps = {
   title: string;
   description: string;
   icon: ImageSourcePropType;
@@ -13,7 +13,7 @@ const Achievement = ({
   description,
   icon,
   completed,
-}: achievementProps) => {
+}: AchievementProps) => {
   return (
     <View className="h-32 m-2 w-full flex-row items-center justify-between px-4">
       <Image source={icon} className="h-100% w-100%" />
