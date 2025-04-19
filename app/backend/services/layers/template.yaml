@@ -70,6 +70,20 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
+  LanguagesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "languages-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
 Outputs:
   CommonLayerArn:
     Description: "ARN of the Layer with all the common code"
@@ -86,3 +100,8 @@ Outputs:
     Value: !Ref TasksTable
     Export:
       Name: !Sub "${AWS::StackName}-TasksTable"
+  LanguagesTable:
+    Description: "DynamoDB table for languages"
+    Value: !Ref LanguagesTable
+    Export:
+      Name: !Sub "${AWS::StackName}-LanguagesTable"
