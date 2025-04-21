@@ -74,7 +74,7 @@ def get_user_by_email(dynamodb, email):
 
     if user_item:
         hearts = user_item.get("hearts", 5)
-        hearts_next_refill = user_item.get("hearts_next_refill", 0)
+        hearts_next_refill = user_item.get("hearts_next_refill", None)
         return hearts, hearts_next_refill
     else :
         logger.error(f"User with email {email} not found")
