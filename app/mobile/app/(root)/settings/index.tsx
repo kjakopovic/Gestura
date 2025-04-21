@@ -96,8 +96,6 @@ const Settings = () => {
             },
           ]}
         />
-
-        <SubscriptionSetting />
       </SafeAreaView>
     </ScrollView>
   );

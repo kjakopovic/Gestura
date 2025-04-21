@@ -11,3 +11,9 @@ https://docs.ultralytics.com/tasks/detect/#predict
 
 za docs o modelu:
 https://chatgpt.com/share/68012c0f-58e4-8004-b5d7-77a33433b38d
+
+Additional links to datasets:
+[text](https://www.kaggle.com/datasets/mrgeislinger/asl-rgb-depth-fingerspelling-spelling-it-out)
+https://www.kaggle.com/datasets/lexset/synthetic-asl-alphabet
+[text](https://www.kaggle.com/datasets/debashishsau/aslamerican-sign-language-aplhabet-dataset)
+[text](https://www.kaggle.com/datasets/risangbaskoro/wlasl-processed)
