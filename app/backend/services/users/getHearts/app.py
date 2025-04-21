@@ -59,20 +59,19 @@ def lambda_handler(event, context):
 
     filled_hearts = False
 
-    if hearts_next_refill and hearts <5:
-        if hearts_next_refill <= current_time:
-            time_delta = current_time - hearts_next_refill
-            hours_elapsed = time_delta.days * 24 + time_delta.seconds // 3600
-            hearts_to_add = min(hours_elapsed // 3 + 1, 5 - hearts)
+    if hearts_next_refill <= current_time:
+        time_delta = current_time - hearts_next_refill
+        hours_elapsed = time_delta.days * 24 + time_delta.seconds // 3600
+        hearts_to_add = min(hours_elapsed // 3 + 1, 5 - hearts)
 
-            hearts += hearts_to_add
-            filled_hearts = hearts_to_add > 0
+        hearts += hearts_to_add
+        filled_hearts = hearts_to_add > 0
 
-            if hearts < 5:
-                hearts_next_refill = hearts_next_refill + timedelta(hours=3 * hearts_to_add)
-            else:
-                hearts_next_refill = None
-                hearts = 5
+        if hearts < 5:
+            hearts_next_refill = hearts_next_refill + timedelta(hours=3 * hearts_to_add)
+        else:
+            hearts_next_refill = None
+            hearts = 5
 
     if filled_hearts:
         update_expression = "SET hearts = :hearts"
