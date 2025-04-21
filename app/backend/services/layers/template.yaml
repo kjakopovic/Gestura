@@ -23,7 +23,6 @@ Resources:
       Name: /layers/common/latest
       Type: String
       Value: !Ref CommonLayer
-      Overwrite: true # allow updates
 
   # Tables
   UsersTable:
