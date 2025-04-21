@@ -20,7 +20,7 @@ const LoginCallback = () => {
     }
 
     navigate(APP_ROUTES.MAIN_PAGE);
-  }, [navigate]);
+  }, [navigate, auth]);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">

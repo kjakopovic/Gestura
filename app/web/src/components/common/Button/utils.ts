@@ -2,7 +2,7 @@ import { TypographyType } from "../Typography";
 import { ButtonStyles, ButtonType } from "./types";
 
 export const getButtonStyles = (type: ButtonType): ButtonStyles => {
-  var styles: ButtonStyles = {
+  const styles: ButtonStyles = {
     button:
       "hover:cursor-pointer rounded-xl transition-colors duration-200 ease-in-out ",
     text: "",
