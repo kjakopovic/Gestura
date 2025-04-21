@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useMemo, createRef } from "react";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { ClickableLogo, Input } from "@/components/elements";
@@ -29,8 +29,9 @@ const ForgotPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const inputRefs = Array.from({ length: 6 }, () =>
-    useRef<HTMLInputElement>(null)
+  const inputRefs = useMemo(
+    () => Array.from({ length: 6 }, () => createRef<HTMLInputElement>()),
+    []
   );
 
   const handleCodeChange = (index: number, value: string) => {

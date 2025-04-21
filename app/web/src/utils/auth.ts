@@ -11,16 +11,24 @@ import {
   REGISTER_SCHEMA,
 } from "@/constants/validation";
 
-const validate = async (values: any, schema: Yup.ObjectSchema<any>) => {
+const validate = async (
+  values: Yup.AnyObject,
+  schema: Yup.ObjectSchema<Yup.AnyObject>
+) => {
   try {
     const validData = await schema.validate(values, { abortEarly: false });
     return { validData, errors: null };
-  } catch (err: any) {
-    const errors = err.inner.reduce((acc: any, error: any) => {
-      acc[error.path] = error.message;
-      return acc;
-    }, {});
-    return { validData: null, errors };
+  } catch (err) {
+    if (err instanceof Yup.ValidationError) {
+      const errors = err.inner.reduce<Record<string, string>>((acc, error) => {
+        if (error.path) {
+          acc[error.path] = error.message;
+        }
+        return acc;
+      }, {});
+      return { validData: null, errors };
+    }
+    throw err;
   }
 };
 
@@ -33,7 +41,7 @@ export const handleLogin = async (
 ) => {
   const { errors } = await validate({ email, password }, LOGIN_SCHEMA);
   if (errors) {
-    setErrors((prev) => [...prev, ...Object.values(errors as string)]);
+    setErrors((prev) => [...prev, ...Object.values(errors)]);
     return;
   }
 
@@ -83,7 +91,7 @@ export const handleRegister = async (
     REGISTER_SCHEMA
   );
   if (errors) {
-    setErrors((prev) => [...prev, ...Object.values(errors as string)]);
+    setErrors((prev) => [...prev, ...Object.values(errors)]);
     return;
   }
 
@@ -130,7 +138,7 @@ export const handleForgotPasswordRequest = async (
 ): Promise<HelperFunctionResponse> => {
   const { errors } = await validate({ email }, FORGOT_PASS_REQUEST_SCHEMA);
   if (errors) {
-    setErrors((prev) => [...prev, ...Object.values(errors as string)]);
+    setErrors((prev) => [...prev, ...Object.values(errors)]);
     return HelperFunctionResponse.ERROR;
   }
 
@@ -154,6 +162,7 @@ export const handleForgotPasswordRequest = async (
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
+      console.log(error);
       setErrors((prev) => [
         ...prev,
         error?.response?.data.message ||
@@ -182,7 +191,7 @@ export const handleForgotPasswordValidate = async (
     FORGOT_PASS_VALIDATE_SCHEMA
   );
   if (errors) {
-    setErrors((prev) => [...prev, ...Object.values(errors as string)]);
+    setErrors((prev) => [...prev, ...Object.values(errors)]);
     return HelperFunctionResponse.ERROR;
   }
 
@@ -234,7 +243,7 @@ export const handlePasswordChange = async (
     FORGOT_PASS_CHANGE_SCHEMA
   );
   if (errors) {
-    setErrors((prev) => [...prev, ...Object.values(errors as string)]);
+    setErrors((prev) => [...prev, ...Object.values(errors)]);
     return HelperFunctionResponse.ERROR;
   }
 

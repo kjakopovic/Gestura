@@ -1,10 +1,7 @@
 import { REFRESH_TOKEN_COOKIE_NAME, TOKEN_COOKIE_NAME } from "@/constants/auth";
-import { createContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
-);
+import { AuthContext } from "./AuthContext";
 
 export const AuthProvider = ({ children }: any) => {
   const [loading, setLoading] = useState(true);
