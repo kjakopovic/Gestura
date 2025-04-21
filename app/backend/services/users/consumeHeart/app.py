@@ -25,11 +25,12 @@ def lambda_handler(event, context):
     global _LAMBDA_USERS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
 
-    hearts, hearts_next_refill = get_user_by_email(dynamodb, email)
-
-    if not hearts and hearts != 0:
+    user_data = get_user_by_email(dynamodb, email)
+    if not user_data:
         logger.debug(f"User with email {email} not found.")
         return build_response(404, {"message": "User not found."})
+
+    hearts, hearts_next_refill = user_data
 
     if hearts == 0:
         logger.debug(f"Unable to consume a heart for user: {email} as they have no hearts left.")
@@ -40,7 +41,7 @@ def lambda_handler(event, context):
     update_expression = "SET hearts = :val"
     expression_attribute_values = {":val": hearts}
 
-    if hearts == 4:
+    if hearts == 4 or (hearts <5 and not hearts_next_refill):
         next_refill = (datetime.now() + timedelta(hours=3)).isoformat()
         update_expression += ", hearts_next_refill = :refill_time"
         expression_attribute_values[":refill_time"] = next_refill
@@ -72,7 +73,7 @@ def get_user_by_email(dynamodb, email):
     user_item = user.get("Item", {})
 
     if user_item:
-        hearts = user_item.get("hearts", 0)
+        hearts = user_item.get("hearts", 5)
         hearts_next_refill = user_item.get("hearts_next_refill", 0)
         return hearts, hearts_next_refill
     else :
