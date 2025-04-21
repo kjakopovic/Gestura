@@ -17,6 +17,14 @@ Resources:
     Metadata:
       BuildMethod: python3.12
 
+  CommonLayerLatestParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /layers/common/latest
+      Type: String
+      Value: !Ref CommonLayer
+      Overwrite: true # allow updates
+
   # Tables
   UsersTable:
     Type: AWS::DynamoDB::Table
@@ -85,11 +93,6 @@ Resources:
         WriteCapacityUnits: 5
 
 Outputs:
-  CommonLayerArn:
-    Description: "ARN of the Layer with all the common code"
-    Value: !Ref CommonLayer
-    Export:
-      Name: !Sub "${AWS::StackName}-CommonLayerArn"
   UsersTable:
     Description: "DynamoDB table for users"
     Value: !Ref UsersTable
