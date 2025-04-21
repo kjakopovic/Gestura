@@ -91,7 +91,7 @@ class TestGetHearts(BaseTestSetup):
         # Ensure user has full hearts
         self.sample_user["hearts"] = 5
         self.sample_user["hearts_next_refill"] = None
-        self.dynamodb.Table(os.environ["USERS_TABLE_NAME"]).put_item(Item=self.sample_user)
+        self.users_table.put_item(Item=self.sample_user)
 
         jwt_token = generate_jwt_token("test@mail.com")
 
@@ -119,7 +119,7 @@ class TestGetHearts(BaseTestSetup):
 
         self.sample_user["hearts"] = 3
         self.sample_user["hearts_next_refill"] = refill_time
-        self.dynamodb.Table(os.environ["USERS_TABLE_NAME"]).put_item(Item=self.sample_user)
+        self.users_table.put_item(Item=self.sample_user)
 
         jwt_token = generate_jwt_token("test@mail.com")
 
@@ -146,7 +146,7 @@ class TestGetHearts(BaseTestSetup):
 
         self.sample_user["hearts"] = 2
         self.sample_user["hearts_next_refill"] = past_refill_time
-        self.dynamodb.Table(os.environ["USERS_TABLE_NAME"]).put_item(Item=self.sample_user)
+        self.users_table.put_item(Item=self.sample_user)
 
         jwt_token = generate_jwt_token("test@mail.com")
 
@@ -182,7 +182,7 @@ class TestGetHearts(BaseTestSetup):
 
         self.sample_user["hearts"] = 0
         self.sample_user["hearts_next_refill"] = past_refill_time
-        self.dynamodb.Table(os.environ["USERS_TABLE_NAME"]).put_item(Item=self.sample_user)
+        self.users_table.put_item(Item=self.sample_user)
 
         jwt_token = generate_jwt_token("test@mail.com")
 
@@ -202,8 +202,7 @@ class TestGetHearts(BaseTestSetup):
         self.assertIsNone(body['data']['hearts_next_refill'])
 
         # Verify hearts were updated in database
-        users_table = self.dynamodb.Table(os.environ["USERS_TABLE_NAME"])
-        result = users_table.get_item(Key={"email": "test@mail.com"})
+        result = self.users_table.get_item(Key={"email": "test@mail.com"})
         user = result.get('Item', {})
 
         self.assertEqual(user.get("hearts"), 5)
@@ -216,7 +215,7 @@ class TestGetHearts(BaseTestSetup):
         """
         self.sample_user["hearts"] = 3
         self.sample_user["hearts_next_refill"] = "invalid-time-format"
-        self.dynamodb.Table(os.environ["USERS_TABLE_NAME"]).put_item(Item=self.sample_user)
+        self.users_table.put_item(Item=self.sample_user)
 
         jwt_token = generate_jwt_token("test@mail.com")
 

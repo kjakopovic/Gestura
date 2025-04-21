@@ -115,8 +115,7 @@ class TestConsumeHeart(BaseTestSetup):
         self.assertLess(time_difference, 5,
                         f"hearts_next_refill time {hearts_next_refill} should be about 3 hours from now")
 
-        users_table = self.dynamodb.Table(os.environ["USERS_TABLE_NAME"])
-        result = users_table.get_item(Key={"email": "test@mail.com"})
+        result = self.users_table.get_item(Key={"email": "test@mail.com"})
         user = result.get('Item', {})
 
         self.assertEqual(user.get("hearts"), 4)
@@ -129,7 +128,7 @@ class TestConsumeHeart(BaseTestSetup):
         Test response when user has no hearts left.
         """
         self.sample_user["hearts"] = 0
-        self.dynamodb.Table(os.environ["USERS_TABLE_NAME"]).put_item(Item=self.sample_user)
+        self.users_table.put_item(Item=self.sample_user)
         jwt_token = generate_jwt_token("test@mail.com")
 
         event = {
