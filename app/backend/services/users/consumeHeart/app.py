@@ -50,7 +50,7 @@ def lambda_handler(event, context):
 
         logger.debug(f"User {email} has hearts next refill time in the future.")
 
-    elif hearts < 5 and hearts_next_refill < datetime.now().isoformat():
+    elif hearts < 5 and hearts_next_refill and datetime.fromisoformat(hearts_next_refill) < datetime.now():
         logger.debug(f"User {email} has hearts next refill time in the past.")
         hearts_next_refill_dt = datetime.fromisoformat(hearts_next_refill)
         next_refill = (hearts_next_refill_dt + timedelta(hours=HEARTS_REFILL_RATE_HOURS)).isoformat()
