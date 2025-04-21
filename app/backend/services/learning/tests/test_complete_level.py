@@ -79,135 +79,135 @@ class TestCreateLevel(BaseTestSetup):
         test_cases = [
             {
                 "request_body": {},
-                "expected_validation_message": "data must contain ['correctAnswersVersions', 'finishedAt', 'languageId', 'lettersLearned', 'startedAt'] properties"
+                "expected_validation_message": "data must contain ['correct_answers_versions', 'finished_at', 'language_id', 'letters_learned', 'started_at'] properties"
             },
             {
                 "request_body": {
-                    "startedAt": "2023-10-01T12:00:00Z",
-                    "finishedAt": "2023-10-01T12:30:00Z",
-                    "languageId": "en",
-                    "lettersLearned": ["A", "B", "C"]
-                    # Missing correctAnswersVersions
+                    "started_at": "2023-10-01T12:00:00Z",
+                    "finished_at": "2023-10-01T12:30:00Z",
+                    "language_id": "en",
+                    "letters_learned": ["A", "B", "C"]
+                    # Missing correct_answers_versions
                 },
-                "expected_validation_message": "data must contain ['correctAnswersVersions'] properties"
+                "expected_validation_message": "data must contain ['correct_answers_versions'] properties"
             },
             {
                 "request_body": {
-                    "correctAnswersVersions": [1, 2, 3],
-                    "finishedAt": "2023-10-01T12:30:00Z",
-                    "languageId": "en",
-                    "lettersLearned": ["A", "B", "C"]
-                    # Missing startedAt
+                    "correct_answers_versions": [1, 2, 3],
+                    "finished_at": "2023-10-01T12:30:00Z",
+                    "language_id": "en",
+                    "letters_learned": ["A", "B", "C"]
+                    # Missing started_at
                 },
-                "expected_validation_message": "data must contain ['startedAt'] properties"
+                "expected_validation_message": "data must contain ['started_at'] properties"
             },
             {
                 "request_body": {
-                    "correctAnswersVersions": [1, 2, 3],
-                    "startedAt": "2023-10-01T12:00:00Z",
-                    "languageId": "en",
-                    "lettersLearned": ["A", "B", "C"]
-                    # Missing finishedAt
+                    "correct_answers_versions": [1, 2, 3],
+                    "started_at": "2023-10-01T12:00:00Z",
+                    "language_id": "en",
+                    "letters_learned": ["A", "B", "C"]
+                    # Missing finished_at
                 },
-                "expected_validation_message": "data must contain ['finishedAt'] properties"
+                "expected_validation_message": "data must contain ['finished_at'] properties"
             },
             {
                 "request_body": {
-                    "correctAnswersVersions": [1, 2, 3],
-                    "startedAt": "2023-10-01T12:00:00Z",
-                    "finishedAt": "2023-10-01T12:30:00Z",
-                    "lettersLearned": ["A", "B", "C"]
-                    # Missing languageId
+                    "correct_answers_versions": [1, 2, 3],
+                    "started_at": "2023-10-01T12:00:00Z",
+                    "finished_at": "2023-10-01T12:30:00Z",
+                    "letters_learned": ["A", "B", "C"]
+                    # Missing language_id
                 },
-                "expected_validation_message": "data must contain ['languageId'] properties"
+                "expected_validation_message": "data must contain ['language_id'] properties"
             },
             {
                 "request_body": {
-                    "correctAnswersVersions": [1, 2, 3],
-                    "startedAt": "2023-10-01T12:00:00Z",
-                    "finishedAt": "2023-10-01T12:30:00Z",
-                    "languageId": "en"
-                    # Missing lettersLearned
+                    "correct_answers_versions": [1, 2, 3],
+                    "started_at": "2023-10-01T12:00:00Z",
+                    "finished_at": "2023-10-01T12:30:00Z",
+                    "language_id": "en"
+                    # Missing letters_learned
                 },
-                "expected_validation_message": "data must contain ['lettersLearned'] properties"
+                "expected_validation_message": "data must contain ['letters_learned'] properties"
             },
             {
                 "request_body": {
-                    "correctAnswersVersions": "not an array",
-                    "startedAt": "2023-10-01T12:00:00Z",
-                    "finishedAt": "2023-10-01T12:30:00Z",
-                    "languageId": "en",
-                    "lettersLearned": ["A", "B", "C"]
+                    "correct_answers_versions": "not an array",
+                    "started_at": "2023-10-01T12:00:00Z",
+                    "finished_at": "2023-10-01T12:30:00Z",
+                    "language_id": "en",
+                    "letters_learned": ["A", "B", "C"]
                 },
-                "expected_validation_message": "data.correctAnswersVersions must be array"
+                "expected_validation_message": "data.correct_answers_versions must be array"
             },
             {
                 "request_body": {
-                    "correctAnswersVersions": [],
-                    "startedAt": "2023-10-01T12:00:00Z",
-                    "finishedAt": "2023-10-01T12:30:00Z",
-                    "languageId": "en",
-                    "lettersLearned": ["A", "B", "C"]
+                    "correct_answers_versions": [],
+                    "started_at": "2023-10-01T12:00:00Z",
+                    "finished_at": "2023-10-01T12:30:00Z",
+                    "language_id": "en",
+                    "letters_learned": ["A", "B", "C"]
                 },
-                "expected_validation_message": "data.correctAnswersVersions must contain at least 1 items"
+                "expected_validation_message": "data.correct_answers_versions must contain at least 1 items"
             },
             {
                 "request_body": {
-                    "correctAnswersVersions": [4],
-                    "startedAt": "2023-10-01T12:00:00Z",
-                    "finishedAt": "2023-10-01T12:30:00Z",
-                    "languageId": "en",
-                    "lettersLearned": ["A", "B", "C"]
+                    "correct_answers_versions": [4],
+                    "started_at": "2023-10-01T12:00:00Z",
+                    "finished_at": "2023-10-01T12:30:00Z",
+                    "language_id": "en",
+                    "letters_learned": ["A", "B", "C"]
                 },
-                "expected_validation_message": "data.correctAnswersVersions[0] must be one of [1, 2, 3]"
+                "expected_validation_message": "data.correct_answers_versions[0] must be one of [1, 2, 3]"
             },
             {
                 "request_body": {
-                    "correctAnswersVersions": [1, 2, 3],
-                    "startedAt": "invalid-date-format",
-                    "finishedAt": "2023-10-01T12:30:00Z",
-                    "languageId": "en",
-                    "lettersLearned": ["A", "B", "C"]
+                    "correct_answers_versions": [1, 2, 3],
+                    "started_at": "invalid-date-format",
+                    "finished_at": "2023-10-01T12:30:00Z",
+                    "language_id": "en",
+                    "letters_learned": ["A", "B", "C"]
                 },
-                "expected_validation_message": "data.startedAt must match pattern"
+                "expected_validation_message": "data.started_at must match pattern"
             },
             {
                 "request_body": {
-                    "correctAnswersVersions": [1, 2, 3],
-                    "startedAt": "2023-10-01T12:00:00Z",
-                    "finishedAt": "invalid-date-format",
-                    "languageId": "en",
-                    "lettersLearned": ["A", "B", "C"]
+                    "correct_answers_versions": [1, 2, 3],
+                    "started_at": "2023-10-01T12:00:00Z",
+                    "finished_at": "invalid-date-format",
+                    "language_id": "en",
+                    "letters_learned": ["A", "B", "C"]
                 },
-                "expected_validation_message": "data.finishedAt must match pattern"
+                "expected_validation_message": "data.finished_at must match pattern"
             },
             {
                 "request_body": {
-                    "correctAnswersVersions": [1, 2, 3],
-                    "startedAt": "2023-10-01T12:00:00Z",
-                    "finishedAt": "2023-10-01T12:30:00Z",
-                    "languageId": 123,
-                    "lettersLearned": ["A", "B", "C"]
+                    "correct_answers_versions": [1, 2, 3],
+                    "started_at": "2023-10-01T12:00:00Z",
+                    "finished_at": "2023-10-01T12:30:00Z",
+                    "language_id": 123,
+                    "letters_learned": ["A", "B", "C"]
                 },
-                "expected_validation_message": "data.languageId must be string"
+                "expected_validation_message": "data.language_id must be string"
             },
             {
                 "request_body": {
-                    "correctAnswersVersions": [1, 2, 3],
-                    "startedAt": "2023-10-01T12:00:00Z",
-                    "finishedAt": "2023-10-01T12:30:00Z",
-                    "languageId": "en",
-                    "lettersLearned": []
+                    "correct_answers_versions": [1, 2, 3],
+                    "started_at": "2023-10-01T12:00:00Z",
+                    "finished_at": "2023-10-01T12:30:00Z",
+                    "language_id": "en",
+                    "letters_learned": []
                 },
-                "expected_validation_message": "data.lettersLearned must contain at least 1 items"
+                "expected_validation_message": "data.letters_learned must contain at least 1 items"
             },
             {
                 "request_body": {
-                    "correctAnswersVersions": [1, 2, 3],
-                    "startedAt": "2023-10-01T12:00:00Z",
-                    "finishedAt": "2023-10-01T12:30:00Z",
-                    "languageId": "en",
-                    "lettersLearned": ["A", "B", "C"],
+                    "correct_answers_versions": [1, 2, 3],
+                    "started_at": "2023-10-01T12:00:00Z",
+                    "finished_at": "2023-10-01T12:30:00Z",
+                    "language_id": "en",
+                    "letters_learned": ["A", "B", "C"],
                     "extraField": "value"
                 },
                 "expected_validation_message": "data must not contain {'extraField'} properties"
@@ -252,11 +252,11 @@ class TestCreateLevel(BaseTestSetup):
         versions = [1, 2, 3]
 
         body_data = {
-            "correctAnswersVersions": versions,
-            "startedAt": "2023-10-01T12:00:00Z",
-            "finishedAt": "2023-10-01T12:30:00Z",
-            "languageId": "en",
-            "lettersLearned": ["A", "B", "C"]
+            "correct_answers_versions": versions,
+            "started_at": "2023-10-01T12:00:00Z",
+            "finished_at": "2023-10-01T12:30:00Z",
+            "language_id": "en",
+            "letters_learned": ["A", "B", "C"]
         }
 
         event = {

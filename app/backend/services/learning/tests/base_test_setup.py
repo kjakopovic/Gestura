@@ -67,11 +67,11 @@ class BaseTestSetup(unittest.TestCase):
         self.tasks_table = self.dynamodb.create_table(
             TableName = os.environ["TASKS_TABLE_NAME"],
             AttributeDefinitions = [
-                {"AttributeName": "taskId", "AttributeType": "S"},
+                {"AttributeName": "task_id", "AttributeType": "S"},
                 {"AttributeName": "section", "AttributeType": "N"}
             ],
             KeySchema = [
-                {"AttributeName": "taskId", "KeyType": "HASH"}
+                {"AttributeName": "task_id", "KeyType": "HASH"}
             ],
             GlobalSecondaryIndexes=[
                 {

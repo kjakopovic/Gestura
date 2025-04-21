@@ -5,7 +5,7 @@ schema = {
             "type": "number",
             "multipleOf": 10
         },
-        "sectionName": {
+        "section_name": {
             "type": "string"
         },
         "version": {
@@ -15,17 +15,17 @@ schema = {
         "question": {
             "type": "string"
         },
-        "possibleAnswers": {
+        "possible_answers": {
             "type": "array",
             "minItems": 4,
             "maxItems": 4,
         },
-        "correctAnswerIndex": {
+        "correct_answer_index": {
             "type": "number",
             "enum": [0, 1, 2, 3]
         }
     },
-    "required": ["section", "sectionName", "version",
-                 "question", "possibleAnswers", "correctAnswerIndex"],
+    "required": ["section", "section_name", "version",
+                 "question", "possible_answers", "correct_answer_index"],
     "additionalProperties": False
 }
