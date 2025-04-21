@@ -18,11 +18,11 @@ logger.setLevel(logging.DEBUG)
 @dataclass
 class Request:
     section: int
-    sectionName: str
+    section_name: str
     version: int
     question: str
-    possibleAnswers: List[str]
-    correctAnswerIndex: int
+    possible_answers: List[str]
+    correct_answer_index: int
 
 
 @middleware
@@ -52,13 +52,13 @@ def lambda_handler(event, context):
     task_id = str(uuid.uuid4())
 
     new_task = {
-        "taskId": task_id,
+        "task_id": task_id,
         "section": request.section,
-        "sectionName": request.sectionName,
+        "section_name": request.section_name,
         "version": request.version,
         "question": request.question,
-        "possibleAnswers": request.possibleAnswers,
-        "correctAnswerIndex": request.correctAnswerIndex,
+        "possible_answers": request.possible_answers,
+        "correct_answer_index": request.correct_answer_index,
     }
 
     try:

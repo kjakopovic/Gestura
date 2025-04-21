@@ -22,11 +22,11 @@ logger.setLevel(logging.DEBUG)
 
 @dataclass
 class Request:
-    correctAnswersVersions: List[int]
-    startedAt: str
-    finishedAt: str
-    languageId: str
-    lettersLearned: List[str]
+    correct_answers_versions: List[int]
+    started_at: str
+    finished_at: str
+    language_id: str
+    letters_learned: List[str]
 
 
 @middleware
@@ -63,32 +63,32 @@ def lambda_handler(event, context):
         logger.error(f"User with email {email} not found")
         return build_response(404, {"message": "User not found"})
 
-    language = get_language_by_id(languagesTable, request.languageId)
+    language = get_language_by_id(languagesTable, request.language_id)
     if not language:
-        logger.error(f"Language with id {request.languageId} not found")
+        logger.error(f"Language with id {request.language_id} not found")
         return build_response(404, {"message": "Language not found"})
 
     logger.info("Calculating time played")
-    time_played = Decimal(str(seconds_between(request.startedAt, request.finishedAt)))
+    time_played = Decimal(str(seconds_between(request.started_at, request.finished_at)))
 
     logger.info(f"Updating users letters learned {user['letters_learned']}")
-    lettersLearned = update_letters_learned(
-        user["letters_learned"], request.languageId, request.lettersLearned
+    letters_learned = update_letters_learned(
+        user["letters_learned"], request.language_id, request.letters_learned
     )
 
-    xp, coins = calculate_xp_and_coins(request.correctAnswersVersions)
+    xp, coins = calculate_xp_and_coins(request.correct_answers_versions)
     xp = Decimal(str(xp))
     coins = Decimal(str(coins))
 
     logger.info(
-        f"Updating user {email} with time played: {time_played}, task level: {user['task_level'] + 1}, letters learned: {lettersLearned}"
+        f"Updating user {email} with time played: {time_played}, task level: {user['task_level'] + 1}, letters learned: {letters_learned}"
     )
     update_user(
         usersTable,
         email,
         user["time_played"] + time_played,
         user["task_level"],
-        lettersLearned,
+        letters_learned,
         user["xp"] + xp,
         user["battlepass_xp"] + xp,
         user["coins"] + coins,

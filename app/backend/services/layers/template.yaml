@@ -49,7 +49,7 @@ Resources:
     Properties:
       TableName: !Sub "tasks-${StageName}"
       AttributeDefinitions:
-        - AttributeName: taskId
+        - AttributeName: task_id
           AttributeType: S
         - AttributeName: section
           AttributeType: N

@@ -74,162 +74,162 @@ class TestCreateTask(BaseTestSetup):
         test_cases = [
             {
                 "request_body": {},
-                "expected_validation_message": "data must contain ['correctAnswerIndex', 'possibleAnswers', 'question', 'section', 'sectionName', 'version'] properties"
+                "expected_validation_message": "data must contain ['correct_answer_index', 'possible_answers', 'question', 'section', 'section_name', 'version'] properties"
             },
             {
                 "request_body": {
                     "section": 10,
-                    "sectionName": "Basic Grammar",
+                    "section_name": "Basic Grammar",
                     "version": 1,
                     "question": "What is the correct sign for 'hello'?",
-                    "possibleAnswers": ["Sign A", "Sign B", "Sign C", "Sign D"]
-                    # Missing correctAnswerIndex
+                    "possible_answers": ["Sign A", "Sign B", "Sign C", "Sign D"]
+                    # Missing correct_answer_index
                 },
-                "expected_validation_message": "data must contain ['correctAnswerIndex'] properties"
+                "expected_validation_message": "data must contain ['correct_answer_index'] properties"
             },
             {
                 "request_body": {
                     "section": 10,
-                    "sectionName": "Basic Grammar",
+                    "section_name": "Basic Grammar",
                     "version": 1,
                     "question": "What is the correct sign for 'hello'?",
-                    # Missing possibleAnswers
-                    "correctAnswerIndex": 0
+                    # Missing possible_answers
+                    "correct_answer_index": 0
                 },
-                "expected_validation_message": "data must contain ['possibleAnswers'] properties"
+                "expected_validation_message": "data must contain ['possible_answers'] properties"
             },
             {
                 "request_body": {
                     "section": 10,
-                    "sectionName": "Basic Grammar",
+                    "section_name": "Basic Grammar",
                     "version": 1,
                     # Missing question
-                    "possibleAnswers": ["Sign A", "Sign B", "Sign C", "Sign D"],
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["Sign A", "Sign B", "Sign C", "Sign D"],
+                    "correct_answer_index": 0
                 },
                 "expected_validation_message": "data must contain ['question'] properties"
             },
             {
                 "request_body": {
                     "section": 10,
-                    # Missing sectionName
+                    # Missing section_name
                     "version": 1,
                     "question": "What is the correct sign for 'hello'?",
-                    "possibleAnswers": ["Sign A", "Sign B", "Sign C", "Sign D"],
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["Sign A", "Sign B", "Sign C", "Sign D"],
+                    "correct_answer_index": 0
                 },
-                "expected_validation_message": "data must contain ['sectionName'] properties"
+                "expected_validation_message": "data must contain ['section_name'] properties"
             },
             {
                 "request_body": {
                     # Missing section
-                    "sectionName": "Basic Grammar",
+                    "section_name": "Basic Grammar",
                     "version": 1,
                     "question": "What is the correct sign for 'hello'?",
-                    "possibleAnswers": ["Sign A", "Sign B", "Sign C", "Sign D"],
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["Sign A", "Sign B", "Sign C", "Sign D"],
+                    "correct_answer_index": 0
                 },
                 "expected_validation_message": "data must contain ['section'] properties"
             },
             {
                 "request_body": {
                     "section": 10,
-                    "sectionName": "Basic Grammar",
+                    "section_name": "Basic Grammar",
                     # Missing version
                     "question": "What is the correct sign for 'hello'?",
-                    "possibleAnswers": ["Sign A", "Sign B", "Sign C", "Sign D"],
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["Sign A", "Sign B", "Sign C", "Sign D"],
+                    "correct_answer_index": 0
                 },
                 "expected_validation_message": "data must contain ['version'] properties"
             },
             {
                 "request_body": {
                     "section": "grammar",  # String instead of number
-                    "sectionName": "Basic Grammar",
+                    "section_name": "Basic Grammar",
                     "version": 1,
                     "question": "What is the correct sign for 'hello'?",
-                    "possibleAnswers": ["Sign A", "Sign B", "Sign C", "Sign D"],
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["Sign A", "Sign B", "Sign C", "Sign D"],
+                    "correct_answer_index": 0
                 },
                 "expected_validation_message": "data.section must be number"
             },
             {
                 "request_body": {
                     "section": 1,  # Not a multiple of 10
-                    "sectionName": "Basic Grammar",
+                    "section_name": "Basic Grammar",
                     "version": 1,
                     "question": "What is the correct sign for 'hello'?",
-                    "possibleAnswers": ["Sign A", "Sign B", "Sign C", "Sign D"],
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["Sign A", "Sign B", "Sign C", "Sign D"],
+                    "correct_answer_index": 0
                 },
                 "expected_validation_message": "data.section must be multiple of 10"
             },
             {
                 "request_body": {
                     "section": 10,
-                    "sectionName": "Basic Grammar",
+                    "section_name": "Basic Grammar",
                     "version": 1,
                     "question": "What is the correct sign for 'hello'?",
-                    "possibleAnswers": "not an array",  # Invalid type
-                    "correctAnswerIndex": 0
+                    "possible_answers": "not an array",  # Invalid type
+                    "correct_answer_index": 0
                 },
-                "expected_validation_message": "data.possibleAnswers must be array"
+                "expected_validation_message": "data.possible_answers must be array"
             },
             {
                 "request_body": {
                     "section": 10,
-                    "sectionName": "Basic Grammar",
+                    "section_name": "Basic Grammar",
                     "version": "1",  # String instead of number
                     "question": "What is the correct sign for 'hello'?",
-                    "possibleAnswers": ["Sign A", "Sign B", "Sign C", "Sign D"],
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["Sign A", "Sign B", "Sign C", "Sign D"],
+                    "correct_answer_index": 0
                 },
                 "expected_validation_message": "data.version must be number"
             },
             {
                 "request_body": {
                     "section": 10,
-                    "sectionName": "Basic Grammar",
+                    "section_name": "Basic Grammar",
                     "version": 1,
                     "question": "What is the correct sign for 'hello'?",
-                    "possibleAnswers": ["Sign A", "Sign B", "Sign C"],  # Only 3 items
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["Sign A", "Sign B", "Sign C"],  # Only 3 items
+                    "correct_answer_index": 0
                 },
-                "expected_validation_message": "data.possibleAnswers must contain at least 4 items"
+                "expected_validation_message": "data.possible_answers must contain at least 4 items"
             },
             {
                 "request_body": {
                     "section": 10,
-                    "sectionName": "Basic Grammar",
+                    "section_name": "Basic Grammar",
                     "version": 1,
                     "question": "What is the correct sign for 'hello'?",
-                    "possibleAnswers": ["Sign A", "Sign B", "Sign C", "Sign D", "Sign E"],  # 5 items
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["Sign A", "Sign B", "Sign C", "Sign D", "Sign E"],  # 5 items
+                    "correct_answer_index": 0
                 },
-                "expected_validation_message": "data.possibleAnswers must contain less than or equal to 4 items"
+                "expected_validation_message": "data.possible_answers must contain less than or equal to 4 items"
             },
             {
                 "request_body": {
                     "section": 10,
-                    "sectionName": "Basic Grammar",
+                    "section_name": "Basic Grammar",
                     "version": 1,
                     "question": "What is the correct sign for 'hello'?",
-                    "possibleAnswers": ["Sign A", "Sign B", "Sign C", "Sign D"],
-                    "correctAnswerIndex": 4  # Out of range index
+                    "possible_answers": ["Sign A", "Sign B", "Sign C", "Sign D"],
+                    "correct_answer_index": 4  # Out of range index
                 },
-                "expected_validation_message": "data.correctAnswerIndex must be one of [0, 1, 2, 3]"
+                "expected_validation_message": "data.correct_answer_index must be one of [0, 1, 2, 3]"
             },
             {
                 "request_body": {
                     "section": 10,
-                    "sectionName": "Basic Grammar",
+                    "section_name": "Basic Grammar",
                     "version": 1,
                     "question": "What is the correct sign for 'hello'?",
-                    "possibleAnswers": ["Sign A", "Sign B", "Sign C", "Sign D"],
-                    "correctAnswerIndex": 0,
-                    "extraField": "value"  # Extra field
+                    "possible_answers": ["Sign A", "Sign B", "Sign C", "Sign D"],
+                    "correct_answer_index": 0,
+                    "extra_field": "value"  # Extra field
                 },
-                "expected_validation_message": "data must not contain {'extraField'} properties"
+                "expected_validation_message": "data must not contain {'extra_field'} properties"
             }
         ]
 
@@ -262,11 +262,11 @@ class TestCreateTask(BaseTestSetup):
             },
             "body": json.dumps({
                 "section": 10,
-                "sectionName": "Basic Grammar",
+                "section_name": "Basic Grammar",
                 "version": 1,
                 "question": "What is the correct sign for 'hello'?",
-                "possibleAnswers": ["Sign A", "Sign B", "Sign C", "Sign D"],
-                "correctAnswerIndex": 0
+                "possible_answers": ["Sign A", "Sign B", "Sign C", "Sign D"],
+                "correct_answer_index": 0
             })
         }
 
