@@ -105,6 +105,8 @@ class BaseTestSetup(unittest.TestCase):
             "subscription": 0,
             "phone_number": "+1234567890",
             "chosen_language": "en",
+            "hearts": 5,
+            "hearts_next_refill": None,
         }
 
         self.users_table.put_item(Item=self.sample_user)
