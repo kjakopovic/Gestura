@@ -68,7 +68,7 @@ def lambda_handler(event, context):
         filled_hearts = hearts_to_add > 0
 
         if hearts < 5:
-            hearts_next_refill = hearts_next_refill + timedelta(hours=3 * hearts_to_add)
+            hearts_next_refill = current_time + timedelta(hours=3)
         else:
             hearts_next_refill = None
             hearts = 5
