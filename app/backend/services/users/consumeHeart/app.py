@@ -58,7 +58,7 @@ def lambda_handler(event, context):
         expression_attribute_values = {":refill_time": next_refill}
 
         logger.debug(f"Setting next heart refill time to {next_refill}")
-    elif hearts < 5 and hearts_next_refill > datetime.now().isoformat():
+    elif hearts < 5 and datetime.fromisoformat(hearts_next_refill) > datetime.now():
         hearts -= 1
         next_refill = hearts_next_refill
         update_expression = "SET hearts = :val"
