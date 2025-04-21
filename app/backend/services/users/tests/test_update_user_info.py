@@ -37,7 +37,7 @@ from auth import generate_jwt_token
 
 
 @mock_aws
-class TestRegisterUser(BaseTestSetup):
+class TestUpdateUserInfo(BaseTestSetup):
     def setUp(self):
         super().setUp()
 
