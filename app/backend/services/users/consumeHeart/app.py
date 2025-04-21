@@ -59,7 +59,7 @@ def lambda_handler(event, context):
         {
             "message": "Heart consumed successfully",
             "data": {
-                "hearts": hearts,
+                "hearts": int(hearts),
                 "hearts_next_refill": expression_attribute_values.get(":refill_time", hearts_next_refill)
             },
         }
