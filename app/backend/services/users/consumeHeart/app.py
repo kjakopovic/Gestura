@@ -48,8 +48,8 @@ def lambda_handler(event, context):
 
     dynamodb.table.update_item(
         Key={"email": email},
-        UpdateExpression="SET hearts = :val",
-        ExpressionAttributeValues={":val": hearts},
+        UpdateExpression=update_expression,
+        ExpressionAttributeValues=expression_attribute_values,
     )
 
     logger.debug(f"Consumed a heart for user: {email}. Remaining hearts: {hearts}")
@@ -78,5 +78,3 @@ def get_user_by_email(dynamodb, email):
     else :
         logger.error(f"User with email {email} not found")
         return None
-
-
