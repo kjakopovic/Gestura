@@ -1,0 +1,27 @@
+name: Build And Check Quality - Mobile
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "app/mobile/**"
+      - ".github/workflows/run_mobile_tests.yaml"
+
+jobs:
+  build-and-check-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: false
+
+      - name: Install dependencies
+        working-directory: app/mobile
+        run: npm i
+
+      - name: Quality check
+        working-directory: app/mobile
+        run: npm run lint
