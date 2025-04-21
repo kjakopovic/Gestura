@@ -61,7 +61,7 @@ Resources:
         - AttributeName: section
           AttributeType: N
       KeySchema:
-        - AttributeName: taskId
+        - AttributeName: task_id
           KeyType: HASH
       GlobalSecondaryIndexes:
         - IndexName: section-index
