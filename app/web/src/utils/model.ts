@@ -1,6 +1,7 @@
 import * as ort from "onnxruntime-web";
-import _ from "lodash";
 import { LABEL_MAP, MODEL_IMAGE_SIZE } from "@/constants/model";
+import { PredictionResult } from "@/types/model";
+import Webcam from "react-webcam";
 
 const imageDataToTensor = (
   image: Uint8ClampedArray,
@@ -38,10 +39,7 @@ const getImageTensorForPicture = async (
   image: Uint8ClampedArray<ArrayBufferLike>,
   dims: number[] = [1, 3, 224, 224]
 ): Promise<ort.Tensor> => {
-  // 2. convert to tensor
-  var imageTensor = imageDataToTensor(image, dims);
-  // 3. return the tensor
-  return imageTensor;
+  return imageDataToTensor(image, dims);
 };
 
 // Get the top K classes from the softmax output
@@ -62,8 +60,8 @@ const softmax = (arr: number[]): number[] => {
 
 const runInference = async (
   session: ort.InferenceSession,
-  preprocessedData: any
-): Promise<[any, number]> => {
+  preprocessedData: ort.Tensor
+): Promise<[PredictionResult[], number]> => {
   // Get start time to calculate inference time.
   const start = new Date();
 
@@ -98,18 +96,21 @@ const runInference = async (
 };
 
 const runModel = async (
-  preprocessedData: any,
+  preprocessedData: ort.Tensor,
   session: ort.InferenceSession
-): Promise<[any, number]> => {
-  var [results, inferenceTime] = await runInference(session, preprocessedData);
-  return [results, inferenceTime];
+): Promise<[PredictionResult[], number]> => {
+  return await runInference(session, preprocessedData);
 };
 
 export const inferenceYolo = async (
-  webcamRef: any,
+  webcamRef: React.RefObject<Webcam | null>,
   session: ort.InferenceSession
-): Promise<[any, number]> => {
+): Promise<[PredictionResult[], number]> => {
   const video = webcamRef.current?.video;
+  if (!video) {
+    return [[], 0];
+  }
+
   const modelW = MODEL_IMAGE_SIZE[0];
   const modelH = MODEL_IMAGE_SIZE[1];
 

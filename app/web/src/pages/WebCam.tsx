@@ -24,7 +24,7 @@ const WebCam: React.FC = () => {
 
       intervalId = window.setInterval(async () => {
         if (sessionRef.current) {
-          var [result, time] = await inferenceYolo(
+          const [result, time] = await inferenceYolo(
             webcamRef,
             sessionRef.current
           );

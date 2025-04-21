@@ -3,7 +3,11 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { AuthContext } from "./AuthContext";
 
-export const AuthProvider = ({ children }: any) => {
+interface Props {
+  children: React.ReactElement | React.ReactElement[];
+}
+
+export const AuthProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState(true);
   const [authState, setAuthState] = useState<AuthState>({
     token: null,
