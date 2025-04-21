@@ -17,6 +17,13 @@ import heart from "@/assets/icons/heart.png";
 import star1 from "@/assets/icons/star1.png";
 import star2 from "@/assets/icons/star2.png";
 import starTrophy from "@/assets/icons/star-trophy.png";
+import people from "@/assets/icons/people.png";
+import confetti from "@/assets/icons/confetti.png";
+import studying from "@/assets/icons/studying.png";
+import studyingBW from "@/assets/icons/studyingBW.png";
+import confettiBW from "@/assets/icons/confettiBW.png";
+import peopleBW from "@/assets/icons/peopleBW.png";
+import more from "@/assets/icons/more.png";
 
 export {
   apple,
@@ -38,4 +45,11 @@ export {
   star1,
   star2,
   starTrophy,
+  people,
+  confetti,
+  studying,
+  studyingBW,
+  confettiBW,
+  peopleBW,
+  more
 };

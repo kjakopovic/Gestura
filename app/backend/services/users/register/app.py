@@ -58,8 +58,27 @@ def sign_up_user(dynamodb, email, username, password):
 
     hashed_password = hash_string(password)
 
+    user = {
+        "email": email,
+        "username": username,
+        "password": hashed_password,
+        "letters_learned": {},
+        "task_level": 0,
+        "time_played": 0,
+        "xp": 0,
+        "battlepass_xp": 0,
+        "coins": 0,
+        "phone_numer": None,
+        "sound_effects": True,
+        "haptic_feedback": True,
+        "push_notifications": True,
+        "heart_refill": True,
+        "daily_reminder": True,
+        "subscription": 0,
+    }
+
     add_user_to_the_table(
-        dynamodb, {"email": email, "username": username, "password": hashed_password}
+        dynamodb, user
     )
 
     refresh_token = generate_refresh_token(email)
