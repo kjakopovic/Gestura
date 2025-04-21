@@ -34,9 +34,17 @@ def lambda_handler(event, context):
 
     if hearts == 5:
         logger.debug(f"User with email {email} has 5 hearts")
-        return build_response(200, { "hearts": hearts })
+        return build_response(
+            200,
+            {
+                "message": "Fetched hearts successfully",
+                "data": {
+                    "hearts": int(hearts),
+                    "hearts_next_refill": None
+                }
+            }
+        )
 
-    # TODO: Check if there will be problems here related to the time data format
     current_time = datetime.now()
     logger.debug(f"Current time: {current_time}")
 
@@ -74,7 +82,8 @@ def lambda_handler(event, context):
             update_expression += ", hearts_next_refill = :hearts_next_refill"
             expression_attribute_values[":hearts_next_refill"] = hearts_next_refill.isoformat()
         else:
-            update_expression += " REMOVE hearts_next_refill"
+            update_expression += ", hearts_next_refill = :null_value"
+            expression_attribute_values[":null_value"] = None
 
         dynamodb.table.update_item(
             Key={"email": email},
@@ -83,12 +92,18 @@ def lambda_handler(event, context):
         )
 
     response_data = {
-        "hearts": hearts,
+        "hearts": int(hearts),
         "hearts_next_refill": hearts_next_refill.isoformat() if hearts_next_refill else None
     }
 
     logger.debug(f"Fetched hearts for user: {email}. Remaining hearts: {hearts}")
-    return build_response(200, {"message": "Fetched hearts successfully", "data": response_data})
+    return build_response(
+        200,
+        {
+            "message": "Fetched hearts successfully",
+            "data": response_data
+        }
+    )
 
 
 def get_user_by_email(dynamodb, email):
@@ -99,7 +114,7 @@ def get_user_by_email(dynamodb, email):
 
     if user_item:
         hearts = user_item.get("hearts", 5)
-        hearts_next_refill = user_item.get("hearts_next_refill", 0)
+        hearts_next_refill = user_item.get("hearts_next_refill", None)
         return hearts, hearts_next_refill
     else :
         logger.error(f"User with email {email} not found")
