@@ -39,6 +39,9 @@ def lambda_handler(event, context):
         logger.debug(f"Unable to consume a heart for user: {email} as they have no hearts left.")
         return build_response(400, {"message": "Unable to consume a heart as they have no hearts left."})
 
+    next_refill = None
+    update_expression = None
+    expression_attribute_values = None
 
     if hearts == 5:
         next_refill = (datetime.now() + timedelta(hours=HEARTS_REFILL_RATE_HOURS)).isoformat()
@@ -46,23 +49,8 @@ def lambda_handler(event, context):
         update_expression = "SET hearts = :val, hearts_next_refill = :refill_time"
         expression_attribute_values = {":val": hearts, ":refill_time": next_refill}
 
-        dynamodb.table.update_item(
-            Key={"email": email},
-            UpdateExpression=update_expression,
-            ExpressionAttributeValues=expression_attribute_values,
-        )
-
         logger.debug(f"User {email} has hearts next refill time in the future.")
-        return build_response(
-            200,
-            {
-                "message": "Heart consumed successfully",
-                "data": {
-                    "hearts": int(hearts),
-                    "hearts_next_refill": next_refill
-                },
-            }
-        )
+
     elif hearts < 5 and hearts_next_refill < datetime.now().isoformat():
         logger.debug(f"User {email} has hearts next refill time in the past.")
         hearts_next_refill_dt = datetime.fromisoformat(hearts_next_refill)
@@ -70,47 +58,29 @@ def lambda_handler(event, context):
         update_expression = "SET hearts_next_refill = :refill_time"
         expression_attribute_values = {":refill_time": next_refill}
 
-        dynamodb.table.update_item(
-            Key={"email": email},
-            UpdateExpression=update_expression,
-            ExpressionAttributeValues=expression_attribute_values,
-        )
         logger.debug(f"Setting next heart refill time to {next_refill}")
-        return build_response(
-            200,
-            {
-                "message": "Heart consumed successfully",
-                "data": {
-                    "hearts": int(hearts),
-                    "hearts_next_refill": next_refill
-                },
-            }
-        )
     elif hearts < 5 and hearts_next_refill > datetime.now().isoformat():
         hearts -= 1
+        next_refill = hearts_next_refill
         update_expression = "SET hearts = :val"
         expression_attribute_values = {":val": hearts}
 
-        dynamodb.table.update_item(
-            Key={"email": email},
-            UpdateExpression=update_expression,
-            ExpressionAttributeValues=expression_attribute_values,
-        )
+    dynamodb.table.update_item(
+        Key={"email": email},
+        UpdateExpression=update_expression,
+        ExpressionAttributeValues=expression_attribute_values,
+    )
 
-        logger.debug(f"User {email} has hearts next refill time in the future.")
-        return build_response(
-            200,
-            {
-                "message": "Heart consumed successfully",
-                "data": {
-                    "hearts": int(hearts),
-                    "hearts_next_refill": hearts_next_refill
-                },
-            }
-        )
-
-    logger.error(f"Unexpected state for user {email}: hearts={hearts}, hearts_next_refill={hearts_next_refill}")
-    return build_response(500, {"message": "Unexpected state for user."})
+    return build_response(
+        200,
+        {
+            "message": "Heart consumed successfully",
+            "data": {
+                "hearts": int(hearts),
+                "hearts_next_refill": next_refill
+            },
+        }
+    )
 
 
 def get_user_by_email(dynamodb, email):
