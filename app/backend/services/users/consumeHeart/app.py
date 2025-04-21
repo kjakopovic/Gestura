@@ -1,5 +1,6 @@
 import logging
 
+from datetime import datetime, timedelta
 from common import build_response
 from middleware import middleware
 from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
@@ -24,9 +25,9 @@ def lambda_handler(event, context):
     global _LAMBDA_USERS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
 
-    hearts = get_user_by_email(dynamodb, email)
+    hearts, hearts_next_refill = get_user_by_email(dynamodb, email)
 
-    if not hearts:
+    if not hearts and hearts != 0:
         logger.debug(f"User with email {email} not found.")
         return build_response(404, {"message": "User not found."})
 
@@ -35,6 +36,15 @@ def lambda_handler(event, context):
         return build_response(400, {"message": "Unable to consume a heart as they have no hearts left."})
 
     hearts -= 1
+
+    update_expression = "SET hearts = :val"
+    expression_attribute_values = {":val": hearts}
+
+    if hearts == 4:
+        next_refill = (datetime.now() + timedelta(hours=3)).isoformat()
+        update_expression += ", hearts_next_refill = :refill_time"
+        expression_attribute_values[":refill_time"] = next_refill
+        logger.debug(f"Setting next heart refill time to {next_refill}")
 
     dynamodb.table.update_item(
         Key={"email": email},
@@ -49,6 +59,7 @@ def lambda_handler(event, context):
             "message": "Heart consumed successfully",
             "data": {
                 "hearts": hearts,
+                "hearts_next_refill": expression_attribute_values.get(":refill_time", hearts_next_refill)
             },
         }
     )
@@ -62,7 +73,10 @@ def get_user_by_email(dynamodb, email):
 
     if user_item:
         hearts = user_item.get("hearts", 0)
-        return hearts
+        hearts_next_refill = user_item.get("hearts_next_refill", 0)
+        return hearts, hearts_next_refill
     else :
         logger.error(f"User with email {email} not found")
         return None
+
+

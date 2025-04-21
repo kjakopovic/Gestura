@@ -62,6 +62,8 @@ def sign_up_user(dynamodb, email, username, password):
         "email": email,
         "username": username,
         "password": hashed_password,
+        "hearts": 5,
+        "hearts_next_refill": None,
         "letters_learned": {},
         "task_level": 0,
         "time_played": 0,
