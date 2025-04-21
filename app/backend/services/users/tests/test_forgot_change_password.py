@@ -36,7 +36,7 @@ from common import hash_string, verify_hash_string
 
 
 @mock_aws
-class TestValidateResetCode(BaseTestSetup):
+class TestForgotChangePassword(BaseTestSetup):
     def setUp(self):
         super().setUp()
 
