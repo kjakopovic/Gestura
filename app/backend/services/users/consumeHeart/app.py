@@ -1,4 +1,5 @@
 import logging
+import os
 
 from datetime import datetime, timedelta
 from common import build_response
@@ -8,6 +9,8 @@ from auth import get_email_from_jwt_token
 
 logger = logging.getLogger("ConsumeHeart")
 logger.setLevel(logging.DEBUG)
+
+HEARTS_REFILL_RATE_HOURS = int(os.environ.get('HEARTS_REFILL_RATE_HOURS', 3))
 
 
 @middleware
@@ -38,7 +41,7 @@ def lambda_handler(event, context):
 
 
     if hearts == 5:
-        next_refill = (datetime.now() + timedelta(hours=3)).isoformat()
+        next_refill = (datetime.now() + timedelta(hours=HEARTS_REFILL_RATE_HOURS)).isoformat()
         hearts -= 1
         update_expression = "SET hearts = :val, hearts_next_refill = :refill_time"
         expression_attribute_values = {":val": hearts, ":refill_time": next_refill}
@@ -62,7 +65,8 @@ def lambda_handler(event, context):
         )
     elif hearts < 5 and hearts_next_refill < datetime.now().isoformat():
         logger.debug(f"User {email} has hearts next refill time in the past.")
-        next_refill = (datetime.now() + timedelta(hours=3)).isoformat()
+        hearts_next_refill_dt = datetime.fromisoformat(hearts_next_refill)
+        next_refill = (hearts_next_refill_dt + timedelta(hours=HEARTS_REFILL_RATE_HOURS)).isoformat()
         update_expression = "SET hearts_next_refill = :refill_time"
         expression_attribute_values = {":refill_time": next_refill}
 

@@ -306,6 +306,7 @@ Resources:
             Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
+          HEARTS_REFILL_RATE_HOURS: 3
       Layers:
         - !ImportValue
           Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
@@ -339,6 +340,7 @@ Resources:
             Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
+          HEARTS_REFILL_RATE_HOURS: 3
       Layers:
         - !ImportValue
           Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"

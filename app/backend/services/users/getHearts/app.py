@@ -1,4 +1,5 @@
 import logging
+import os
 
 from datetime import datetime, timedelta
 from common import build_response
@@ -8,6 +9,8 @@ from auth import get_email_from_jwt_token
 
 logger = logging.getLogger("GetHearts")
 logger.setLevel(logging.DEBUG)
+
+HEARTS_REFILL_RATE_HOURS = int(os.environ.get('HEARTS_REFILL_RATE_HOURS', 3))
 
 
 @middleware
@@ -62,13 +65,13 @@ def lambda_handler(event, context):
     if hearts_next_refill <= current_time:
         time_delta = current_time - hearts_next_refill
         hours_elapsed = time_delta.days * 24 + time_delta.seconds // 3600
-        hearts_to_add = min(hours_elapsed // 3 + 1, 5 - hearts)
+        hearts_to_add = min(hours_elapsed // HEARTS_REFILL_RATE_HOURS + 1, 5 - hearts)
 
         hearts += hearts_to_add
         filled_hearts = hearts_to_add > 0
 
         if hearts < 5:
-            hearts_next_refill = current_time + timedelta(hours=3)
+            hearts_next_refill = current_time + timedelta(hours=HEARTS_REFILL_RATE_HOURS)
         else:
             hearts_next_refill = None
             hearts = 5
