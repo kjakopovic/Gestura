@@ -18,7 +18,6 @@ def lambda_handler(event, context):
     logger.debug(f"Received event {event}")
 
     jwt_token = event.get("headers").get("x-access-token")
-    print(f"JWT token: {jwt_token}")
     email = get_email_from_jwt_token(jwt_token)
 
     if not email:
