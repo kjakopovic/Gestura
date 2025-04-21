@@ -308,8 +308,7 @@ Resources:
           SECRETS_REGION_NAME: !Ref SecretsRegionName
           HEARTS_REFILL_RATE_HOURS: 3
       Layers:
-        - !ImportValue
-          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Architectures:
         - x86_64
       Policies:
@@ -342,8 +341,7 @@ Resources:
           SECRETS_REGION_NAME: !Ref SecretsRegionName
           HEARTS_REFILL_RATE_HOURS: 3
       Layers:
-        - !ImportValue
-          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Architectures:
         - x86_64
       Policies:
