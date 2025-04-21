@@ -6,6 +6,7 @@ import BackButton from "@/components/BackButton";
 import SettingSection from "@/components/settings/SettingSection";
 import SettingSubtitle from "@/components/settings/SettingSubtitle";
 import * as icons from "@/constants/icons";
+import SubscriptionSetting from "@/components/settings/SubscriptionSetting";
 
 const Settings = () => {
   const router = useRouter();
