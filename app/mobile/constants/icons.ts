@@ -20,6 +20,8 @@ import starTrophy from "@/assets/icons/star-trophy.png";
 import arrowBack from "@/assets/icons/arrow-back.png";
 import gb from "@/assets/icons/GB.png";
 import germany from "@/assets/icons/germany.png";
+import book from "@/assets/icons/book.png";
+import trophy from "@/assets/icons/trophy.png";
 import people from "@/assets/icons/people.png";
 import confetti from "@/assets/icons/confetti.png";
 import studying from "@/assets/icons/studying.png";
@@ -51,6 +53,8 @@ export {
   arrowBack,
   gb,
   germany,
+  book,
+  trophy,
   people,
   confetti,
   studying,

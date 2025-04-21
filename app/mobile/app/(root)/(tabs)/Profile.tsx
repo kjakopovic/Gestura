@@ -2,6 +2,7 @@ import { ScrollView } from "react-native";
 import React from "react";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import ProfileOption from "@/components/ProfileOption";
 
 import Table from "@/components/profile/Table";
 import Achievement from "@/components/profile/Achievement";
