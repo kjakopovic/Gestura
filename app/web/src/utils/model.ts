@@ -1,6 +1,6 @@
 import * as ort from "onnxruntime-web";
 import _ from "lodash";
-import { MODEL_IMAGE_SIZE } from "@/constants/model";
+import { LABEL_MAP, MODEL_IMAGE_SIZE } from "@/constants/model";
 
 const imageDataToTensor = (
   image: Uint8ClampedArray,
@@ -85,7 +85,16 @@ const runInference = async (
 
   const results = imagenetClassesTopK(outputSoftmax, 5);
 
-  return [results, inferenceTime];
+  // Convert the results to a more readable format.
+  const resultsFormatted = results.map((result) => {
+    return {
+      class: result.index,
+      probability: result.value,
+      label: LABEL_MAP[result.index],
+    };
+  });
+
+  return [resultsFormatted, inferenceTime];
 };
 
 const runModel = async (

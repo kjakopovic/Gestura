@@ -3,7 +3,11 @@ import * as ort from "onnxruntime-web";
 
 import Webcam from "react-webcam";
 import { inferenceYolo } from "@/utils/model";
-import { DETECTION_INTERVAL_MS, MODEL_IMAGE_SIZE } from "@/constants/model";
+import {
+  ASL_MODEL_PATH,
+  DETECTION_INTERVAL_MS,
+  MODEL_IMAGE_SIZE,
+} from "@/constants/model";
 
 const WebCam: React.FC = () => {
   const webcamRef = useRef<Webcam>(null);
@@ -13,10 +17,10 @@ const WebCam: React.FC = () => {
     let intervalId: number;
 
     const runModel = async () => {
-      sessionRef.current = await ort.InferenceSession.create(
-        "/yolo/yolo11n-cls.onnx",
-        { executionProviders: ["wasm"], graphOptimizationLevel: "all" }
-      );
+      sessionRef.current = await ort.InferenceSession.create(ASL_MODEL_PATH, {
+        executionProviders: ["wasm"],
+        graphOptimizationLevel: "all",
+      });
 
       intervalId = window.setInterval(async () => {
         if (sessionRef.current) {
