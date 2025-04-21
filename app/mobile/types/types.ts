@@ -24,19 +24,3 @@ export type CustomInputProps = TextInputProps & {
   onChangeText: (text: string) => void;
   className?: string;
 };
-
-// Types for the forgot password functions
-export type ForgotEmailResult = {
-  success: boolean;
-  error?: { message: string };
-};
-
-export type ForgotCodeResult = {
-  success: boolean;
-  error?: { message: string };
-};
-
-export type ForgotPasswordResult = {
-  success: boolean;
-  error?: { message: string };
-};

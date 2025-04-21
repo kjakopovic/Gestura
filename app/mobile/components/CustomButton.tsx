@@ -5,6 +5,7 @@ type CustomButtonProps = {
   onPress: () => void;
   text: string;
   style?: string;
+  marginTop?: number;
   disabled?: boolean;
 };
 
@@ -12,6 +13,7 @@ const CustomButton = ({
   onPress,
   text,
   style,
+  marginTop,
   disabled,
   ...rest
 }: CustomButtonProps) => {
