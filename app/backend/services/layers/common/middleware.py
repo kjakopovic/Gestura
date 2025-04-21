@@ -64,7 +64,6 @@ def validate_refresh_token(refresh_token, refresh_secret, jwt_secret):
         jwt.decode(refresh_token, refresh_secret, algorithms=["HS256"])
 
         logger.info("Refresh token verified successfully, creating new JWT token")
-
         expiration_time = get_expiration_time(timedelta(hours=1))
         user_email = get_email_from_jwt_token(refresh_token)
         new_jwt_token = jwt.encode(
@@ -72,7 +71,6 @@ def validate_refresh_token(refresh_token, refresh_secret, jwt_secret):
         )
 
         logger.info(f"New JWT token created successfully for email: {user_email}")
-
         return build_response(
             200,
             {"message": "JWT token verified successfully"},

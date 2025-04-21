@@ -43,8 +43,7 @@ Resources:
       Handler: app.lambda_handler
       Runtime: python3.12
       Layers:
-        - !ImportValue
-          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Architectures:
         - x86_64
       Events:
@@ -68,8 +67,7 @@ Resources:
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
-        - !ImportValue
-          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Architectures:
         - x86_64
       Policies:
@@ -101,8 +99,7 @@ Resources:
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
-        - !ImportValue
-          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Architectures:
         - x86_64
       Policies:
@@ -136,8 +133,7 @@ Resources:
           LANGUAGES_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-LanguagesTable"
       Layers:
-        - !ImportValue
-          Fn::Sub: "${LayerStackName}-${StageName}-CommonLayerArn"
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Architectures:
         - x86_64
       Policies:

@@ -117,13 +117,13 @@ class TestGetListOfTasks(BaseTestSetup):
         for version in [1, 2, 3]:
             for i in range(5):  # Add multiple items per version
                 self.tasks_table.put_item(Item={
-                    "taskId": f"special-task-10-{version}-{i}",
+                    "task_id": f"special-task-10-{version}-{i}",
                     "section": 10,
-                    "sectionName": "Test Section 10",
+                    "section_name": "Test Section 10",
                     "version": version,
                     "question": f"Test question version {version}",
-                    "possibleAnswers": ["A", "B", "C", "D"],
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0
                 })
 
         event = {
@@ -152,13 +152,13 @@ class TestGetListOfTasks(BaseTestSetup):
 
         # Check structure of the first task
         first_task = body["tasks"][0]
-        self.assertIn("taskId", first_task)
+        self.assertIn("task_id", first_task)
         self.assertIn("section", first_task)
-        self.assertIn("sectionName", first_task)
+        self.assertIn("section_name", first_task)
         self.assertIn("version", first_task)
         self.assertIn("question", first_task)
-        self.assertIn("possibleAnswers", first_task)
-        self.assertIn("correctAnswerIndex", first_task)
+        self.assertIn("possible_answers", first_task)
+        self.assertIn("correct_answer_index", first_task)
 
         # Check if section equals 10
         self.assertEqual(first_task["section"], 10)
@@ -173,24 +173,24 @@ class TestGetListOfTasks(BaseTestSetup):
         for version in [1, 2, 3]:
             for i in range(5):
                 self.tasks_table.put_item(Item={
-                    "taskId": f"special-task-10-{version}-{i}",
+                    "task_id": f"special-task-10-{version}-{i}",
                     "section": 10,
-                    "sectionName": "Test Section 10",
+                    "section_name": "Test Section 10",
                     "version": version,
                     "question": f"Test question version {version}",
-                    "possibleAnswers": ["A", "B", "C", "D"],
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0
                 })
 
             for i in range(5):
                 self.tasks_table.put_item(Item={
-                    "taskId": f"special-task-20-{version}-{i}",
+                    "task_id": f"special-task-20-{version}-{i}",
                     "section": 20,
-                    "sectionName": "Test Section 20",
+                    "section_name": "Test Section 20",
                     "version": version,
                     "question": f"Test question version {version}",
-                    "possibleAnswers": ["A", "B", "C", "D"],
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0
                 })
 
         event = {
@@ -247,33 +247,33 @@ class TestGetListOfTasks(BaseTestSetup):
         for version in [1, 2, 3]:
             for i in range(5):  # Add multiple items per version
                 self.tasks_table.put_item(Item={
-                    "taskId": f"special-task-10-{version}-{i}",
+                    "task_id": f"special-task-10-{version}-{i}",
                     "section": 10,
-                    "sectionName": "Test Section 10",
+                    "section_name": "Test Section 10",
                     "version": version,
                     "question": f"Test question version {version}",
-                    "possibleAnswers": ["A", "B", "C", "D"],
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0
                 })
 
                 self.tasks_table.put_item(Item={
-                    "taskId": f"special-task-20-{version}-{i}",
+                    "task_id": f"special-task-20-{version}-{i}",
                     "section": 20,
-                    "sectionName": "Test Section 20",
+                    "section_name": "Test Section 20",
                     "version": version,
                     "question": f"Test question version {version}",
-                    "possibleAnswers": ["A", "B", "C", "D"],
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0
                 })
 
                 self.tasks_table.put_item(Item={
-                    "taskId": f"special-task-30-{version}-{i}",
+                    "task_id": f"special-task-30-{version}-{i}",
                     "section": 30,
-                    "sectionName": "Test Section 30",
+                    "section_name": "Test Section 30",
                     "version": version,
                     "question": f"Test question version {version}",
-                    "possibleAnswers": ["A", "B", "C", "D"],
-                    "correctAnswerIndex": 0
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0
                 })
 
         event = {
@@ -329,13 +329,13 @@ class TestGetListOfTasks(BaseTestSetup):
 
         # Check structure of a random task
         random_task = body["tasks"][0]
-        self.assertIn("taskId", random_task)
+        self.assertIn("task_id", random_task)
         self.assertIn("section", random_task)
-        self.assertIn("sectionName", random_task)
+        self.assertIn("section_name", random_task)
         self.assertIn("version", random_task)
         self.assertIn("question", random_task)
-        self.assertIn("possibleAnswers", random_task)
-        self.assertIn("correctAnswerIndex", random_task)
+        self.assertIn("possible_answers", random_task)
+        self.assertIn("correct_answer_index", random_task)
 
 
     def tearDown(self):

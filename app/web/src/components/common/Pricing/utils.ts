@@ -4,7 +4,7 @@ import { images } from "@/constants/images";
 import { ButtonType } from "../Button";
 
 export const getPricingStyles = (type: PricingType): PricingStyles => {
-  let styles: PricingStyles = {
+  const styles: PricingStyles = {
     image: "",
     title: "",
     subtitle: "",

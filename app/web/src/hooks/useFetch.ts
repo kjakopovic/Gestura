@@ -31,9 +31,13 @@ function useFetch<T>(url: string, options?: RequestInit): ApiResponse<T> {
         const result: T = await response.json();
 
         setData(result);
-      } catch (err: any) {
-        if (err.name !== "AbortError") {
+      } catch (err) {
+        if (err instanceof Error && err.name !== "AbortError") {
           setError(err.message || "Something went wrong");
+        } else if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred");
         }
       } finally {
         setLoading(false);

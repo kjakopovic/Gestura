@@ -2,8 +2,8 @@ import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
+
 import "./globals.css";
-import { StatusBar } from "expo-status-bar";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -16,6 +16,8 @@ export default function RootLayout() {
     "Inter-ExtraLight": require("../assets/fonts/Inter_18pt-ExtraLight.ttf"),
   });
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
@@ -27,12 +29,9 @@ export default function RootLayout() {
   }
 
   return (
-    <>
-      <StatusBar style="light" />
-      <Stack>
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(root)" options={{ headerShown: false }} />
-      </Stack>
-    </>
+    <Stack>
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="(root)" options={{ headerShown: false }} />
+    </Stack>
   );
 }
