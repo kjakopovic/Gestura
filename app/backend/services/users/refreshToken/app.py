@@ -23,13 +23,17 @@ def lambda_handler(event, context):
 
     user_email = get_user_by_email(dynamodb, email)
 
-    if user_email is None or user_email != email:
-        logger.error(f"Invalid email in jwt token {email}")
-        return build_response(400, {"message": "Invalid email in jwt token"})
+    if not user_email:
+        logger.debug(f"User with email {email} not found")
+        return build_response(
+            401,
+            {"message": "User not found in database"},
+        )
 
     secrets = get_secrets_from_aws_secrets_manager(
         environ.get("JWT_SECRET_NAME"), environ.get("SECRETS_REGION_NAME")
     )
+
     response = validate_refresh_token(jwt_token, secrets["refresh_secret"], secrets["jwt_secret"])
 
     return response
