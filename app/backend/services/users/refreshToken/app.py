@@ -2,7 +2,7 @@ import json
 import logging
 
 from common import build_response
-from auth import generate_jwt_token, get_expiration_time, get_email_from_jwt_token
+from auth import generate_jwt_token, get_expiration_time, get_email_from_refresh_token
 from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE, get_secrets_from_aws_secrets_manager
 from middleware import validate_refresh_token
 from os import environ
@@ -16,7 +16,8 @@ def lambda_handler(event, context):
     logger.debug(f"Received event {event}")
 
     jwt_token = event.get("headers").get("x-refresh-token")
-    email = get_email_from_jwt_token(jwt_token)
+    email = get_email_from_refresh_token(jwt_token)
+    logger.debug(f"Email from JWT token: {email}")
 
     global _LAMBDA_USERS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)

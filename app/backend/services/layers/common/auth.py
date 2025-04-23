@@ -63,6 +63,28 @@ def get_email_from_jwt_token(token):
     return decoded_jwt.get("email")
 
 
+def get_email_from_refresh_token(token):
+    if not token:
+        logger.warning("No token provided")
+        return None
+
+    secrets = get_secrets_from_aws_secrets_manager(
+        environ.get("JWT_SECRET_NAME"), environ.get("SECRETS_REGION_NAME")
+    )
+
+    try:
+        logger.debug("Decoding JWT token")
+        decoded_jwt = jwt.decode(
+            token.encode("utf-8"), secrets["refresh_secret"], algorithms=["HS256"]
+        )
+    except Exception as e:
+        logger.error(f"Error decoding JWT token {e}")
+        return None
+
+    logger.debug("Returning email from the JWT token")
+    return decoded_jwt.get("email")
+
+
 def get_expiration_time(time: timedelta) -> int:
     return int((datetime.now(timezone.utc) + time).timestamp())
 
