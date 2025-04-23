@@ -1,6 +1,6 @@
 from aws_lambda_powertools.middleware_factory import lambda_handler_decorator
 from common import build_response
-from auth import get_expiration_time, get_email_from_jwt_token
+from auth import get_expiration_time, get_email_from_refresh_token
 from datetime import timedelta
 from os import environ
 from boto import get_secrets_from_aws_secrets_manager
@@ -65,7 +65,7 @@ def validate_refresh_token(refresh_token, refresh_secret, jwt_secret):
 
         logger.info("Refresh token verified successfully, creating new JWT token")
         expiration_time = get_expiration_time(timedelta(hours=1))
-        user_email = get_email_from_jwt_token(refresh_token)
+        user_email = get_email_from_refresh_token(refresh_token)
         new_jwt_token = jwt.encode(
             {"email": user_email, "exp": expiration_time}, jwt_secret, algorithm="HS256"
         )
