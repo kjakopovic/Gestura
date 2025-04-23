@@ -17,7 +17,7 @@ def lambda_handler(event, context):
 
     jwt_token = event.get("headers").get("x-refresh-token")
     email = get_email_from_refresh_token(jwt_token)
-    print(f"Email from JWT token: {email}")
+    logger.debug(f"Email from JWT token: {email}")
 
     global _LAMBDA_USERS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
