@@ -48,6 +48,6 @@ def get_user_by_email(dynamodb, email):
     if user_item:
         user_email = user_item.get("email", None)
         return user_email
-    else :
+    else:
         logger.error(f"User with email {email} not found")
         return None
