@@ -42,11 +42,16 @@ class TestGetUserInfo(BaseTestSetup):
         super().setUp()
 
         # Create patcher for the DynamoDB resource in the lambda handler
-        self.resource_patcher = patch('getUserInfo.app._LAMBDA_USERS_TABLE_RESOURCE', {
+        self.users_resource_patcher = patch('getUserInfo.app._LAMBDA_USERS_TABLE_RESOURCE', {
             "resource": self.dynamodb,
             "table_name": os.environ["USERS_TABLE_NAME"]
         })
-        self.resource_patcher.start()
+        self.languages_resource_patcher = patch('getUserInfo.app._LAMBDA_LANGUAGES_TABLE_RESOURCE', {
+            "resource": self.dynamodb,
+            "table_name": os.environ["LANGUAGES_TABLE_NAME"]
+        })
+        self.users_resource_patcher.start()
+        self.languages_resource_patcher.start()
 
 
     def test_when_user_not_authorized(self):
@@ -103,10 +108,13 @@ class TestGetUserInfo(BaseTestSetup):
 
         self.assertEqual(response['statusCode'], 200)
         self.assertIn('message', body)
+        self.assertIn('users', body)
+        self.assertIn('languages', body)
 
 
     def tearDown(self):
-        self.resource_patcher.stop()
+        self.users_resource_patcher.stop()
+        self.languages_resource_patcher.stop()
         super().tearDown()
 
 
