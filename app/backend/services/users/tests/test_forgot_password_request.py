@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch
 from datetime import datetime, timezone
 
-from base_test_setups import BaseTestSetup
+from base_test_setup import BaseTestSetup
 
 original_path = sys.path.copy()
 BaseTestSetup.setup_paths('forgotPasswordRequest')

@@ -5,7 +5,7 @@ import unittest
 from datetime import datetime, timezone
 from unittest.mock import patch
 
-from base_test_setups import BaseTestSetup
+from base_test_setup import BaseTestSetup
 
 original_path = sys.path.copy()
 BaseTestSetup.setup_paths('validateResetCode')

@@ -4,7 +4,7 @@ import os
 import unittest
 from unittest.mock import patch
 from datetime import datetime, timedelta
-from base_test_setups import BaseTestSetup
+from base_test_setup import BaseTestSetup
 
 
 original_path = sys.path.copy()
@@ -12,7 +12,7 @@ BaseTestSetup.setup_paths('consumeHeart')
 BaseTestSetup.clear_module_cache(['common', 'consumeHeart.app'])
 
 
-from base_test_setups import BaseTestSetup
+from base_test_setup import BaseTestSetup
 from moto import mock_aws
 from consumeHeart.app import lambda_handler
 from auth import generate_jwt_token
