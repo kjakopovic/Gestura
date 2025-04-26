@@ -37,7 +37,7 @@ def lambda_handler(event, context):
 
     # Every 10 levels = 1 section
     # 0-9 = section 10, 10-19 = section 20, etc.
-    level = int(query_params.get("level"))
+    level = int(query_params.get("level", 1))
     section = (level // 10 + 1) * 10
 
     return get_list_of_tasks(dynamodb, section)
