@@ -13,6 +13,9 @@
 
 # AI
 **/data/
+**/runs/
+**/yolo11n-cls.pt
+**/yolo11n.pt
 
 # Logs
 **/logs
