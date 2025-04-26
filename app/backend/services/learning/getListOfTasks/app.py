@@ -49,6 +49,10 @@ def get_list_of_tasks(dynamodb, section):
     tasks = get_tasks_for_section(dynamodb, section)
     selected_tasks = chose_tasks(tasks, 4, 4, 2)
 
+    if len(tasks) <= 0:
+        logger.error("No tasks found for section")
+        return build_response(404, {"message": "No tasks found", "tasks": []})
+
     if section == 10:
         selected_tasks.append(random.choice(tasks))
     elif section == 20:
