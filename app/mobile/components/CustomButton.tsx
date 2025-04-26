@@ -21,11 +21,11 @@ const CustomButton = ({
     <TouchableOpacity
       className={`w-3/4 self-center py-4 border ${
         style === "base"
-          ? "border-grayscale-400"
+          ? "border-grayscale-400 bg-grayscale-700"
           : style === "success"
-          ? "border-success"
-          : "border-error"
-      } bg-grayscale-700 rounded-2xl ${noMargin ? "" : "mt-16"} ${
+          ? "border-success bg-grayscale-700"
+          : "border-error bg-error/10"
+      } rounded-2xl ${noMargin ? "" : "mt-16"} ${
         disabled ? "opacity-50" : "opacity-100"
       }`}
       onPress={onPress}
