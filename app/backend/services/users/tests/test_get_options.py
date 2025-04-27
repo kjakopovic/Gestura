@@ -6,25 +6,25 @@ from unittest.mock import patch
 from base_test_setup import BaseTestSetup
 
 original_path = sys.path.copy()
-BaseTestSetup.setup_paths('getUserInfo')
-BaseTestSetup.clear_module_cache(['common', 'getUserInfo.app'])
+BaseTestSetup.setup_paths('getOptions')
+BaseTestSetup.clear_module_cache(['common', 'getOptions.app'])
 
 from moto import mock_aws
-from getUserInfo.app import lambda_handler
+from getOptions.app import lambda_handler
 from auth import generate_jwt_token
 
 
 @mock_aws
-class TestGetUserInfo(BaseTestSetup):
+class TestGetOptions(BaseTestSetup):
     def setUp(self):
         super().setUp()
 
         # Create patcher for the DynamoDB resource in the lambda handler
-        self.users_resource_patcher = patch('getUserInfo.app._LAMBDA_USERS_TABLE_RESOURCE', {
+        self.users_resource_patcher = patch('getOptions.app._LAMBDA_USERS_TABLE_RESOURCE', {
             "resource": self.dynamodb,
             "table_name": os.environ["USERS_TABLE_NAME"]
         })
-        self.languages_resource_patcher = patch('getUserInfo.app._LAMBDA_LANGUAGES_TABLE_RESOURCE', {
+        self.languages_resource_patcher = patch('getOptions.app._LAMBDA_LANGUAGES_TABLE_RESOURCE', {
             "resource": self.dynamodb,
             "table_name": os.environ["LANGUAGES_TABLE_NAME"]
         })
