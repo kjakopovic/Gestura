@@ -5,7 +5,7 @@ import decimal
 from validation_schema import schema
 from dataclasses import dataclass
 from aws_lambda_powertools.utilities.validation import SchemaValidationError, validate
-from common import build_response
+from common import build_response, convert_decimal_to_float
 from boto import LambdaDynamoDBClass, _LAMBDA_TASKS_TABLE_RESOURCE
 from middleware import middleware
 from boto3.dynamodb.conditions import Key
@@ -76,18 +76,6 @@ def get_list_of_tasks(dynamodb, section):
     return build_response(
         200, {"message": "Tasks fetched successfully", "tasks": selected_tasks}
     )
-
-
-def convert_decimal_to_float(obj):
-    """Convert Decimal objects to floats for JSON serialization"""
-    if isinstance(obj, list):
-        return [convert_decimal_to_float(i) for i in obj]
-    elif isinstance(obj, dict):
-        return {key: convert_decimal_to_float(value) for key, value in obj.items()}
-    elif isinstance(obj, decimal.Decimal):
-        return float(obj) if obj % 1 else int(obj)
-    else:
-        return obj
 
 
 def get_tasks_for_section(dynamodb, section):
