@@ -79,10 +79,10 @@ Resources:
                 - "secretsmanager:GetSecretValue"
               Resource: "*"
       Events:
-        GetUserInfoEndpoint:
+        GetItemsEndpoint:
           Type: Api
           Properties:
-            Path: /shop
+            Path: /items/available
             Method: GET
             RestApiId: !Ref ShopApi
 
