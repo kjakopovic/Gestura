@@ -54,6 +54,37 @@ Resources:
             Method: GET
             RestApiId: !Ref ShopApi
 
+  GetItemsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: getItems/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          ITEMS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ItemsTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architecture:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        GetUserInfoEndpoint:
+          Type: Api
+          Properties:
+            Path: /shop
+            Method: GET
+            RestApiId: !Ref ShopApi
 
 Outputs:
   ShopApiUrl:
