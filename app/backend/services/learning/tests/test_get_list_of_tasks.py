@@ -92,11 +92,20 @@ class TestGetListOfTasks(BaseTestSetup):
         jwt_token = generate_jwt_token("test@mail.com")
 
         for version in [1, 2, 3]:
-            for i in range(5):  # Add multiple items per version
+            for i in range(10):  # Add multiple items per version
                 self.tasks_table.put_item(Item={
                     "task_id": f"special-task-10-{version}-{i}",
                     "section": 10,
                     "section_name": "Test Section 10",
+                    "version": version,
+                    "question": f"Test question version {version}",
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0
+                })
+                self.tasks_table.put_item(Item={
+                    "task_id": f"special-task-20-{version}-{i}",
+                    "section": 20,
+                    "section_name": "Test Section 20",
                     "version": version,
                     "question": f"Test question version {version}",
                     "possible_answers": ["A", "B", "C", "D"],
@@ -124,8 +133,7 @@ class TestGetListOfTasks(BaseTestSetup):
         # Check if tasks is a list
         self.assertIsInstance(body["tasks"], list)
         # Check if we have the expected number of tasks
-        # For section 10, we should have 4+4+2+1=11 tasks (see get_list_of_tasks function)
-        self.assertEqual(len(body["tasks"]), 11)
+        self.assertEqual(len(body["tasks"]), 15)
 
         # Check structure of the first task
         first_task = body["tasks"][0]
