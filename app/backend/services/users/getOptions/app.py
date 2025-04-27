@@ -5,7 +5,6 @@ from middleware import middleware
 from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE, _LAMBDA_LANGUAGES_TABLE_RESOURCE
 from auth import get_email_from_jwt_token
 
-
 logger = logging.getLogger("GetOptions")
 logger.setLevel(logging.DEBUG)
 
