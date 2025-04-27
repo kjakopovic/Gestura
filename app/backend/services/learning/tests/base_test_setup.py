@@ -1,5 +1,6 @@
 import unittest
 import os
+import sys
 import json
 from moto import mock_aws
 from boto3 import resource, client
@@ -165,3 +166,42 @@ class BaseTestSetup(unittest.TestCase):
 
         for language in self.sample_languages:
             self.languages_table.put_item(Item=language)
+
+    @staticmethod
+    def setup_paths(service_name=None):
+        """
+        Configure import paths for tests across different services.
+
+        Args:
+            service_name: Optional specific service name to include in path
+        """
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.abspath(os.path.join(current_dir, '..', '..', '..', '..', '..'))
+
+        paths = [
+            os.path.join(project_root, 'app', 'backend', 'services', 'layers', 'common'),
+            os.path.join(project_root, 'app', 'backend', 'services', 'learning'),
+            current_dir
+        ]
+
+        # Add service-specific path if provided
+        if service_name:
+            service_path = os.path.join(project_root, 'app', 'backend', 'services', 'learning', service_name)
+            paths.insert(0, service_path)
+
+        for path in paths:
+            if path not in sys.path and os.path.exists(path):
+                sys.path.insert(0, path)
+
+    @staticmethod
+    def clear_module_cache(modules=None):
+        """
+        Clear module cache for potentially imported modules
+
+        Args:
+            modules: List of module names to clear from cache
+        """
+        if modules:
+            for module in modules:
+                if module in sys.modules:
+                    del sys.modules[module]
