@@ -3,50 +3,33 @@ import sys
 import os
 import unittest
 from unittest.mock import patch
+from base_test_setup import BaseTestSetup
 
-# Setup path resolution
-def setup_paths():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.abspath(os.path.join(current_dir, '..', '..', '..', '..', '..'))
-
-    paths = [
-        os.path.join(project_root, 'app', 'backend', 'services', 'users', 'getUserInfo'),
-        os.path.join(project_root, 'app', 'backend', 'services', 'layers', 'common'),
-        os.path.join(project_root, 'app', 'backend', 'services', 'users'),
-        current_dir
-    ]
-
-    for path in paths:
-        if path not in sys.path and os.path.exists(path):
-            sys.path.insert(0, path)
-
-    # Clear cache of potentially imported modules
-    for module in ['validation_schema', 'common', 'getUserInfo.app']:
-        if module in sys.modules:
-            del sys.modules[module]
-
-# Save original path and setup test paths
-# Otherwise unittest will not find the modules
 original_path = sys.path.copy()
-setup_paths()
+BaseTestSetup.setup_paths('getOptions')
+BaseTestSetup.clear_module_cache(['common', 'getOptions.app'])
 
-from base_test_setups import BaseTestSetup
 from moto import mock_aws
-from getUserInfo.app import lambda_handler
+from getOptions.app import lambda_handler
 from auth import generate_jwt_token
 
 
 @mock_aws
-class TestGetUserInfo(BaseTestSetup):
+class TestGetOptions(BaseTestSetup):
     def setUp(self):
         super().setUp()
 
         # Create patcher for the DynamoDB resource in the lambda handler
-        self.resource_patcher = patch('getUserInfo.app._LAMBDA_USERS_TABLE_RESOURCE', {
+        self.users_resource_patcher = patch('getOptions.app._LAMBDA_USERS_TABLE_RESOURCE', {
             "resource": self.dynamodb,
             "table_name": os.environ["USERS_TABLE_NAME"]
         })
-        self.resource_patcher.start()
+        self.languages_resource_patcher = patch('getOptions.app._LAMBDA_LANGUAGES_TABLE_RESOURCE', {
+            "resource": self.dynamodb,
+            "table_name": os.environ["LANGUAGES_TABLE_NAME"]
+        })
+        self.users_resource_patcher.start()
+        self.languages_resource_patcher.start()
 
 
     def test_when_user_not_authorized(self):
@@ -103,10 +86,13 @@ class TestGetUserInfo(BaseTestSetup):
 
         self.assertEqual(response['statusCode'], 200)
         self.assertIn('message', body)
+        self.assertIn('users', body)
+        self.assertIn('languages', body)
 
 
     def tearDown(self):
-        self.resource_patcher.stop()
+        self.users_resource_patcher.stop()
+        self.languages_resource_patcher.stop()
         super().tearDown()
 
 
