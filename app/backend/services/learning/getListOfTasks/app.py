@@ -73,31 +73,19 @@ def get_list_of_tasks(dynamodb, section):
     section_exists = True
 
     if len(tasks) <= 0:
-        print(f"Tasks not found for section: {section}")
-        logger.error("No tasks found for section. Getting random tasks.")
-
-        print(f"Current max section: {CURRENT_MAX_SECTION}")
+        logger.error(f"No tasks found for section: {section}. Getting random tasks.")
 
         if CURRENT_MAX_SECTION == 0:
             logger.error("No tasks found in the database.")
             return build_response(404, {"message": "No tasks found", "tasks": []})
 
         if CURRENT_MAX_SECTION + 10 == section:
-            print(f"Section {section} is only 10 levels away from the current max section")
-            print(f"Creating random tasks for section {section} from previous sections")
-
             logger.info(f"Creating random tasks for section {section} from previous sections")
             tasks_1 = get_tasks_for_section(dynamodb, CURRENT_MAX_SECTION)
             tasks_2 = get_tasks_for_section(dynamodb, CURRENT_MAX_SECTION - 10)
             tasks_3 = get_tasks_for_section(dynamodb, CURRENT_MAX_SECTION - 20)
 
-            print(f"tasks_1: {tasks_1}")
-            print(f"tasks_2: {tasks_2}")
-            print(f"tasks_3: {tasks_3}")
-
         else:
-            print(f"Section {section} is not the next section")
-
             logger.info(f"Creating random tasks for section {section} from previous sections")
             section_1, section_2 = get_two_random_sections(CURRENT_MAX_SECTION)
 
@@ -150,7 +138,6 @@ def get_list_of_tasks(dynamodb, section):
 
 def get_tasks_for_section(dynamodb, section):
     logger.info(f"Getting tasks for section {section}")
-    print(f"Getting tasks for section: {section}")
 
     response = dynamodb.table.query(
         IndexName="section-index", KeyConditionExpression=Key("section").eq(section)
