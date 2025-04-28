@@ -1,8 +1,9 @@
-export interface LabelStyle {
-  name: string;
-  color: string;
+export interface LabelMap {
+  [key: number]: string;
 }
 
-export interface LabelMap {
-  [key: number]: LabelStyle;
+export interface PredictionResult {
+  class: number;
+  probability: number;
+  label: string;
 }

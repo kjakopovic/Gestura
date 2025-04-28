@@ -1,12 +1,13 @@
 import { REFRESH_TOKEN_COOKIE_NAME, TOKEN_COOKIE_NAME } from "@/constants/auth";
-import { createContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
+import { AuthContext } from "./AuthContext";
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
-);
+interface Props {
+  children: React.ReactElement | React.ReactElement[];
+}
 
-export const AuthProvider = ({ children }: any) => {
+export const AuthProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState(true);
   const [authState, setAuthState] = useState<AuthState>({
     token: null,

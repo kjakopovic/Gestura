@@ -1,4 +1,11 @@
 AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  StageName:
+    Type: String
+    Description: Stage of app deployment (develop, prod)
+    Default: prod
 
 Resources:
   CommonLayer:
@@ -10,9 +17,112 @@ Resources:
     Metadata:
       BuildMethod: python3.12
 
+  CommonLayerLatestParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /layers/common/latest
+      Type: String
+      Value: !Ref CommonLayer
+
+  # Tables
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "users-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+        - AttributeName: username
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: username-index
+          KeySchema:
+            - AttributeName: username
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  TasksTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "tasks-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: task_id
+          AttributeType: S
+        - AttributeName: section
+          AttributeType: N
+      KeySchema:
+        - AttributeName: task_id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: section-index
+          KeySchema:
+            - AttributeName: section
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  LanguagesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "languages-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  ItemsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "items-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
 Outputs:
-  CommonLayerArn:
-    Description: "ARN of the Layer with all the common code"
-    Value: !Ref CommonLayer
+  UsersTable:
+    Description: "DynamoDB table for users"
+    Value: !Ref UsersTable
     Export:
-      Name: !Sub "${AWS::StackName}-CommonLayerArn"
+      Name: !Sub "${AWS::StackName}-UsersTable"
+  TasksTable:
+    Description: "DynamoDB table for tasks"
+    Value: !Ref TasksTable
+    Export:
+      Name: !Sub "${AWS::StackName}-TasksTable"
+  LanguagesTable:
+    Description: "DynamoDB table for languages"
+    Value: !Ref LanguagesTable
+    Export:
+      Name: !Sub "${AWS::StackName}-LanguagesTable"
+  ItemsTable:
+    Description: "DynamoDB table for items"
+    Value: !Ref ItemsTable
+    Export:
+      Name: !Sub "${AWS::StackName}-ItemsTable"

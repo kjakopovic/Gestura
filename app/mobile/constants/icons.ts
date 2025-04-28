@@ -11,6 +11,24 @@ import profile from "@/assets/icons/profile.png";
 import nonPremium from "@/assets/icons/non-premium.png";
 import chest from "@/assets/icons/chest.png";
 import shop from "@/assets/icons/shop.png";
+import coin from "@/assets/icons/coin.png";
+import experience_token from "@/assets/icons/experience_token.png";
+import heart from "@/assets/icons/heart.png";
+import star1 from "@/assets/icons/star1.png";
+import star2 from "@/assets/icons/star2.png";
+import starTrophy from "@/assets/icons/star-trophy.png";
+import arrowBack from "@/assets/icons/arrow-back.png";
+import gb from "@/assets/icons/GB.png";
+import germany from "@/assets/icons/germany.png";
+import book from "@/assets/icons/book.png";
+import trophy from "@/assets/icons/trophy.png";
+import people from "@/assets/icons/people.png";
+import confetti from "@/assets/icons/confetti.png";
+import studying from "@/assets/icons/studying.png";
+import studyingBW from "@/assets/icons/studyingBW.png";
+import confettiBW from "@/assets/icons/confettiBW.png";
+import peopleBW from "@/assets/icons/peopleBW.png";
+import more from "@/assets/icons/more.png";
 
 export {
   apple,
@@ -26,4 +44,22 @@ export {
   nonPremium,
   chest,
   shop,
+  coin,
+  experience_token,
+  heart,
+  star1,
+  star2,
+  starTrophy,
+  arrowBack,
+  gb,
+  germany,
+  book,
+  trophy,
+  people,
+  confetti,
+  studying,
+  studyingBW,
+  confettiBW,
+  peopleBW,
+  more,
 };

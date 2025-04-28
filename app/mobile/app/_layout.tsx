@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
+
 import "./globals.css";
 import { StatusBar } from "expo-status-bar";
 
@@ -15,6 +16,8 @@ export default function RootLayout() {
     "Inter-Thin": require("../assets/fonts/Inter_18pt-Thin.ttf"),
     "Inter-ExtraLight": require("../assets/fonts/Inter_18pt-ExtraLight.ttf"),
   });
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (fontsLoaded) {

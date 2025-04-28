@@ -11,6 +11,21 @@ _LAMBDA_USERS_TABLE_RESOURCE = {
     "table_name": environ.get("USERS_TABLE_NAME", "test_table"),
 }
 
+_LAMBDA_TASKS_TABLE_RESOURCE = {
+    "resource": boto3.resource("dynamodb"),
+    "table_name": environ.get("TASKS_TABLE_NAME", "task_test_table"),
+}
+
+_LAMBDA_LANGUAGES_TABLE_RESOURCE = {
+    "resource": boto3.resource("dynamodb"),
+    "table_name": environ.get("LANGUAGES_TABLE_NAME", "languages_test_table"),
+}
+
+_LAMBDA_ITEMS_TABLE_RESOURCE = {
+    "resource": boto3.resource("dynamodb"),
+    "table_name": environ.get("ITEMS_TABLE_NAME", "items_test_table"),
+}
+
 
 class LambdaDynamoDBClass:
     """

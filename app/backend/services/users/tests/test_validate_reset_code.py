@@ -5,33 +5,12 @@ import unittest
 from datetime import datetime, timezone
 from unittest.mock import patch
 
-# Setup path resolution
-def setup_paths():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.abspath(os.path.join(current_dir, '..', '..', '..', '..', '..'))
+from base_test_setup import BaseTestSetup
 
-    paths = [
-        os.path.join(project_root, 'app', 'backend', 'services', 'users', 'validateResetCode'),
-        os.path.join(project_root, 'app', 'backend', 'services', 'layers', 'common'),
-        os.path.join(project_root, 'app', 'backend', 'services', 'users'),
-        current_dir
-    ]
-
-    for path in paths:
-        if path not in sys.path and os.path.exists(path):
-            sys.path.insert(0, path)
-
-    # Clear cache of potentially imported modules
-    for module in ['validation_schema', 'common', 'validateResetCode.app']:
-        if module in sys.modules:
-            del sys.modules[module]
-
-# Save original path and setup test paths
-# Otherwise unittest will not find the modules
 original_path = sys.path.copy()
-setup_paths()
+BaseTestSetup.setup_paths('validateResetCode')
+BaseTestSetup.clear_module_cache(['validation_schema', 'common', 'validateResetCode.app'])
 
-from base_test_setups import BaseTestSetup
 from moto import mock_aws
 from validateResetCode.app import lambda_handler
 

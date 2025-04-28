@@ -1,0 +1,32 @@
+name: Build And Check Quality - Web
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "app/web/**"
+      - ".github/task_definitions/frontend/**"
+      - ".github/workflows/run_web_tests.yaml"
+
+jobs:
+  build-and-check-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: false
+
+      - name: Install dependencies
+        working-directory: app/web
+        run: npm i
+
+      - name: Build app
+        working-directory: app/web
+        run: npm run build
+
+      - name: Quality check
+        working-directory: app/web
+        run: npm run lint
