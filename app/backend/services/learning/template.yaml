@@ -23,7 +23,7 @@ Parameters:
   CurrentMaxSection:
     Type: Number
     Description: Current max section number
-    Default: 30
+    Default: 10
 
 Globals:
   Function:
