@@ -4,6 +4,19 @@ import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 
 import "./globals.css";
+import { StatusBar } from "expo-status-bar";
+
+import InterRegular from "@/assets/fonts/Inter_18pt-Regular.ttf";
+import InterBold from "@/assets/fonts/Inter_18pt-Bold.ttf";
+import InterSemiBold from "@/assets/fonts/Inter_18pt-SemiBold.ttf";
+import InterMedium from "@/assets/fonts/Inter_18pt-Medium.ttf";
+import InterLight from "@/assets/fonts/Inter_18pt-Light.ttf";
+import InterThin from "@/assets/fonts/Inter_18pt-Thin.ttf";
+import InterExtraLight from "@/assets/fonts/Inter_18pt-ExtraLight.ttf";
+import InterExtraBold from "@/assets/fonts/Inter_18pt-ExtraBold.ttf";
+import InterBlack from "@/assets/fonts/Inter_18pt-Black.ttf";
+
+SplashScreen.preventAutoHideAsync().catch(console.warn);
 
 import InterRegular from "@/assets/fonts/Inter_18pt-Regular.ttf";
 import InterBold from "@/assets/fonts/Inter_18pt-Bold.ttf";
@@ -45,9 +58,12 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="(root)" options={{ headerShown: false }} />
-    </Stack>
+    <>
+      <StatusBar style="light" />
+      <Stack>
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(root)" options={{ headerShown: false }} />
+      </Stack>
+    </>
   );
 }
