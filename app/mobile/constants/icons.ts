@@ -29,6 +29,8 @@ import studyingBW from "@/assets/icons/studyingBW.png";
 import confettiBW from "@/assets/icons/confettiBW.png";
 import peopleBW from "@/assets/icons/peopleBW.png";
 import more from "@/assets/icons/more.png";
+import xp_token from "@/assets/icons/xp-token.png";
+import error_testing from "@/assets/icons/error-testing.png";
 
 export {
   apple,
@@ -62,4 +64,6 @@ export {
   confettiBW,
   peopleBW,
   more,
+  xp_token,
+  error_testing
 };
