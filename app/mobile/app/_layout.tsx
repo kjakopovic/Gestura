@@ -5,26 +5,42 @@ import * as SplashScreen from "expo-splash-screen";
 
 import "./globals.css";
 
+import InterRegular from "@/assets/fonts/Inter_18pt-Regular.ttf";
+import InterBold from "@/assets/fonts/Inter_18pt-Bold.ttf";
+import InterSemiBold from "@/assets/fonts/Inter_18pt-SemiBold.ttf";
+import InterMedium from "@/assets/fonts/Inter_18pt-Medium.ttf";
+import InterLight from "@/assets/fonts/Inter_18pt-Light.ttf";
+import InterThin from "@/assets/fonts/Inter_18pt-Thin.ttf";
+import InterExtraLight from "@/assets/fonts/Inter_18pt-ExtraLight.ttf";
+import InterExtraBold from "@/assets/fonts/Inter_18pt-ExtraBold.ttf";
+import InterBlack from "@/assets/fonts/Inter_18pt-Black.ttf";
+
+SplashScreen.preventAutoHideAsync().catch(console.warn);
+
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
-    Inter: require("../assets/fonts/Inter_18pt-Regular.ttf"),
-    "Inter-Bold": require("../assets/fonts/Inter_18pt-Bold.ttf"),
-    "Inter-SemiBold": require("../assets/fonts/Inter_18pt-SemiBold.ttf"),
-    "Inter-Medium": require("../assets/fonts/Inter_18pt-Medium.ttf"),
-    "Inter-Light": require("../assets/fonts/Inter_18pt-Light.ttf"),
-    "Inter-Thin": require("../assets/fonts/Inter_18pt-Thin.ttf"),
-    "Inter-ExtraLight": require("../assets/fonts/Inter_18pt-ExtraLight.ttf"),
+  const [fontsLoaded, fontError] = useFonts({
+    Inter: InterRegular,
+    "Inter-Bold": InterBold,
+    "Inter-SemiBold": InterSemiBold,
+    "Inter-Medium": InterMedium,
+    "Inter-Light": InterLight,
+    "Inter-Thin": InterThin,
+    "Inter-ExtraLight": InterExtraLight,
+    "Inter-ExtraBold": InterExtraBold,
+    "Inter-Black": InterBlack,
   });
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
-    if (fontsLoaded) {
+    if (fontsLoaded || fontError) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
+    if (fontError) {
+      console.error("Font loading error:", fontError);
+    }
+  }, [fontsLoaded, fontError]);
+
+  if (!fontsLoaded && !fontError) {
     return null;
   }
 

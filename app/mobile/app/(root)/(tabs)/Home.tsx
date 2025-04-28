@@ -1,3 +1,4 @@
+import React from "react";
 import { ScrollView, View } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -11,7 +12,7 @@ const Home = () => {
   const router = useRouter();
   // Levels data with their types and states
   // TODO: Add infinite loading with repeating cycle every 10 levels
-  const [levels, setLevels] = useState<LevelData[]>([
+  const [levels] = useState<LevelData[]>([
     {
       id: 1,
       level: 1,
