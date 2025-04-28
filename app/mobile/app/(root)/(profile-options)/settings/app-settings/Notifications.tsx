@@ -9,7 +9,7 @@ import SettingSection, {
 const Notifications = () => {
   const [notifications, setNotifications] = useState({
     pushNotifications: true,
-    heartRefil: true,
+    heartRefill: true,
     dailyReminder: true,
     subscription: true,
   });
