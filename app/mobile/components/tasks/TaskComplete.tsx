@@ -21,7 +21,7 @@ const TaskComplete = () => {
       <Image className="w-40 h-40" source={characters.character1_cut} />
       <Text className="text-white text-4xl font-interBold">Nice one!</Text>
       <Text className="text-white text-2xl font-inter">
-        You've completed the task.
+        You&apos;ve completed the task.
       </Text>
       <View className="flex-row justify-between m-10 items-center w-80 h-20 border border-grayscale-400 rounded-xl">
         <View className="flex-row justify-center items-center w-20 h-10 border border-grayscale-400 rounded-xl mx-2">

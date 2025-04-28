@@ -18,8 +18,8 @@ type PopupProps = {
   correctAnswer?: string;
   correctImage?: ImageSourcePropType;
   onDismiss?: () => void;
-  buttonStyle?: string;
-  taskVersion?: number; // To know if we should show verification
+  buttonStyle?: "base" | "success" | "error" | "fail";
+  taskVersion?: number;
 };
 
 const ResultPopup = ({
@@ -47,7 +47,7 @@ const ResultPopup = ({
 
       return () => clearTimeout(timer);
     }
-  }, [visible]);
+  }, [visible, taskVersion]);
 
   // Reset verification state when popup is dismissed
   useEffect(() => {

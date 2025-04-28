@@ -4,7 +4,7 @@ import React from "react";
 type CustomButtonProps = {
   onPress: () => void;
   text: string;
-  style?: "base" | "success" | "error";
+  style?: "base" | "success" | "error" | "fail";
   noMargin?: boolean;
   disabled?: boolean;
 };

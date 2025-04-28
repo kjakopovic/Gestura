@@ -90,14 +90,14 @@ const Profile = () => {
               title="Words"
               icon={icons.book}
               onPress={() => {
-                router.push("/words");
+                router.push("/Words");
               }}
             />
             <ProfileOption
               title="Achievements"
               icon={icons.trophy}
               onPress={() => {
-                router.push("/achievements");
+                router.push("/Achievements");
               }}
             />
           </View>
