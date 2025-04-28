@@ -211,7 +211,7 @@ export const resetPassword = async (
   code: string
 ): Promise<ForgotPasswordResult> => {
   try {
-    console.log("New Password:", data.newPassword);
+    // Removed logging of the new password to prevent exposure of sensitive information.
 
     // Here you would make an API call to your backend
     // to reset the password
