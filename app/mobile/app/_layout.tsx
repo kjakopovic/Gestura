@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 
 import "./globals.css";
+import { StatusBar } from "expo-status-bar";
 
 import InterRegular from "@/assets/fonts/Inter_18pt-Regular.ttf";
 import InterBold from "@/assets/fonts/Inter_18pt-Bold.ttf";
@@ -45,9 +46,12 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="(root)" options={{ headerShown: false }} />
-    </Stack>
+    <>
+      <StatusBar style="light" />
+      <Stack>
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(root)" options={{ headerShown: false }} />
+      </Stack>
+    </>
   );
 }
