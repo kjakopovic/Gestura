@@ -2,6 +2,7 @@ from datetime import datetime
 import json
 import bcrypt
 import logging
+from decimal import Decimal
 
 logger = logging.getLogger("common")
 logger.setLevel(logging.INFO)
@@ -53,3 +54,14 @@ def parse_utc_isoformat(ts: str) -> datetime:
         ts = ts[:-1] + "+00:00"
 
     return datetime.fromisoformat(ts)
+
+
+def convert_decimal_to_float(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+    elif isinstance(obj, dict):
+        return {k: convert_decimal_to_float(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_decimal_to_float(i) for i in obj]
+    else:
+        return obj

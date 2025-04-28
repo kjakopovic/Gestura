@@ -1,11 +1,6 @@
 schema = {
     "type": "object",
-    "properties": {
-        "level": {
-            "type": "number",
-            "minimum": 0
-        }
-    },
+    "properties": {"level": {"type": "string", "pattern": "^[1-9][0-9]*$"}},
     "required": ["level"],
-    "additionalProperties": False
+    "additionalProperties": False,
 }
