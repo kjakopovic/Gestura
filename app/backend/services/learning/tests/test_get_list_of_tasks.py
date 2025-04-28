@@ -18,17 +18,22 @@ class TestGetListOfTasks(BaseTestSetup):
     def setUp(self):
         super().setUp()
 
-        # Create patcher for the DynamoDB resource in the lambda handler
-        self.resource_patcher = patch('getListOfTasks.app._LAMBDA_TASKS_TABLE_RESOURCE', {
+        # Create a patcher for the DynamoDB resource in the lambda handler
+        self.tasks_resource_patcher = patch('getListOfTasks.app._LAMBDA_TASKS_TABLE_RESOURCE', {
             "resource": self.dynamodb,
             "table_name": os.environ["TASKS_TABLE_NAME"]
         })
-        self.resource_patcher.start()
+        self.users_resource_patcher = patch('getListOfTasks.app._LAMBDA_USERS_TABLE_RESOURCE', {
+            "resource": self.dynamodb,
+            "table_name": os.environ["USERS_TABLE_NAME"]
+        })
+        self.users_resource_patcher.start()
+        self.tasks_resource_patcher.start()
 
 
     def test_when_user_not_authorized(self):
         """
-        Test response when user is unauthorized.
+        Test response when a user is unauthorized.
         """
         event = {
             'headers': {'Authorization': 'invalid-token'}
@@ -43,7 +48,7 @@ class TestGetListOfTasks(BaseTestSetup):
 
     def test_validation_schema(self):
         """
-        Test response when validation schema is not valid.
+        Test response when the validation schema is not valid.
         """
         jwt_token = generate_jwt_token("test@mail.com")
 
@@ -85,9 +90,34 @@ class TestGetListOfTasks(BaseTestSetup):
                 self.assertTrue("Failed schema validation" in body['message'])
 
 
+    def test_user_not_allowed(self):
+        """
+        Test response when the user is not allowed to access the level.
+        """
+        jwt_token = generate_jwt_token("test@mail.com")
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "queryStringParameters": {
+                "level": "41"
+            }
+        }
+
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        self.assertEqual(response['statusCode'], 403)
+        self.assertIn("message", body)
+
+        self.assertEqual(body["message"], "User test@mail.com is not allowed to access level 41.")
+        self.assertEqual(body["current_level"], 0)
+
+
     def test_get_list_section_10(self):
         """
-        Test response when section is 10.
+        Test response when the section is 10.
         """
         jwt_token = generate_jwt_token("test@mail.com")
 
@@ -135,7 +165,7 @@ class TestGetListOfTasks(BaseTestSetup):
         # Check if we have the expected number of tasks
         self.assertEqual(len(body["tasks"]), 15)
 
-        # Check structure of the first task
+        # Check the structure of the first task
         first_task = body["tasks"][0]
         self.assertIn("task_id", first_task)
         self.assertIn("section", first_task)
@@ -145,13 +175,13 @@ class TestGetListOfTasks(BaseTestSetup):
         self.assertIn("possible_answers", first_task)
         self.assertIn("correct_answer_index", first_task)
 
-        # Check if section equals 10
+        # Check if the section equals 10
         self.assertEqual(first_task["section"], 10)
 
 
     def test_get_list_section_20(self):
         """
-        Test response when section is 20.
+        Test response when the section is 20.
         """
         jwt_token = generate_jwt_token("test@mail.com")
 
@@ -177,6 +207,12 @@ class TestGetListOfTasks(BaseTestSetup):
                     "possible_answers": ["A", "B", "C", "D"],
                     "correct_answer_index": 0
                 })
+
+        self.users_table.update_item(
+            Key={"email": "test@mail.com"},
+            UpdateExpression="SET current_level = :level",
+            ExpressionAttributeValues={":level": 10}
+        )
 
         event = {
             'headers': {
@@ -224,7 +260,7 @@ class TestGetListOfTasks(BaseTestSetup):
 
     def test_get_list_section_30(self):
         """
-        Test response when section is 30.
+        Test response when the section is 30.
         """
         jwt_token = generate_jwt_token("test@mail.com")
 
@@ -260,6 +296,12 @@ class TestGetListOfTasks(BaseTestSetup):
                     "possible_answers": ["A", "B", "C", "D"],
                     "correct_answer_index": 0
                 })
+
+        self.users_table.update_item(
+            Key={"email": "test@mail.com"},
+            UpdateExpression="SET current_level = :level",
+            ExpressionAttributeValues={":level": 20}
+        )
 
         event = {
             'headers': {
@@ -312,7 +354,114 @@ class TestGetListOfTasks(BaseTestSetup):
         self.assertEqual(len(section_20_tasks), 3)  # 1+1+1 from section 20
         self.assertEqual(len(section_10_tasks), 2)  # 1+1+0 from section 10
 
-        # Check structure of a random task
+        # Check the structure of a random task
+        random_task = body["tasks"][0]
+        self.assertIn("task_id", random_task)
+        self.assertIn("section", random_task)
+        self.assertIn("section_name", random_task)
+        self.assertIn("version", random_task)
+        self.assertIn("question", random_task)
+        self.assertIn("possible_answers", random_task)
+        self.assertIn("correct_answer_index", random_task)
+
+
+    def test_get_list_section_40(self):
+        """
+        Test response when the section is 40, but there are no tasks for it.
+        """
+        jwt_token = generate_jwt_token("test@mail.com")
+
+        # Add test data for sections 10, 20, and 30
+        for version in [1, 2, 3]:
+            for i in range(5):  # Add multiple items per version
+                self.tasks_table.put_item(Item={
+                    "task_id": f"special-task-10-{version}-{i}",
+                    "section": 10,
+                    "section_name": "Test Section 10",
+                    "version": version,
+                    "question": f"Test question version {version}",
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0
+                })
+
+                self.tasks_table.put_item(Item={
+                    "task_id": f"special-task-20-{version}-{i}",
+                    "section": 20,
+                    "section_name": "Test Section 20",
+                    "version": version,
+                    "question": f"Test question version {version}",
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0
+                })
+
+                self.tasks_table.put_item(Item={
+                    "task_id": f"special-task-30-{version}-{i}",
+                    "section": 30,
+                    "section_name": "Test Section 30",
+                    "version": version,
+                    "question": f"Test question version {version}",
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0
+                })
+
+        self.users_table.update_item(
+            Key={"email": "test@mail.com"},
+            UpdateExpression="SET current_level = :level",
+            ExpressionAttributeValues={":level": 30}
+        )
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "queryStringParameters": {
+                "level": "31"  # Level 31 corresponds to section 40
+            }
+        }
+
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        self.assertEqual(response['statusCode'], 200)
+        self.assertIn("message", body)
+        self.assertIn("tasks", body)
+        self.assertEqual(body["message"], "Tasks fetched successfully")
+        self.assertIsInstance(body["tasks"], list)
+
+        # Categorize tasks by section
+        section_10_tasks = []
+        section_20_tasks = []
+        section_30_tasks = []
+
+        for task in body["tasks"]:
+            if task["section"] == 10:
+                section_10_tasks.append(task)
+            elif task["section"] == 20:
+                section_20_tasks.append(task)
+            elif task["section"] == 30:
+                section_30_tasks.append(task)
+
+        # Check if we have tasks from all three sections
+        self.assertGreater(len(section_10_tasks), 0)  # Should have tasks from section 10
+        self.assertGreater(len(section_20_tasks), 0)  # Should have tasks from section 20
+        self.assertGreater(len(section_30_tasks), 0)  # Should have tasks from section 30
+
+        # Verify that these add up to the total number of tasks
+        self.assertEqual(
+            len(section_10_tasks) + len(section_20_tasks) + len(section_30_tasks),
+            len(body["tasks"])
+        )
+
+        # For section 30, we should have:
+        # - 4+4+2=10 tasks from section 30
+        # - 1+1+1=3 tasks from section 20
+        # - 1+1+0=2 tasks from section 10
+        self.assertEqual(len(body["tasks"]), 15)
+        self.assertEqual(len(section_30_tasks), 8)
+        self.assertEqual(len(section_20_tasks), 4)
+        self.assertEqual(len(section_10_tasks), 3)
+
+        # Check the structure of a random task
         random_task = body["tasks"][0]
         self.assertIn("task_id", random_task)
         self.assertIn("section", random_task)
@@ -324,7 +473,8 @@ class TestGetListOfTasks(BaseTestSetup):
 
 
     def tearDown(self):
-        self.resource_patcher.stop()
+        self.tasks_resource_patcher.stop()
+        self.users_resource_patcher.stop()
         super().tearDown()
 
 

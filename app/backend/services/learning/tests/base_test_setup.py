@@ -139,6 +139,7 @@ class BaseTestSetup(unittest.TestCase):
             "username": "TestUser",
             "password": bcrypt.hashpw(self.sample_user_pass.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"),
             "letters_learned": {},
+            "current_level": 0,
             "task_level": 0,
             "time_played": 0,
             "xp": 0,
