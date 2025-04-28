@@ -46,6 +46,9 @@ def lambda_handler(event, context):
     user_dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
 
     users_current_level = get_users_current_level(user_dynamodb, email)
+    if users_current_level is None:
+        logger.error(f"User {email} not found in the database.")
+        return build_response(404, {"message": "User not found"})
 
     # Every 10 levels = 1 section
     # 0-9 = section 10, 10-19 = section 20, etc.
@@ -175,8 +178,7 @@ def get_users_current_level(dynamodb, email):
 
     user_item = user.get("Item", {})
     if not user_item:
-        logger.error(f"User not found with email {email}")
-        return build_response(404, {"message": "User not found"})
+        return None
 
     user_current_level = user_item.get("current_level", 0)
 
