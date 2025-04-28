@@ -9,7 +9,7 @@ import SettingSection, {
 const Notifications = () => {
   const [notifications, setNotifications] = useState({
     pushNotifications: true,
-    heartRefil: true,
+    heartRefill: true,
     dailyReminder: true,
     subscription: true,
   });
@@ -63,7 +63,7 @@ const Notifications = () => {
 
   return (
     <>
-      <CustomAppBar title="NOTIFICAITONS" backButton />
+      <CustomAppBar title="NOTIFICATIONS" backButton />
       <ScrollView className="bg-grayscale-800 mt-24 px-10">
         <SafeAreaView className="bg-grayscale-800 flex-1">
           <SettingSection title="NOTIFICATIONS" items={NOTIFICATIONS} noTitle />
