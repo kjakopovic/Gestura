@@ -3,7 +3,7 @@ import React from "react";
 import SettingItem from "./SettingItem";
 import SettingSubtitle from "./SettingSubtitle";
 
-type SettingItemConfig = {
+export type SettingItemConfig = {
   title: string;
   type: "toggle" | "select" | "button";
   value?: boolean;
@@ -14,14 +14,15 @@ type SettingItemConfig = {
 };
 
 type SettingSectionProps = {
+  noTitle?: boolean;
   title: string;
   items: SettingItemConfig[];
 };
 
-const SettingSection = ({ title, items }: SettingSectionProps) => {
+const SettingSection = ({ title, items, noTitle }: SettingSectionProps) => {
   return (
     <View>
-      <SettingSubtitle title={title} />
+      {!noTitle && <SettingSubtitle title={title} />}
       {items.map((item, index) => (
         <SettingItem
           key={`setting-item-${index}`}

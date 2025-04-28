@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { useState, useRef } from "react";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, FieldError } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "expo-router";
 
@@ -173,7 +173,7 @@ const ForgotPassword = () => {
             {/* Display first encountered error (if any) */}
             {Object.values(codeErrors)[0] && (
               <Text className="text-error">
-                {(Object.values(codeErrors)[0] as any)?.message}
+                {(Object.values(codeErrors)[0] as FieldError)?.message}
               </Text>
             )}
             <CustomButton

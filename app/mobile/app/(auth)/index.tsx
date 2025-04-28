@@ -122,7 +122,7 @@ const Login = () => {
       </View>
       <View className="flex-row items-center justify-center w-full">
         <Text className="text-grayscale-100">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/(auth)/Register" className="text-primary font-interBold">
             Register
           </Link>

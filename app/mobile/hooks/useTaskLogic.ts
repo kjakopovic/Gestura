@@ -39,7 +39,9 @@ export const useTaskLogic = ({
     router.push("/(root)/(tabs)/Home");
   };
 
-  const buttonStyle = selectedAnswer === correctAnswer ? "success" : "fail";
+  const buttonStyle = (
+    selectedAnswer === correctAnswer ? "success" : "fail"
+  ) as "success" | "fail" | "base" | "error";
 
   return {
     selectedAnswer,
