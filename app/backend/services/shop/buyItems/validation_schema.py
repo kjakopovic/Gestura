@@ -2,7 +2,7 @@ schema = {
     "type": "object",
     "properties": {
         "item_id": {
-            "type": "number",
+            "type": "string",
         }
     },
     "required": ["item_id"],
