@@ -21,6 +21,16 @@ _LAMBDA_LANGUAGES_TABLE_RESOURCE = {
     "table_name": environ.get("LANGUAGES_TABLE_NAME", "languages_test_table"),
 }
 
+_LAMBDA_CONNECTIONS_TABLE_RESOURCE = {
+    "resource": boto3.resource("dynamodb"),
+    "table_name": environ.get("CONNECTIONS_TABLE_NAME", "connections_test_table"),
+}
+
+_LAMBDA_CHAT_ROOM_TABLE_RESOURCE = {
+    "resource": boto3.resource("dynamodb"),
+    "table_name": environ.get("CHAT_ROOM_TABLE_NAME", "chat_room_test_table"),
+}
+
 
 class LambdaDynamoDBClass:
     """
