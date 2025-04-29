@@ -11,6 +11,7 @@ from boto import (
 )
 
 
+# TODO: maybe it would be better to handle connections on a certain room not generalized in connections table
 def lambda_handler(event, context):
     try:
         # Getting JWT token from query parameters

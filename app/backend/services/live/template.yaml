@@ -1,18 +1,24 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: >
-  stack for managing endpoints and wss for chat
+Description: serverless WebSocket + REST API for chat rooms (Python)
 
 Parameters:
   SecretsRegionName:
     Type: String
     Description: Region name where the secrets are stored
     Default: eu-central-1
-
   JwtSecretName:
     Type: String
     Description: Name of the secret in Secrets Manager that contains the JWT secret
     Default: python-lambda-app/prod/jwt-secret
+  LayerStackName:
+    Type: String
+    Description: Name of the stack where the layer is deployed
+    Default: layers
+  StageName:
+    Type: String
+    Description: Stage of app deployment (develop, prod)
+    Default: prod
 
 # Global Settings
 Globals:
@@ -21,6 +27,17 @@ Globals:
     MemorySize: 512
 
 Resources:
+  ### REST API ###
+  LiveChatApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: LiveChat
+      StageName: api-v1
+      Cors:
+        AllowMethods: "'OPTIONS,POST'"
+        AllowHeaders: "'Content-Type'"
+        AllowOrigin: "'*'"
+
   # Websocket API setup
   WebSocketApi:
     Type: AWS::ApiGatewayV2::Api
@@ -107,53 +124,9 @@ Resources:
   Stage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
-      StageName: api-v1
+      StageName: !Ref StageName
       DeploymentId: !Ref Deployment
       ApiId: !Ref WebSocketApi
-
-  # DynamoDB Tables
-
-  ConnectionsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: connections
-      AttributeDefinitions:
-        - AttributeName: email
-          AttributeType: S
-        - AttributeName: connection_id
-          AttributeType: S
-      KeySchema:
-        - AttributeName: email
-          KeyType: "HASH"
-      GlobalSecondaryIndexes:
-        - IndexName: "ConnectionIdIndex"
-          KeySchema:
-            - AttributeName: connection_id
-              KeyType: "HASH"
-          Projection:
-            ProjectionType: "ALL"
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
-      SSESpecification:
-        SSEEnabled: True
-
-  ChatRoomTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: chat_rooms
-      AttributeDefinitions:
-        - AttributeName: chat_id
-          AttributeType: S
-      KeySchema:
-        - AttributeName: chat_id
-          KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
 
   # Lambda functions
   OnConnectFunction:
@@ -161,14 +134,15 @@ Resources:
     Metadata:
       BuildMethod: makefile
     Properties:
-      CodeUri: ./
+      CodeUri: ./onConnectWss
       Handler: app.lambda_handler
       Runtime: python3.12
       Layers:
         - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Environment:
         Variables:
-          CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
+          CONNECTIONS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Architectures:
@@ -196,14 +170,15 @@ Resources:
     Metadata:
       BuildMethod: makefile
     Properties:
-      CodeUri: ./
+      CodeUri: ./onDisconnectWss
       Handler: app.lambda_handler
       Runtime: python3.12
       Layers:
         - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Environment:
         Variables:
-          CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
+          CONNECTIONS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
       Architectures:
         - x86_64
       Policies:
@@ -228,7 +203,7 @@ Resources:
     Metadata:
       BuildMethod: makefile
     Properties:
-      CodeUri: ./
+      CodeUri: ./sendMessageWss
       Handler: lambda_handler.lambda_handler
       Runtime: python3.12
       Environment:
@@ -257,7 +232,69 @@ Resources:
       Principal: apigateway.amazonaws.com
 
   # Endpoints
-  # TODO: here we will put create room and join room in a normal backend API endpoint
+  CreateRoomFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: createRoom/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          CHAT_ROOM_TABLE: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        CreateRoomEndpoint:
+          Type: Api
+          Properties:
+            Path: /
+            Method: POST
+            RestApiId: !Ref LiveChatApi
+
+  JoinRoomFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: joinRoom/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          CHAT_ROOM_TABLE: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        JoinRoomEndpoint:
+          Type: Api
+          Properties:
+            Path: /{room_id}/join
+            Method: POST
+            RestApiId: !Ref LiveChatApi
 
 Outputs:
   ConnectionsTableArn:
@@ -268,11 +305,9 @@ Outputs:
     Description: "Chat room table ARN"
     Value: !GetAtt ChatRoomTable.Arn
 
-  # EndpointURI:
-  #   Description: "API Endpoint URL"
-  #   Value: !Sub "https://${ChatServiceApi}.execute-api.${AWS::Region}.amazonaws.com/api-v1"
-  #   Export:
-  #     Name: ChatServiceApiUrl
+  EndpointURI:
+    Description: "API Gateway endpoint URL for Live chat microservice apis"
+    Value: !Sub "https://${LiveChatApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"
 
   WebSocketURI:
     Description: "The WSS Protocol URI to connect to"
