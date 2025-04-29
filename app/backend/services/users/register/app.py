@@ -77,6 +77,7 @@ def sign_up_user(dynamodb, email, username, password):
         "heart_refill": True,
         "daily_reminder": True,
         "subscription": 0,
+        "items": [],
     }
 
     add_user_to_the_table(
