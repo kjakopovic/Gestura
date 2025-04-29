@@ -34,7 +34,6 @@ def lambda_handler(event, context):
     logger.debug(f"Received event: {event}")
 
     jwt_token = event.get("headers").get("x-access-token")
-    print(f"JWT token: {jwt_token}")
     email = get_email_from_jwt_token(jwt_token)
 
     body = event.get("body")
@@ -86,6 +85,7 @@ def lambda_handler(event, context):
     update_user(
         usersTable,
         email,
+        user["current_level"] + 1,
         user["time_played"] + time_played,
         user["task_level"],
         letters_learned,
@@ -121,12 +121,16 @@ def get_user_by_email(dynamodb, email):
 
 
 def update_user(
-    dynamodb, email, time_played, task_level, letters_learned, xp, battlepass_xp, coins
+    dynamodb, email, current_level, time_played, task_level, letters_learned, xp, battlepass_xp, coins
 ):
     logger.info(f"Updating user with email: {email}")
 
     update_expression = "SET "
     expression_attribute_values = {}
+
+    logger.debug(f"Updating current level to {current_level}")
+    update_expression += "current_level = :current_level, "
+    expression_attribute_values[":current_level"] = current_level
 
     logger.debug(f"Updating time played to {time_played}")
     update_expression += "time_played = :time_played, "
