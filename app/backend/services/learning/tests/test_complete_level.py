@@ -224,6 +224,7 @@ class TestCreateLevel(BaseTestSetup):
         initial_user = self.users_table.get_item(Key={'email': email})['Item']
         initial_xp = Decimal(str(initial_user['xp']))
         initial_coins = Decimal(str(initial_user['coins']))
+        initial_current_level = initial_user['current_level']
 
         # Define versions for correct answers
         versions = [1, 2, 3]
@@ -255,7 +256,14 @@ class TestCreateLevel(BaseTestSetup):
         self.assertEqual(response['statusCode'], 200)
         self.assertIn("message", body)
 
+        self.assertEqual(body['message'], "Level completed successfully")
+
         updated_user = self.users_table.get_item(Key={'email': email})['Item']
+
+        current_level = updated_user['current_level']
+        print(f"Initial current level: {initial_current_level}, Updated current level: {current_level}")
+        self.assertEqual(current_level, initial_current_level + 1)
+
         updated_xp = Decimal(str(updated_user['xp']))
         updated_coins = Decimal(str(updated_user['coins']))
         print(f"Updated user state - XP: {updated_xp}, Coins: {updated_coins}")
