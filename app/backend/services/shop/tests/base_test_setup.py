@@ -125,6 +125,8 @@ class BaseTestSetup(unittest.TestCase):
             "chosen_language": "en",
             "hearts": 5,
             "hearts_next_refill": None,
+            "coins": 100,
+            "items": [],
         }
 
         self.users_table.put_item(Item=self.sample_user)
@@ -156,20 +158,20 @@ class BaseTestSetup(unittest.TestCase):
                 "effect": {"xp": {"multiplier": 2, "seconds_in_use": 3600}}
             },
             {
-                "id": "coin-1",
+                "id": "coins-1",
                 "name": "Small Coin Pack",
                 "image_url": "https://example.com/images/small_coins.png",
                 "price": Decimal("1.99"),
-                "category": "coin",
-                "effect": {"coins": {"amount": 100}}
+                "category": "coins",
+                "effect": {"coins": 100}
             },
             {
                 "id": "coin-2",
                 "name": "Medium Coin Pack",
                 "image_url": "https://example.com/images/medium_coins.png",
                 "price": Decimal("4.99"),
-                "category": "coin",
-                "effect": {"coins": {"amount": 600}}
+                "category": "coins",
+                "effect": {"coins": 600}
             },
             {
                 "id": "chest-1",
