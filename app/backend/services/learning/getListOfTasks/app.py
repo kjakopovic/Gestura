@@ -73,7 +73,6 @@ def get_list_of_tasks(dynamodb, section):
 
     tasks = get_tasks_for_section(dynamodb, section)
     selected_tasks = []
-    section_exists = True
 
     if len(tasks) <= 0:
         logger.error(f"No tasks found for section: {section}. Getting random tasks.")
@@ -82,7 +81,7 @@ def get_list_of_tasks(dynamodb, section):
             logger.error("No tasks found in the database.")
             return build_response(404, {"message": "No tasks found", "tasks": []})
 
-        if CURRENT_MAX_SECTION + 10 == section:
+        if CURRENT_MAX_SECTION + 10 == section and CURRENT_MAX_SECTION >= 30:
             logger.info(f"Creating random tasks for section {section} from previous sections")
             tasks_1 = get_tasks_for_section(dynamodb, CURRENT_MAX_SECTION)
             tasks_2 = get_tasks_for_section(dynamodb, CURRENT_MAX_SECTION - 10)
@@ -102,31 +101,27 @@ def get_list_of_tasks(dynamodb, section):
 
         selected_tasks = selected_tasks_1 + selected_tasks_2 + selected_tasks_3
         random.shuffle(selected_tasks)
-        section_exists = False
-
-    if section == 10 and section_exists:
+    else:
+        logger.info(f"Tasks found for section {section}.")
         selected_tasks = chose_tasks(tasks, 4, 4, 2)
 
-        for i in range(5):
-            selected_tasks.append(random.choice(tasks))
-    elif section == 20 and section_exists:
-        selected_tasks = chose_tasks(tasks, 4, 4, 2)
+        if section == 10:
+            for i in range(5):
+                selected_tasks.append(random.choice(tasks))
+        elif section == 20:
+            tasks = get_tasks_for_section(dynamodb, 10)
+            prev_section_tasks = chose_tasks(tasks, 2, 2, 1)
 
-        tasks = get_tasks_for_section(dynamodb, 10)
-        prev_section_tasks = chose_tasks(tasks, 2, 2, 1)
+            selected_tasks.extend(prev_section_tasks)
+        else:
+            prev_tasks_1 = get_tasks_for_section(dynamodb, section - 10)
+            prev_tasks_2 = get_tasks_for_section(dynamodb, section - 20)
 
-        selected_tasks.extend(prev_section_tasks)
-    elif section_exists:
-        selected_tasks = chose_tasks(tasks, 4, 4, 2)
+            prev_section_tasks_1 = chose_tasks(prev_tasks_1, 1, 1, 1)
+            prev_section_tasks_2 = chose_tasks(prev_tasks_2, 1, 1, 0)
 
-        prev_tasks_1 = get_tasks_for_section(dynamodb, section - 10)
-        prev_tasks_2 = get_tasks_for_section(dynamodb, section - 20)
-
-        prev_section_tasks_1 = chose_tasks(prev_tasks_1, 1, 1, 1)
-        prev_section_tasks_2 = chose_tasks(prev_tasks_2, 1, 1, 0)
-
-        selected_tasks.extend(prev_section_tasks_1)
-        selected_tasks.extend(prev_section_tasks_2)
+            selected_tasks.extend(prev_section_tasks_1)
+            selected_tasks.extend(prev_section_tasks_2)
 
     selected_tasks = convert_decimal_to_float(selected_tasks)
 
