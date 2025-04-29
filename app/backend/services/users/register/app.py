@@ -66,6 +66,7 @@ def sign_up_user(dynamodb, email, username, password):
         "hearts_next_refill": None,
         "letters_learned": {},
         "task_level": 0,
+        "current_level": 0,
         "time_played": 0,
         "xp": 0,
         "battlepass_xp": 0,
