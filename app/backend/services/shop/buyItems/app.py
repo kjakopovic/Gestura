@@ -16,7 +16,7 @@ logger.setLevel(logging.INFO)
 
 @dataclass
 class Request:
-    item_id: int
+    item_id: str
 
 
 @middleware
@@ -55,6 +55,7 @@ def lambda_handler(event, context):
 
 def buy_item(items_dynamodb, users_dynamodb, item_id, email):
     user = get_user_by_email(users_dynamodb, email)
+
     if user is None:
         logger.error(f"User with email {email} does not exist")
         return build_response(404, {"message": "User not found."})
@@ -62,11 +63,16 @@ def buy_item(items_dynamodb, users_dynamodb, item_id, email):
     available_coins = user.get("coins", 0)
 
     shop_item = get_item_by_id(items_dynamodb, item_id)
+    if shop_item is None:
+        logger.error(f"Item with id {item_id} does not exist")
+        return build_response(404, {"message": "Item not found."})
+
     item_category = shop_item.get("category")
 
     if item_category == "coins":
         item_effect = shop_item.get("effect")
         add_coins = item_effect.get("coins")
+        add_coins = convert_decimal_to_float(add_coins)
         add_coins = int(add_coins)
 
         if add_coins <= 0:
@@ -82,6 +88,7 @@ def buy_item(items_dynamodb, users_dynamodb, item_id, email):
     else:
         item_price = shop_item.get("price")
         item_price = convert_decimal_to_float(item_price)
+        item_price = int(item_price)
 
         if available_coins < item_price:
             logger.error(f"User {email} does not have enough coins to buy the item")
@@ -96,8 +103,7 @@ def buy_item(items_dynamodb, users_dynamodb, item_id, email):
 
         return add_item_to_user(users_dynamodb, email, item_id)
 
-
-    return None
+    return build_response(500, {"message": "Failed to process the request"})
 
 
 def update_user_coins(dynamodb, email, coins):
@@ -118,9 +124,10 @@ def update_user_coins(dynamodb, email, coins):
 def add_item_to_user(dynamodb, email, item_id):
     logger.info(f"Adding item {item_id} to user {email}")
 
-    update_expression = "SET items = :item_id"
+    update_expression = "SET items_inventory = list_append(if_not_exists(items_inventory, :empty_list), :new_item)"
     expression_attribute_values = {
-        ":item_id": [item_id],
+        ":new_item": [item_id],
+        ":empty_list": []
     }
 
     dynamodb.table.update_item(
