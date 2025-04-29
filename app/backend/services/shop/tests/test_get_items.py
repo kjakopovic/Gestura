@@ -3,7 +3,6 @@ import sys
 import os
 import unittest
 from unittest.mock import patch
-from datetime import datetime, timedelta
 
 from base_test_setup import BaseTestSetup
 
