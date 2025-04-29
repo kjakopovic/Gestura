@@ -128,7 +128,7 @@ class TestGetItems(BaseTestSetup):
 
         initial_user = self.users_table.get_item(Key={'email': email})['Item']
         initial_coins = initial_user['coins']
-        initial_items = initial_user['items']
+        initial_items_inventory = initial_user['items_inventory']
 
         body_data = {
             "item_id": coins_item_id
@@ -150,12 +150,112 @@ class TestGetItems(BaseTestSetup):
 
         updated_user = self.users_table.get_item(Key={'email': email})['Item']
         updated_coins = updated_user['coins']
-        updated_items = updated_user['items']
+        updated_items = updated_user['items_inventory']
 
         self.assertGreater(updated_coins, initial_coins)
         self.assertEqual(initial_coins + 100, updated_coins)
-        self.assertEqual(updated_items, initial_items)
+        self.assertEqual(updated_items, initial_items_inventory)
 
+
+    def test_successful_buy_item(self):
+        """
+        Test that a user can successfully buy an item.
+        """
+        email = "test@mail.com"
+        jwt_token = generate_jwt_token(email)
+
+        item_id = "item-1"
+
+        initial_user = self.users_table.get_item(Key={'email': email})['Item']
+        initial_coins = initial_user['coins']
+        initial_item_inventory = initial_user['items_inventory']
+
+        body_data = {
+            "item_id": item_id
+        }
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "body": json.dumps(body_data)
+        }
+
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        self.assertEqual(response['statusCode'], 200)
+        self.assertIn("message", body)
+        self.assertIn("Item added successfully", body['message'])
+
+        updated_user = self.users_table.get_item(Key={'email': email})['Item']
+        updated_coins = updated_user['coins']
+        updated_items_inventory = updated_user['items_inventory']
+
+        self.assertGreater(initial_coins, updated_coins)
+        self.assertEqual(initial_coins - 100, updated_coins)
+        self.assertIsNotNone(updated_items_inventory)
+
+        self.assertNotEqual(updated_items_inventory, initial_item_inventory)
+        self.assertIn(item_id, updated_items_inventory)
+
+        print(f"User inventory after purchase: {updated_user['items_inventory']}")
+
+
+    def test_buy_item_with_insufficient_coins(self):
+        """
+        Test that a user cannot buy an item if they do not have enough coins.
+        """
+        email = "test@mail.com"
+        jwt_token = generate_jwt_token(email)
+
+        item_id = "item-3"
+
+        body_data = {
+            "item_id": item_id
+        }
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "body": json.dumps(body_data)
+        }
+
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        self.assertEqual(response['statusCode'], 400)
+        self.assertIn("message", body)
+        self.assertIn("Not enough coins", body['message'])
+
+
+    def test_item_not_found(self):
+        """
+        Test response when item is not found.
+        """
+        email = "test@mail.com"
+        jwt_token = generate_jwt_token(email)
+
+        item_id = "random-item"
+
+        body_data = {
+            "item_id": item_id
+        }
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "body": json.dumps(body_data)
+        }
+
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        self.assertEqual(response['statusCode'], 404)
+        self.assertIn("message", body)
+        self.assertIn("Item not found", body['message'])
 
 
     def tearDown(self):

@@ -126,7 +126,7 @@ class BaseTestSetup(unittest.TestCase):
             "hearts": 5,
             "hearts_next_refill": None,
             "coins": 100,
-            "items": [],
+            "items_inventory": ['random-item'],
         }
 
         self.users_table.put_item(Item=self.sample_user)
