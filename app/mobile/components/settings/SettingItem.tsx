@@ -29,7 +29,7 @@ const SettingItem = ({
 }: SettingItemProps) => {
   return (
     <TouchableOpacity
-      className={`flex-row mx-5 items-center rounded-2xl my-2 p-4 border ${
+      className={`flex-row items-center rounded-2xl my-2 p-4 border ${
         type === "button"
           ? "border-grayscale-400"
           : type === "select" && selected
@@ -41,7 +41,11 @@ const SettingItem = ({
       {/* Show image on left for types other than select */}
       {image && type !== "select" && <Image source={image} className="mr-4" />}
 
-      <Text className="flex-1 text-lg font-interBold text-grayscale-100">
+      <Text
+        className={`flex-1 text-lg font-interBold text-grayscale-100 ${
+          type === "button" ? "ml-10" : ""
+        }`}
+      >
         {title}
       </Text>
 

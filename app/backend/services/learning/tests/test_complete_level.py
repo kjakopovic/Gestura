@@ -2,36 +2,13 @@ import json
 import sys
 import os
 import unittest
-
 from unittest.mock import patch
-
-# Setup path resolution
-def setup_paths():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.abspath(os.path.join(current_dir, '..', '..', '..', '..', '..'))
-
-    paths = [
-        os.path.join(project_root, 'app', 'backend', 'services', 'learning', 'completeLevel'),
-        os.path.join(project_root, 'app', 'backend', 'services', 'layers', 'common'),
-        os.path.join(project_root, 'app', 'backend', 'services', 'learning'),
-        current_dir
-    ]
-
-    for path in paths:
-        if path not in sys.path and os.path.exists(path):
-            sys.path.insert(0, path)
-
-    # Clear cache of potentially imported modules
-    for module in ['validation_schema', 'common', 'completeLevel.app']:
-        if module in sys.modules:
-            del sys.modules[module]
-
-# Save original path and setup test paths
-# Otherwise unittest will not find the modules
-original_path = sys.path.copy()
-setup_paths()
-
 from base_test_setup import BaseTestSetup
+
+original_path = sys.path.copy()
+BaseTestSetup.setup_paths('completeLevel')
+BaseTestSetup.clear_module_cache(['validation_schema', 'common', 'completeLevel.app'])
+
 from moto import mock_aws
 from completeLevel.app import lambda_handler
 from auth import generate_jwt_token
@@ -247,6 +224,7 @@ class TestCreateLevel(BaseTestSetup):
         initial_user = self.users_table.get_item(Key={'email': email})['Item']
         initial_xp = Decimal(str(initial_user['xp']))
         initial_coins = Decimal(str(initial_user['coins']))
+        initial_current_level = initial_user['current_level']
 
         # Define versions for correct answers
         versions = [1, 2, 3]
@@ -278,7 +256,14 @@ class TestCreateLevel(BaseTestSetup):
         self.assertEqual(response['statusCode'], 200)
         self.assertIn("message", body)
 
+        self.assertEqual(body['message'], "Level completed successfully")
+
         updated_user = self.users_table.get_item(Key={'email': email})['Item']
+
+        current_level = updated_user['current_level']
+        print(f"Initial current level: {initial_current_level}, Updated current level: {current_level}")
+        self.assertEqual(current_level, initial_current_level + 1)
+
         updated_xp = Decimal(str(updated_user['xp']))
         updated_coins = Decimal(str(updated_user['coins']))
         print(f"Updated user state - XP: {updated_xp}, Coins: {updated_coins}")
