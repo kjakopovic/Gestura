@@ -17,7 +17,7 @@ const CircularProgressIndicator = ({
 }: CircularProgressIndicatorProps) => {
   // Constants for SVG dimensions
   const size = 100;
-  const strokeWidth = 10;
+  const strokeWidth = 15;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
@@ -25,12 +25,12 @@ const CircularProgressIndicator = ({
   return (
     <View className="flex flex-col items-center">
       {/* Title text above indicator */}
-      <Text className="text-white text-lg font-interExtraBold">
+      <Text className="text-white text-xl font-interExtraBold">
         {type === "Your" ? "Your" : "Battlepass"}
       </Text>
 
       {/* Level text */}
-      <Text className="text-white text-2xl font-interExtraBold mb-2">
+      <Text className="text-white text-3xl font-interExtraBold mb-2">
         Level
       </Text>
 

@@ -16,7 +16,10 @@ const Achievement = ({
 }: AchievementProps) => {
   return (
     <View className="h-32 m-2 w-full flex-row items-center justify-between px-4">
-      <Image source={icon} className="h-100% w-100%" />
+      <Image
+        source={icon}
+        className={`h-100% w-100% ${completed ? "opacity-100" : "opacity-30"}`}
+      />
       <View className="flex-column items-start justify-center w-3/4 h-3/4 py-1">
         <Text
           className={`text-2xl overflow-hidden w-3/4 font-interBold my-2 ${

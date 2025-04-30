@@ -1,5 +1,3 @@
-// Game-related types used across components
-import * as icons from "@/constants/icons";
 import { ImageSourcePropType } from "react-native";
 
 export type LevelType = "normal" | "special";

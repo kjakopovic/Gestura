@@ -1,3 +1,4 @@
+import React from "react";
 import { View, Dimensions } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { LevelData } from "@/types/levels";

@@ -91,6 +91,20 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
+  ItemsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "items-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
 Outputs:
   UsersTable:
     Description: "DynamoDB table for users"
@@ -107,3 +121,8 @@ Outputs:
     Value: !Ref LanguagesTable
     Export:
       Name: !Sub "${AWS::StackName}-LanguagesTable"
+  ItemsTable:
+    Description: "DynamoDB table for items"
+    Value: !Ref ItemsTable
+    Export:
+      Name: !Sub "${AWS::StackName}-ItemsTable"
