@@ -1,6 +1,7 @@
 import apple from "@/assets/icons/apple.png";
 import arrowBack from "@/assets/icons/arrow-back.png";
 import badge from "@/assets/icons/badge.png";
+import bag_coins from "@/assets/icons/bag-coins.png";
 import book from "@/assets/icons/book.png";
 import chest from "@/assets/icons/chest.png";
 import cog from "@/assets/icons/cog.png";
@@ -8,6 +9,7 @@ import coin from "@/assets/icons/coin.png";
 import confetti from "@/assets/icons/confetti.png";
 import confettiBW from "@/assets/icons/confettiBW.png";
 import envelope from "@/assets/icons/envelope.png";
+import error_testing from "@/assets/icons/error_testing.png";
 import experience_token from "@/assets/icons/experience_token.png";
 import facebook from "@/assets/icons/facebook.png";
 import gb from "@/assets/icons/GB.png";
@@ -32,10 +34,12 @@ import studying from "@/assets/icons/studying.png";
 import studyingBW from "@/assets/icons/studyingBW.png";
 import trophy from "@/assets/icons/trophy.png";
 
+
 export {
   apple,
   arrowBack,
   badge,
+  bag_coins,
   book,
   chest,
   cog,
@@ -43,6 +47,7 @@ export {
   confetti,
   confettiBW,
   envelope,
+  error_testing,
   experience_token,
   facebook,
   gb,
