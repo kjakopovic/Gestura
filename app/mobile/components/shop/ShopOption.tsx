@@ -1,4 +1,10 @@
-import { View, Text, Image, ImageSourcePropType } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ImageSourcePropType,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
 
 import * as icons from "@/constants/icons";
@@ -9,9 +15,10 @@ type ShopOptionProps = {
   type: ItemType;
   price: number;
   borderless: boolean;
+  onPress?: () => void; // Optional onPress function
 };
 
-const ShopOption = ({ type, price, borderless }: ShopOptionProps) => {
+const ShopOption = ({ type, price, borderless, onPress }: ShopOptionProps) => {
   let icon: ImageSourcePropType;
   let title: string;
 
@@ -38,10 +45,11 @@ const ShopOption = ({ type, price, borderless }: ShopOptionProps) => {
   }
 
   return (
-    <View
+    <TouchableOpacity
       className={`bg-grayscale-700 w-40 h-40 flex flex-col items-center justify-center  ${
         borderless ? "" : "border border-grayscale-400 border-b-2"
       } rounded-xl`}
+      onPress={onPress}
     >
       <Text className="text-grayscale-100 text-2xl font-interBold">
         {title}
@@ -57,7 +65,7 @@ const ShopOption = ({ type, price, borderless }: ShopOptionProps) => {
           {price}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
