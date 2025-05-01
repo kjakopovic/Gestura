@@ -56,20 +56,41 @@ def lambda_handler(event, context):
     if users_battlepass_xp + battlepass_level == required_sum:
         logger.info(f"Battlepass level {battlepass_level} is valid.")
 
+        coins = user.get("coins", 0)
+        coins += battlepass_level * 25
+        logger.info(f"Giving {battlepass_level * 25} coins to user {email}.")
+
+        update_parts = []
+        expression_attribute_values = {}
+
+        update_parts.append("coins = :coins")
+        expression_attribute_values[":coins"] = coins
+        update_parts.append("battlepass_xp = :xp")
+        expression_attribute_values[":xp"] = users_battlepass_xp + battlepass_level
+
+        update_expression = "SET " + ", ".join(update_parts)
+
         user_dynamodb.table.update_item(
             Key={"email": email},
-            UpdateExpression="SET battlepass_xp = :xp",
-            ExpressionAttributeValues={":xp": users_battlepass_xp + battlepass_level},
+            UpdateExpression=update_expression,
+            ExpressionAttributeValues=expression_attribute_values,
         )
 
         logger.info(f"User {email} battlepass_xp updated to {users_battlepass_xp + battlepass_level}.")
         return build_response(200, {"message": "Battlepass level claimed successfully."})
-
+    elif users_battlepass_xp + battlepass_level >= required_sum:
+        logger.info(f"Battlepass level {battlepass_level} has already been claimed.")
+        return build_response(
+            400,
+            {
+                "message": f"Battlepass level {battlepass_level} has already been claimed."
+            },
+        )
 
     return build_response(
         400,
         {
-            "message": f"Battlepass level {battlepass_level} is not valid."
+            "message": f"Not able to claim battlepass level {battlepass_level}, not enough xp."
         },
     )
 
