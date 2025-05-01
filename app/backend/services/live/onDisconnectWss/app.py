@@ -41,7 +41,7 @@ def lambda_handler(event, context):
         logger.info(f"Deleting connection: {connections[0]}")
         delete_connection(dynamodb, connections[0].get("email"))
 
-    rooms = chatRoomDb.scan().get("Items", [])
+    rooms = chatRoomDb.table.scan().get("Items", [])
     logger.info(f"Rooms: {rooms}")
     for room in rooms:
         users = room.get("user_connections", [])
