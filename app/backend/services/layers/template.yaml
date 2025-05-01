@@ -95,6 +95,48 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
+  ConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "connections-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+        - AttributeName: connection_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: "HASH"
+      GlobalSecondaryIndexes:
+        - IndexName: "ConnectionIdIndex"
+          KeySchema:
+            - AttributeName: connection_id
+              KeyType: "HASH"
+          Projection:
+            ProjectionType: "ALL"
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      SSESpecification:
+        SSEEnabled: True
+
+  ChatRoomTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "chatRooms-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: chat_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: chat_id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
   ItemsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -125,6 +167,16 @@ Outputs:
     Value: !Ref LanguagesTable
     Export:
       Name: !Sub "${AWS::StackName}-LanguagesTable"
+  ConnectionsTable:
+    Description: "DynamoDB table for connections"
+    Value: !Ref ConnectionsTable
+    Export:
+      Name: !Sub "${AWS::StackName}-ConnectionsTable"
+  ChatRoomTable:
+    Description: "DynamoDB table for chat rooms"
+    Value: !Ref ChatRoomTable
+    Export:
+      Name: !Sub "${AWS::StackName}-ChatRoomTable"
   ItemsTable:
     Description: "DynamoDB table for items"
     Value: !Ref ItemsTable
