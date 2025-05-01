@@ -15,8 +15,15 @@ from boto import (
 
 
 def lambda_handler(event, context):
-    body = json.loads(event.get("body", "{}"))
-    room_id = body.get("roomId")
+    logger.debug(f"Received event: {event}")
+
+    body = event.get("body")
+    if body is not None:
+        request_body = json.loads(body)
+    else:
+        request_body = event
+
+    room_id = request_body.get("roomId")
     connection_id = event["requestContext"]["connectionId"]
 
     if not connection_id:
