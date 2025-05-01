@@ -9,3 +9,6 @@ run-docs-local:
 stop-docs-local:
 	docker stop gestura-docs
 	docker rm gestura-docs
+
+insert-items-into-table:
+	python ./backend/scripts/insert_into_table.py --table items-$(stageName) --items-file ./backend/scripts/items.json --region eu-central-1
