@@ -90,33 +90,60 @@ Resources:
       IntegrationUri:
         Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OnDisconnectFunction.Arn}/invocations
 
-  # Send message
-  SendRoute:
+  # Start Sharing
+  StartSharingRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref WebSocketApi
-      RouteKey: sendmessage
+      RouteKey: start-sharing
       AuthorizationType: NONE
-      OperationName: SendRoute
+      OperationName: StartSharingRoute
       Target: !Join
         - "/"
-        - - "integrations"
-          - !Ref SendInteg
+        - - integrations
+          - !Ref StartSharingInteg
 
-  SendInteg:
+  StartSharingInteg:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
       ApiId: !Ref WebSocketApi
-      Description: Send Integration
+      Description: Start Sharing Integration
       IntegrationType: AWS_PROXY
       IntegrationUri:
-        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SendMessageFunction.Arn}/invocations
+        Fn::Sub: >-
+          arn:aws:apigateway:${AWS::Region}:lambda
+          /path/2015-03-31/functions/${StartSharingFunction.Arn}/invocations
+
+  # Stop Sharing
+  StopSharingRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: stop-sharing
+      AuthorizationType: NONE
+      OperationName: StopSharingRoute
+      Target: !Join
+        - "/"
+        - - integrations
+          - !Ref StopSharingInteg
+
+  StopSharingInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketApi
+      Description: Stop Sharing Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub: >-
+          arn:aws:apigateway:${AWS::Region}:lambda
+          /path/2015-03-31/functions/${StopSharingFunction.Arn}/invocations
 
   Deployment:
     Type: AWS::ApiGatewayV2::Deployment
     DependsOn:
       - ConnectRoute
-      - SendRoute
+      - StartSharingRoute
+      - StopSharingRoute
       - DisconnectRoute
     Properties:
       ApiId: !Ref WebSocketApi
@@ -179,7 +206,7 @@ Resources:
             Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
           CHAT_ROOM_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
-          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
+          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
       Architectures:
         - x86_64
       Policies:
@@ -212,7 +239,7 @@ Resources:
             Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
           CHAT_ROOM_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
-          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
+          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
       Architectures:
         - x86_64
       Policies:
@@ -245,7 +272,7 @@ Resources:
             Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
           CHAT_ROOM_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
-          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
+          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
       Architectures:
         - x86_64
       Policies:
