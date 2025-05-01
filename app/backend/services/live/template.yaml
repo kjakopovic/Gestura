@@ -10,7 +10,7 @@ Parameters:
   JwtSecretName:
     Type: String
     Description: Name of the secret in Secrets Manager that contains the JWT secret
-    Default: python-lambda-app/prod/jwt-secret
+    Default: auth
   LayerStackName:
     Type: String
     Description: Name of the stack where the layer is deployed
