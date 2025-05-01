@@ -79,19 +79,23 @@ def lambda_handler(event, context):
     xp = Decimal(str(xp))
     coins = Decimal(str(coins))
 
+    # Updating user level for this language
+    user_levels = user.get("current_level", {})
+    current_lang_level = user_levels.get(request.language_id, 0) + 1
+    user_levels[request.language_id] = current_lang_level
+
     logger.info(
-        f"Updating user {email} with time played: {time_played}, task level: {user['task_level'] + 1}, letters learned: {letters_learned}"
+        f"Updating user {email} with time played: {time_played}, task level: {user_levels}, letters learned: {letters_learned}"
     )
     update_user(
         usersTable,
         email,
-        user["current_level"] + 1,
-        user["time_played"] + time_played,
-        user["task_level"],
+        user_levels,
+        user.get("time_played", 0) + time_played,
         letters_learned,
-        user["xp"] + xp,
-        user["battlepass_xp"] + xp,
-        user["coins"] + coins,
+        user.get("xp", 0) + xp,
+        user.get("battlepass_xp", 0) + xp,
+        user.get("coins", 0) + coins,
     )
 
     return build_response(
@@ -129,7 +133,6 @@ def update_user(
     email,
     current_level,
     time_played,
-    task_level,
     letters_learned,
     xp,
     battlepass_xp,
@@ -147,10 +150,6 @@ def update_user(
     logger.debug(f"Updating time played to {time_played}")
     update_expression += "time_played = :time_played, "
     expression_attribute_values[":time_played"] = time_played
-
-    logger.debug(f"Updating task level to {task_level+1}")
-    update_expression += "task_level = :task_level, "
-    expression_attribute_values[":task_level"] = task_level + 1
 
     logger.debug(f"Updating letters learned to {letters_learned}")
     update_expression += "letters_learned = :letters_learned, "
