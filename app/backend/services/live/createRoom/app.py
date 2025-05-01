@@ -40,7 +40,7 @@ def lambda_handler(event, context):
 
     logger.debug(f"Creating chat room with ID: {room_id}")
     chatRoomDb.table.put_item(
-        Item={"chat_id": room_id, "users": [user.get("connection_id")]}
+        Item={"chat_id": room_id, "user_connections": [user.get("connection_id")]}
     )
 
     return build_response(
