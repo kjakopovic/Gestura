@@ -41,7 +41,7 @@ def lambda_handler(event, context):
         logger.error("Room not found.")
         return {"statusCode": 400, "body": "Room not found."}
 
-    for user in room.get("user_connections", []):
+    for user in room.get("user_connections", set()):
         if user == connection_id:
             continue
 

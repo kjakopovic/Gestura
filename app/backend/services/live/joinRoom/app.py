@@ -60,14 +60,8 @@ def get_user_connection_by_email(dynamodb, email):
 def update_room(dynamodb, id, user_conn):
     resp = dynamodb.table.update_item(
         Key={"chat_id": id},
-        UpdateExpression="""
-          SET user_connections =
-            list_append(
-              if_not_exists(user_connections, :empty_list),
-              :new_conn
-            )
-        """,
-        ExpressionAttributeValues={":new_conn": [user_conn], ":empty_list": []},
+        UpdateExpression="ADD user_connections :new_conn",
+        ExpressionAttributeValues={":new_conn": {user_conn}},
         ReturnValues="ALL_NEW",
     )
     return resp["Attributes"]
