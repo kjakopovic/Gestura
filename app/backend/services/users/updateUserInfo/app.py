@@ -70,10 +70,11 @@ def lambda_handler(event, context):
         logger.debug(f"User with email {email} does not exist")
         return build_response(404, {"message": "User not found."})
 
-    language = get_language_by_id(languagesTable, request.chosen_language)
-    if not language:
-        logger.error(f"Language with id {request.chosen_language} not found")
-        return build_response(404, {"message": "Language not found"})
+    if request.chosen_language:
+        language = get_language_by_id(languagesTable, request.chosen_language)
+        if not language:
+            logger.error(f"Language with id {request.chosen_language} not found")
+            return build_response(404, {"message": "Language not found"})
 
     logger.debug(f"User with email {email} exists, proceeding with update")
 
