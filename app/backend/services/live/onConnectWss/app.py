@@ -11,7 +11,6 @@ from boto import (
 )
 
 
-# TODO: maybe it would be better to handle connections on a certain room not generalized in connections table
 def lambda_handler(event, context):
     try:
         # Getting JWT token from query parameters
@@ -46,7 +45,6 @@ def lambda_handler(event, context):
         return {"statusCode": 200, "body": "Connected."}
 
     except Exception as e:
-        # Log the exception with stack trace
         logger.error("An unexpected error occurred: %s", str(e))
         logger.debug(traceback.format_exc())
 

@@ -131,8 +131,6 @@ Resources:
   # Lambda functions
   OnConnectFunction:
     Type: AWS::Serverless::Function
-    Metadata:
-      BuildMethod: makefile
     Properties:
       CodeUri: ./onConnectWss
       Handler: app.lambda_handler
@@ -143,6 +141,8 @@ Resources:
         Variables:
           CONNECTIONS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Architectures:
@@ -167,8 +167,6 @@ Resources:
 
   OnDisconnectFunction:
     Type: AWS::Serverless::Function
-    Metadata:
-      BuildMethod: makefile
     Properties:
       CodeUri: ./onDisconnectWss
       Handler: app.lambda_handler
@@ -179,6 +177,9 @@ Resources:
         Variables:
           CONNECTIONS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
+          CHAT_ROOM_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
+          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
       Architectures:
         - x86_64
       Policies:
@@ -187,6 +188,7 @@ Resources:
             - Effect: "Allow"
               Action:
                 - "dynamodb:*"
+                - "execute-api:*"
               Resource: "*"
 
   OnDisconnectPermission:
@@ -198,19 +200,19 @@ Resources:
       FunctionName: !Ref OnDisconnectFunction
       Principal: apigateway.amazonaws.com
 
-  SendMessageFunction:
+  StartSharingFunction:
     Type: AWS::Serverless::Function
-    Metadata:
-      BuildMethod: makefile
     Properties:
-      CodeUri: ./sendMessageWss
-      Handler: lambda_handler.lambda_handler
+      CodeUri: ./startSharingWss
+      Handler: app.lambda_handler
       Runtime: python3.12
       Environment:
         Variables:
-          MESSAGE_HISTORY_TABLE_NAME: !Ref MessageHistoryTable
-          CHAT_ROOM_TABLE_NAME: !Ref ChatRoomTable
-          CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
+          CONNECTIONS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
+          CHAT_ROOM_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
+          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
       Architectures:
         - x86_64
       Policies:
@@ -219,16 +221,49 @@ Resources:
             - Effect: "Allow"
               Action:
                 - "dynamodb:*"
-                - "execute-api:ManageConnections"
+                - "execute-api:*"
               Resource: "*"
 
-  SendMessagePermission:
+  StartSharingPermission:
     Type: AWS::Lambda::Permission
     DependsOn:
       - WebSocketApi
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !Ref SendMessageFunction
+      FunctionName: !Ref StartSharingFunction
+      Principal: apigateway.amazonaws.com
+
+  StopSharingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./stopSharingWss
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          CONNECTIONS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
+          CHAT_ROOM_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
+          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "execute-api:*"
+              Resource: "*"
+
+  StopSharingPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketApi
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref StopSharingFunction
       Principal: apigateway.amazonaws.com
 
   # Endpoints
@@ -242,6 +277,10 @@ Resources:
         Variables:
           CHAT_ROOM_TABLE: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
+          CONNECTIONS_ROOM_TABLE: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
+          USERS_ROOM_TABLE: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
@@ -274,6 +313,10 @@ Resources:
         Variables:
           CHAT_ROOM_TABLE: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
+          CONNECTIONS_ROOM_TABLE: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
+          USERS_ROOM_TABLE: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
@@ -297,14 +340,6 @@ Resources:
             RestApiId: !Ref LiveChatApi
 
 Outputs:
-  ConnectionsTableArn:
-    Description: "Connections table ARN"
-    Value: !GetAtt ConnectionsTable.Arn
-
-  ChatRoomTableArn:
-    Description: "Chat room table ARN"
-    Value: !GetAtt ChatRoomTable.Arn
-
   EndpointURI:
     Description: "API Gateway endpoint URL for Live chat microservice apis"
     Value: !Sub "https://${LiveChatApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"

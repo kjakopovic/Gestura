@@ -1,28 +1,55 @@
-import os, json
-import boto3
+from boto import (
+    LambdaDynamoDBClass,
+    _LAMBDA_CHAT_ROOM_TABLE_RESOURCE,
+    _LAMBDA_CONNECTIONS_TABLE_RESOURCE,
+)
+from auth import get_email_from_jwt_token
+from middleware import middleware
+from common import build_response
 
-# TODO: needs some reworking
 
-dynamodb = boto3.resource("dynamodb")
-chat_rooms = dynamodb.Table(os.environ["CHAT_ROOM_TABLE"])
-
-
+@middleware
 def lambda_handler(event, context):
     room_id = event["pathParameters"]["roomId"]
 
-    body = json.loads(event.get("body", "{}"))
-    peer_id = body.get("peerId")
+    jwt_token = event.get("headers").get("x-access-token")
+    email = get_email_from_jwt_token(jwt_token)
 
-    chat_rooms.update_item(
-        Key={"chat_id": room_id},
-        UpdateExpression="ADD users :u",
-        ExpressionAttributeValues={":u": set([peer_id])},
+    if not email:
+        return build_response(400, {"message": "Invalid email in jwt token"})
+
+    global _LAMBDA_CHAT_ROOM_TABLE_RESOURCE, _LAMBDA_CONNECTIONS_TABLE_RESOURCE
+    chatRoomDb = LambdaDynamoDBClass(_LAMBDA_CHAT_ROOM_TABLE_RESOURCE)
+    connectionsDb = LambdaDynamoDBClass(_LAMBDA_CONNECTIONS_TABLE_RESOURCE)
+
+    user = get_user_connection_by_email(connectionsDb, email)
+    if not user or not user.get("connection_id"):
+        return build_response(400, {"message": "User connection not found"})
+
+    room = update_room(chatRoomDb, room_id, user.get("connection_id"))
+    if not room:
+        return build_response(400, {"message": "Room not found"})
+
+    return build_response(
+        200,
+        {
+            "message": "User added to room successfully",
+            "room": room,
+        },
     )
-    room = chat_rooms.get_item(Key={"chat_id": room_id}).get("Item", {})
-    users = room.get("users", [])
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps({"roomId": room_id, "users": users}),
-        "headers": {"Content-Type": "application/json"},
-    }
+
+def get_user_connection_by_email(dynamodb, email):
+    user = dynamodb.table.get_item(Key={"email": email})
+
+    return user.get("Item")
+
+
+def update_room(dynamodb, id, user):
+    room = dynamodb.table.update_item(
+        Key={"chat_id": id},
+        UpdateExpression="ADD users :u",
+        ExpressionAttributeValues={":u": set([user])},
+    )
+
+    return room.get("Item")
