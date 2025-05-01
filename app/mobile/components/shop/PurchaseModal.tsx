@@ -12,7 +12,7 @@ type PurchaseModalProps = {
   item: { type: string; price: number };
   price: number;
   userCoins: number;
-  onPurchase?: (success: boolean) => void; // Add callback for purchase completion
+  onPurchase?: (success: boolean) => void;
 };
 
 const PurchaseModal = ({
@@ -50,7 +50,6 @@ const PurchaseModal = ({
     setPurchaseResult(success);
     setShowResult(true);
 
-    // Notify parent component about purchase result
     if (onPurchase) {
       onPurchase(success);
     }
@@ -94,7 +93,7 @@ const PurchaseModal = ({
             Do you want to buy{" "}
             <Text className="font-interBold">{item.type}</Text>?
           </Text>
-          <View className="flex flex-row items-center justify-center m-6">
+          <View className="flex flex-row items-center justify-center m-6 mb-24">
             <Image source={icons.coin} className="w-8 h-8" />
             <Text className="text-primary text-4xl font-interExtraBold px-2">
               {price}

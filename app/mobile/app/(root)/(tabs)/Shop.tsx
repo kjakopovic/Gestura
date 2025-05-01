@@ -17,7 +17,7 @@ import PurchaseModal from "@/components/shop/PurchaseModal";
 import * as icons from "@/constants/icons";
 
 const Shop = () => {
-  let userCoins = 20;
+  let userCoins = 200;
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState({ type: "", price: 0 });
@@ -41,7 +41,7 @@ const Shop = () => {
         contentContainerStyle={{ paddingBottom: 120 }}
       >
         <View className="w-full flex flex-col items-center justify-start">
-          <View className="w-full flex flex-row items-center justify-center my-10">
+          <View className="w-full flex flex-row items-center justify-center mt-32 mb-8">
             <Image source={icons.coin} className="h-10 w-10" />
             <Text className="text-primary text-4xl font-interBold m-2">
               {userCoins}
@@ -59,11 +59,26 @@ const Shop = () => {
                 borderless={false}
                 onPress={() => handlePurchase("hearts", 100)}
               />
-              <ShopOption type="xp" price={200} borderless={false} />
+              <ShopOption
+                type="xp"
+                price={200}
+                borderless={false}
+                onPress={() => handlePurchase("xp", 200)}
+              />
             </View>
             <View className="w-full flex flex-row items-center justify-between px-12">
-              <ShopOption type="hearts" price={100} borderless={false} />
-              <ShopOption type="xp" price={200} borderless={false} />
+              <ShopOption
+                type="hearts"
+                price={100}
+                borderless={false}
+                onPress={() => handlePurchase("hearts", 100)}
+              />
+              <ShopOption
+                type="xp"
+                price={200}
+                borderless={false}
+                onPress={() => handlePurchase("xp", 200)}
+              />
             </View>
           </View>
           {/* COINS */}
@@ -83,7 +98,10 @@ const Shop = () => {
               CHESTS
             </Text>
             <View className="w-full flex flex-row items-center justify-center m-8">
-              <ChestOption chestPrice={1000} />
+              <ChestOption
+                chestPrice={1000}
+                onPress={() => handlePurchase("chest", 1000)}
+              />
             </View>
           </View>
         </View>
