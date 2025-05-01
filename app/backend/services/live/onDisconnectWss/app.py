@@ -29,9 +29,9 @@ def lambda_handler(event, context):
     chatRoomDb = LambdaDynamoDBClass(_LAMBDA_CHAT_ROOM_TABLE_RESOURCE)
 
     logger.info("Setting up db connections")
-    ws = client(
-        "apigatewaymanagementapi", endpoint_url=os.environ["WEBSOCKET_ENDPOINT"]
-    )
+    raw = os.environ["WEBSOCKET_ENDPOINT"]
+    https_url = raw.replace("wss://", "https://", 1)
+    ws = client("apigatewaymanagementapi", endpoint_url=https_url)
 
     logger.info("Deleting connection from user.")
 

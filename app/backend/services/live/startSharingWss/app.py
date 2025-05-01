@@ -33,9 +33,9 @@ def lambda_handler(event, context):
     logger.info("Setting up db connections")
     global _LAMBDA_CHAT_ROOM_TABLE_RESOURCE
     chatRoomDb = LambdaDynamoDBClass(_LAMBDA_CHAT_ROOM_TABLE_RESOURCE)
-    ws = client(
-        "apigatewaymanagementapi", endpoint_url=os.environ["WEBSOCKET_ENDPOINT"]
-    )
+    raw = os.environ["WEBSOCKET_ENDPOINT"]
+    https_url = raw.replace("wss://", "https://", 1)
+    ws = client("apigatewaymanagementapi", endpoint_url=https_url)
 
     room = get_room_by_id(chatRoomDb, room_id)
     if not room:
