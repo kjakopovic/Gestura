@@ -42,6 +42,9 @@ def lambda_handler(event, context):
         logger.error("Room not found")
         return build_response(400, {"message": "Room not found"})
 
+    if isinstance(room.get("user_connections"), set):
+        room["user_connections"] = list(room["user_connections"])
+
     return build_response(
         200,
         {
