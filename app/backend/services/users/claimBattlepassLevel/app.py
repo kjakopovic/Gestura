@@ -6,7 +6,6 @@ from aws_lambda_powertools.utilities.validation import SchemaValidationError, va
 from common import build_response, convert_decimal_to_float
 from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
 from middleware import middleware
-from boto3.dynamodb.conditions import Key
 from auth import get_email_from_jwt_token
 
 logger = logging.getLogger("ClaimBattlepassLevel")
