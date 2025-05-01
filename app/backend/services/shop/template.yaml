@@ -122,5 +122,5 @@ Resources:
 
 Outputs:
   ShopApiUrl:
-    Description: "API Gateway endpoint URL for Learning microservice apis"
-    Value: !Sub "https://${LearningApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"
+    Description: "API Gateway endpoint URL for Shop microservice apis"
+    Value: !Sub "https://${ShopApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"
