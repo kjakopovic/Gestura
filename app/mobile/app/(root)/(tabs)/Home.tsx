@@ -1,86 +1,65 @@
-import React from "react";
-import { ScrollView, View } from "react-native";
-import { useState } from "react";
-import { useRouter } from "expo-router";
+import React, { useRef } from "react";
+import { ScrollView, View, ActivityIndicator } from "react-native";
 
 import PlayerInfoBar from "@/components/PlayerInfoBar";
 import LevelMap from "@/components/levels/LevelMap";
-import { LevelData } from "@/types/levels";
-import * as icons from "@/constants/icons";
+import { useLevel } from "@/hooks/useLevel";
+import { useUserData } from "@/hooks/useUserData";
+import { navigateToLevel } from "@/utils/navigationUtils";
+
+// Extract scroll handler to a separate function
+const useScrollHandler = (onScrollEnd: () => void) => {
+  return {
+    onScroll: ({ nativeEvent }: { nativeEvent: any }) => {
+      const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+      const paddingToBottom = 200;
+      if (
+        layoutMeasurement.height + contentOffset.y >=
+        contentSize.height - paddingToBottom
+      ) {
+        onScrollEnd();
+      }
+    },
+    scrollEventThrottle: 400,
+  };
+};
 
 const Home = () => {
-  const router = useRouter();
-  // Levels data with their types and states
-  // TODO: Add infinite loading with repeating cycle every 10 levels
-  const [levels] = useState<LevelData[]>([
-    {
-      id: 1,
-      level: 1,
-      type: "special",
-      state: "unlocked",
-      icon: icons.star1,
-    },
-    {
-      id: 2,
-      level: 2,
-      type: "normal",
-      state: "unlocked",
-      icon: icons.star2,
-    },
-    {
-      id: 3,
-      level: 3,
-      type: "special",
-      state: "unlocked",
-      icon: icons.star1,
-    },
-    {
-      id: 4,
-      level: 4,
-      type: "normal",
-      state: "locked",
-      icon: icons.star2,
-    },
-    {
-      id: 5,
-      level: 5,
-      type: "special",
-      state: "locked",
-      icon: icons.starTrophy,
-    },
-    {
-      id: 6,
-      level: 6,
-      type: "special",
-      state: "locked",
-      icon: icons.starTrophy,
-    },
-    {
-      id: 7,
-      level: 7,
-      type: "normal",
-      state: "locked",
-      icon: icons.star1,
-    },
-    {
-      id: 8,
-      level: 8,
-      type: "normal",
-      state: "locked",
-      icon: icons.star2,
-    },
-  ]);
+  const scrollViewRef = useRef<ScrollView>(null);
 
+  // Use the extracted hooks
+  const { levels, isLoadingMore, handleScrollToEnd, loadMoreLevels } =
+    useLevel();
+  const { isLoading, userStats } = useUserData();
+
+  // Use the scroll handler
+  const scrollHandlerProps = useScrollHandler(handleScrollToEnd);
+
+  // Handle level press
   const handleLevelPress = (levelId: number) => {
     console.log(`Level ${levelId} press`);
-    router.push(`/level`);
-    // Here you can navigate to the level or show a modal
+    navigateToLevel(levelId);
   };
+
+  // Show loading indicator when data is being fetched
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-grayscale-800">
+        <ActivityIndicator
+          size="large"
+          color="#A162FF"
+          className="absolute top-1/2"
+          style={{ transform: [{ translateY: -50 }] }}
+        />
+      </View>
+    );
+  }
 
   return (
     <View className="bg-grayscale-800 flex-1">
-      <PlayerInfoBar />
+      <PlayerInfoBar {...userStats} />
       <ScrollView
+        ref={scrollViewRef}
         className="h-full w-full"
         contentContainerStyle={{
           paddingBottom: 100,
@@ -88,10 +67,15 @@ const Home = () => {
         }}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        {...scrollHandlerProps}
       >
-        {/* Level Map */}
         <View className="mt-20">
-          <LevelMap levels={levels} onLevelPress={handleLevelPress} />
+          <LevelMap
+            levels={levels}
+            onLevelPress={handleLevelPress}
+            onLoadMore={loadMoreLevels}
+            isLoadingMore={isLoadingMore}
+          />
         </View>
       </ScrollView>
     </View>

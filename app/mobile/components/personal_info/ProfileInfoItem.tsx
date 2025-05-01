@@ -41,6 +41,8 @@ const ProfileInfoItem = ({
         placeholder={name}
         placeholderTextColor="#A9A9A9"
         editable={!disabled}
+        autoCapitalize="none"
+        autoCorrect={false}
       />
     </View>
   );

@@ -8,6 +8,7 @@ export type SettingItemConfig = {
   type: "toggle" | "select" | "button";
   value?: boolean;
   selected?: boolean;
+  disabled?: boolean;
   image?: ImageSourcePropType;
   onPress?: () => void;
   onChange?: (value: boolean) => void;

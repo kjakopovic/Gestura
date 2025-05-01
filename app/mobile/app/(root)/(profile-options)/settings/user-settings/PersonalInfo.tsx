@@ -1,43 +1,45 @@
-import React, { useState, useEffect } from "react";
-import { ScrollView, View } from "react-native";
+import React from "react";
+import { ScrollView, View, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomAppBar from "@/components/CustomAppBar";
 import ProfileImage from "@/components/personal_info/ProfileImage";
 import * as characters from "@/constants/characters";
 import ProfileInfoItem from "@/components/personal_info/ProfileInfoItem";
 import CustomButton from "@/components/CustomButton";
+import { useUserStore } from "@/store/useUserStore";
+import { mapSubscriptionToString } from "@/utils/subscriptionMapper";
+import { useSettingsState } from "@/hooks/useSettingsState";
 
 const PersonalInfo = () => {
-  const [originalProfile, setOriginalProfile] = useState({
-    name: "John Doe",
-    username: "johndoe123",
-    email: "jon@doe.com",
-    phone: "+1234567890",
-    subscription: "Live",
-  });
+  const userData = useUserStore((state) => state.user);
 
-  const [userProfile, setUserProfile] = useState({
-    name: "John Doe",
-    username: "johndoe123",
-    email: "jon@doe.com",
-    phone: "+1234567890",
-    subscription: "Live",
-  });
+  const initialProfile = {
+    username: userData?.username || "",
+    email: userData?.email || "",
+    phone_number: userData?.phone || userData?.phone_numer || null,
+    subscription: userData?.subscription,
+  };
 
-  const [hasChanges, setHasChanges] = useState(false);
+  const {
+    state: userProfile,
+    setState: setUserProfile,
+    hasChanges,
+    saveChanges,
+    isLoading,
+    error,
+  } = useSettingsState(initialProfile);
 
-  // Check for changes whenever userProfile is updated
-  useEffect(() => {
-    const profileChanged =
-      JSON.stringify(userProfile) !== JSON.stringify(originalProfile);
-    setHasChanges(profileChanged);
-  }, [userProfile, originalProfile]);
+  const handleSaveChanges = async () => {
+    const success = await saveChanges();
 
-  const saveChanges = () => {
-    // Here you would typically save to a backend
-    setOriginalProfile({ ...userProfile });
-    setHasChanges(false);
-    // You might want to add a success message or notification here
+    if (success) {
+      Alert.alert(
+        "Success",
+        "Your personal information has been updated successfully"
+      );
+    } else if (error) {
+      Alert.alert("Error", error || "Failed to update personal information");
+    }
   };
 
   return (
@@ -51,49 +53,41 @@ const PersonalInfo = () => {
           />
           <View className="flex w-full flex-col items-center justify-center mt-8">
             <ProfileInfoItem
-              name="Name"
-              value={userProfile.name}
-              onChange={(value) =>
-                setUserProfile({ ...userProfile, name: value })
-              }
-            />
-            <ProfileInfoItem
               name="Username"
               value={userProfile.username}
               onChange={(value) =>
-                setUserProfile({ ...userProfile, username: value })
+                setUserProfile((prev) => ({ ...prev, username: value }))
               }
             />
             <ProfileInfoItem
               name="Email"
               value={userProfile.email}
               onChange={(value) =>
-                setUserProfile({ ...userProfile, email: value })
+                setUserProfile((prev) => ({ ...prev, email: value }))
               }
             />
             <ProfileInfoItem
               name="Phone"
-              value={userProfile.phone}
+              value={userProfile.phone_number || ""}
               onChange={(value) =>
-                setUserProfile({ ...userProfile, phone: value })
+                setUserProfile((prev) => ({ ...prev, phone: value }))
               }
             />
             <ProfileInfoItem
               name="Subscription"
-              value={userProfile.subscription}
-              onChange={(value) =>
-                setUserProfile({ ...userProfile, subscription: value })
-              }
+              value={mapSubscriptionToString(userProfile.subscription)}
+              onChange={(value) => {}}
               disabled={true}
             />
 
             {hasChanges && (
               <View className="w-full mt-4">
                 <CustomButton
-                  text="SAVE CHANGES"
+                  text={isLoading ? "SAVING..." : "SAVE CHANGES"}
                   style="success"
-                  onPress={saveChanges}
+                  onPress={handleSaveChanges}
                   noMargin
+                  disabled={isLoading}
                 />
               </View>
             )}
