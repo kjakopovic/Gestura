@@ -2,7 +2,7 @@ import logging
 import traceback
 
 logger = logging.getLogger("OnConnectWss")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 from auth import get_email_from_jwt_token
 from boto import (

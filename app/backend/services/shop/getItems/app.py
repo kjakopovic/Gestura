@@ -6,7 +6,7 @@ from boto import LambdaDynamoDBClass, _LAMBDA_ITEMS_TABLE_RESOURCE
 from auth import get_email_from_jwt_token
 
 logger = logging.getLogger("GetItems")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 @middleware

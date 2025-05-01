@@ -4,7 +4,7 @@ import logging
 from os import environ
 
 logger = logging.getLogger("boto3")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 _LAMBDA_USERS_TABLE_RESOURCE = {
     "resource": boto3.resource("dynamodb"),

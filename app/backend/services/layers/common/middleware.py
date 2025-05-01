@@ -8,7 +8,7 @@ import logging
 import jwt
 
 logger = logging.getLogger("middleware")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 @lambda_handler_decorator

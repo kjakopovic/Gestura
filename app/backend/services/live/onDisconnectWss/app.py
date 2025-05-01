@@ -6,7 +6,7 @@ from boto3 import client
 from boto3.dynamodb.conditions import Key
 
 logger = logging.getLogger("OnDisconnectWss")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 from boto import (
     LambdaDynamoDBClass,
