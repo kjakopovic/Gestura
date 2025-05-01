@@ -34,7 +34,6 @@ def lambda_handler(event, context):
     logger.debug(f"Received event: {event}")
 
     jwt_token = event.get("headers").get("x-access-token")
-    print(f"JWT token: {jwt_token}")
     email = get_email_from_jwt_token(jwt_token)
 
     body = event.get("body")
@@ -80,18 +79,23 @@ def lambda_handler(event, context):
     xp = Decimal(str(xp))
     coins = Decimal(str(coins))
 
+    # Updating user level for this language
+    user_levels = user.get("current_level", {})
+    current_lang_level = user_levels.get(request.language_id, 1) + 1
+    user_levels[request.language_id] = current_lang_level
+
     logger.info(
-        f"Updating user {email} with time played: {time_played}, task level: {user['task_level'] + 1}, letters learned: {letters_learned}"
+        f"Updating user {email} with time played: {time_played}, task level: {user_levels}, letters learned: {letters_learned}"
     )
     update_user(
         usersTable,
         email,
-        user["time_played"] + time_played,
-        user["task_level"],
+        user_levels,
+        user.get("time_played", 0) + time_played,
         letters_learned,
-        user["xp"] + xp,
-        user["battlepass_xp"] + xp,
-        user["coins"] + coins,
+        user.get("xp", 0) + xp,
+        user.get("battlepass_xp", 0) + xp,
+        user.get("coins", 0) + coins,
     )
 
     return build_response(
@@ -113,6 +117,10 @@ def get_language_by_id(dynamodb, id):
 
 def get_user_by_email(dynamodb, email):
     logger.info(f"Getting user by email {email}")
+    if not email:
+        logger.error("Email is None")
+        return None
+
     user = dynamodb.table.get_item(Key={"email": email})
 
     user_item = user.get("Item", {})
@@ -121,20 +129,27 @@ def get_user_by_email(dynamodb, email):
 
 
 def update_user(
-    dynamodb, email, time_played, task_level, letters_learned, xp, battlepass_xp, coins
+    dynamodb,
+    email,
+    current_level,
+    time_played,
+    letters_learned,
+    xp,
+    battlepass_xp,
+    coins,
 ):
     logger.info(f"Updating user with email: {email}")
 
     update_expression = "SET "
     expression_attribute_values = {}
 
+    logger.debug(f"Updating current level to {current_level}")
+    update_expression += "current_level = :current_level, "
+    expression_attribute_values[":current_level"] = current_level
+
     logger.debug(f"Updating time played to {time_played}")
     update_expression += "time_played = :time_played, "
     expression_attribute_values[":time_played"] = time_played
-
-    logger.debug(f"Updating task level to {task_level+1}")
-    update_expression += "task_level = :task_level, "
-    expression_attribute_values[":task_level"] = task_level + 1
 
     logger.debug(f"Updating letters learned to {letters_learned}")
     update_expression += "letters_learned = :letters_learned, "

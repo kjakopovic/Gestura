@@ -1,0 +1,12 @@
+[
+  {
+    "id": "usa",
+    "name": "American (ASL)",
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/languageFlag/usa.png"
+  },
+  {
+    "id": "hr",
+    "name": "Croatian (HZJ)",
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/languageFlag/croatia.png"
+  }
+]

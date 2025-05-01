@@ -60,14 +60,18 @@ Resources:
           AttributeType: S
         - AttributeName: section
           AttributeType: N
+        - AttributeName: language_id
+          AttributeType: S
       KeySchema:
         - AttributeName: task_id
           KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: section-index
+        - IndexName: section-language-index
           KeySchema:
             - AttributeName: section
               KeyType: HASH
+            - AttributeName: language_id
+              KeyType: RANGE
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
@@ -132,6 +136,20 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
+        
+  ItemsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "items-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
 
 Outputs:
   UsersTable:
@@ -149,6 +167,7 @@ Outputs:
     Value: !Ref LanguagesTable
     Export:
       Name: !Sub "${AWS::StackName}-LanguagesTable"
+<<<<<<< HEAD
   ConnectionsTable:
     Description: "DynamoDB table for connections"
     Value: !Ref ConnectionsTable
@@ -159,3 +178,10 @@ Outputs:
     Value: !Ref ChatRoomTable
     Export:
       Name: !Sub "${AWS::StackName}-ChatRoomTable"
+=======
+  ItemsTable:
+    Description: "DynamoDB table for items"
+    Value: !Ref ItemsTable
+    Export:
+      Name: !Sub "${AWS::StackName}-ItemsTable"
+>>>>>>> develop

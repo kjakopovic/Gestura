@@ -1,4 +1,4 @@
-import { View, Image, Text, ImageSourcePropType } from "react-native";
+import { View, Image, Text } from "react-native";
 import React from "react";
 
 import * as hands from "@/constants/hand-signs";

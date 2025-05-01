@@ -66,22 +66,23 @@ def sign_up_user(dynamodb, email, username, password):
         "hearts_next_refill": None,
         "letters_learned": {},
         "task_level": 0,
+        "current_level": 0,
         "time_played": 0,
         "xp": 0,
+        "language_id": "usa",
         "battlepass_xp": 0,
         "coins": 0,
-        "phone_numer": None,
+        "phone_number": None,
         "sound_effects": True,
         "haptic_feedback": True,
         "push_notifications": True,
         "heart_refill": True,
         "daily_reminder": True,
         "subscription": 0,
+        "items_inventory": [],
     }
 
-    add_user_to_the_table(
-        dynamodb, user
-    )
+    add_user_to_the_table(dynamodb, user)
 
     refresh_token = generate_refresh_token(email)
     access_token = generate_jwt_token(email)

@@ -230,16 +230,18 @@ Resources:
             Method: POST
             RestApiId: !Ref UsersApi
 
-  GetUserInfoFunction:
+  GetOptionsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: getUserInfo/
+      CodeUri: getOptions/
       Handler: app.lambda_handler
       Runtime: python3.12
       Environment:
         Variables:
           USERS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          LANGUAGES_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-LanguagesTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
@@ -255,7 +257,7 @@ Resources:
                 - "secretsmanager:GetSecretValue"
               Resource: "*"
       Events:
-        GetUserInfoEndpoint:
+        GetOptionsEndpoint:
           Type: Api
           Properties:
             Path: /users
@@ -272,6 +274,8 @@ Resources:
         Variables:
           USERS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          LANGUAGES_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-LanguagesTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:

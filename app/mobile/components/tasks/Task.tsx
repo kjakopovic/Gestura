@@ -1,5 +1,5 @@
-import { View, Image, Text, ActivityIndicator } from "react-native";
-import React, { useEffect } from "react";
+import { View, Image, Text } from "react-native";
+import React from "react";
 import { router } from "expo-router";
 import { CameraCapturedPicture } from "expo-camera";
 
@@ -13,7 +13,7 @@ import * as characters from "@/constants/characters";
 import * as hands from "@/constants/hand-signs";
 import CameraComponent from "../CameraComponent";
 
-type Task = {
+type TaskType = {
   id: string;
   section: number;
   sectionName: string;
@@ -23,7 +23,7 @@ type Task = {
   correctAnswerIndex: number;
 };
 
-const Task = (task: Task) => {
+const Task = (task: TaskType) => {
   const handleAnswerPress = (text: string) => {
     setSelectedAnswer(text);
     console.log("Answer pressed!");
@@ -68,6 +68,7 @@ const Task = (task: Task) => {
 
   const handleSavePhoto = (photo: CameraCapturedPicture) => {
     console.log("Photo saved:", photo.uri);
+    console.log(showCamera);
     setCapturedPhoto(photo);
     // Don't close the camera view here - we want to keep showing the photo in CameraComponent
   };
@@ -182,7 +183,7 @@ const Task = (task: Task) => {
 
       <View className="w-full items-center mt-5">
         <CustomButton
-          marginTop={1}
+          noMargin
           onPress={handleContinue}
           text="CONTINUE"
           style="base"

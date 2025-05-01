@@ -31,6 +31,11 @@ _LAMBDA_CHAT_ROOM_TABLE_RESOURCE = {
     "table_name": environ.get("CHAT_ROOM_TABLE_NAME", "chat_room_test_table"),
 }
 
+_LAMBDA_ITEMS_TABLE_RESOURCE = {
+    "resource": boto3.resource("dynamodb"),
+    "table_name": environ.get("ITEMS_TABLE_NAME", "items_test_table"),
+}
+
 
 class LambdaDynamoDBClass:
     """
