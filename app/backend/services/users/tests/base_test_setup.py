@@ -108,6 +108,8 @@ class BaseTestSetup(unittest.TestCase):
             "chosen_language": "en",
             "hearts": 5,
             "hearts_next_refill": None,
+            "battlepass_xp": 3,
+            "coins": 100,
         }
 
         self.users_table.put_item(Item=self.sample_user)
