@@ -240,6 +240,8 @@ Resources:
         Variables:
           USERS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          LANGUAGES_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-LanguagesTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
@@ -272,6 +274,8 @@ Resources:
         Variables:
           USERS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          LANGUAGES_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-LanguagesTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
