@@ -35,10 +35,6 @@ Resources:
       StageName: !Ref StageName
       Auth:
         ApiKeyRequired: false
-      Cors:
-        AllowMethods: "'OPTIONS,POST'"
-        AllowHeaders: "'Content-Type'"
-        AllowOrigin: "'*'"
 
   # Websocket API setup
   WebSocketApi:
