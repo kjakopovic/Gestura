@@ -227,6 +227,8 @@ Resources:
       CodeUri: ./startSharingWss
       Handler: app.lambda_handler
       Runtime: python3.12
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Environment:
         Variables:
           CONNECTIONS_TABLE_NAME: !ImportValue
@@ -260,6 +262,8 @@ Resources:
       CodeUri: ./stopSharingWss
       Handler: app.lambda_handler
       Runtime: python3.12
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Environment:
         Variables:
           CONNECTIONS_TABLE_NAME: !ImportValue
