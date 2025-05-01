@@ -19,6 +19,7 @@ def lambda_handler(event, context):
     connection_id = event.get("requestContext").get("connectionId")
 
     if not connection_id:
+        logger.error("Connection ID not found in event.")
         return {"statusCode": 400, "body": "Connection ID not found."}
 
     # Getting dynamodb table connection
@@ -27,6 +28,7 @@ def lambda_handler(event, context):
     dynamodb = LambdaDynamoDBClass(_LAMBDA_CONNECTIONS_TABLE_RESOURCE)
     chatRoomDb = LambdaDynamoDBClass(_LAMBDA_CHAT_ROOM_TABLE_RESOURCE)
 
+    logger.info("Setting up db connections")
     ws = client(
         "apigatewaymanagementapi", endpoint_url=os.environ["WEBSOCKET_ENDPOINT"]
     )
@@ -36,30 +38,37 @@ def lambda_handler(event, context):
     connections = query_connections_by_id(dynamodb, connection_id)
 
     if connections:
+        logger.info(f"Deleting connection: {connections[0]}")
         delete_connection(dynamodb, connections[0].get("email"))
 
-    peer_id = connections[0].get("connection_id", "")
     rooms = chatRoomDb.scan().get("Items", [])
+    logger.info(f"Rooms: {rooms}")
     for room in rooms:
         users = room.get("user_connections", [])
-        if peer_id in users:
+        logger.info(f"{room} - Users: {users}")
+        if connection_id in users:
+            logger.info(
+                f"Removing connection {connection_id} from room {room['chat_id']}"
+            )
             # remove
             chatRoomDb.table.update_item(
                 Key={"chat_id": room["chat_id"]},
                 UpdateExpression="DELETE user_connections :u",
-                ExpressionAttributeValues={":u": {peer_id}},
+                ExpressionAttributeValues={":u": {connection_id}},
                 ReturnValues="ALL_NEW",
             )
 
             # notify remaining
             for other in users:
-                if other == peer_id:
+                logger.info(f"Notifying {other} about disconnection.")
+
+                if other == connection_id:
                     continue
 
                 ws.post_to_connection(
                     ConnectionId=other,
                     Data=json.dumps(
-                        {"action": "user-disconnected", "peerId": peer_id}
+                        {"action": "user-disconnected", "peerId": connection_id}
                     ).encode("utf-8"),
                 )
 
