@@ -6,7 +6,12 @@ from validation_schema import schema
 from dataclasses import dataclass
 from aws_lambda_powertools.utilities.validation import SchemaValidationError, validate
 from common import build_response, convert_decimal_to_float
-from boto import LambdaDynamoDBClass, _LAMBDA_TASKS_TABLE_RESOURCE, _LAMBDA_USERS_TABLE_RESOURCE
+from boto import (
+    LambdaDynamoDBClass,
+    _LAMBDA_TASKS_TABLE_RESOURCE,
+    _LAMBDA_USERS_TABLE_RESOURCE,
+    _LAMBDA_LANGUAGES_TABLE_RESOURCE,
+)
 from middleware import middleware
 from boto3.dynamodb.conditions import Key
 from auth import get_email_from_jwt_token
@@ -14,7 +19,8 @@ from auth import get_email_from_jwt_token
 logger = logging.getLogger("GetListOfTasks")
 logger.setLevel(logging.DEBUG)
 
-CURRENT_MAX_SECTION = int(os.environ.get('CURRENT_MAX_SECTION', 10))
+CURRENT_MAX_SECTION = int(os.environ.get("CURRENT_MAX_SECTION", 10))
+
 
 @dataclass
 class Request:
@@ -41,9 +47,16 @@ def lambda_handler(event, context):
         logger.error(f"Validation failed: {e}")
         return build_response(400, {"message": str(e)})
 
-    global _LAMBDA_TASKS_TABLE_RESOURCE, _LAMBDA_USERS_TABLE_RESOURCE
+    global _LAMBDA_TASKS_TABLE_RESOURCE, _LAMBDA_USERS_TABLE_RESOURCE, _LAMBDA_LANGUAGES_TABLE_RESOURCE
     tasks_dynamodb = LambdaDynamoDBClass(_LAMBDA_TASKS_TABLE_RESOURCE)
     user_dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
+    languages_dynamodb = LambdaDynamoDBClass(_LAMBDA_LANGUAGES_TABLE_RESOURCE)
+
+    language_id = query_params.get("language", "")
+    language = get_language_by_id(languages_dynamodb, language_id)
+    if not language:
+        logger.error(f"Language with id {language_id} not found")
+        return build_response(404, {"message": "Language not found"})
 
     users_current_level = get_users_current_level(user_dynamodb, email)
     if users_current_level is None:
@@ -56,7 +69,7 @@ def lambda_handler(event, context):
     section = (level // 10 + 1) * 10
 
     if users_current_level + 1 == level:
-        return get_list_of_tasks(tasks_dynamodb, section)
+        return get_list_of_tasks(tasks_dynamodb, section, language_id)
     else:
         logger.error(f"User {email} is not allowed to access level {level}.")
         return build_response(
@@ -68,10 +81,19 @@ def lambda_handler(event, context):
         )
 
 
-def get_list_of_tasks(dynamodb, section):
+def get_language_by_id(dynamodb, id):
+    logger.info(f"Getting language by id {id}")
+    language = dynamodb.table.get_item(Key={"id": id})
+
+    language_item = language.get("Item", {})
+
+    return language_item
+
+
+def get_list_of_tasks(dynamodb, section, language_id):
     logger.info(f"Getting list of tasks for section {section}")
 
-    tasks = get_tasks_for_section(dynamodb, section)
+    tasks = get_tasks_for_section(dynamodb, section, language_id)
     selected_tasks = []
 
     if len(tasks) <= 0:
@@ -82,18 +104,26 @@ def get_list_of_tasks(dynamodb, section):
             return build_response(404, {"message": "No tasks found", "tasks": []})
 
         if CURRENT_MAX_SECTION + 10 == section and CURRENT_MAX_SECTION >= 30:
-            logger.info(f"Creating random tasks for section {section} from previous sections")
-            tasks_1 = get_tasks_for_section(dynamodb, CURRENT_MAX_SECTION)
-            tasks_2 = get_tasks_for_section(dynamodb, CURRENT_MAX_SECTION - 10)
-            tasks_3 = get_tasks_for_section(dynamodb, CURRENT_MAX_SECTION - 20)
+            logger.info(
+                f"Creating random tasks for section {section} from previous sections"
+            )
+            tasks_1 = get_tasks_for_section(dynamodb, CURRENT_MAX_SECTION, language_id)
+            tasks_2 = get_tasks_for_section(
+                dynamodb, CURRENT_MAX_SECTION - 10, language_id
+            )
+            tasks_3 = get_tasks_for_section(
+                dynamodb, CURRENT_MAX_SECTION - 20, language_id
+            )
 
         else:
-            logger.info(f"Creating random tasks for section {section} from previous sections")
+            logger.info(
+                f"Creating random tasks for section {section} from previous sections"
+            )
             section_1, section_2 = get_two_random_sections(CURRENT_MAX_SECTION)
 
-            tasks_1 = get_tasks_for_section(dynamodb, CURRENT_MAX_SECTION)
-            tasks_2 = get_tasks_for_section(dynamodb, section_1)
-            tasks_3 = get_tasks_for_section(dynamodb, section_2)
+            tasks_1 = get_tasks_for_section(dynamodb, CURRENT_MAX_SECTION, language_id)
+            tasks_2 = get_tasks_for_section(dynamodb, section_1, language_id)
+            tasks_3 = get_tasks_for_section(dynamodb, section_2, language_id)
 
         selected_tasks_1 = chose_tasks(tasks_1, 3, 3, 2)
         selected_tasks_2 = chose_tasks(tasks_2, 2, 1, 1)
@@ -109,13 +139,13 @@ def get_list_of_tasks(dynamodb, section):
             for i in range(5):
                 selected_tasks.append(random.choice(tasks))
         elif section == 20:
-            tasks = get_tasks_for_section(dynamodb, 10)
+            tasks = get_tasks_for_section(dynamodb, 10, language_id)
             prev_section_tasks = chose_tasks(tasks, 2, 2, 1)
 
             selected_tasks.extend(prev_section_tasks)
         else:
-            prev_tasks_1 = get_tasks_for_section(dynamodb, section - 10)
-            prev_tasks_2 = get_tasks_for_section(dynamodb, section - 20)
+            prev_tasks_1 = get_tasks_for_section(dynamodb, section - 10, language_id)
+            prev_tasks_2 = get_tasks_for_section(dynamodb, section - 20, language_id)
 
             prev_section_tasks_1 = chose_tasks(prev_tasks_1, 1, 1, 1)
             prev_section_tasks_2 = chose_tasks(prev_tasks_2, 1, 1, 0)
@@ -126,19 +156,18 @@ def get_list_of_tasks(dynamodb, section):
     selected_tasks = convert_decimal_to_float(selected_tasks)
 
     return build_response(
-        200,
-        {
-            "message": "Tasks fetched successfully",
-            "tasks": selected_tasks
-        }
+        200, {"message": "Tasks fetched successfully", "tasks": selected_tasks}
     )
 
 
-def get_tasks_for_section(dynamodb, section):
-    logger.info(f"Getting tasks for section {section}")
+def get_tasks_for_section(dynamodb, section, language_id):
+    logger.info(f"Getting tasks for section {section} and language {language_id}")
 
     response = dynamodb.table.query(
-        IndexName="section-index", KeyConditionExpression=Key("section").eq(section)
+        IndexName="section-language-index",
+        KeyConditionExpression=(
+            Key("section").eq(section) & Key("language_id").eq(language_id)
+        ),
     )
 
     return response.get("Items", [])

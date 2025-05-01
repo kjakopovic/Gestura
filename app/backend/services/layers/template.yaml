@@ -60,14 +60,18 @@ Resources:
           AttributeType: S
         - AttributeName: section
           AttributeType: N
+        - AttributeName: language_id
+          AttributeType: S
       KeySchema:
         - AttributeName: task_id
           KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: section-index
+        - IndexName: section-language-index
           KeySchema:
             - AttributeName: section
               KeyType: HASH
+            - AttributeName: language_id
+              KeyType: RANGE
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
