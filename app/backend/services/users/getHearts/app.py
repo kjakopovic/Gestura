@@ -1,7 +1,7 @@
 import logging
 import os
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from common import build_response
 from middleware import middleware
 from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
@@ -10,7 +10,7 @@ from auth import get_email_from_jwt_token
 logger = logging.getLogger("GetHearts")
 logger.setLevel(logging.DEBUG)
 
-HEARTS_REFILL_RATE_HOURS = int(os.environ.get('HEARTS_REFILL_RATE_HOURS', 3))
+HEARTS_REFILL_RATE_HOURS = int(os.environ.get("HEARTS_REFILL_RATE_HOURS", 3))
 
 
 @middleware
@@ -40,14 +40,11 @@ def lambda_handler(event, context):
             200,
             {
                 "message": "Fetched hearts successfully",
-                "data": {
-                    "hearts": int(hearts),
-                    "hearts_next_refill": None
-                }
-            }
+                "data": {"hearts": int(hearts), "hearts_next_refill": None},
+            },
         )
 
-    current_time = datetime.now()
+    current_time = datetime.now(timezone.utc)
     logger.debug(f"Current time: {current_time}")
 
     hearts_next_refill = None
@@ -57,7 +54,7 @@ def lambda_handler(event, context):
             hearts_next_refill = datetime.fromisoformat(hearts_next_refill_str)
         except (ValueError, TypeError):
             logger.error(f"Invalid hearts_next_refill format: {hearts_next_refill_str}")
-            hearts_next_refill = datetime.now() - timedelta(hours=1)
+            hearts_next_refill = current_time - timedelta(hours=1)
 
     filled_hearts = False
 
@@ -70,7 +67,9 @@ def lambda_handler(event, context):
         filled_hearts = hearts_to_add > 0
 
         if hearts < 5:
-            hearts_next_refill = current_time + timedelta(hours=HEARTS_REFILL_RATE_HOURS)
+            hearts_next_refill = current_time + timedelta(
+                hours=HEARTS_REFILL_RATE_HOURS
+            )
         else:
             hearts_next_refill = None
             hearts = 5
@@ -81,7 +80,9 @@ def lambda_handler(event, context):
 
         if hearts_next_refill:
             update_expression += ", hearts_next_refill = :hearts_next_refill"
-            expression_attribute_values[":hearts_next_refill"] = hearts_next_refill.isoformat()
+            expression_attribute_values[":hearts_next_refill"] = (
+                hearts_next_refill.isoformat()
+            )
         else:
             update_expression += ", hearts_next_refill = :null_value"
             expression_attribute_values[":null_value"] = None
@@ -94,16 +95,14 @@ def lambda_handler(event, context):
 
     response_data = {
         "hearts": int(hearts),
-        "hearts_next_refill": hearts_next_refill.isoformat() if hearts_next_refill else None
+        "hearts_next_refill": (
+            hearts_next_refill.isoformat() if hearts_next_refill else None
+        ),
     }
 
     logger.debug(f"Fetched hearts for user: {email}. Remaining hearts: {hearts}")
     return build_response(
-        200,
-        {
-            "message": "Fetched hearts successfully",
-            "data": response_data
-        }
+        200, {"message": "Fetched hearts successfully", "data": response_data}
     )
 
 
@@ -117,6 +116,6 @@ def get_user_by_email(dynamodb, email):
         hearts = user_item.get("hearts", 5)
         hearts_next_refill = user_item.get("hearts_next_refill", None)
         return hearts, hearts_next_refill
-    else :
+    else:
         logger.error(f"User with email {email} not found")
         return None

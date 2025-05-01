@@ -81,7 +81,7 @@ def lambda_handler(event, context):
 
     # Updating user level for this language
     user_levels = user.get("current_level", {})
-    current_lang_level = user_levels.get(request.language_id, 0) + 1
+    current_lang_level = user_levels.get(request.language_id, 1) + 1
     user_levels[request.language_id] = current_lang_level
 
     logger.info(
