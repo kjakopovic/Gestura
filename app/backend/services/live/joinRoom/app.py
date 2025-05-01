@@ -9,14 +9,14 @@ from auth import get_email_from_jwt_token
 from middleware import middleware
 from common import build_response
 
-logger = logging.getLogger("CreateRoom")
+logger = logging.getLogger("JoinRoom")
 logger.setLevel(logging.DEBUG)
 
 
 @middleware
 def lambda_handler(event, context):
     logger.debug(f"Event: {event}")
-    room_id = event["pathParameters"]["roomId"]
+    room_id = event["pathParameters"]["room_id"]
 
     logger.debug(f"Room ID: {room_id}")
     jwt_token = event.get("headers").get("x-access-token")
