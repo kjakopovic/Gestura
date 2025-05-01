@@ -133,8 +133,6 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          TASKS_TABLE_NAME: !ImportValue
-            Fn::Sub: "${LayerStackName}-${StageName}-TasksTable"
           LANGUAGES_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-LanguagesTable"
           USERS_TABLE_NAME: !ImportValue

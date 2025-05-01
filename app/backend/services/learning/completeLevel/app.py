@@ -113,6 +113,10 @@ def get_language_by_id(dynamodb, id):
 
 def get_user_by_email(dynamodb, email):
     logger.info(f"Getting user by email {email}")
+    if not email:
+        logger.error("Email is None")
+        return None
+
     user = dynamodb.table.get_item(Key={"email": email})
 
     user_item = user.get("Item", {})
@@ -121,7 +125,15 @@ def get_user_by_email(dynamodb, email):
 
 
 def update_user(
-    dynamodb, email, current_level, time_played, task_level, letters_learned, xp, battlepass_xp, coins
+    dynamodb,
+    email,
+    current_level,
+    time_played,
+    task_level,
+    letters_learned,
+    xp,
+    battlepass_xp,
+    coins,
 ):
     logger.info(f"Updating user with email: {email}")
 
