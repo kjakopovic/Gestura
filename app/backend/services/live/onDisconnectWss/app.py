@@ -45,14 +45,17 @@ def lambda_handler(event, context):
     logger.info(f"Rooms: {rooms}")
     for room in rooms:
         users = room.get("user_connections")
-        if not users:
-            logger.info(f"No users in room {room['chat_id']}")
-            chatRoomDb.table.delete_item(Key={"chat_id": room["chat_id"]})
-            logger.info(f"Deleted empty room {room['chat_id']}")
-            continue
 
         logger.info(f"{room} - Users: {users}")
         if connection_id in users:
+            if isinstance(users, set):
+                temp_users = list(users)
+                if len(temp_users) <= 1:
+                    logger.info(f"No users in room {room['chat_id']}")
+                    chatRoomDb.table.delete_item(Key={"chat_id": room["chat_id"]})
+                    logger.info(f"Deleted empty room {room['chat_id']}")
+                    continue
+
             logger.info(
                 f"Removing connection {connection_id} from room {room['chat_id']}"
             )
