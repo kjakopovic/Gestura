@@ -110,9 +110,7 @@ Resources:
       Description: Start Sharing Integration
       IntegrationType: AWS_PROXY
       IntegrationUri:
-        Fn::Sub: >-
-          arn:aws:apigateway:${AWS::Region}:lambda
-          /path/2015-03-31/functions/${StartSharingFunction.Arn}/invocations
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${StartSharingFunction.Arn}/invocations
 
   # Stop Sharing
   StopSharingRoute:
@@ -134,9 +132,7 @@ Resources:
       Description: Stop Sharing Integration
       IntegrationType: AWS_PROXY
       IntegrationUri:
-        Fn::Sub: >-
-          arn:aws:apigateway:${AWS::Region}:lambda
-          /path/2015-03-31/functions/${StopSharingFunction.Arn}/invocations
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${StopSharingFunction.Arn}/invocations
 
   Deployment:
     Type: AWS::ApiGatewayV2::Deployment
