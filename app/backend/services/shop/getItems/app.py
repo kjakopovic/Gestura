@@ -37,21 +37,21 @@ def lambda_handler(event, context):
         category = item.get("category", "").lower()
         processed_item = convert_decimal_to_float(item)
 
-        if category == 'coin':
+        if category == "coins":
             coins.append(processed_item)
-        elif category == 'chest':
+        elif category == "chest":
             chests.append(processed_item)
         else:
             regular_items.append(processed_item)
 
-
     return build_response(
-        200, {
+        200,
+        {
             "message": "Items fetched successfully",
             "items": regular_items,
             "coins": coins,
             "chests": chests,
-        }
+        },
     )
 
 
