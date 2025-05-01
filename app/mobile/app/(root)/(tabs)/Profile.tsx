@@ -40,7 +40,7 @@ const Profile = () => {
 
   return (
     <>
-      <View className="w-full h-72 absolute z-10 top-0">
+      <View className="w-full bg-grayscale-800 h-72 z-10 top-0">
         <Image
           source={images.profilegradient}
           className="w-full h-72 rounded-b-2xl z-1 absolute"
@@ -54,7 +54,7 @@ const Profile = () => {
           </TouchableOpacity>
           <Image
             source={characters.profileCharacter}
-            className="size-40 self-end z-10 mx-5 mt-2"
+            className="size-40 self-end z-10 mx-5"
           />
         </SafeAreaView>
       </View>

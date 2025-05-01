@@ -40,8 +40,8 @@ const ShopOption = ({ type, price, borderless, onPress }: ShopOptionProps) => {
       title = "Chest";
       break;
     default:
-      icon = icons.error_testing; // Fallback to hearts if type is unknown
-      title = "Hearts";
+      icon = icons.error_testing; // Fallback to error if type is unknown
+      title = "Error";
   }
 
   return (
@@ -68,5 +68,7 @@ const ShopOption = ({ type, price, borderless, onPress }: ShopOptionProps) => {
     </TouchableOpacity>
   );
 };
+
+// umjesto backbuttona neki xic koji stavlja na false
 
 export default ShopOption;

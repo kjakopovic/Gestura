@@ -19,7 +19,7 @@ const ChestOption = ({ chestPrice, onPress }: ChestOptionProps) => {
     >
       <ShopOption type="chest" price={chestPrice} borderless={true} />
       <View className="flex flex-col w-1/2 h-full items-center justify-center m-1">
-        <Text className="text-primary text-l font-interBold text-center">
+        <Text className="text-primary text-lg font-interBold text-center">
           {text}
         </Text>
         <Image source={characters.shopCharacter} className="m-2" />

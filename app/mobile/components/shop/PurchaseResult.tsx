@@ -47,7 +47,7 @@ const PurchaseResult = ({
             </Text>
             <Image
               source={icons.coin}
-              className="w-10 h-10 mt-6"
+              className="size-10 mt-6"
               resizeMode="contain"
             />
           </>

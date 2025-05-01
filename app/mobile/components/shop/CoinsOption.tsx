@@ -33,7 +33,7 @@ const CoinsOption = ({ type, price, amount }: CoinsOptionProps) => {
         {title}
       </Text>
       <View className="flex flex-row items-center justify-center">
-        <Image source={icon} className="w-8 h-8" />
+        <Image source={icon} className="size-8" />
         <Text className="text-primary text-2xl font-interExtraBold m-1 mx-2">
           {amount}
         </Text>

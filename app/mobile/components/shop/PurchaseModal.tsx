@@ -1,4 +1,4 @@
-import { View, Text, Modal, Image } from "react-native";
+import { View, Text, Modal, Image, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 
 import CustomButton from "@/components/CustomButton";
@@ -78,14 +78,16 @@ const PurchaseModal = ({
         />
       )}
       <View className="w-full h-1/6 flex flex-row justify-start items-center bg-grayscale-800">
-        <BackButton />
+        <TouchableOpacity onPress={handleClose}>
+          <Text className="text-grayscale-400 text-4xl ml-6">X</Text>
+        </TouchableOpacity>
       </View>
       <View className="w-full h-5/6 flex flex-col justify-center items-center bg-grayscale-800">
         <View className="w-full h-2/5 flex flex-col items-center justify-center">
           <View className="w-52 h-52 flex flex-row items-center justify-center bg-grayscale-700 rounded-xl border-2 border-grayscale-400 border-b-4 m-6">
             <Image
               source={getIcon(item.type)}
-              className="w-40 h-40"
+              className="size-40"
               resizeMode="contain"
             />
           </View>
