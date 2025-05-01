@@ -41,13 +41,14 @@ def lambda_handler(event, context):
     peer_id = connections[0].get("connection_id", "")
     rooms = chatRoomDb.scan().get("Items", [])
     for room in rooms:
-        users = room.get("users", [])
+        users = room.get("user_connections", [])
         if peer_id in users:
             # remove
-            chatRoomDb.update_item(
+            chatRoomDb.table.update_item(
                 Key={"chat_id": room["chat_id"]},
-                UpdateExpression="DELETE users :u",
-                ExpressionAttributeValues={":u": set([peer_id])},
+                UpdateExpression="DELETE user_connections :u",
+                ExpressionAttributeValues={":u": {peer_id}},
+                ReturnValues="ALL_NEW",
             )
 
             # notify remaining
@@ -55,14 +56,12 @@ def lambda_handler(event, context):
                 if other == peer_id:
                     continue
 
-                rec = dynamodb.get_item(Key={"email": other})
-                if "Item" in rec:
-                    ws.post_to_connection(
-                        ConnectionId=rec["Item"]["connection_id"],
-                        Data=json.dumps(
-                            {"action": "user-disconnected", "peerId": peer_id}
-                        ).encode("utf-8"),
-                    )
+                ws.post_to_connection(
+                    ConnectionId=other,
+                    Data=json.dumps(
+                        {"action": "user-disconnected", "peerId": peer_id}
+                    ).encode("utf-8"),
+                )
 
     logger.info("Successfully disconnected.")
 
