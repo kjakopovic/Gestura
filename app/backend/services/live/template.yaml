@@ -300,11 +300,11 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          CHAT_ROOM_TABLE: !ImportValue
+          CHAT_ROOM_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
-          CONNECTIONS_ROOM_TABLE: !ImportValue
+          CONNECTIONS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
-          USERS_ROOM_TABLE: !ImportValue
+          USERS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
@@ -336,11 +336,11 @@ Resources:
       Runtime: python3.12
       Environment:
         Variables:
-          CHAT_ROOM_TABLE: !ImportValue
+          CHAT_ROOM_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
-          CONNECTIONS_ROOM_TABLE: !ImportValue
+          CONNECTIONS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
-          USERS_ROOM_TABLE: !ImportValue
+          USERS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
