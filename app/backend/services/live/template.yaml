@@ -31,8 +31,10 @@ Resources:
   LiveChatApi:
     Type: AWS::Serverless::Api
     Properties:
-      Name: LiveChat
-      StageName: api-v1
+      Name: !Sub "LiveChat-${StageName}"
+      StageName: !Ref StageName
+      Auth:
+        ApiKeyRequired: false
       Cors:
         AllowMethods: "'OPTIONS,POST'"
         AllowHeaders: "'Content-Type'"
