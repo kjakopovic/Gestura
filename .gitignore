@@ -16,6 +16,8 @@
 **/runs/
 **/yolo11n-cls.pt
 **/yolo11n.pt
+**/otherDatasets/
+**/mergedData/
 
 # Logs
 **/logs

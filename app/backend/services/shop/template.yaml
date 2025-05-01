@@ -86,6 +86,40 @@ Resources:
             Method: GET
             RestApiId: !Ref ShopApi
 
+  BuyItemsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: buyItems/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          ITEMS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ItemsTable"
+          USER_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UserTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        BuyItemsEndpoint:
+          Type: Api
+          Properties:
+            Path: /items/buy
+            Method: POST
+            RestApiId: !Ref ShopApi
+
 Outputs:
   ShopApiUrl:
     Description: "API Gateway endpoint URL for Learning microservice apis"

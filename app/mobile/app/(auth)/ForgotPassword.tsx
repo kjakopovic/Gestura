@@ -3,13 +3,11 @@ import { StatusBar } from "expo-status-bar";
 import { useState, useRef } from "react";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useForm, Controller, FieldError } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 
-import CustomInput from "@/components/CustomInput";
 import * as icons from "@/constants/icons";
-import CustomButton from "@/components/CustomButton";
 import {
   forgotEmailSchema,
   forgotCodeSchema,
@@ -20,15 +18,28 @@ import {
   ForgotCodeFormData,
   ForgotPasswordFormData,
 } from "@/types/types";
+import {
+  requestPasswordReset,
+  verifyResetCode,
+  resetPassword,
+} from "@/lib/auth";
+import {
+  EmailStep,
+  CodeStep,
+  PasswordStep,
+} from "@/components/ResetPasswordSteps";
 
-//TODO - Extract funcitons to a separate file
-//TODO - Add comments to functions
 const ForgotPassword = () => {
   // currentStep: 1 = email, 2 = code, 3 = new password
+  const router = useRouter();
   const [step, setStep] = useState(1);
+  // Store user data in a single state object
+  const [userData, setUserData] = useState({ email: "", code: "" });
 
-  // Optionally store email for later use.
-  const [userEmail, setUserEmail] = useState("");
+  // Loading state for buttons
+  const [isLoading, setIsLoading] = useState(false);
+  // Error message state
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Add refs for auto focusing inputs in code verification step
   const digitRefs = [
@@ -77,28 +88,77 @@ const ForgotPassword = () => {
     defaultValues: { newPassword: "", confirmNewPassword: "" },
   });
 
-  const onEmailSubmit = (data: ForgotEmailFormData) => {
-    console.log("Email:", data.email);
-    setUserEmail(data.email);
-    setStep(2);
+  const onEmailSubmit = async (data: ForgotEmailFormData) => {
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    try {
+      const result = await requestPasswordReset(data);
+
+      if (result.success) {
+        setUserData((prev) => ({ ...prev, email: data.email }));
+        setStep(2);
+      } else {
+        setErrorMessage(
+          result.error?.message ||
+            "Failed to send reset email. Please try again."
+        );
+      }
+    } catch (error) {
+      setErrorMessage("An unexpected error occurred. Please try again.");
+      console.error("Error during email submission:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const onCodeSubmit = (data: ForgotCodeFormData) => {
-    // Combine digits into a code string if needed
-    const code =
-      data.digit1 +
-      data.digit2 +
-      data.digit3 +
-      data.digit4 +
-      data.digit5 +
-      data.digit6;
-    console.log("Verification Code:", code);
-    setStep(3);
+  const onCodeSubmit = async (data: ForgotCodeFormData) => {
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    try {
+      const result = await verifyResetCode(data, userData.email);
+
+      if (result.success) {
+        // Combine all digits into a single string
+        const combinedCode = `${data.digit1}${data.digit2}${data.digit3}${data.digit4}${data.digit5}${data.digit6}`;
+        setUserData((prev) => ({ ...prev, code: combinedCode }));
+        setStep(3);
+      } else {
+        setErrorMessage(
+          result.error?.message || "Failed to verify code. Please try again."
+        );
+      }
+    } catch (error) {
+      setErrorMessage("An unexpected error occurred. Please try again.");
+      console.error("Error during code verification:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const onPasswordSubmit = (data: ForgotPasswordFormData) => {
-    console.log("New Password:", data.newPassword);
-    // ...handle password reset...
+  const onPasswordSubmit = async (data: ForgotPasswordFormData) => {
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    try {
+      const result = await resetPassword(data, userData.email, userData.code);
+
+      if (result.success) {
+        // Navigate to login or show success message
+        console.log("Password reset successful");
+        router.push("/(auth)");
+      } else {
+        setErrorMessage(
+          result.error?.message || "Failed to reset password. Please try again."
+        );
+      }
+    } catch (error) {
+      setErrorMessage("An unexpected error occurred. Please try again.");
+      console.error("Error during password reset:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -114,125 +174,37 @@ const ForgotPassword = () => {
           Reset your password
         </Text>
 
+        {errorMessage && (
+          <Text className="text-error mb-4 text-center">{errorMessage}</Text>
+        )}
+
         {step === 1 && (
-          <View className="w-full">
-            <Text className="text-grayscale-100 mb-4">Enter your email</Text>
-            <Controller
-              control={emailControl}
-              name="email"
-              render={({ field: { onChange, value } }) => (
-                <CustomInput
-                  placeholder="Enter your email address"
-                  value={value}
-                  onChangeText={onChange}
-                  icon={icons.envelope}
-                  className="w-[90%]"
-                />
-              )}
-            />
-            {emailErrors.email && (
-              <Text className="text-error">{emailErrors.email.message}</Text>
-            )}
-            <CustomButton
-              text="NEXT"
-              onPress={handleEmailSubmit(onEmailSubmit)}
-              style="base"
-            />
-          </View>
+          <EmailStep
+            control={emailControl}
+            errors={emailErrors}
+            isLoading={isLoading}
+            onSubmit={handleEmailSubmit(onEmailSubmit)}
+          />
         )}
 
         {step === 2 && (
-          <View className="w-full">
-            <Text className="text-grayscale-100 mb-4">
-              Enter the 6-digit code sent to {userEmail}
-            </Text>
-            <View className="flex-row justify-between">
-              {[1, 2, 3, 4, 5, 6].map((num, index) => (
-                <Controller
-                  key={num}
-                  control={codeControl}
-                  name={`digit${num}` as keyof ForgotCodeFormData}
-                  render={({ field: { onChange, value } }) => (
-                    <TextInput
-                      ref={digitRefs[index]}
-                      value={value}
-                      onChangeText={(text) => {
-                        onChange(text);
-                        if (text && index < digitRefs.length - 1) {
-                          digitRefs[index + 1].current?.focus();
-                        }
-                      }}
-                      className="w-14 h-14 rounded-xl mx-2 text-grayscale-100 text-center border border-grayscale-300 focus:ring-0 focus:outline-none focus:border-2 focus:border-grayscale-100"
-                      maxLength={1}
-                      keyboardType="number-pad"
-                    />
-                  )}
-                />
-              ))}
-            </View>
-            {/* Display first encountered error (if any) */}
-            {Object.values(codeErrors)[0] && (
-              <Text className="text-error">
-                {(Object.values(codeErrors)[0] as FieldError)?.message}
-              </Text>
-            )}
-            <CustomButton
-              text="VERIFY"
-              onPress={handleCodeSubmit(onCodeSubmit)}
-              style="base"
-            />
-          </View>
+          <CodeStep
+            control={codeControl}
+            errors={codeErrors}
+            isLoading={isLoading}
+            onSubmit={handleCodeSubmit(onCodeSubmit)}
+            email={userData.email}
+            digitRefs={digitRefs}
+          />
         )}
 
         {step === 3 && (
-          <View className="w-full">
-            <Text className="text-grayscale-100 mb-4">
-              Enter your new password
-            </Text>
-            <Controller
-              control={passwordControl}
-              name="newPassword"
-              render={({ field: { onChange, value } }) => (
-                <CustomInput
-                  placeholder="Enter new password"
-                  value={value}
-                  onChangeText={onChange}
-                  icon={icons.lock}
-                  secureTextEntry
-                  className="w-[90%]"
-                />
-              )}
-            />
-            {passwordErrors.newPassword && (
-              <Text className="text-error">
-                {passwordErrors.newPassword.message}
-              </Text>
-            )}
-            <Controller
-              control={passwordControl}
-              name="confirmNewPassword"
-              render={({ field: { onChange, value } }) => (
-                <CustomInput
-                  placeholder="Confirm new password"
-                  value={value}
-                  onChangeText={onChange}
-                  icon={icons.lock}
-                  secureTextEntry
-                  className="w-[90%]"
-                />
-              )}
-            />
-            {passwordErrors.confirmNewPassword && (
-              <Text className="text-error">
-                {passwordErrors.confirmNewPassword.message}
-              </Text>
-            )}
-            <CustomButton
-              text="RESET PASSWORD"
-              onPress={handlePasswordSubmit(onPasswordSubmit)}
-              style="base"
-            />
-          </View>
+          <PasswordStep
+            control={passwordControl}
+            errors={passwordErrors}
+            isLoading={isLoading}
+            onSubmit={handlePasswordSubmit(onPasswordSubmit)}
+          />
         )}
 
         <View className="mt-12">
