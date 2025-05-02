@@ -3,6 +3,8 @@ import arrowBack from "@/assets/icons/arrow-back.png";
 import badge from "@/assets/icons/badge.png";
 import bag_coins from "@/assets/icons/bag-coins.png";
 import book from "@/assets/icons/book.png";
+import bp_chest from "@/assets/icons/bp_chest.png";
+import bp_chestBW from "@/assets/icons/bp_chestBW.png";
 import chest from "@/assets/icons/chest.png";
 import cog from "@/assets/icons/cog.png";
 import coin from "@/assets/icons/coin.png";
@@ -41,6 +43,8 @@ export {
   badge,
   bag_coins,
   book,
+  bp_chest,
+  bp_chestBW,
   chest,
   cog,
   coin,
