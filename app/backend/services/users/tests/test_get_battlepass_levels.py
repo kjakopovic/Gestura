@@ -98,7 +98,6 @@ class TestGetBattlepassLevels(BaseTestSetup):
             "end_date": "2025-12-31T23:59:59Z",
         }
 
-
         self.battlepass_table.put_item(Item=battlepass)
 
         response = lambda_handler(event, {})
@@ -109,6 +108,89 @@ class TestGetBattlepassLevels(BaseTestSetup):
         self.assertIn("battlepasses", body)
         self.assertEqual(len(body['battlepasses']), 1)
         self.assertEqual(body['battlepasses'][0]['season'], "3")
+
+
+    def test_multiple_active_battlepasses(self):
+        """
+        Test response when multiple active battlepasses are found.
+        """
+        jwt_token = generate_jwt_token("test@mail.com")
+
+        event = {
+            'headers': {'Authorization': jwt_token}
+        }
+
+        battlepasses = [
+            {
+                "season": "3",
+                "name": "Season 3",
+                "levels": [
+                    {
+                        "level": 1,
+                        "coins": 30,
+                        "required_xp": 150,
+                    },
+                    {
+                        "level": 2,
+                        "coins": 60,
+                        "required_xp": 250,
+                    },
+                    {
+                        "level": 3,
+                        "coins": 90,
+                        "required_xp": 350,
+                    },
+                    {
+                        "level": 4,
+                        "coins": 120,
+                        "required_xp": 450,
+                    },
+                ],
+                "start_date": "2025-05-01T00:00:00Z",
+                "end_date": "2025-12-31T23:59:59Z",
+            },
+            {
+                "season": "4",
+                "name": "Season 4",
+                "levels": [
+                    {
+                        "level": 1,
+                        "coins": 35,
+                        "required_xp": 200,
+                    },
+                    {
+                        "level": 2,
+                        "coins": 70,
+                        "required_xp": 300,
+                    },
+                    {
+                        "level": 3,
+                        "coins": 105,
+                        "required_xp": 400,
+                    },
+                    {
+                        "level": 4,
+                        "coins": 140,
+                        "required_xp": 500,
+                    },
+                ],
+                "start_date": "2025-05-01T00:00:00Z",
+                "end_date": "2025-12-31T23:59:59Z",
+            }
+        ]
+
+        for battlepass in battlepasses:
+            self.battlepass_table.put_item(Item=battlepass)
+
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        self.assertEqual(response['statusCode'], 200)
+        self.assertEqual(body['message'], "Fetched battlepasses successfully")
+        self.assertIn("battlepasses", body)
+        self.assertEqual(len(body['battlepasses']), 2)
+        self.assertEqual(body['battlepasses'][0]['season'], "3")
+        self.assertEqual(body['battlepasses'][1]['season'], "4")
 
 
     def tearDown(self):
