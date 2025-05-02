@@ -64,6 +64,8 @@ Resources:
         Variables:
           ITEMS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ItemsTable"
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
@@ -96,8 +98,8 @@ Resources:
         Variables:
           ITEMS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ItemsTable"
-          USER_TABLE_NAME: !ImportValue
-            Fn::Sub: "${LayerStackName}-${StageName}-UserTable"
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
@@ -122,5 +124,5 @@ Resources:
 
 Outputs:
   ShopApiUrl:
-    Description: "API Gateway endpoint URL for Learning microservice apis"
-    Value: !Sub "https://${LearningApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"
+    Description: "API Gateway endpoint URL for Shop microservice apis"
+    Value: !Sub "https://${ShopApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"

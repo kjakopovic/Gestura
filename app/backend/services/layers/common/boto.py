@@ -4,7 +4,7 @@ import logging
 from os import environ
 
 logger = logging.getLogger("boto3")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 _LAMBDA_USERS_TABLE_RESOURCE = {
     "resource": boto3.resource("dynamodb"),
@@ -19,6 +19,16 @@ _LAMBDA_TASKS_TABLE_RESOURCE = {
 _LAMBDA_LANGUAGES_TABLE_RESOURCE = {
     "resource": boto3.resource("dynamodb"),
     "table_name": environ.get("LANGUAGES_TABLE_NAME", "languages_test_table"),
+}
+
+_LAMBDA_CONNECTIONS_TABLE_RESOURCE = {
+    "resource": boto3.resource("dynamodb"),
+    "table_name": environ.get("CONNECTIONS_TABLE_NAME", "connections_test_table"),
+}
+
+_LAMBDA_CHAT_ROOM_TABLE_RESOURCE = {
+    "resource": boto3.resource("dynamodb"),
+    "table_name": environ.get("CHAT_ROOM_TABLE_NAME", "chat_room_test_table"),
 }
 
 _LAMBDA_ITEMS_TABLE_RESOURCE = {

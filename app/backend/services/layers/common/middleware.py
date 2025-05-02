@@ -8,7 +8,7 @@ import logging
 import jwt
 
 logger = logging.getLogger("middleware")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 @lambda_handler_decorator
@@ -85,6 +85,8 @@ def validate_refresh_token(refresh_token, refresh_secret, jwt_secret):
 def validate_jwt_token(access_token, refresh_token):
     logger.info(f"Validating JWT token: {access_token}")
 
+    logger.debug(f"Secret name: {environ.get("JWT_SECRET_NAME")}")
+    logger.debug(f"Region name: {environ.get("SECRETS_REGION_NAME")}")
     secrets = get_secrets_from_aws_secrets_manager(
         environ.get("JWT_SECRET_NAME"), environ.get("SECRETS_REGION_NAME")
     )

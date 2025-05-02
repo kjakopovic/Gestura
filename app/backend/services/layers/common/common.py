@@ -5,7 +5,7 @@ import logging
 from decimal import Decimal
 
 logger = logging.getLogger("common")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 def build_response(status_code, body, headers=None):

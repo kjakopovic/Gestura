@@ -3,7 +3,11 @@ import json
 
 from common import build_response, convert_decimal_to_float
 from middleware import middleware
-from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE, _LAMBDA_ITEMS_TABLE_RESOURCE
+from boto import (
+    LambdaDynamoDBClass,
+    _LAMBDA_USERS_TABLE_RESOURCE,
+    _LAMBDA_ITEMS_TABLE_RESOURCE,
+)
 from auth import get_email_from_jwt_token
 from validation_schema import schema
 from dataclasses import dataclass
@@ -11,7 +15,7 @@ from aws_lambda_powertools.utilities.validation import SchemaValidationError, va
 
 
 logger = logging.getLogger("BuyItems")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 @dataclass
@@ -125,10 +129,7 @@ def add_item_to_user(dynamodb, email, item_id):
     logger.info(f"Adding item {item_id} to user {email}")
 
     update_expression = "SET items_inventory = list_append(if_not_exists(items_inventory, :empty_list), :new_item)"
-    expression_attribute_values = {
-        ":new_item": [item_id],
-        ":empty_list": []
-    }
+    expression_attribute_values = {":new_item": [item_id], ":empty_list": []}
 
     dynamodb.table.update_item(
         Key={"email": email},

@@ -6,7 +6,7 @@ from boto import get_secrets_from_aws_secrets_manager
 from common import parse_utc_isoformat
 
 logger = logging.getLogger("auth")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 def generate_jwt_token(email):
