@@ -28,6 +28,12 @@ class TestCreateLevel(BaseTestSetup):
             "resource": self.dynamodb,
             "table_name": os.environ["LANGUAGES_TABLE_NAME"]
         })
+        self.battlepass_resource_patcher = patch('completeLevel.app._LAMBDA_BATTLEPASS_TABLE_RESOURCE', {
+            "resource": self.dynamodb,
+            "table_name": os.environ["BATTLEPASS_TABLE_NAME"]
+        })
+
+        self.battlepass_resource_patcher.start()
         self.users_resource_patcher.start()
         self.languages_resource_patcher.start()
 
@@ -226,6 +232,8 @@ class TestCreateLevel(BaseTestSetup):
         initial_coins = Decimal(str(initial_user['coins']))
         initial_current_level = initial_user['current_level']
 
+        print(f"User: {initial_user}")
+
         # Define versions for correct answers
         versions = [1, 2, 3]
 
@@ -262,7 +270,13 @@ class TestCreateLevel(BaseTestSetup):
 
         current_level = updated_user['current_level']
         print(f"Initial current level: {initial_current_level}, Updated current level: {current_level}")
-        self.assertEqual(current_level, initial_current_level + 1)
+        initial_lang_level = next((item['level'] for item in initial_current_level
+                                   if item['language_id'] == "en"), Decimal('0'))
+        updated_lang_level = next((item['level'] for item in current_level
+                                   if item['language_id'] == "en"), Decimal('0'))
+
+        self.assertEqual(updated_lang_level, initial_lang_level + Decimal('1'),
+                         f"Expected level to be {initial_lang_level + 1}, got {updated_lang_level}")
 
         updated_xp = Decimal(str(updated_user['xp']))
         updated_coins = Decimal(str(updated_user['coins']))
@@ -284,9 +298,159 @@ class TestCreateLevel(BaseTestSetup):
                          f"Expected coins to be {expected_coins}, got {updated_coins}")
 
 
+    def test_no_current_level(self):
+        """
+        Test when the user has no current level for given language.
+        """
+        from decimal import Decimal
+
+        email = "test@mail.com"
+        jwt_token = generate_jwt_token(email)
+
+        initial_user = self.users_table.get_item(Key={'email': email})['Item']
+        initial_current_level = initial_user['current_level']
+
+        # Define versions for correct answers
+        versions = [1, 2, 3]
+
+        body_data = {
+            "correct_answers_versions": versions,
+            "started_at": "2023-10-01T12:00:00Z",
+            "finished_at": "2023-10-01T12:30:00Z",
+            "language_id": "de",
+            "letters_learned": ["A", "B", "C"]
+        }
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "body": json.dumps(body_data)
+        }
+
+        response = lambda_handler(event, {})
+
+        if response['statusCode'] != 200:
+            print(f"Response status code: {response['statusCode']}")
+            print(f"Response body: {response['body']}")
+
+        body = json.loads(response['body'])
+        self.assertEqual(response['statusCode'], 200)
+        self.assertIn("message", body)
+
+        self.assertEqual(body['message'], "Level completed successfully")
+
+        # Get updated user data
+        updated_user = self.users_table.get_item(Key={'email': email})['Item']
+        updated_current_level = updated_user['current_level']
+
+        # Check that the new language was added
+        de_level = next((item for item in updated_current_level if item['language_id'] == 'de'), None)
+        self.assertIsNotNone(de_level, "The German language level should be added")
+        self.assertEqual(de_level['level'], Decimal('1'), "The German language level should be 1")
+
+        # Check that existing languages were preserved
+        self.assertEqual(len(updated_current_level), len(initial_current_level) + 1,
+                         "Should have added exactly one language")
+
+        # print(f"Updated_user: {updated_user}")
+
+        # Check that all original languages are still there with same levels
+        for lang_item in initial_current_level:
+            lang_id = lang_item['language_id']
+            old_level = lang_item['level']
+
+            # Find this language in updated list
+            updated_lang = next((item for item in updated_current_level
+                                 if item['language_id'] == lang_id), None)
+
+            self.assertIsNotNone(updated_lang, f"Language {lang_id} should be preserved")
+            self.assertEqual(updated_lang['level'], old_level,
+                             f"Level for {lang_id} should not change")
+
+
+    def test_complete_level_no_active_battlepass(self):
+        """
+        Test level completion when there's no active battlepass.
+        """
+        from decimal import Decimal
+
+        email = "test@mail.com"
+        jwt_token = generate_jwt_token(email)
+
+        # Get the initial user state
+        initial_user = self.users_table.get_item(Key={'email': email})['Item']
+        initial_xp = Decimal(str(initial_user.get('xp', 0)))
+        initial_coins = Decimal(str(initial_user.get('coins', 0)))
+        initial_battlepass_xp = initial_user.get('battlepass_xp', [])
+
+        # Store the initial battlepass seasons to restore later
+        original_battlepass_items = self._scan_table(self.battlepass_table)
+
+        # Clear the battlepass table to simulate no active battlepasses
+        for item in original_battlepass_items:
+            self.battlepass_table.delete_item(Key={'season': item['season']})
+
+        # Define versions for correct answers
+        versions = [1, 2, 3]
+
+        body_data = {
+            "correct_answers_versions": versions,
+            "started_at": "2023-10-01T12:00:00Z",
+            "finished_at": "2023-10-01T12:30:00Z",
+            "language_id": "en",
+            "letters_learned": ["A", "B", "C"]
+        }
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "body": json.dumps(body_data)
+        }
+
+        # Call the lambda handler
+        response = lambda_handler(event, {})
+
+        # Restore the original battlepass seasons
+        for item in original_battlepass_items:
+            self.battlepass_table.put_item(Item=item)
+
+        # Verify the response
+        body = json.loads(response['body'])
+        self.assertEqual(response['statusCode'], 200)
+        self.assertEqual(body['message'], "Level completed successfully")
+
+        # Get the updated user
+        updated_user = self.users_table.get_item(Key={'email': email})['Item']
+        updated_xp = Decimal(str(updated_user.get('xp', 0)))
+        updated_coins = Decimal(str(updated_user.get('coins', 0)))
+        updated_battlepass_xp = updated_user.get('battlepass_xp', [])
+
+        # Verify XP and coins were awarded correctly
+        xp_map = {1: 2, 2: 3, 3: 5}
+        expected_xp_increase = sum(xp_map.get(v, 0) for v in versions)
+        expected_xp = initial_xp + Decimal(str(expected_xp_increase))
+
+        self.assertEqual(updated_xp, expected_xp,
+                         f"Expected XP to be {expected_xp}, got {updated_xp}")
+        self.assertTrue(updated_coins > initial_coins,
+                        "Coins should increase after completing a level")
+
+        # Verify battlepass_xp array was preserved but not modified
+        self.assertEqual(updated_battlepass_xp, initial_battlepass_xp,
+                         "Battlepass XP should remain unchanged when no active battlepass")
+
+    def _scan_table(self, table):
+        """Helper method to scan entire table contents."""
+        response = table.scan()
+        return response.get('Items', [])
+
+
     def tearDown(self):
         self.users_resource_patcher.stop()
         self.languages_resource_patcher.stop()
+        self.battlepass_resource_patcher.stop()
         super().tearDown()
 
 

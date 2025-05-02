@@ -194,7 +194,16 @@ class BaseTestSetup(unittest.TestCase):
             {
                 "id": "es",
                 "name": "Spanish"
+            },
+            {
+                "id": "hr",
+                "name": "Croatian"
+            },
+            {
+                "id": "de",
+                "name": "German"
             }
+
         ]
 
         for language in self.sample_languages:
