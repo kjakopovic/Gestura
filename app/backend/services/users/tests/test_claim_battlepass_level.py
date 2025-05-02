@@ -19,12 +19,59 @@ class TestClaimBattlepassLevel(BaseTestSetup):
     def setUp(self):
         super().setUp()
 
-        # Create patcher for the DynamoDB resource in the lambda handler
-        self.resource_patcher = patch('claimBattlepassLevel.app._LAMBDA_USERS_TABLE_RESOURCE', {
+        # Create a patcher for the DynamoDB resource in the lambda handler
+        self.users_resource_patcher = patch('claimBattlepassLevel.app._LAMBDA_USERS_TABLE_RESOURCE', {
             "resource": self.dynamodb,
             "table_name": os.environ["USERS_TABLE_NAME"]
         })
-        self.resource_patcher.start()
+        self.battlepass_resource_patcher = patch('claimBattlepassLevel.app._LAMBDA_BATTLEPASS_TABLE_RESOURCE', {
+            "resource": self.dynamodb,
+            "table_name": os.environ["BATTLEPASS_TABLE_NAME"]
+        })
+
+        self.users_resource_patcher.start()
+        self.battlepass_resource_patcher.start()
+
+        self.active_battlepass ={
+            "season": "3",
+            "name": "Season 3",
+            "levels": [
+                {
+                    "level": 1,
+                    "coins": 30,
+                    "required_xp": 150,
+                },
+                {
+                    "level": 2,
+                    "coins": 60,
+                    "required_xp": 250,
+                },
+                {
+                    "level": 3,
+                    "coins": 90,
+                    "required_xp": 350,
+                },
+                {
+                    "level": 4,
+                    "coins": 120,
+                    "required_xp": 450,
+                },
+                {
+                    "level": 5,
+                    "coins": 150,
+                    "required_xp": 550,
+                },
+                {
+                    "level": 6,
+                    "coins": 180,
+                    "required_xp": 650,
+                }
+            ],
+            "start_date": "2025-05-01T00:00:00Z",
+            "end_date": "2025-12-31T23:59:59Z",
+        }
+        self.battlepass_table.put_item(Item=self.active_battlepass)
+
 
     def test_when_user_not_authorized(self):
         """
@@ -43,7 +90,7 @@ class TestClaimBattlepassLevel(BaseTestSetup):
 
     def test_validation_schema(self):
         """
-        Test response when validation schema is not satisfied.
+        Test response when the validation schema is not satisfied.
         """
         jwt_token = generate_jwt_token("test@mail.com")
 
@@ -92,7 +139,7 @@ class TestClaimBattlepassLevel(BaseTestSetup):
 
     def test_user_not_found(self):
         """
-        Test response when user is not found in the database.
+        Test response when a user is not found in the database.
         """
         jwt_token = generate_jwt_token("random@mail.com")
         request_query = {
@@ -119,9 +166,32 @@ class TestClaimBattlepassLevel(BaseTestSetup):
         """
         jwt_token = generate_jwt_token("test@mail.com")
 
-        # User already has battlepass_xp of 3, so claiming level 5 should fail
         request_query = {
-            "battlepass_level": "5"
+            "battlepass_level": "8"
+        }
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "queryStringParameters": request_query
+        }
+
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        self.assertEqual(response['statusCode'], 404)
+        self.assertEqual(body['message'], "Battlepass level not found")
+
+
+    def test_battlepass_level_already_claimed(self):
+        """
+        Test response when the battlepass level has already been claimed.
+        """
+        jwt_token = generate_jwt_token("test@mail.com")
+
+        request_query = {
+            "battlepass_level": "1"
         }
 
         event = {
@@ -135,16 +205,19 @@ class TestClaimBattlepassLevel(BaseTestSetup):
         body = json.loads(response['body'])
 
         self.assertEqual(response['statusCode'], 400)
-        self.assertEqual(body['message'], "Not able to claim battlepass level 5, not enough xp.")
+        self.assertEqual(body['message'], "Battlepass level 1 has already been claimed.")
 
 
-    def test_battlepass_level_already_claimed(self):
+    def test_successful_claim(self):
         """
-        Test response when the battlepass level has already been claimed.
+        Test response when the battlepass level is successfully claimed.
         """
-        jwt_token = generate_jwt_token("test@mail.com")
+        email = "test@mail.com"
+        jwt_token = generate_jwt_token(email)
 
-        # User already has battlepass_xp of 3, so claiming level 2 should fail
+        initial_user = self.users_table.get_item(Key={'email': email})['Item']
+        initial_coins = initial_user['coins']
+
         request_query = {
             "battlepass_level": "2"
         }
@@ -159,23 +232,26 @@ class TestClaimBattlepassLevel(BaseTestSetup):
         response = lambda_handler(event, {})
         body = json.loads(response['body'])
 
-        self.assertEqual(response['statusCode'], 400)
-        self.assertEqual(body['message'], "Battlepass level 2 has already been claimed.")
+        self.assertEqual(response['statusCode'], 200)
+        self.assertEqual(body['message'], "Battlepass level 2 claimed successfully")
+
+        updated_user = self.users_table.get_item(Key={'email': email})['Item']
+        updated_coins = updated_user['coins']
+
+        # Check if the coins have been updated correctly
+        expected_coins = initial_coins + self.active_battlepass['levels'][1]['coins']
+        self.assertEqual(updated_coins, expected_coins)
 
 
-    def test_successful_claim(self):
+    def test_claim_previous_levels(self):
         """
-        Test response when the battlepass level is successfully claimed.
+        Test response when the user tries to claim a level without claiming previous levels.
         """
         email = "test@mail.com"
         jwt_token = generate_jwt_token(email)
 
-        initial_user = self.users_table.get_item(Key={'email': email})['Item']
-        initial_coins = initial_user['coins']
-
-        # User already has battlepass_xp of 3, so claiming level 3 should succeed
         request_query = {
-            "battlepass_level": "3"
+            "battlepass_level": "4"
         }
 
         event = {
@@ -188,17 +264,37 @@ class TestClaimBattlepassLevel(BaseTestSetup):
         response = lambda_handler(event, {})
         body = json.loads(response['body'])
 
-        self.assertEqual(response['statusCode'], 200)
-        self.assertEqual(body['message'], "Battlepass level claimed successfully.")
+        self.assertEqual(response['statusCode'], 400)
+        self.assertEqual(body['message'], "Must claim all previous levels before claiming level 4.")
 
-        updated_user = self.users_table.get_item(Key={'email': email})['Item']
-        updated_coins = updated_user['coins']
 
-        self.assertEqual(initial_coins + 3 * 25, updated_coins)
+    def test_not_enough_xp(self):
+        """
+        Test response when the user does not have enough XP to claim a level.
+        """
+        email = "test@mail.com"
+        jwt_token = generate_jwt_token(email)
+
+        request_query = {
+            "battlepass_level": "5"
+        }
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "queryStringParameters": request_query
+        }
+
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        self.assertEqual(response['statusCode'], 400)
+        self.assertEqual(body['message'], "Not enough XP to claim this level")
 
 
     def tearDown(self):
-        self.resource_patcher.stop()
+        self.users_resource_patcher.stop()
+        self.battlepass_resource_patcher.stop()
         super().tearDown()
 
 
