@@ -1,15 +1,14 @@
 import logging
-import os
 
-from common import build_response
+from datetime import datetime, timezone
+from common import build_response, parse_utc_isoformat, convert_decimal_to_float
 from boto import LambdaDynamoDBClass, _LAMBDA_BATTLEPASS_TABLE_RESOURCE
 from middleware import middleware
 from auth import get_email_from_jwt_token
+from boto3.dynamodb.conditions import Attr
 
 logger = logging.getLogger("GetBattlepassLevels")
 logger.setLevel(logging.DEBUG)
-
-LATEST_BATTLEPASS_SEASON = int(os.environ.get("LATEST_BATTLEPASS_SEASON", 1))
 
 
 @middleware
@@ -26,21 +25,37 @@ def lambda_handler(event, context):
     global _LAMBDA_BATTLEPASS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_BATTLEPASS_TABLE_RESOURCE)
 
-    logger.info(f"Getting battlepass levels for season: {LATEST_BATTLEPASS_SEASON}")
+    active_battlepasses = get_active_battlepass_seassons(dynamodb)
 
-    battlepass_item = dynamodb.table.get_item(
-        Key={"season": LATEST_BATTLEPASS_SEASON},
-    )
+    if not active_battlepasses:
+        logger.debug(f"No active battlepasses found.")
+        return build_response(404, {"message": "No active battlepasses found."})
 
-    battlepass = battlepass_item.get("Item", {})
-    if not battlepass:
-        logger.debug(f"No battlepass levels found for season {LATEST_BATTLEPASS_SEASON}.")
-        return build_response(404, {"message": "No battlepass levels found."})
+    converted_active_battlepasses = convert_decimal_to_float(active_battlepasses)
 
     return build_response(
         200,
         {
-            "message": "Battlepass levels fetched successfully",
-            "battlepass": battlepass_levels,
-        },
+            "message": "Fetched battlepasses successfully",
+            "battlepasses": converted_active_battlepasses
+        }
     )
+
+
+def get_active_battlepass_seassons(dynamodb):
+    logger.info(f"Fetching active battlepass seasons")
+
+    current_date = datetime.now(timezone.utc)
+    logger.debug(f"Current date: {current_date}")
+    current_date_str = current_date.isoformat()
+
+    response = dynamodb.table.scan(
+        FilterExpression=Attr("start_date").lte(current_date_str) & Attr("end_date").gte(current_date_str)
+    )
+
+    active_battlepasses = response.get("Items", [])
+    logger.debug(f"Found {len(active_battlepasses)} active battlepasses")
+    print(f"Found {len(active_battlepasses)} active battlepasses")
+    print(f"Active battlepasses: {active_battlepasses}")
+
+    return active_battlepasses
