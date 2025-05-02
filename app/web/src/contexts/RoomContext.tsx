@@ -12,11 +12,12 @@ import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from "uuid";
 import { addPeerAction, removePeerAction } from "@/constants/peerActions";
 import { peersReducer } from "@/utils/video";
+import { useAuth } from "@/hooks/useAuth";
 
-const WS = import.meta.env.VITE_WS_URL;
+const WS = import.meta.env.VITE_WSS_API;
 const STAGE = import.meta.env.VITE_STAGE;
 if (!WS || !STAGE) {
-  throw new Error("Please setup you .env file");
+  throw new Error("Please setup your .env file");
 }
 
 export const RoomContext = createContext<null | any>(null);
@@ -25,6 +26,7 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
   children,
 }) => {
   const navigate = useNavigate();
+  const auth = useAuth();
 
   const [me, setMe] = useState<Peer>();
   const [stream, setStream] = useState<MediaStream>();
@@ -130,8 +132,12 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
     } catch (error) {
       console.log(error);
     }
+  }, []);
 
-    const sock = new WebSocket(`${WS}/${STAGE}`);
+  useEffect(() => {
+    const sock = new WebSocket(
+      `${WS}/${STAGE}?x-access-token=${auth?.authState.token}`
+    );
     socketRef.current = sock;
 
     sock.onopen = () => {
@@ -172,7 +178,7 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
     return () => {
       sock.close();
     };
-  }, []);
+  }, [auth?.authState.token]);
 
   useEffect(() => {
     if (!roomId || !me) return;

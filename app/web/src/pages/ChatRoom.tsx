@@ -29,6 +29,7 @@ const ChatRoom = () => {
       JSON.stringify({
         action: "join-room",
         roomId: id,
+        peerId: me.id,
       })
     );
   }, [id, me, socketRef]);
