@@ -36,10 +36,6 @@ Parameters:
     Type: String
     Description: The email address that will be used as the sender for the password reset emails
     Default: nolanilisic@gmail.com
-  LatestBattlepassSeason:
-    Type: Number
-    Description: The latest battlepass season number
-    Default: 1
 
 Globals:
   Function:
@@ -512,7 +508,6 @@ Resources:
           SECRETS_REGION_NAME: !Ref SecretsRegionName
           BATTLEPASS_TABLE_NAME: !ImportValue
                 Fn::Sub: "${LayerStackName}-${StageName}-BattlepassTable"
-          LATEST_BATTLEPASS_SEASON: !Ref LatestBattlepassSeason
       Layers:
         - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Architectures:
