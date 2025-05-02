@@ -1,20 +1,23 @@
 import logging
 import json
 import random
+
 from datetime import datetime, timezone
 from validation_schema import schema
 from dataclasses import dataclass
 from aws_lambda_powertools.utilities.validation import validate, SchemaValidationError
-from common import build_response, parse_utc_isoformat
+from common import build_response, parse_utc_isoformat, convert_decimal_to_float
 from auth import get_email_from_jwt_token
 from boto import (
     LambdaDynamoDBClass,
     _LAMBDA_LANGUAGES_TABLE_RESOURCE,
     _LAMBDA_USERS_TABLE_RESOURCE,
+    _LAMBDA_BATTLEPASS_TABLE_RESOURCE,
 )
 from middleware import middleware
 from typing import List
 from decimal import Decimal
+from boto3.dynamodb.conditions import Attr
 
 logger = logging.getLogger("CompleteLevel")
 logger.setLevel(logging.DEBUG)
@@ -54,8 +57,10 @@ def lambda_handler(event, context):
 
     global _LAMBDA_LANGUAGES_TABLE_RESOURCE
     global _LAMBDA_USERS_TABLE_RESOURCE
+    global _LAMBDA_BATTLEPASS_TABLE_RESOURCE
     languagesTable = LambdaDynamoDBClass(_LAMBDA_LANGUAGES_TABLE_RESOURCE)
     usersTable = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
+    battlepassTable = LambdaDynamoDBClass(_LAMBDA_BATTLEPASS_TABLE_RESOURCE)
 
     user = get_user_by_email(usersTable, email)
     if not user:
@@ -79,22 +84,78 @@ def lambda_handler(event, context):
     xp = Decimal(str(xp))
     coins = Decimal(str(coins))
 
+    language_id = request.language_id
+
     # Updating user level for this language
-    user_levels = user.get("current_level", {})
-    current_lang_level = user_levels.get(request.language_id, 1) + 1
-    user_levels[request.language_id] = current_lang_level
+    user_current_level = user.get("current_level", [])
+
+    if not isinstance(user_current_level, list):
+        user_current_level = []
+
+    current_language_level = next(
+        (cll for cll in user_current_level if cll["language_id"] == language_id),
+        None
+    )
+
+    # Check if the user has a current level for the language
+    if not current_language_level:
+        logger.debug(f"User {email} has no current level for language {language_id}")
+        current_language_level = {
+            "language_id": language_id,
+            "level": 0
+        }
+        user_current_level.append(current_language_level)
+        language_level = 0
+    else:
+        language_level = convert_decimal_to_float(current_language_level.get("level", 1))
+
+    new_language_level = language_level + 1
+    current_language_level["level"] = Decimal(str(new_language_level))
 
     logger.info(
-        f"Updating user {email} with time played: {time_played}, task level: {user_levels}, letters learned: {letters_learned}"
+        f"Updating user {email} with time played: {time_played}, task level: {new_language_level}, letters learned: {letters_learned}"
     )
+
+    # Check for active battlepasses
+    active_battlepass = get_active_battlepass_seasons(battlepassTable)
+    if active_battlepass:
+        battlepass_season_id = active_battlepass.get("season")
+        if battlepass_season_id:
+            # Get the user's battlepass XP list
+            user_battlepass_xp = user.get("battlepass_xp", [])
+
+            # Find the entry for this season if it exists
+            user_season_entry = next(
+                (bp for bp in user_battlepass_xp if bp.get("season_id") == battlepass_season_id),
+                None
+            )
+
+            # If the user doesn't have an entry for this season, create one
+            if not user_season_entry:
+                user_season_entry = {
+                    "season_id": battlepass_season_id,
+                    "sum_of_xp": 0,
+                    "claimed_levels": 0
+                }
+                user_battlepass_xp.append(user_season_entry)
+
+            # Update the XP for this season
+            user_season_entry["sum_of_xp"] += xp
+        else:
+            logger.warning("Active battlepass found but missing season ID")
+            user_battlepass_xp = user.get("battlepass_xp", [])
+    else:
+        # No active battlepass, use existing battlepass_xp
+        user_battlepass_xp = user.get("battlepass_xp", [])
+
     update_user(
         usersTable,
         email,
-        user_levels,
+        user_current_level,
         user.get("time_played", 0) + time_played,
         letters_learned,
         user.get("xp", 0) + xp,
-        user.get("battlepass_xp", 0) + xp,
+        user_battlepass_xp,
         user.get("coins", 0) + coins,
     )
 
@@ -126,6 +187,23 @@ def get_user_by_email(dynamodb, email):
     user_item = user.get("Item", {})
 
     return user_item
+
+
+def get_active_battlepass_seasons(dynamodb):
+    logger.info(f"Fetching active battlepass seasons")
+
+    current_date = datetime.now(timezone.utc)
+    logger.debug(f"Current date: {current_date}")
+    current_date_str = current_date.isoformat()
+
+    response = dynamodb.table.scan(
+        FilterExpression=Attr("start_date").lte(current_date_str) & Attr("end_date").gte(current_date_str)
+    )
+
+    active_battlepasses = response.get("Items", [])
+    logger.debug(f"Found {len(active_battlepasses)} active battlepasses")
+
+    return active_battlepasses[0] if active_battlepasses else None
 
 
 def update_user(

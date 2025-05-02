@@ -137,6 +137,8 @@ Resources:
             Fn::Sub: "${LayerStackName}-${StageName}-LanguagesTable"
           USERS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          BATTLEPASS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-BattlepassTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
