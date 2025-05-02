@@ -36,6 +36,10 @@ Parameters:
     Type: String
     Description: The email address that will be used as the sender for the password reset emails
     Default: nolanilisic@gmail.com
+  LatestBattlepassSeason:
+    Type: Number
+    Description: The latest battlepass season number
+    Default: 1
 
 Globals:
   Function:
@@ -474,6 +478,8 @@ Resources:
             Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
+          BATTLEPASS_TABLE_NAME: !ImportValue
+                Fn::Sub: "${LayerStackName}-${StageName}-BattlepassTable"
       Layers:
         - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Architectures:
@@ -491,7 +497,40 @@ Resources:
           Type: Api
           Properties:
             Path: /claim/battlepass
-            Method: PATCH
+            Method: POST
+            RestApiId: !Ref UsersApi
+
+  GetBattlepassLevelsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: getBattlepassLevels/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          BATTLEPASS_TABLE_NAME: !ImportValue
+                Fn::Sub: "${LayerStackName}-${StageName}-BattlepassTable"
+          LATEST_BATTLEPASS_SEASON: !Ref LatestBattlepassSeason
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        ClaimBattlePassLevelEndpoint:
+          Type: Api
+          Properties:
+            Path: /battlepass
+            Method: GET
             RestApiId: !Ref UsersApi
 
 Outputs:
