@@ -183,6 +183,8 @@ Resources:
       - StartSharingRoute
       - StopSharingRoute
       - DisconnectRoute
+      - JoinRoomRoute
+      - CreateRoomRoute
     Properties:
       ApiId: !Ref WebSocketApi
 
