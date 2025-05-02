@@ -8,6 +8,7 @@ import MainPage from "@/pages/MainPage";
 import LoginCallback from "@/pages/LoginCallback";
 import { ProtectedRoute } from "@/components/auth";
 import { APP_ROUTES } from "@/constants/common";
+import ChatRoom from "@/pages/ChatRoom";
 
 const AppRoutes = () => {
   return (
@@ -28,6 +29,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route path="/room/:id" element={<ChatRoom />} />
       <Route path={APP_ROUTES.LOGIN} element={<Login />} />
       <Route path={APP_ROUTES.SIGNUP} element={<SignUp />} />
       <Route path={APP_ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />

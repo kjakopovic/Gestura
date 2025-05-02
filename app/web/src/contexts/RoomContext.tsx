@@ -5,6 +5,7 @@ import {
   ReactNode,
   useEffect,
   useReducer,
+  useRef,
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
@@ -12,13 +13,13 @@ import { v4 as uuid } from "uuid";
 import { addPeerAction, removePeerAction } from "@/constants/peerActions";
 import { peersReducer } from "@/utils/video";
 
-// TODO: use from .env
-const WS = "http://localhost:3000";
+const WS = import.meta.env.VITE_WS_URL;
+const STAGE = import.meta.env.VITE_STAGE;
+if (!WS || !STAGE) {
+  throw new Error("Please setup you .env file");
+}
 
 export const RoomContext = createContext<null | any>(null);
-
-// TODO: use normal sockets so I can connect to AWS lambda sockets (logic is the same)
-// const ws = socketIO(WS);
 
 export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
   children,
@@ -32,6 +33,17 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
   const [showCamera, setShowCamera] = useState(false);
   const [screenSharingId, setScreenSharingId] = useState<string>("");
   const [roomId, setRoomId] = useState<string>("");
+
+  // ref to hold our WebSocket instance
+  const socketRef = useRef<WebSocket | null>(null);
+
+  // helper to send JSON messages
+  const send = (action: string, payload: any) => {
+    const sock = socketRef.current;
+    if (sock && sock.readyState === WebSocket.OPEN) {
+      sock.send(JSON.stringify({ action, ...payload }));
+    }
+  };
 
   const enterRoom = ({ roomId }: { roomId: string }) => {
     navigate(`/room/${roomId}`);
@@ -119,35 +131,58 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
       console.log(error);
     }
 
-    ws.on("room-created", enterRoom);
-    ws.on("get-users", getUsers);
-    ws.on("user-disconnected", removePeer);
-    ws.on("user-started-sharing", (peerId: string) =>
-      setScreenSharingId(peerId)
-    );
-    ws.on("user-stopped-sharing", () => setScreenSharingId(""));
+    const sock = new WebSocket(`${WS}/${STAGE}`);
+    socketRef.current = sock;
+
+    sock.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    sock.onmessage = (evt) => {
+      let msg;
+      try {
+        msg = JSON.parse(evt.data);
+      } catch {
+        return;
+      }
+      switch (msg.action) {
+        case "room-created":
+          enterRoom(msg);
+          break;
+        case "get-users":
+          getUsers(msg);
+          break;
+        case "user-disconnected":
+          removePeer(msg.peerId);
+          break;
+        case "user-started-sharing":
+          setScreenSharingId(msg.peerId);
+          break;
+        case "user-stopped-sharing":
+          setScreenSharingId("");
+          break;
+        default:
+          console.warn("Unknown WS action", msg);
+      }
+    };
+
+    sock.onerror = (err) => console.error("WS error", err);
+    sock.onclose = () => console.log("WebSocket closed");
 
     return () => {
-      ws.off("room-created");
-      ws.off("get-users");
-      ws.off("user-disconnected");
-      ws.off("user-started-sharing");
-      ws.off("user-stopped-sharing");
+      sock.close();
     };
   }, []);
 
   useEffect(() => {
-    if (!roomId) return;
+    if (!roomId || !me) return;
 
-    // Only emit start-sharing if this client is the one sharing.
-    if (me?.id === screenSharingId) {
-      ws.emit("start-sharing", { roomId: roomId, peerId: me.id });
+    if (me.id === screenSharingId) {
+      send("start-sharing", { roomId });
+    } else if (screenSharingId === "") {
+      send("stop-sharing", { roomId });
     }
-    // Optionally, if no one is sharing, emit stop-sharing.
-    else if (!screenSharingId) {
-      ws.emit("stop-sharing", roomId);
-    }
-  }, [screenSharingId, roomId, me, ws]);
+  }, [screenSharingId, roomId, me]);
 
   useEffect(() => {
     if (!me || !stream) return;
@@ -160,7 +195,6 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
       track.enabled = !isMuted;
     });
 
-    // Handler for when another user joins
     const handleUserJoined = ({ peerId }: { peerId: string }) => {
       const call = me.call(peerId, stream);
       call.on("stream", (peerStream) => {
@@ -168,7 +202,6 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
       });
     };
 
-    // Handler for incoming calls
     const handleCall = (call: any) => {
       call.answer(stream);
       call.on("stream", (peerStream: MediaStream) => {
@@ -176,11 +209,14 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
       });
     };
 
-    ws.on("user-joined", handleUserJoined);
+    // these fire off from our onmessage switch above
+    socketRef.current?.addEventListener("message", (evt) => {
+      const msg = JSON.parse(evt.data);
+      if (msg.action === "user-joined") handleUserJoined(msg);
+    });
     me.on("call", handleCall);
 
     return () => {
-      ws.off("user-joined", handleUserJoined);
       me.off("call", handleCall);
     };
   }, [me, stream, isMuted, showCamera]);
@@ -188,7 +224,7 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
   return (
     <RoomContext.Provider
       value={{
-        ws,
+        socketRef,
         me,
         stream,
         peers,

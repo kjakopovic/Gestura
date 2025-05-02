@@ -7,7 +7,7 @@ import { PeerState } from "@/constants/peerActions";
 const ChatRoom = () => {
   const { id } = useParams();
   const {
-    ws,
+    socketRef,
     me,
     stream,
     peers,
@@ -22,8 +22,16 @@ const ChatRoom = () => {
   const [isDeafened, setIsDeafened] = useState(false);
 
   useEffect(() => {
-    if (me) ws.emit("join-room", { roomId: id, peerId: me.id });
-  }, [id, me, ws]);
+    const sock = socketRef.current;
+    if (!me || !sock || sock.readyState !== WebSocket.OPEN) return;
+
+    sock.send(
+      JSON.stringify({
+        action: "join-room",
+        roomId: id,
+      })
+    );
+  }, [id, me, socketRef]);
 
   useEffect(() => {
     setRoomId(id);
