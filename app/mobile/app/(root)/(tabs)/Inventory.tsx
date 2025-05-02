@@ -34,7 +34,12 @@ const Inventory = () => {
         <Text className="text-xl text-grayscale-100 font-interBold mt-16 ml-4">
           ITEMS
         </Text>
-        <Item itemTitle="Double XP token" iconName="experience_token" />
+        <Item
+          itemTitle="Double XP Token"
+          iconName="experience_token"
+          buttonText="ACTIVATE"
+        />
+        <Item itemTitle="Regular Chest" iconName="chest" buttonText="OPEN" />
 
         <Text className="text-xl text-grayscale-100 font-interBold mt-16 ml-4">
           BATTLE PASS

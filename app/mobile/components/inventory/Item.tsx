@@ -1,14 +1,16 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
+import { useRouter } from "expo-router";
 
 import * as icons from "@/constants/icons";
 
 type ItemProps = {
   itemTitle: string;
   iconName: string;
+  buttonText: string;
 };
 
-const Item = ({ itemTitle, iconName }: ItemProps) => {
+const Item = ({ itemTitle, iconName, buttonText }: ItemProps) => {
   const icon = icons[iconName as keyof typeof icons] || icons.error_testing;
 
   return (
@@ -22,13 +24,13 @@ const Item = ({ itemTitle, iconName }: ItemProps) => {
           {itemTitle}
         </Text>
         <TouchableOpacity
-          className="w-3/4 border border-gestBlue rounded-xl"
+          className="w-3/4 border border-grayscale-300 rounded-xl"
           onPress={() => {
             alert("Activated item!");
           }}
         >
-          <Text className="text-xl text-gestBlue font-interBold text-center mt-1 pb-1">
-            ACTIVATE
+          <Text className="text-xl text-grayscale-300 font-interBold text-center mt-1 pb-1">
+            {buttonText}
           </Text>
         </TouchableOpacity>
       </View>
