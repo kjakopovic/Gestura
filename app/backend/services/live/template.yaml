@@ -137,7 +137,7 @@ Resources:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref WebSocketApi
-      RouteKey: stop-sharing
+      RouteKey: join-room
       AuthorizationType: NONE
       OperationName: JoinRoomRoute
       Target: !Join
@@ -159,7 +159,7 @@ Resources:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref WebSocketApi
-      RouteKey: stop-sharing
+      RouteKey: create-room
       AuthorizationType: NONE
       OperationName: CreateRoomRoute
       Target: !Join
