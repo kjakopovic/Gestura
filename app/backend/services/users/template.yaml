@@ -475,7 +475,7 @@ Resources:
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
           BATTLEPASS_TABLE_NAME: !ImportValue
-                Fn::Sub: "${LayerStackName}-${StageName}-BattlepassTable"
+            Fn::Sub: "${LayerStackName}-${StageName}-BattlepassTable"
       Layers:
         - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Architectures:
@@ -492,7 +492,7 @@ Resources:
         ClaimBattlePassLevelEndpoint:
           Type: Api
           Properties:
-            Path: /claim/battlepass
+            Path: /battlepass/claim
             Method: POST
             RestApiId: !Ref UsersApi
 
