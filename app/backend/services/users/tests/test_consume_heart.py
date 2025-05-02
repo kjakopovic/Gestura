@@ -3,7 +3,7 @@ import sys
 import os
 import unittest
 from unittest.mock import patch
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from base_test_setup import BaseTestSetup
 
 
@@ -89,7 +89,7 @@ class TestConsumeHeart(BaseTestSetup):
 
         # Parse and verify the refill time is approximately 3 hours in the future
         hearts_next_refill = datetime.fromisoformat(hearts_next_refill_str)
-        expected_time = datetime.now() + timedelta(hours=3)
+        expected_time = datetime.now(timezone.utc) + timedelta(hours=3)
         time_difference = abs((hearts_next_refill - expected_time).total_seconds())
 
         # Allow a small tolerance (5 seconds) for test execution time
