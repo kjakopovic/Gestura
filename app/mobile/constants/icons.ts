@@ -5,6 +5,8 @@ import bag_coins from "@/assets/icons/bag-coins.png";
 import book from "@/assets/icons/book.png";
 import bp_chest from "@/assets/icons/bp_chest.png";
 import bp_chestBW from "@/assets/icons/bp_chestBW.png";
+import bp_chest_map from "@/assets/icons/bp_chest_map.png";
+import bp_chest_mapBW from "@/assets/icons/bp_chest_mapBW.png";
 import chest from "@/assets/icons/chest.png";
 import cog from "@/assets/icons/cog.png";
 import coin from "@/assets/icons/coin.png";
@@ -45,6 +47,8 @@ export {
   book,
   bp_chest,
   bp_chestBW,
+  bp_chest_map,
+  bp_chest_mapBW,
   chest,
   cog,
   coin,

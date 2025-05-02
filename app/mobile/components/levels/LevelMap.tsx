@@ -14,9 +14,10 @@ const { width: screenWidth } = Dimensions.get("window");
 interface LevelMapProps {
   levels: LevelData[];
   onLevelPress: (levelId: number) => void;
+  pathStyle?: "default" | "battlepass";
 }
 
-const LevelMap = ({ levels, onLevelPress }: LevelMapProps) => {
+const LevelMap = ({ levels, onLevelPress, pathStyle }: LevelMapProps) => {
   // Setting up the dimensions for our level path
   const pathWidth = screenWidth * 0.7; // Using 70% of screen width to ensure the path fits on all devices
   const levelSpacing = 230;
@@ -24,6 +25,10 @@ const LevelMap = ({ levels, onLevelPress }: LevelMapProps) => {
 
   // Find the index of the last unlocked level
   const lastUnlockedIndex = levels.map((l) => l.state).lastIndexOf("unlocked");
+
+  // Determine path color based on style
+
+  const pathColor = pathStyle === "battlepass" ? "#FFC800" : "#A162FF"; // Use primary color for battlepass
 
   const renderLevelPath = () => {
     // Determining how many rows we need based on level count
@@ -49,7 +54,7 @@ const LevelMap = ({ levels, onLevelPress }: LevelMapProps) => {
         {lastUnlockedIndex >= 0 && (
           <Path
             d={unlockedPathData}
-            stroke="#A162FF"
+            stroke={pathColor}
             strokeWidth={4}
             fill="none"
           />
