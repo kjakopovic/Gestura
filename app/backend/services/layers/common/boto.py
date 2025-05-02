@@ -36,6 +36,11 @@ _LAMBDA_ITEMS_TABLE_RESOURCE = {
     "table_name": environ.get("ITEMS_TABLE_NAME", "items_test_table"),
 }
 
+_LAMBDA_BATTLEPASS_TABLE_RESOURCE = {
+    "resource": boto3.resource("dynamodb"),
+    "table_name": environ.get("BATTLEPASS_TABLE_NAME", "battlepass_test_table"),
+}
+
 
 class LambdaDynamoDBClass:
     """
