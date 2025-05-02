@@ -27,15 +27,6 @@ Globals:
     MemorySize: 512
 
 Resources:
-  ### REST API ###
-  LiveChatApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      Name: !Sub "LiveChat-${StageName}"
-      StageName: !Ref StageName
-      Auth:
-        ApiKeyRequired: false
-
   # Websocket API setup
   WebSocketApi:
     Type: AWS::ApiGatewayV2::Api
@@ -403,84 +394,7 @@ Resources:
       FunctionName: !Ref CreateRoomFunction
       Principal: apigateway.amazonaws.com
 
-  # Endpoints
-  # CreateRoomFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     CodeUri: createRoom/
-  #     Handler: app.lambda_handler
-  #     Runtime: python3.12
-  #     Environment:
-  #       Variables:
-  #         CHAT_ROOM_TABLE_NAME: !ImportValue
-  #           Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
-  #         CONNECTIONS_TABLE_NAME: !ImportValue
-  #           Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
-  #         USERS_TABLE_NAME: !ImportValue
-  #           Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
-  #         JWT_SECRET_NAME: !Ref JwtSecretName
-  #         SECRETS_REGION_NAME: !Ref SecretsRegionName
-  #     Layers:
-  #       - !Sub "{{resolve:ssm:/layers/common/latest}}"
-  #     Architectures:
-  #       - x86_64
-  #     Policies:
-  #       - Version: "2012-10-17"
-  #         Statement:
-  #           - Effect: "Allow"
-  #             Action:
-  #               - "dynamodb:*"
-  #               - "secretsmanager:GetSecretValue"
-  #             Resource: "*"
-  #     Events:
-  #       CreateRoomEndpoint:
-  #         Type: Api
-  #         Properties:
-  #           Path: /
-  #           Method: POST
-  #           RestApiId: !Ref LiveChatApi
-
-  # JoinRoomFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     CodeUri: joinRoom/
-  #     Handler: app.lambda_handler
-  #     Runtime: python3.12
-  #     Environment:
-  #       Variables:
-  #         CHAT_ROOM_TABLE_NAME: !ImportValue
-  #           Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
-  #         CONNECTIONS_TABLE_NAME: !ImportValue
-  #           Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
-  #         USERS_TABLE_NAME: !ImportValue
-  #           Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
-  #         JWT_SECRET_NAME: !Ref JwtSecretName
-  #         SECRETS_REGION_NAME: !Ref SecretsRegionName
-  #     Layers:
-  #       - !Sub "{{resolve:ssm:/layers/common/latest}}"
-  #     Architectures:
-  #       - x86_64
-  #     Policies:
-  #       - Version: "2012-10-17"
-  #         Statement:
-  #           - Effect: "Allow"
-  #             Action:
-  #               - "dynamodb:*"
-  #               - "secretsmanager:GetSecretValue"
-  #             Resource: "*"
-  #     Events:
-  #       JoinRoomEndpoint:
-  #         Type: Api
-  #         Properties:
-  #           Path: /{room_id}/join
-  #           Method: POST
-  #           RestApiId: !Ref LiveChatApi
-
 Outputs:
-  EndpointURI:
-    Description: "API Gateway endpoint URL for Live chat microservice apis"
-    Value: !Sub "https://${LiveChatApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"
-
   WebSocketURI:
     Description: "The WSS Protocol URI to connect to"
     Value: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
