@@ -70,7 +70,7 @@ def sign_up_user(dynamodb, email, username, password):
         "time_played": 0,
         "xp": 0,
         "language_id": "usa",
-        "battlepass_xp": 0,
+        "battlepass_xp": [],
         "coins": 0,
         "phone_number": None,
         "sound_effects": True,
