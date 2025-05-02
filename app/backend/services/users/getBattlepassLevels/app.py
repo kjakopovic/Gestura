@@ -55,7 +55,5 @@ def get_active_battlepass_seassons(dynamodb):
 
     active_battlepasses = response.get("Items", [])
     logger.debug(f"Found {len(active_battlepasses)} active battlepasses")
-    print(f"Found {len(active_battlepasses)} active battlepasses")
-    print(f"Active battlepasses: {active_battlepasses}")
 
     return active_battlepasses

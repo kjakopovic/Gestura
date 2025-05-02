@@ -110,8 +110,6 @@ class TestGetBattlepassLevels(BaseTestSetup):
         self.assertEqual(len(body['battlepasses']), 1)
         self.assertEqual(body['battlepasses'][0]['season'], "3")
 
-        print(f"Response: {response}")
-
 
     def tearDown(self):
         self.battlepass_resource_patcher.stop()
