@@ -58,7 +58,7 @@ def lambda_handler(event, context):
         logger.error(f"Language with id {language_id} not found")
         return build_response(404, {"message": "Language not found"})
 
-    users_current_level = get_users_current_level(user_dynamodb, email)
+    users_current_level = get_users_current_level(user_dynamodb, email, language_id)
     if users_current_level is None:
         logger.error(f"User {email} not found in the database.")
         return build_response(404, {"message": "User not found"})
@@ -88,6 +88,33 @@ def get_language_by_id(dynamodb, id):
     language_item = language.get("Item", {})
 
     return language_item
+
+
+def get_users_current_level(dynamodb, email, language_id):
+    logger.info(f"Getting user level for email {email} and language {language_id}")
+    user = dynamodb.table.get_item(Key={"email": email})
+
+    user_item = user.get("Item", {})
+    if not user_item:
+        return None
+
+    # Get the current_level array which contains levels for different languages
+    current_level_array = user_item.get("current_level", [])
+
+    # Check if current_level_array is not a list (could be a Decimal)
+    if not isinstance(current_level_array, list):
+        logger.warning(f"current_level is not a list but {type(current_level_array)}")
+        return convert_decimal_to_float(current_level_array)
+
+    # Find the level for the specified language
+    language_level = 0  # Default if not found
+    for level_item in current_level_array:
+        if level_item.get("language_id") == language_id:
+            language_level = level_item.get("level", 0)
+            break
+
+    language_level = convert_decimal_to_float(language_level)
+    return language_level
 
 
 def get_list_of_tasks(dynamodb, section, language_id):
@@ -175,6 +202,7 @@ def get_tasks_for_section(dynamodb, section, language_id):
 
 def chose_tasks(tasks, num_v1, num_v2, num_v3):
     tasks_by_version = {1: [], 2: [], 3: []}
+    print(f"choosing tasks from {len(tasks)} tasks")
 
     for task in tasks:
         version = task.get("version")
@@ -196,19 +224,19 @@ def chose_tasks(tasks, num_v1, num_v2, num_v3):
     return chosen_tasks
 
 
-def get_users_current_level(dynamodb, email):
-    logger.info(f"Getting user by email {email}")
-    user = dynamodb.table.get_item(Key={"email": email})
-
-    user_item = user.get("Item", {})
-    if not user_item:
-        return None
-
-    user_current_level = user_item.get("current_level", 0)
-
-    user_current_level = convert_decimal_to_float(user_current_level)
-
-    return user_current_level
+# def get_users_current_level(dynamodb, email):
+#     logger.info(f"Getting user by email {email}")
+#     user = dynamodb.table.get_item(Key={"email": email})
+#
+#     user_item = user.get("Item", {})
+#     if not user_item:
+#         return None
+#
+#     user_current_level = user_item.get("current_level", 0)
+#
+#     user_current_level = convert_decimal_to_float(user_current_level)
+#
+#     return user_current_level
 
 
 def get_two_random_sections(max_section):

@@ -67,19 +67,21 @@ class BaseTestSetup(unittest.TestCase):
         # Tasks table
         self.dynamodb = resource('dynamodb', region_name='eu-central-1')
         self.tasks_table = self.dynamodb.create_table(
-            TableName = os.environ["TASKS_TABLE_NAME"],
-            AttributeDefinitions = [
+            TableName=os.environ["TASKS_TABLE_NAME"],
+            AttributeDefinitions=[
                 {"AttributeName": "task_id", "AttributeType": "S"},
-                {"AttributeName": "section", "AttributeType": "N"}
+                {"AttributeName": "section", "AttributeType": "N"},
+                {"AttributeName": "language_id", "AttributeType": "S"}  # Add language_id attribute
             ],
-            KeySchema = [
+            KeySchema=[
                 {"AttributeName": "task_id", "KeyType": "HASH"}
             ],
             GlobalSecondaryIndexes=[
                 {
-                    'IndexName': 'section-index',
+                    'IndexName': 'section-language-index',  # Change to match template
                     'KeySchema': [
-                        {"AttributeName": "section", "KeyType": "HASH"}
+                        {"AttributeName": "section", "KeyType": "HASH"},
+                        {"AttributeName": "language_id", "KeyType": "RANGE"}  # Add language_id as range key
                     ],
                     'Projection': {'ProjectionType': 'ALL'},
                     'ProvisionedThroughput': {
@@ -160,11 +162,15 @@ class BaseTestSetup(unittest.TestCase):
                 },
                 {
                     "language_id": "hr",
-                    "level": 1
+                    "level": 10
                 },
                 {
                     "language_id": "es",
-                    "level": 1
+                    "level": 0
+                },
+                {
+                    "language_id": "fr",
+                    "level": 20
                 }
             ],
             "task_level": 0,
