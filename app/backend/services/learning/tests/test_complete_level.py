@@ -15,7 +15,7 @@ from auth import generate_jwt_token
 
 
 @mock_aws
-class TestCreateLevel(BaseTestSetup):
+class TestCompleteLevel(BaseTestSetup):
     def setUp(self):
         super().setUp()
 
