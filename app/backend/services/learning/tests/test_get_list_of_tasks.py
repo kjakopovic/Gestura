@@ -234,11 +234,11 @@ class TestGetListOfTasks(BaseTestSetup):
                     "language_id": "hr"
                 })
 
-        self.users_table.update_item(
-            Key={"email": "test@mail.com"},
-            UpdateExpression="SET current_level = :level",
-            ExpressionAttributeValues={":level": 10}
-        )
+        # self.users_table.update_item(
+        #     Key={"email": "test@mail.com"},
+        #     UpdateExpression="SET current_level = :level",
+        #     ExpressionAttributeValues={":level": 10}
+        # )
 
         event = {
             'headers': {
@@ -326,12 +326,6 @@ class TestGetListOfTasks(BaseTestSetup):
                     "correct_answer_index": 0,
                     "language_id": "fr"
                 })
-
-        self.users_table.update_item(
-            Key={"email": "test@mail.com"},
-            UpdateExpression="SET current_level = :level",
-            ExpressionAttributeValues={":level": 20}
-        )
 
         event = {
             'headers': {

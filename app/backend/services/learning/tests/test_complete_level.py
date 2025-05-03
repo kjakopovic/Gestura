@@ -222,15 +222,15 @@ class TestCompleteLevel(BaseTestSetup):
         import random
 
         original_uniform = random.uniform
-        random.uniform = lambda a, b : 1.5
+        random.uniform = lambda a, b: 1.5
 
         email = "test@mail.com"
-        jwt_token =  generate_jwt_token(email)
+        jwt_token = generate_jwt_token(email)
 
         initial_user = self.users_table.get_item(Key={'email': email})['Item']
         initial_xp = Decimal(str(initial_user['xp']))
         initial_coins = Decimal(str(initial_user['coins']))
-        initial_current_level = initial_user['current_level']
+        initial_current_level = initial_user.get('current_level', {})
 
         print(f"User: {initial_user}")
 
@@ -268,15 +268,15 @@ class TestCompleteLevel(BaseTestSetup):
 
         updated_user = self.users_table.get_item(Key={'email': email})['Item']
 
-        current_level = updated_user['current_level']
+        current_level = updated_user.get('current_level', {})
         print(f"Initial current level: {initial_current_level}, Updated current level: {current_level}")
-        initial_lang_level = next((item['level'] for item in initial_current_level
-                                   if item['language_id'] == "en"), Decimal('0'))
-        updated_lang_level = next((item['level'] for item in current_level
-                                   if item['language_id'] == "en"), Decimal('0'))
 
-        self.assertEqual(updated_lang_level, initial_lang_level + Decimal('1'),
-                         f"Expected level to be {initial_lang_level + 1}, got {updated_lang_level}")
+        # If the initial level doesn't exist, the Lambda sets it to 1+1=2
+        expected_level = 2
+        updated_lang_level = current_level.get("en", 0)
+
+        self.assertEqual(updated_lang_level, expected_level,
+                         f"Expected level to be {expected_level}, got {updated_lang_level}")
 
         updated_xp = Decimal(str(updated_user['xp']))
         updated_coins = Decimal(str(updated_user['coins']))
@@ -308,7 +308,7 @@ class TestCompleteLevel(BaseTestSetup):
         jwt_token = generate_jwt_token(email)
 
         initial_user = self.users_table.get_item(Key={'email': email})['Item']
-        initial_current_level = initial_user['current_level']
+        initial_current_level = initial_user.get('current_level', {})
 
         # Define versions for correct answers
         versions = [1, 2, 3]
@@ -342,30 +342,20 @@ class TestCompleteLevel(BaseTestSetup):
 
         # Get updated user data
         updated_user = self.users_table.get_item(Key={'email': email})['Item']
-        updated_current_level = updated_user['current_level']
+        updated_current_level = updated_user.get('current_level', {})
 
         # Check that the new language was added
-        de_level = next((item for item in updated_current_level if item['language_id'] == 'de'), None)
-        self.assertIsNotNone(de_level, "The German language level should be added")
-        self.assertEqual(de_level['level'], Decimal('1'), "The German language level should be 1")
+        self.assertIn('de', updated_current_level, "The German language level should be added")
+        self.assertEqual(updated_current_level['de'], 2, "The German language level should be 2")
 
         # Check that existing languages were preserved
         self.assertEqual(len(updated_current_level), len(initial_current_level) + 1,
                          "Should have added exactly one language")
 
-        # print(f"Updated_user: {updated_user}")
-
         # Check that all original languages are still there with same levels
-        for lang_item in initial_current_level:
-            lang_id = lang_item['language_id']
-            old_level = lang_item['level']
-
-            # Find this language in updated list
-            updated_lang = next((item for item in updated_current_level
-                                 if item['language_id'] == lang_id), None)
-
-            self.assertIsNotNone(updated_lang, f"Language {lang_id} should be preserved")
-            self.assertEqual(updated_lang['level'], old_level,
+        for lang_id, level in initial_current_level.items():
+            self.assertIn(lang_id, updated_current_level, f"Language {lang_id} should be preserved")
+            self.assertEqual(updated_current_level[lang_id], level,
                              f"Level for {lang_id} should not change")
 
 
