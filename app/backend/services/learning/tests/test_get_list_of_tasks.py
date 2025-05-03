@@ -27,8 +27,14 @@ class TestGetListOfTasks(BaseTestSetup):
             "resource": self.dynamodb,
             "table_name": os.environ["USERS_TABLE_NAME"]
         })
+        self.languages_resource_patcher = patch('getListOfTasks.app._LAMBDA_LANGUAGES_TABLE_RESOURCE', {
+            "resource": self.dynamodb,
+            "table_name": os.environ["LANGUAGES_TABLE_NAME"]
+        })
+
         self.users_resource_patcher.start()
         self.tasks_resource_patcher.start()
+        self.languages_resource_patcher.start()
 
 
     def test_when_user_not_authorized(self):
@@ -55,20 +61,34 @@ class TestGetListOfTasks(BaseTestSetup):
         test_cases = [
             {
                 "request_query": {},
-                "expected_status_code": 400  # Accepting 500 status code
+                "expected_status_code": 400
             },
             {
                 "request_query": {
-                    "level": "string-instead-of-number"  # String instead of number
+                    "level": "1"  # Missing language
                 },
-                "expected_status_code": 400  # Accepting 500 status code
+                "expected_status_code": 400
+            },
+            {
+                "request_query": {
+                    "language": "en"  # Missing level
+                },
+                "expected_status_code": 400
+            },
+            {
+                "request_query": {
+                    "level": "string-instead-of-number",
+                    "language": "en"
+                },
+                "expected_status_code": 400
             },
             {
                 "request_query": {
                     "level": 1,
-                    "extra_field": "not-allowed"  # Extra field
+                    "language": "en",
+                    "extra_field": "not-allowed"
                 },
-                "expected_status_code": 400  # Accepting 500 status code
+                "expected_status_code": 400
             }
         ]
 
@@ -101,7 +121,8 @@ class TestGetListOfTasks(BaseTestSetup):
                 'Authorization': jwt_token
             },
             "queryStringParameters": {
-                "level": "41"
+                "level": "41",
+                "language": "en"
             }
         }
 
@@ -112,7 +133,7 @@ class TestGetListOfTasks(BaseTestSetup):
         self.assertIn("message", body)
 
         self.assertEqual(body["message"], "User test@mail.com is not allowed to access level 41.")
-        self.assertEqual(body["current_level"], 0)
+        self.assertEqual(body["current_level"], 1)
 
 
     def test_get_list_section_10(self):
@@ -130,7 +151,8 @@ class TestGetListOfTasks(BaseTestSetup):
                     "version": version,
                     "question": f"Test question version {version}",
                     "possible_answers": ["A", "B", "C", "D"],
-                    "correct_answer_index": 0
+                    "correct_answer_index": 0,
+                    "language_id": "es"
                 })
                 self.tasks_table.put_item(Item={
                     "task_id": f"special-task-20-{version}-{i}",
@@ -139,7 +161,8 @@ class TestGetListOfTasks(BaseTestSetup):
                     "version": version,
                     "question": f"Test question version {version}",
                     "possible_answers": ["A", "B", "C", "D"],
-                    "correct_answer_index": 0
+                    "correct_answer_index": 0,
+                    "language_id": "es"
                 })
 
         event = {
@@ -147,7 +170,8 @@ class TestGetListOfTasks(BaseTestSetup):
                 'Authorization': jwt_token
             },
             "queryStringParameters": {
-                "level": "1"
+                "level": "1",
+                "language": "es"
             }
         }
 
@@ -194,7 +218,8 @@ class TestGetListOfTasks(BaseTestSetup):
                     "version": version,
                     "question": f"Test question version {version}",
                     "possible_answers": ["A", "B", "C", "D"],
-                    "correct_answer_index": 0
+                    "correct_answer_index": 0,
+                    "language_id": "hr"
                 })
 
             for i in range(5):
@@ -205,21 +230,23 @@ class TestGetListOfTasks(BaseTestSetup):
                     "version": version,
                     "question": f"Test question version {version}",
                     "possible_answers": ["A", "B", "C", "D"],
-                    "correct_answer_index": 0
+                    "correct_answer_index": 0,
+                    "language_id": "hr"
                 })
 
-        self.users_table.update_item(
-            Key={"email": "test@mail.com"},
-            UpdateExpression="SET current_level = :level",
-            ExpressionAttributeValues={":level": 10}
-        )
+        # self.users_table.update_item(
+        #     Key={"email": "test@mail.com"},
+        #     UpdateExpression="SET current_level = :level",
+        #     ExpressionAttributeValues={":level": 10}
+        # )
 
         event = {
             'headers': {
                 'Authorization': jwt_token
             },
             "queryStringParameters": {
-                "level": "11"
+                "level": "11",
+                "language": "hr"
             }
         }
 
@@ -274,7 +301,8 @@ class TestGetListOfTasks(BaseTestSetup):
                     "version": version,
                     "question": f"Test question version {version}",
                     "possible_answers": ["A", "B", "C", "D"],
-                    "correct_answer_index": 0
+                    "correct_answer_index": 0,
+                    "language_id": "fr"
                 })
 
                 self.tasks_table.put_item(Item={
@@ -284,7 +312,8 @@ class TestGetListOfTasks(BaseTestSetup):
                     "version": version,
                     "question": f"Test question version {version}",
                     "possible_answers": ["A", "B", "C", "D"],
-                    "correct_answer_index": 0
+                    "correct_answer_index": 0,
+                    "language_id": "fr"
                 })
 
                 self.tasks_table.put_item(Item={
@@ -294,21 +323,17 @@ class TestGetListOfTasks(BaseTestSetup):
                     "version": version,
                     "question": f"Test question version {version}",
                     "possible_answers": ["A", "B", "C", "D"],
-                    "correct_answer_index": 0
+                    "correct_answer_index": 0,
+                    "language_id": "fr"
                 })
-
-        self.users_table.update_item(
-            Key={"email": "test@mail.com"},
-            UpdateExpression="SET current_level = :level",
-            ExpressionAttributeValues={":level": 20}
-        )
 
         event = {
             'headers': {
                 'Authorization': jwt_token
             },
             "queryStringParameters": {
-                "level": "21"  # Level 21 corresponds to section 30
+                "level": "21",  # Level 21 corresponds to section 30
+                "language": "fr"
             }
         }
 
@@ -475,6 +500,7 @@ class TestGetListOfTasks(BaseTestSetup):
     def tearDown(self):
         self.tasks_resource_patcher.stop()
         self.users_resource_patcher.stop()
+        self.languages_resource_patcher.stop()
         super().tearDown()
 
 

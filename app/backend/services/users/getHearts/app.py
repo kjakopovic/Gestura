@@ -52,6 +52,8 @@ def lambda_handler(event, context):
     if hearts_next_refill_str:
         try:
             hearts_next_refill = datetime.fromisoformat(hearts_next_refill_str)
+            if hearts_next_refill.tzinfo is None:
+                hearts_next_refill = hearts_next_refill.replace(tzinfo=timezone.utc)
         except (ValueError, TypeError):
             logger.error(f"Invalid hearts_next_refill format: {hearts_next_refill_str}")
             hearts_next_refill = current_time - timedelta(hours=1)

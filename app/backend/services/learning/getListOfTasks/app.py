@@ -58,7 +58,7 @@ def lambda_handler(event, context):
         logger.error(f"Language with id {language_id} not found")
         return build_response(404, {"message": "Language not found"})
 
-    users_current_level = get_users_current_level(user_dynamodb, email)
+    users_current_level = get_users_current_level(user_dynamodb, email, language_id)
     if users_current_level is None:
         logger.error(f"User {email} not found in the database.")
         return build_response(404, {"message": "User not found"})
@@ -88,6 +88,20 @@ def get_language_by_id(dynamodb, id):
     language_item = language.get("Item", {})
 
     return language_item
+
+
+def get_users_current_level(dynamodb, email, language_id):
+    logger.info(f"Getting user level for email {email} and language {language_id}")
+    user = dynamodb.table.get_item(Key={"email": email})
+
+    user_item = user.get("Item", {})
+    if not user_item:
+        return None
+
+    user_levels = user_item.get("current_level", {})
+    print(f"User levels: {user_levels}")
+
+    return user_levels.get(language_id, 1)
 
 
 def get_list_of_tasks(dynamodb, section, language_id):
@@ -175,6 +189,7 @@ def get_tasks_for_section(dynamodb, section, language_id):
 
 def chose_tasks(tasks, num_v1, num_v2, num_v3):
     tasks_by_version = {1: [], 2: [], 3: []}
+    print(f"choosing tasks from {len(tasks)} tasks")
 
     for task in tasks:
         version = task.get("version")
@@ -194,21 +209,6 @@ def chose_tasks(tasks, num_v1, num_v2, num_v3):
     random.shuffle(chosen_tasks)
 
     return chosen_tasks
-
-
-def get_users_current_level(dynamodb, email):
-    logger.info(f"Getting user by email {email}")
-    user = dynamodb.table.get_item(Key={"email": email})
-
-    user_item = user.get("Item", {})
-    if not user_item:
-        return None
-
-    user_current_level = user_item.get("current_level", 0)
-
-    user_current_level = convert_decimal_to_float(user_current_level)
-
-    return user_current_level
 
 
 def get_two_random_sections(max_section):
