@@ -1,6 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React from "react";
-import { useRouter } from "expo-router";
+import React, { useState } from "react";
+
+import ChestOpening from "./ChestOpening";
 
 import * as icons from "@/constants/icons";
 
@@ -11,7 +12,11 @@ type ItemProps = {
 };
 
 const Item = ({ itemTitle, iconName, buttonText }: ItemProps) => {
+  const [showChestModal, setShowChestModal] = useState(false);
   const icon = icons[iconName as keyof typeof icons] || icons.error_testing;
+
+  // const chest = itemTitle === "chest";
+  const chest = buttonText === "OPEN";
 
   return (
     <View className="bg-grayscale-700 w-5/6 flex flex-row justify-between items-center border border-grayscale-400 rounded-xl p-4 m-4">
@@ -24,7 +29,11 @@ const Item = ({ itemTitle, iconName, buttonText }: ItemProps) => {
         <TouchableOpacity
           className="w-3/4 border border-grayscale-300 rounded-xl"
           onPress={() => {
-            alert("Activated item!");
+            if (chest) {
+              setShowChestModal(true);
+            } else {
+              alert("Activated item!");
+            }
           }}
         >
           <Text className="text-xl text-grayscale-300 font-interBold text-center mt-1 pb-1">
@@ -32,6 +41,14 @@ const Item = ({ itemTitle, iconName, buttonText }: ItemProps) => {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {showChestModal && (
+        <ChestOpening
+          onClose={() => {
+            setShowChestModal(false);
+          }}
+        />
+      )}
     </View>
   );
 };
