@@ -122,15 +122,16 @@ class BaseTestSetup(unittest.TestCase):
             "chosen_language": "en",
             "hearts": 5,
             "hearts_next_refill": None,
-            "battlepass_xp": [
+            "battlepass": [
                 {
                     "season_id": "1",
-                    "sum_of_xp": 0
+                    "xp": 0,
+                    "claimed_levels": []
                 },
                 {
                     "season_id": "3",
-                    "sum_of_xp": 1500,
-                    "claimed_levels": 1
+                    "xp": 1500,
+                    "claimed_levels": [1]
                 }
             ],
             "coins": 100,

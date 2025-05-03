@@ -243,31 +243,6 @@ class TestClaimBattlepassLevel(BaseTestSetup):
         self.assertEqual(updated_coins, expected_coins)
 
 
-    def test_claim_previous_levels(self):
-        """
-        Test response when the user tries to claim a level without claiming previous levels.
-        """
-        email = "test@mail.com"
-        jwt_token = generate_jwt_token(email)
-
-        request_query = {
-            "battlepass_level": "4"
-        }
-
-        event = {
-            'headers': {
-                'Authorization': jwt_token
-            },
-            "queryStringParameters": request_query
-        }
-
-        response = lambda_handler(event, {})
-        body = json.loads(response['body'])
-
-        self.assertEqual(response['statusCode'], 400)
-        self.assertEqual(body['message'], "Must claim all previous levels before claiming level 4.")
-
-
     def test_not_enough_xp(self):
         """
         Test response when the user does not have enough XP to claim a level.

@@ -83,7 +83,7 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
         else:
             break
 
-    user_battlepasses = user.get("battlepass_xp", [])
+    user_battlepasses = user.get("battlepass", [])
     user_battlepass = next(
         (bp for bp in user_battlepasses if bp.get("season_id") == battlepass_season_id), None
     )
@@ -91,53 +91,54 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
         logger.info(f"User battlepass not found for season ID: {battlepass_season_id}."
                     f" Adding new battlepass season to user.")
 
-        new_battlepass_xp = {
+        new_battlepass = {
             "season_id": battlepass_season_id,
-            "sum_of_xp": 0,
-            "claimed_levels": 0,
+            "xp": 0,
+            "claimed_levels": [],
         }
 
-        user_battlepasses.append(new_battlepass_xp)
+        user_battlepasses.append(new_battlepass)
 
         user_dynamodb.table.update_item(
             Key={"email": email},
-            UpdateExpression="SET battlepass_xp = :battlepass_xp",
+            UpdateExpression="SET battlepass = :battlepass_",
             ExpressionAttributeValues={
-                ":battlepass_xp": user_battlepasses
+                ":battlepass": user_battlepasses
             }
         )
 
-        user_battlepass = new_battlepass_xp
+        user_battlepass = new_battlepass
         logger.info(f"New battlepass season added to user: {user_battlepass}")
 
-    user_xp = user_battlepass.get("sum_of_xp", 0)
+    user_xp = user_battlepass.get("xp", 0)
 
     if user_xp < required_xp:
         logger.error(f"User does not have enough XP to claim level {claim_level}")
         return build_response(400, {"message": "Not enough XP to claim this level"})
 
-    claimed_levels = int(user_battlepass.get("claimed_levels", 0))
+    claimed_levels = user_battlepass.get("claimed_levels", [])
 
-    sum_of_levels = 0
-    for i in range(1, int(claim_level) + 1):
-        sum_of_levels += i
-
-    if claimed_levels >= sum_of_levels:
+    if claim_level in claimed_levels:
         logger.error(f"Battlepass level {claim_level} has already been claimed.")
         return build_response(400, {"message": f"Battlepass level {claim_level} has already been claimed."})
-    elif claimed_levels + claim_level < sum_of_levels:
-        logger.error(f"Must claim all previous levels before claiming level {claim_level}.")
-        return build_response(400, {"message": f"Must claim all previous levels before claiming level {claim_level}."})
 
     user_coins = user.get("coins", 0)
     level_coins = battlepass_level.get("coins", 0)
 
     user_coins += level_coins
+    claimed_levels.append(int(claim_level))
+    for i, bp in enumerate(user_battlepasses):
+        if bp.get("season_id") == battlepass_season_id:
+            user_battlepasses[i]["claimed_levels"] = claimed_levels
+
 
     user_dynamodb.table.update_item(
         Key={"email": email},
-        UpdateExpression="SET coins = :coins",
-        ExpressionAttributeValues={":coins": user_coins},
+        UpdateExpression="SET coins = :coins, battlepass = :battlepass",
+        ExpressionAttributeValues={
+            ":coins": user_coins,
+            ":battlepass": user_battlepasses
+        }
     )
 
     logger.info(f"User {email} claimed battlepass level {claim_level} and received {level_coins} coins")
