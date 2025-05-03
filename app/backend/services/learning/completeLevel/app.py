@@ -110,6 +110,9 @@ def lambda_handler(event, context):
         200,
         {
             "message": "Level completed successfully",
+            "xp": xp,
+            "coins": coins,
+            "percentage": round(len(request.correct_answers_versions) / 15),
         },
     )
 
