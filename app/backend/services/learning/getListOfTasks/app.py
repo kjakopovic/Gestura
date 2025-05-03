@@ -99,9 +99,19 @@ def get_users_current_level(dynamodb, email, language_id):
         return None
 
     user_levels = user_item.get("current_level", {})
-    print(f"User levels: {user_levels}")
+    logger.info(f"User levels: {user_levels} for email {email}")
 
-    return user_levels.get(language_id, 1)
+    if language_id not in user_levels:
+        logger.info(f"Adding new language {language_id} to user {email}")
+        user_levels[language_id] = 0
+
+        dynamodb.table.update_item(
+            Key={"email": email},
+            UpdateExpression="SET current_level = :levels",
+            ExpressionAttributeValues={":levels": user_levels}
+        )
+
+    return user_levels.get(language_id, 0)
 
 
 def get_list_of_tasks(dynamodb, section, language_id):

@@ -133,7 +133,7 @@ class TestGetListOfTasks(BaseTestSetup):
         self.assertIn("message", body)
 
         self.assertEqual(body["message"], "User test@mail.com is not allowed to access level 41.")
-        self.assertEqual(body["current_level"], 1)
+        self.assertEqual(body["current_level"], 0)
 
 
     def test_get_list_section_10(self):
@@ -201,6 +201,77 @@ class TestGetListOfTasks(BaseTestSetup):
 
         # Check if the section equals 10
         self.assertEqual(first_task["section"], 10)
+
+
+    def test_when_no_current_level_for_language(self):
+        """
+        Test response when the user has no current level for the specified language.
+        """
+        jwt_token = generate_jwt_token("test@mail.com")
+
+        for version in [1, 2, 3]:
+            for i in range(10):  # Add multiple items per version
+                self.tasks_table.put_item(Item={
+                    "task_id": f"special-task-10-{version}-{i}",
+                    "section": 10,
+                    "section_name": "Test Section 10",
+                    "version": version,
+                    "question": f"Test question version {version}",
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0,
+                    "language_id": "de"
+                })
+                self.tasks_table.put_item(Item={
+                    "task_id": f"special-task-20-{version}-{i}",
+                    "section": 20,
+                    "section_name": "Test Section 20",
+                    "version": version,
+                    "question": f"Test question version {version}",
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0,
+                    "language_id": "de"
+                })
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "queryStringParameters": {
+                "level": "1",
+                "language": "de"
+            }
+        }
+
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        self.assertEqual(response['statusCode'], 200)
+        self.assertIn("message", body)
+
+        self.assertIn("tasks", body)
+        self.assertEqual(body["message"], "Tasks fetched successfully")
+
+        # Check if tasks is a list
+        self.assertIsInstance(body["tasks"], list)
+        # Check if we have the expected number of tasks
+        self.assertEqual(len(body["tasks"]), 15)
+
+        # Check the structure of the first task
+        first_task = body["tasks"][0]
+        self.assertIn("task_id", first_task)
+        self.assertIn("section", first_task)
+        self.assertIn("section_name", first_task)
+        self.assertIn("version", first_task)
+        self.assertIn("question", first_task)
+        self.assertIn("possible_answers", first_task)
+        self.assertIn("correct_answer_index", first_task)
+
+        # Check if the section equals 10
+        self.assertEqual(first_task["section"], 10)
+
+        updated_user = self.users_table.get_item(Key={'email': 'test@mail.com'})
+        print(f"Updated user: {updated_user}")
+
 
 
     def test_get_list_section_20(self):
