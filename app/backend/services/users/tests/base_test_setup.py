@@ -129,7 +129,7 @@ class BaseTestSetup(unittest.TestCase):
                 },
                 {
                     "season_id": "3",
-                    "sum_of_xp": 450,
+                    "sum_of_xp": 1500,
                     "claimed_levels": 1
                 }
             ],

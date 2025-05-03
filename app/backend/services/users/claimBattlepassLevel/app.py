@@ -75,7 +75,13 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
         logger.error(f"Battlepass season ID not found: {battlepass_season_id}")
         return build_response(404, {"message": "Battlepass season ID not found"})
 
-    required_xp = battlepass_level.get("required_xp", 0)
+    required_xp = 0
+    for level in battlepass_levels:
+        level_number = level.get("level")
+        if level_number <= claim_level:
+            required_xp += level.get("required_xp", 0)
+        else:
+            break
 
     user_battlepasses = user.get("battlepass_xp", [])
     user_battlepass = next(
