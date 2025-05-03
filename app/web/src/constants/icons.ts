@@ -21,6 +21,7 @@ import cc from "@/assets/icons/video/cc.svg";
 import dial_icon from "@/assets/icons/video/dial_icon.svg";
 import menu from "@/assets/icons/video/menu.svg";
 import mic from "@/assets/icons/video/microphone.svg";
+import headphones from "@/assets/icons/video/headphones.svg";
 
 export const icons = {
   apple,
@@ -46,4 +47,5 @@ export const icons = {
   dial_icon,
   menu,
   mic,
+  headphones,
 };
