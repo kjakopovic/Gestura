@@ -15,14 +15,14 @@ const Achievement = ({
   completed,
 }: AchievementProps) => {
   return (
-    <View className="h-32 m-2 w-full flex-row items-center justify-between px-4">
+    <View className="m-2 w-full flex-row items-center justify-start px-4 py-2">
       <Image
         source={icon}
-        className={`h-100% w-100% ${completed ? "opacity-100" : "opacity-30"}`}
+        className={`size-12 ${completed ? "opacity-100" : "opacity-20"}`}
       />
-      <View className="flex-column items-start justify-center w-3/4 h-3/4 py-1">
+      <View className="flex-column items-start justify-center py-1 ml-5">
         <Text
-          className={`text-2xl overflow-hidden w-3/4 font-interBold my-2 ${
+          className={`text-2xl overflow-hidden font-interBold my-2 ${
             completed ? "text-grayscale-100" : "text-grayscale-400"
           }`}
         >

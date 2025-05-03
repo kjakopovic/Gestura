@@ -7,7 +7,7 @@ type TableProps = {
 
 const Table = ({ children }: TableProps) => {
   return (
-    <View className="h-full w-11/12 border rounded-xl border-grayscale-400 flex-column items-center justify-start">
+    <View className="w-full border rounded-xl border-grayscale-400 flex-column items-center justify-start">
       {children.map((child, index) => (
         <React.Fragment key={index}>
           {child}

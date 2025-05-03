@@ -40,3 +40,45 @@ export type ForgotPasswordResult = {
   success: boolean;
   error?: { message: string };
 };
+
+// User data type
+export interface UserData {
+  id?: string;
+  name?: string;
+  username?: string;
+  email?: string;
+  phone?: string;
+  level: number;
+  xp: number;
+  progress?: number; // Progress percentage (0-100)
+  coins: number;
+  hearts: number;
+  subscription?: number;
+  current_level?: number;
+  battlepass_xp?: number;
+  hearts_next_refill?: string | null;
+  time_played?: number;
+  task_level?: number;
+  phone_numer?: string | null;
+  letters_learned?: Record<string, any>;
+  items_inventory?: any[];
+  // User preferences
+  sound_effects?: boolean;
+  haptic_feedback?: boolean;
+  push_notifications?: boolean;
+  daily_reminder?: boolean;
+  heart_refill?: boolean;
+  [key: string]: any; // For flexibility with API responses
+}
+
+export interface LanguageData {
+  id: string;
+  name: string;
+  image_url: string;
+}
+
+export interface ApiUserResponse {
+  users: UserData;
+  languages: LanguageData[];
+  message: string;
+}

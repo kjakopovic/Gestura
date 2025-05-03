@@ -13,6 +13,7 @@ type SettingItemProps = {
   type: "toggle" | "select" | "button";
   value?: boolean;
   selected?: boolean;
+  disabled?: boolean;
   image?: ImageSourcePropType;
   onPress?: () => void;
   onChange?: (value: boolean) => void;
@@ -24,6 +25,7 @@ const SettingItem = ({
   value,
   selected,
   image,
+  disabled,
   onPress,
   onChange,
 }: SettingItemProps) => {
@@ -57,6 +59,7 @@ const SettingItem = ({
             thumbColor={value ? "#89E219" : "#FF4B4B"}
             trackColor={{ false: "transparent", true: "transparent" }}
             ios_backgroundColor="transparent"
+            disabled={disabled}
           />
         </View>
       )}

@@ -27,6 +27,7 @@ class BaseTestSetup(unittest.TestCase):
         # Environment variables
         os.environ["USERS_TABLE_NAME"] = "test_users_table"
         os.environ["LANGUAGES_TABLE_NAME"] = "test_languages_table"
+        os.environ["BATTLEPASS_TABLE_NAME"] = "test_battlepass_table"
         os.environ["JWT_SECRET_NAME"] = "secret"
         os.environ["SECRETS_REGION_NAME"] = "eu-central-1"
         os.environ["AWS_REGION"] = "eu-central-1"
@@ -91,6 +92,19 @@ class BaseTestSetup(unittest.TestCase):
         )
         self.languages_table.meta.client.get_waiter('table_exists').wait(TableName=os.environ["LANGUAGES_TABLE_NAME"])
 
+        # Battlepass table
+        self.battlepass_table = self.dynamodb.create_table(
+            TableName="test_battlepass_table",
+            AttributeDefinitions=[
+                {"AttributeName": "season", "AttributeType": "S"},
+            ],
+            KeySchema=[
+                {"AttributeName": "season", "KeyType": "HASH"}
+            ],
+            BillingMode="PAY_PER_REQUEST"
+        )
+        self.battlepass_table.meta.client.get_waiter('table_exists').wait(TableName=os.environ["BATTLEPASS_TABLE_NAME"])
+
         # Sample user data
         self.sample_user_pass = "password123"
 
@@ -108,6 +122,19 @@ class BaseTestSetup(unittest.TestCase):
             "chosen_language": "en",
             "hearts": 5,
             "hearts_next_refill": None,
+            "battlepass": [
+                {
+                    "season_id": "1",
+                    "xp": 0,
+                    "claimed_levels": []
+                },
+                {
+                    "season_id": "3",
+                    "xp": 1500,
+                    "claimed_levels": [1]
+                }
+            ],
+            "coins": 100,
         }
 
         self.users_table.put_item(Item=self.sample_user)
@@ -130,6 +157,68 @@ class BaseTestSetup(unittest.TestCase):
 
         for language in self.sample_languages:
             self.languages_table.put_item(Item=language)
+
+        # Sample battlepass data
+        self.sample_battlepasses = [
+            {
+                "season": "1",
+                "name": "Season 1",
+                "levels": [
+                    {
+                        "level": 1,
+                        "coins": 25,
+                        "required_xp": 100,
+                    },
+                    {
+                        "level": 2,
+                        "coins": 50,
+                        "required_xp": 200,
+                    },
+                    {
+                        "level": 3,
+                        "coins": 75,
+                        "required_xp": 300,
+                    },
+                    {
+                        "level": 4,
+                        "coins": 100,
+                        "required_xp": 400,
+                    },
+                ],
+                "start_date": "2023-01-01T00:00:00Z",
+                "end_date": "2023-12-31T23:59:59Z",
+            },
+            {
+                "season": "2",
+                "name": "Season 2",
+                "levels": [
+                    {
+                        "level": 1,
+                        "coins": 30,
+                        "required_xp": 150,
+                    },
+                    {
+                        "level": 2,
+                        "coins": 60,
+                        "required_xp": 250,
+                    },
+                    {
+                        "level": 3,
+                        "coins": 90,
+                        "required_xp": 350,
+                    },
+                    {
+                        "level": 4,
+                        "coins": 120,
+                        "required_xp": 450,
+                    },
+                ],
+                "start_date": "2023-06-01T00:00:00Z",
+                "end_date": "2023-12-31T23:59:59Z",
+            },
+        ]
+        for battlepass in self.sample_battlepasses:
+            self.battlepass_table.put_item(Item=battlepass)
 
 
     @staticmethod

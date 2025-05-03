@@ -3,7 +3,7 @@ import sys
 import os
 import unittest
 from unittest.mock import patch
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from base_test_setup import BaseTestSetup
 
@@ -94,7 +94,7 @@ class TestGetHearts(BaseTestSetup):
         Test getting hearts when user has some hearts and refill time is in the future.
         """
         # Set user with partial hearts and future refill time
-        refill_time = (datetime.now() + timedelta(hours=1)).isoformat()
+        refill_time = (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()
 
         self.sample_user["hearts"] = 3
         self.sample_user["hearts_next_refill"] = refill_time
@@ -121,7 +121,7 @@ class TestGetHearts(BaseTestSetup):
         Test getting hearts when some hearts should be refilled due to passed time.
         """
         # Set user with partial hearts and refill time in the past (3 hours ago)
-        past_refill_time = (datetime.now() - timedelta(hours=3)).isoformat()
+        past_refill_time = (datetime.now(timezone.utc) - timedelta(hours=3)).isoformat()
 
         self.sample_user["hearts"] = 2
         self.sample_user["hearts_next_refill"] = past_refill_time

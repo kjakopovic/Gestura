@@ -41,24 +41,27 @@ def lambda_handler(event, context):
         logger.error("Room not found.")
         return {"statusCode": 400, "body": "Room not found."}
 
-    for user in room.get("user_connections", set()):
-        if user == connection_id:
+    user_connections: dict = room.get("user_connections", {})
+    peer_id = user_connections.get(connection_id, "")
+
+    for other_conn_id in user_connections.keys():
+        if other_conn_id == connection_id:
             continue
 
         try:
-            logger.info(f"Sending message to {user}")
+            logger.info(f"Sending message to {other_conn_id}")
             ws.post_to_connection(
-                ConnectionId=user,
+                ConnectionId=other_conn_id,
                 Data=json.dumps(
-                    {"action": "user-stopped-sharing", "peerId": connection_id}
+                    {"action": "user-stopped-sharing", "peerId": peer_id}
                 ).encode("utf-8"),
             )
         except ClientError as e:
             code = e.response["Error"]["Code"]
             if code == "GoneException":
-                logger.info(f"Stale connection, skipping: {user}")
+                logger.info(f"Stale connection, skipping: {other_conn_id}")
             else:
-                logger.error(f"Error posting to {user}: {e}")
+                logger.error(f"Error posting to {other_conn_id}: {e}")
 
     return {"statusCode": 200, "body": "screen shared"}
 

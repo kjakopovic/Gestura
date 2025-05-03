@@ -151,6 +151,20 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
+  BattlepassTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "battlepass-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: season
+          AttributeType: S
+      KeySchema:
+        - AttributeName: season
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
 Outputs:
   UsersTable:
     Description: "DynamoDB table for users"
@@ -182,3 +196,8 @@ Outputs:
     Value: !Ref ItemsTable
     Export:
       Name: !Sub "${AWS::StackName}-ItemsTable"
+  BattlepassTable:
+    Description: "DynamoDB table for battlepass"
+    Value: !Ref BattlepassTable
+    Export:
+      Name: !Sub "${AWS::StackName}-BattlepassTable"
