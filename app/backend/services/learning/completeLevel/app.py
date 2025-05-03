@@ -169,16 +169,14 @@ def update_users_battlepass_xp(user, xp, battlepassDb):
         logger.error(
             f"No active battlepass for user {user.get("email", "")}; skipping XP bump."
         )
-        return build_response(200, {"message": "No active battlepass season found"})
+        return None
 
     season_id = active_bp.get("season")
     if not season_id:
         logger.error(
             f"Active battlepass found but missing season ID; skipping XP bump."
         )
-        return build_response(
-            400, {"message": "No season ID provided for battlepass season"}
-        )
+        return None
 
     # 2) Get or create this season’s entry
     #    Defaults: xp=0, claimed_levels=[]
