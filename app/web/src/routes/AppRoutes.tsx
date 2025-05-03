@@ -39,11 +39,31 @@ const AppRoutes = () => {
           </RoomProvider>
         }
       >
-        <Route path="room/create" element={<CreateRoom />} />
-        <Route path="room/join" element={<JoinRoom />} />
-        <Route path="room/:id" element={<ChatRoom />} />
+        <Route
+          path="room/create"
+          element={
+            <ProtectedRoute>
+              <CreateRoom />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="room/join"
+          element={
+            <ProtectedRoute>
+              <JoinRoom />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="room/:id"
+          element={
+            <ProtectedRoute>
+              <ChatRoom />
+            </ProtectedRoute>
+          }
+        />
       </Route>
-
       <Route path={APP_ROUTES.LOGIN} element={<Login />} />
       <Route path={APP_ROUTES.SIGNUP} element={<SignUp />} />
       <Route path={APP_ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
