@@ -98,23 +98,8 @@ def get_users_current_level(dynamodb, email, language_id):
     if not user_item:
         return None
 
-    # Get the current_level array which contains levels for different languages
-    current_level_array = user_item.get("current_level", [])
-
-    # Check if current_level_array is not a list (could be a Decimal)
-    if not isinstance(current_level_array, list):
-        logger.warning(f"current_level is not a list but {type(current_level_array)}")
-        return convert_decimal_to_float(current_level_array)
-
-    # Find the level for the specified language
-    language_level = 0  # Default if not found
-    for level_item in current_level_array:
-        if level_item.get("language_id") == language_id:
-            language_level = level_item.get("level", 0)
-            break
-
-    language_level = convert_decimal_to_float(language_level)
-    return language_level
+    user_levels = user.get("current_level", {})
+    return user_levels.get(language_id, 1)
 
 
 def get_list_of_tasks(dynamodb, section, language_id):
@@ -222,21 +207,6 @@ def chose_tasks(tasks, num_v1, num_v2, num_v3):
     random.shuffle(chosen_tasks)
 
     return chosen_tasks
-
-
-# def get_users_current_level(dynamodb, email):
-#     logger.info(f"Getting user by email {email}")
-#     user = dynamodb.table.get_item(Key={"email": email})
-#
-#     user_item = user.get("Item", {})
-#     if not user_item:
-#         return None
-#
-#     user_current_level = user_item.get("current_level", 0)
-#
-#     user_current_level = convert_decimal_to_float(user_current_level)
-#
-#     return user_current_level
 
 
 def get_two_random_sections(max_section):

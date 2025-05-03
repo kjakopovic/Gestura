@@ -84,36 +84,13 @@ def lambda_handler(event, context):
     xp = Decimal(str(xp))
     coins = Decimal(str(coins))
 
-    language_id = request.language_id
-
     # Updating user level for this language
-    user_current_level = user.get("current_level", [])
-
-    if not isinstance(user_current_level, list):
-        user_current_level = []
-
-    current_language_level = next(
-        (cll for cll in user_current_level if cll["language_id"] == language_id),
-        None
-    )
-
-    # Check if the user has a current level for the language
-    if not current_language_level:
-        logger.debug(f"User {email} has no current level for language {language_id}")
-        current_language_level = {
-            "language_id": language_id,
-            "level": 0
-        }
-        user_current_level.append(current_language_level)
-        language_level = 0
-    else:
-        language_level = convert_decimal_to_float(current_language_level.get("level", 1))
-
-    new_language_level = language_level + 1
-    current_language_level["level"] = Decimal(str(new_language_level))
+    user_levels = user.get("current_level", {})
+    current_lang_level = user_levels.get(request.language_id, 1) + 1
+    user_levels[request.language_id] = current_lang_level
 
     logger.info(
-        f"Updating user {email} with time played: {time_played}, task level: {new_language_level}, letters learned: {letters_learned}"
+        f"Updating user {email} with time played: {time_played}, task level: {user_levels[request.language_id]}, letters learned: {letters_learned}"
     )
 
     # Check for active battlepasses
@@ -126,8 +103,12 @@ def lambda_handler(event, context):
 
             # Find the entry for this season if it exists
             user_season_entry = next(
-                (bp for bp in user_battlepass_xp if bp.get("season_id") == battlepass_season_id),
-                None
+                (
+                    bp
+                    for bp in user_battlepass_xp
+                    if bp.get("season_id") == battlepass_season_id
+                ),
+                None,
             )
 
             # If the user doesn't have an entry for this season, create one
@@ -135,7 +116,7 @@ def lambda_handler(event, context):
                 user_season_entry = {
                     "season_id": battlepass_season_id,
                     "sum_of_xp": 0,
-                    "claimed_levels": 0
+                    "claimed_levels": 0,
                 }
                 user_battlepass_xp.append(user_season_entry)
 
@@ -197,7 +178,8 @@ def get_active_battlepass_seasons(dynamodb):
     current_date_str = current_date.isoformat()
 
     response = dynamodb.table.scan(
-        FilterExpression=Attr("start_date").lte(current_date_str) & Attr("end_date").gte(current_date_str)
+        FilterExpression=Attr("start_date").lte(current_date_str)
+        & Attr("end_date").gte(current_date_str)
     )
 
     active_battlepasses = response.get("Items", [])
