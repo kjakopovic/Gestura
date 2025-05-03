@@ -25,3 +25,12 @@ export const peersReducer = (
       return { ...state };
   }
 };
+
+export const createRoom = (socketRef: any, me: any) => {
+  const sock = socketRef.current;
+  if (sock && sock.readyState === WebSocket.OPEN) {
+    sock.send(JSON.stringify({ action: "create-room", peerId: me?.id }));
+  } else {
+    console.error("WebSocket is not open. Ready state:", sock?.readyState);
+  }
+};

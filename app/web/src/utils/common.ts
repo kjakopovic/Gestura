@@ -35,3 +35,10 @@ export const handleThirdPartyLogin = async (type_of_service: string) => {
     "_self"
   );
 };
+
+// only go back if there’s somewhere to go
+export const handleBack = (navigate: NavigateFunction) => {
+  if (window.history.length > 1) {
+    navigate(-1);
+  }
+};

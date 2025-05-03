@@ -8,6 +8,7 @@ import { Pricing, PricingType, PricingFeature } from "./Pricing";
 import { Sidebar, SidebarOption } from "./Sidebar";
 import ErrorMessage from "./ErrorMessage";
 import VideoPlayer from "./VideoPlayer";
+import BackButton from "./BackButton";
 
 export {
   Navbar,
@@ -25,4 +26,5 @@ export {
   SidebarOption,
   ErrorMessage,
   VideoPlayer,
+  BackButton,
 };
