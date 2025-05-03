@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }: Props) => {
 
     if (token && refreshToken) {
       const newToken = await handleRefreshToken(refreshToken);
-      console.log("newToken", newToken);
       if (newToken) {
         saveTokensToCookies(newToken, refreshToken);
         return;

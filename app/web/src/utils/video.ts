@@ -1,3 +1,4 @@
+import { NavigateFunction } from "react-router-dom";
 import {
   ADD_PEER,
   PeerAction,
@@ -33,4 +34,12 @@ export const createRoom = (socketRef: any, me: any) => {
   } else {
     console.error("WebSocket is not open. Ready state:", sock?.readyState);
   }
+};
+
+export const joinRoom = (roomCode: string, navigate: NavigateFunction) => {
+  if (!roomCode || roomCode === "") {
+    return;
+  }
+
+  navigate(`/room/${roomCode}`);
 };

@@ -6,6 +6,7 @@ import {
   TypographyType,
 } from "@/components/common";
 import { handleBack } from "@/utils/common";
+import { joinRoom } from "@/utils/video";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -13,14 +14,6 @@ const JoinRoom = () => {
   const navigate = useNavigate();
 
   const [roomCode, setRoomCode] = useState("");
-
-  const joinRoom = () => {
-    if (!roomCode || roomCode === "") {
-      return;
-    }
-
-    navigate(`/room/${roomCode}`);
-  };
 
   return (
     <div className="w-full h-screen flex flex-col items-start p-10">
@@ -47,7 +40,9 @@ const JoinRoom = () => {
           />
         </div>
         <Button
-          onClick={joinRoom}
+          onClick={() => {
+            joinRoom(roomCode, navigate);
+          }}
           type={ButtonType.PRIMARY_FULL}
           text="Join Room"
           styles="w-[200px]"
