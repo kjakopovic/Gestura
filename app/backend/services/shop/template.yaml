@@ -64,8 +64,6 @@ Resources:
         Variables:
           ITEMS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-ItemsTable"
-          USERS_TABLE_NAME: !ImportValue
-            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:
