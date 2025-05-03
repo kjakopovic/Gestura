@@ -1,6 +1,7 @@
 import { View, Image, Text } from "react-native";
-import React from "react";
-import { router } from "expo-router";
+import React, { useEffect } from "react";
+// Don't use router here - let parent components handle navigation
+// import { router } from "expo-router";
 import { CameraCapturedPicture } from "expo-camera";
 
 import AnswerBox from "./task-components/AnswerBox";
@@ -13,7 +14,7 @@ import * as characters from "@/constants/characters";
 import * as hands from "@/constants/hand-signs";
 import CameraComponent from "../CameraComponent";
 
-type TaskType = {
+interface TaskProps {
   id: string;
   section: number;
   sectionName: string;
@@ -21,9 +22,11 @@ type TaskType = {
   question: string;
   possibleAnswers: string[];
   correctAnswerIndex: number;
-};
+  onComplete?: () => void;
+  onFailure?: () => void;
+}
 
-const Task = (task: TaskType) => {
+const Task = (task: TaskProps) => {
   const handleAnswerPress = (text: string) => {
     setSelectedAnswer(text);
     console.log("Answer pressed!");
@@ -34,7 +37,7 @@ const Task = (task: TaskType) => {
     task.version === 2
       ? { uri: task.possibleAnswers[task.correctAnswerIndex] }
       : task.version === 3
-      ? hands.letter_c // This would need to be determined dynamically in a real app
+      ? hands.letter_c
       : null;
 
   const [selectedAnswer, setSelectedAnswer] = React.useState<string | null>(
@@ -45,6 +48,12 @@ const Task = (task: TaskType) => {
   const [capturedPhoto, setCapturedPhoto] =
     React.useState<CameraCapturedPicture | null>(null);
   const [showCamera, setShowCamera] = React.useState(true);
+
+  // Handle result and call appropriate callback - remove any automatic timers
+  useEffect(() => {
+    // We're not going to automatically call the callbacks
+    // The ResultPopup will handle the dismissal, and then the user will manually continue
+  }, [popupVisible, isSuccess, task]);
 
   const showResults = () => {
     if (task.version === 3) {
@@ -60,9 +69,24 @@ const Task = (task: TaskType) => {
   const handleContinue = () => {
     if (popupVisible) {
       setPopupVisible(false);
-      goToHome();
+      // After dismissing the popup, now we can call the appropriate callback
+      if (isSuccess && task.onComplete) {
+        task.onComplete();
+      } else if (!isSuccess && task.onFailure) {
+        task.onFailure();
+      }
     } else {
       showResults();
+    }
+  };
+
+  const handlePopupDismiss = () => {
+    setPopupVisible(false);
+    // After dismissing the popup, now we can call the appropriate callback
+    if (isSuccess && task.onComplete) {
+      task.onComplete();
+    } else if (!isSuccess && task.onFailure) {
+      task.onFailure();
     }
   };
 
@@ -70,15 +94,10 @@ const Task = (task: TaskType) => {
     console.log("Photo saved:", photo.uri);
     console.log(showCamera);
     setCapturedPhoto(photo);
-    // Don't close the camera view here - we want to keep showing the photo in CameraComponent
   };
 
   const handleCloseCamera = () => {
     setShowCamera(false);
-  };
-
-  const goToHome = () => {
-    router.push("/(root)/(tabs)/Home");
   };
 
   const isButtonDisabled = () => {
@@ -123,7 +142,7 @@ const Task = (task: TaskType) => {
         visible={popupVisible}
         isSuccess={isSuccess}
         correctAnswer={correctAnswer}
-        onDismiss={() => setPopupVisible(false)}
+        onDismiss={handlePopupDismiss}
         buttonStyle={buttonStyle}
       />
     </View>
@@ -161,7 +180,7 @@ const Task = (task: TaskType) => {
         visible={popupVisible}
         isSuccess={isSuccess}
         correctImage={correctImage}
-        onDismiss={() => setPopupVisible(false)}
+        onDismiss={handlePopupDismiss}
         buttonStyle={buttonStyle}
       />
     </View>
@@ -175,7 +194,6 @@ const Task = (task: TaskType) => {
 
       <View className="w-full h-[1px] bg-grayscale-400 mb-8" />
 
-      {/* Always show CameraComponent, but it will internally display either the camera or the taken photo */}
       <CameraComponent
         onSavePhoto={handleSavePhoto}
         onCloseCamera={handleCloseCamera}
@@ -195,7 +213,7 @@ const Task = (task: TaskType) => {
         visible={popupVisible}
         isSuccess={isSuccess}
         correctImage={correctImage}
-        onDismiss={() => setPopupVisible(false)}
+        onDismiss={handlePopupDismiss}
         buttonStyle={isSuccess ? "success" : "error"}
         taskVersion={task.version}
       />
@@ -205,7 +223,11 @@ const Task = (task: TaskType) => {
       <Text className="text-lg text-grayscale-900 mb-4">
         Unknown task version
       </Text>
-      <CustomButton onPress={goToHome} text="GO BACK" style="base" />
+      <CustomButton
+        onPress={() => task.onFailure?.()}
+        text="GO BACK"
+        style="base"
+      />
     </View>
   );
 };
