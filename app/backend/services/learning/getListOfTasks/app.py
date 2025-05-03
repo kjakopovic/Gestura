@@ -98,7 +98,9 @@ def get_users_current_level(dynamodb, email, language_id):
     if not user_item:
         return None
 
-    user_levels = user.get("current_level", {})
+    user_levels = user_item.get("current_level", {})
+    print(f"User levels: {user_levels}")
+
     return user_levels.get(language_id, 1)
 
 
