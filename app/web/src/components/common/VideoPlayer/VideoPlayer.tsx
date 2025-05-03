@@ -1,11 +1,13 @@
+import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 
 interface Props {
   stream: MediaStream;
   muted?: boolean;
+  className?: string;
 }
 
-const VideoPlayer = ({ stream, muted }: Props) => {
+const VideoPlayer = ({ stream, muted, className }: Props) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -21,12 +23,19 @@ const VideoPlayer = ({ stream, muted }: Props) => {
   }, [stream]);
 
   return (
-    <video
-      ref={videoRef}
-      autoPlay
-      muted={muted}
-      className="bg-black w-full h-[300px]"
-    ></video>
+    <div
+      className={cn(
+        "rounded-xl overflow-hidden w-full h-[300px] z-10",
+        className
+      )}
+    >
+      <video
+        ref={videoRef}
+        autoPlay
+        muted={muted}
+        className={"w-full h-full object-cover bg-transparent"}
+      />
+    </div>
   );
 };
 

@@ -47,7 +47,7 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
     }
   };
 
-  const enterRoom = ({ roomId }: { roomId: string }) => {
+  const enterRoom = (roomId: string) => {
     navigate(`/room/${roomId}`);
   };
 
@@ -151,9 +151,13 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
       } catch {
         return;
       }
+
+      console.log("WebSocket message", msg);
+
       switch (msg.action) {
         case "room-created":
-          enterRoom(msg);
+          console.log("Room created", msg);
+          enterRoom(msg.roomId);
           break;
         case "get-users":
           getUsers(msg);

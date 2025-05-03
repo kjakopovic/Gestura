@@ -23,15 +23,30 @@ const ChatRoom = () => {
 
   useEffect(() => {
     const sock = socketRef.current;
-    if (!me || !sock || sock.readyState !== WebSocket.OPEN) return;
+    if (!me || !sock) return;
 
-    sock.send(
-      JSON.stringify({
-        action: "join-room",
-        roomId: id,
-        peerId: me.id,
-      })
-    );
+    const sendJoin = () => {
+      sock.send(
+        JSON.stringify({
+          action: "join-room",
+          roomId: id!,
+          peerId: me.id,
+        })
+      );
+    };
+
+    // If it’s already open, send immediately
+    if (sock.readyState === WebSocket.OPEN) {
+      sendJoin();
+    } else {
+      // otherwise wait for open
+      sock.addEventListener("open", sendJoin);
+    }
+
+    // cleanup listener on unmount or deps change
+    return () => {
+      sock.removeEventListener("open", sendJoin);
+    };
   }, [id, me, socketRef]);
 
   useEffect(() => {
@@ -40,8 +55,6 @@ const ChatRoom = () => {
 
   const screenSharingVideo =
     screenSharingId === me?.id ? stream : peers[screenSharingId]?.stream;
-
-  console.log("User screen sharing: ", screenSharingId);
 
   return (
     <>
