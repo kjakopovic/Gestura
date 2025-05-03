@@ -14,10 +14,8 @@ const Item = ({ itemTitle, iconName, buttonText }: ItemProps) => {
   const icon = icons[iconName as keyof typeof icons] || icons.error_testing;
 
   return (
-    <View className="bg-grayscale-700 w-5/6 flex flex-row justify-between items-center border border-grayscale-400 rounded-xl py-4 px-4 m-4">
-      <View className="w-1/6">
-        <Image source={icon} className="size-12" />
-      </View>
+    <View className="bg-grayscale-700 w-5/6 flex flex-row justify-between items-center border border-grayscale-400 rounded-xl p-4 m-4">
+      <Image source={icon} className="size-12" />
 
       <View className="flex flex-col justify-center items-center w-5/6">
         <Text className="text-xl text-grayscale-100 font-interBold mb-1">
