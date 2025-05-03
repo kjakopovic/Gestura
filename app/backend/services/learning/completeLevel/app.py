@@ -84,59 +84,25 @@ def lambda_handler(event, context):
     xp = Decimal(str(xp))
     coins = Decimal(str(coins))
 
-    # Updating user level for this language
+    # --- Updating user level for this language ---
     user_levels = user.get("current_level", {})
     current_lang_level = user_levels.get(request.language_id, 1) + 1
     user_levels[request.language_id] = current_lang_level
+
+    user_bp = update_users_battlepass_xp(user, xp, battlepassTable)
 
     logger.info(
         f"Updating user {email} with time played: {time_played}, task level: {user_levels[request.language_id]}, letters learned: {letters_learned}"
     )
 
-    # Check for active battlepasses
-    active_battlepass = get_active_battlepass_seasons(battlepassTable)
-    if active_battlepass:
-        battlepass_season_id = active_battlepass.get("season")
-        if battlepass_season_id:
-            # Get the user's battlepass XP list
-            user_battlepass_xp = user.get("battlepass_xp", [])
-
-            # Find the entry for this season if it exists
-            user_season_entry = next(
-                (
-                    bp
-                    for bp in user_battlepass_xp
-                    if bp.get("season_id") == battlepass_season_id
-                ),
-                None,
-            )
-
-            # If the user doesn't have an entry for this season, create one
-            if not user_season_entry:
-                user_season_entry = {
-                    "season_id": battlepass_season_id,
-                    "sum_of_xp": 0,
-                    "claimed_levels": 0,
-                }
-                user_battlepass_xp.append(user_season_entry)
-
-            # Update the XP for this season
-            user_season_entry["sum_of_xp"] += xp
-        else:
-            logger.warning("Active battlepass found but missing season ID")
-            user_battlepass_xp = user.get("battlepass_xp", [])
-    else:
-        # No active battlepass, use existing battlepass_xp
-        user_battlepass_xp = user.get("battlepass_xp", [])
-
     update_user(
         usersTable,
         email,
-        user_current_level,
+        user_levels,
         user.get("time_played", 0) + time_played,
         letters_learned,
         user.get("xp", 0) + xp,
-        user_battlepass_xp,
+        user_bp,
         user.get("coins", 0) + coins,
     )
 
@@ -146,6 +112,87 @@ def lambda_handler(event, context):
             "message": "Level completed successfully",
         },
     )
+
+
+def update_user(
+    dynamodb,
+    email,
+    current_level,
+    time_played,
+    letters_learned,
+    xp,
+    battlepass,
+    coins,
+):
+    logger.info(f"Updating user with email: {email}")
+
+    update_expression = "SET "
+    expression_attribute_values = {}
+
+    logger.debug(f"Updating current level to {current_level}")
+    update_expression += "current_level = :current_level, "
+    expression_attribute_values[":current_level"] = current_level
+
+    logger.debug(f"Updating time played to {time_played}")
+    update_expression += "time_played = :time_played, "
+    expression_attribute_values[":time_played"] = time_played
+
+    logger.debug(f"Updating letters learned to {letters_learned}")
+    update_expression += "letters_learned = :letters_learned, "
+    expression_attribute_values[":letters_learned"] = letters_learned
+
+    logger.debug(f"Updating xp to {xp}")
+    update_expression += "xp = :xp, "
+    expression_attribute_values[":xp"] = xp
+
+    logger.debug(f"Updating battlepass to {battlepass}")
+    update_expression += "battlepass = :battlepass, "
+    expression_attribute_values[":battlepass"] = battlepass
+
+    logger.debug(f"Updating coins to {coins}")
+    update_expression += "coins = :coins, "
+    expression_attribute_values[":coins"] = coins
+
+    dynamodb.table.update_item(
+        Key={"email": email},
+        UpdateExpression=update_expression.rstrip(", "),
+        ExpressionAttributeValues=expression_attribute_values,
+    )
+
+
+def update_users_battlepass_xp(user, xp, battlepassDb):
+    user_bp: dict = user.setdefault("battlepass", {})
+
+    # 1) fetch & validate active season
+    active_bp = get_active_battlepass_seasons(battlepassDb)
+    if not active_bp:
+        logger.error(
+            f"No active battlepass for user {user.get("email", "")}; skipping XP bump."
+        )
+        return build_response(200, {"message": "No active battlepass season found"})
+
+    season_id = active_bp.get("season")
+    if not season_id:
+        logger.error(
+            f"Active battlepass found but missing season ID; skipping XP bump."
+        )
+        return build_response(
+            400, {"message": "No season ID provided for battlepass season"}
+        )
+
+    # 2) Get or create this season’s entry
+    #    Defaults: xp=0, claimed_levels=[]
+    season_entry = user_bp.setdefault(season_id, {"xp": 0, "claimed_levels": []})
+
+    # 3) Update the XP counter
+    old_xp = season_entry.get("xp", 0)
+    season_entry["xp"] = old_xp + xp
+    logger.info(f"Battlepass '{season_id}' XP: {old_xp} → {season_entry['xp']}")
+
+    # 4) Update user battlepass for new season entry
+    user_bp[season_id] = season_entry
+
+    return user_bp
 
 
 def get_language_by_id(dynamodb, id):
@@ -186,52 +233,6 @@ def get_active_battlepass_seasons(dynamodb):
     logger.debug(f"Found {len(active_battlepasses)} active battlepasses")
 
     return active_battlepasses[0] if active_battlepasses else None
-
-
-def update_user(
-    dynamodb,
-    email,
-    current_level,
-    time_played,
-    letters_learned,
-    xp,
-    battlepass_xp,
-    coins,
-):
-    logger.info(f"Updating user with email: {email}")
-
-    update_expression = "SET "
-    expression_attribute_values = {}
-
-    logger.debug(f"Updating current level to {current_level}")
-    update_expression += "current_level = :current_level, "
-    expression_attribute_values[":current_level"] = current_level
-
-    logger.debug(f"Updating time played to {time_played}")
-    update_expression += "time_played = :time_played, "
-    expression_attribute_values[":time_played"] = time_played
-
-    logger.debug(f"Updating letters learned to {letters_learned}")
-    update_expression += "letters_learned = :letters_learned, "
-    expression_attribute_values[":letters_learned"] = letters_learned
-
-    logger.debug(f"Updating xp to {xp}")
-    update_expression += "xp = :xp, "
-    expression_attribute_values[":xp"] = xp
-
-    logger.debug(f"Updating battlepass_xp to {battlepass_xp}")
-    update_expression += "battlepass_xp = :battlepass_xp, "
-    expression_attribute_values[":battlepass_xp"] = battlepass_xp
-
-    logger.debug(f"Updating coins to {coins}")
-    update_expression += "coins = :coins, "
-    expression_attribute_values[":coins"] = coins
-
-    dynamodb.table.update_item(
-        Key={"email": email},
-        UpdateExpression=update_expression.rstrip(", "),
-        ExpressionAttributeValues=expression_attribute_values,
-    )
 
 
 def seconds_between(started_at: str, finished_at: str) -> float:
