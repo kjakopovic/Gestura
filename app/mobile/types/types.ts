@@ -41,6 +41,23 @@ export type ForgotPasswordResult = {
   error?: { message: string };
 };
 
+// API Task types
+export interface ApiTask {
+  section_name: string;
+  question: string;
+  correct_answer_index: number;
+  version: number;
+  section: number;
+  task_id: string;
+  possible_answers: string[];
+  language_id: string;
+}
+
+export interface ApiTasksResponse {
+  message: string;
+  tasks: ApiTask[];
+}
+
 // User data type
 export interface UserData {
   id?: string;
@@ -54,7 +71,8 @@ export interface UserData {
   coins: number;
   hearts: number;
   subscription?: number;
-  current_level?: number;
+  current_level?: Record<string, number>; // Changed from number to Record<string, number>
+  language_id?: string; // Add explicit language_id field
   battlepass_xp?: number;
   hearts_next_refill?: string | null;
   time_played?: number;

@@ -65,11 +65,9 @@ export function useSettingsState<T extends Record<string, any>>(
         body[snakeKey] = value;
       });
 
-      console.log("Saving settings with body:", body);
-
-      const response = await api.patch("/users", body);
-
-      console.log("Settings save response:", response);
+      const response = await api.patch("/users", body, {
+        apiBase: "user",
+      });
 
       if (!response.success) {
         const errorMsg =

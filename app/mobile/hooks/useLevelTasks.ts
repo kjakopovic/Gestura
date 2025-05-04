@@ -34,6 +34,8 @@ export const useLevelTasks = ({
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [completedTasks, setCompletedTasks] = useState<boolean[]>([]);
   const [showCompletionScreen, setShowCompletionScreen] = useState(false);
+  const [correctTaskIndices, setCorrectTaskIndices] = useState<number[]>([]);
+  const [startTime] = useState<Date>(new Date());
   const [completionStats, setCompletionStats] = useState<LevelCompletionStats>({
     xpEarned: 0,
     coinsEarned: 0,
@@ -55,6 +57,11 @@ export const useLevelTasks = ({
       const updatedCompletedTasks = [...completedTasks];
       updatedCompletedTasks[currentTaskIndex] = isCorrect;
       setCompletedTasks(updatedCompletedTasks);
+
+      // Track correct task indices for API submission
+      if (isCorrect) {
+        setCorrectTaskIndices((prev) => [...prev, currentTaskIndex]);
+      }
 
       // Calculate stats
       const correctCount = updatedCompletedTasks.filter(Boolean).length;
@@ -97,6 +104,9 @@ export const useLevelTasks = ({
     totalTasks: tasks.length,
     showCompletionScreen,
     completionStats,
+    correctTaskIndices,
+    startTime,
+    allTasks: tasks,
     goToHome: navigateToHome,
     resetLevel,
   };

@@ -61,3 +61,19 @@ export const generatePathDataUpToLevel = (
   }
   return pathData;
 };
+
+export const useScrollHandler = (onScrollEnd: () => void) => {
+  return {
+    onScroll: ({ nativeEvent }: { nativeEvent: any }) => {
+      const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+      const paddingToBottom = 200;
+      if (
+        layoutMeasurement.height + contentOffset.y >=
+        contentSize.height - paddingToBottom
+      ) {
+        onScrollEnd();
+      }
+    },
+    scrollEventThrottle: 400,
+  };
+};

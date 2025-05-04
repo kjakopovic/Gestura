@@ -1,24 +1,46 @@
-import React from "react";
-import { ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { ScrollView, ActivityIndicator, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 
 import Task from "@/components/tasks/Task";
 import TaskComplete from "@/components/tasks/TaskComplete";
 import { useLevel } from "@/hooks/useLevel";
-import { useLevelTasks } from "@/hooks/useLevelTasks";
-import { getLevelTasks } from "@/utils/taskUtils";
-
-// Import the task data from a separate file
-import { levelTasksMap } from "@/data/levelTasks";
+import { useLevelTasks, LevelTask } from "@/hooks/useLevelTasks";
+import { fetchLevelTasks } from "@/utils/levelApi";
 
 const LevelScreen = () => {
   const { completeLevel } = useLevel();
   const params = useLocalSearchParams();
-  const levelId = params.id ? parseInt(params.id as string, 10) : 3;
+  const levelId = params.id ? parseInt(params.id as string, 10) : 1;
 
-  // Get tasks for the current level
-  const levelTasks = getLevelTasks(levelId, levelTasksMap);
+  const [tasks, setTasks] = useState<LevelTask[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch tasks for the level
+  useEffect(() => {
+    const loadTasks = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const levelTasks = await fetchLevelTasks(levelId);
+        if (levelTasks.length > 0) {
+          setTasks(levelTasks);
+        } else {
+          setError("No tasks found for this level.");
+        }
+      } catch (err) {
+        setError("Failed to load tasks. Please try again.");
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadTasks();
+  }, [levelId]);
 
   // Handle level completion
   const handleLevelComplete = (levelId: number, stats: any) => {
@@ -26,15 +48,18 @@ const LevelScreen = () => {
     completeLevel(levelId);
   };
 
-  // Use the level tasks hook
+  // Use the level tasks hook with fetched tasks
   const {
     currentTask,
     completeTask,
     showCompletionScreen,
     completionStats,
+    correctTaskIndices,
+    startTime,
+    allTasks,
     goToHome,
   } = useLevelTasks({
-    tasks: levelTasks,
+    tasks,
     levelId,
     onLevelComplete: handleLevelComplete,
   });
@@ -44,11 +69,39 @@ const LevelScreen = () => {
     setTimeout(() => completeTask(isCorrect), 100);
   };
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <View className="w-full h-full bg-grayscale-800 flex items-center justify-center">
+        <ActivityIndicator size="large" color="#ffffff" />
+        <Text className="text-white mt-4">Loading tasks...</Text>
+      </View>
+    );
+  }
+
+  // Show error state
+  if (error || tasks.length === 0) {
+    return (
+      <View className="w-full h-full bg-grayscale-800 flex items-center justify-center p-4">
+        <Text className="text-white text-lg text-center mb-4">
+          {error || "No tasks available for this level."}
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView className="w-full h-full bg-grayscale-800">
       <SafeAreaView className="w-full h-full justify-center bg-grayscale-800">
         {showCompletionScreen ? (
-          <TaskComplete stats={completionStats} onContinue={goToHome} />
+          <TaskComplete
+            stats={completionStats}
+            onContinue={goToHome}
+            correctTasksIndices={correctTaskIndices}
+            allTasks={allTasks}
+            startTime={startTime}
+            levelId={levelId}
+          />
         ) : (
           <Task
             {...currentTask}

@@ -116,9 +116,6 @@ export const requestPasswordReset = async (data: {
   email: string;
 }): Promise<ForgotEmailResult> => {
   try {
-    console.log("Email:", data.email);
-    // Here you would make an API call to your backend
-    // to request a password reset email
     const response = await fetch(`${URL_BASE}/forgot-password/request`, {
       method: "POST",
       headers: {
@@ -128,8 +125,6 @@ export const requestPasswordReset = async (data: {
     });
     const json = await response.json();
     if (!response.ok) {
-      console.log("Error:", json.error);
-      console.log("Response:", response);
       return {
         success: false,
         error: { message: json.error || "Failed to send reset email." },
@@ -170,7 +165,6 @@ export const verifyResetCode = async (
       data.digit5 +
       data.digit6;
     console.log("Verification Code:", code);
-    console.log("Email for verification:", email);
 
     // Here you would make an API call to your backend
     // to verify the reset code for the specific email
@@ -228,7 +222,6 @@ export const resetPassword = async (
     });
     const json = await response.json();
     if (!response.ok) {
-      console.log("Response:", json);
       return {
         success: false,
         error: { message: json.error || "Failed to reset password." },

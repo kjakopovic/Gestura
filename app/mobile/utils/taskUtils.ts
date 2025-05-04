@@ -22,7 +22,7 @@ export const calculateLevelStats = (
 };
 
 /**
- * Get default tasks for a level
+ * Get default tasks for a level (used as fallback if API fails)
  */
 export const getDefaultTasks = (levelId: number): LevelTask[] => [
   {
@@ -49,13 +49,3 @@ export const getDefaultTasks = (levelId: number): LevelTask[] => [
     correctAnswerIndex: 1,
   },
 ];
-
-/**
- * Get level tasks by level ID
- */
-export const getLevelTasks = (
-  levelId: number,
-  taskMap: Record<number, LevelTask[]>
-): LevelTask[] => {
-  return taskMap[levelId] || getDefaultTasks(levelId);
-};

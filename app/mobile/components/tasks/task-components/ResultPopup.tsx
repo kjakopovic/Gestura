@@ -10,6 +10,7 @@ import {
 import React, { useEffect, useState } from "react";
 
 import CustomButton from "@/components/CustomButton";
+import * as hands from "@/constants/hand-signs";
 
 type PopupProps = {
   visible: boolean;
@@ -33,6 +34,12 @@ const ResultPopup = ({
   // Simple internal verification state
   const [isVerifying, setIsVerifying] = useState(false);
   const popupButtonStyle = buttonStyle || (isSuccess ? "success" : "error");
+
+  const rightImage = correctImage
+    ? typeof correctImage === "string"
+      ? { uri: correctImage }
+      : correctImage
+    : hands.error_testing;
 
   // When popup becomes visible for task version 3, show a brief verification animation
   useEffect(() => {
@@ -108,8 +115,8 @@ const ResultPopup = ({
             <View className="flex items-center justify-center border border-grayscale-400 rounded-xl w-40 h-40">
               {correctImage ? (
                 <Image
-                  source={correctImage}
-                  className="w-100% h-100%"
+                  source={rightImage}
+                  className="size-32"
                   resizeMode="contain"
                 />
               ) : (

@@ -1,7 +1,5 @@
 import { View, Image, Text } from "react-native";
-import React, { useEffect } from "react";
-// Don't use router here - let parent components handle navigation
-// import { router } from "expo-router";
+import React from "react";
 import { CameraCapturedPicture } from "expo-camera";
 
 import AnswerBox from "./task-components/AnswerBox";
@@ -29,7 +27,6 @@ interface TaskProps {
 const Task = (task: TaskProps) => {
   const handleAnswerPress = (text: string) => {
     setSelectedAnswer(text);
-    console.log("Answer pressed!");
   };
 
   const correctAnswer = task.possibleAnswers[task.correctAnswerIndex];
@@ -49,16 +46,12 @@ const Task = (task: TaskProps) => {
     React.useState<CameraCapturedPicture | null>(null);
   const [showCamera, setShowCamera] = React.useState(true);
 
-  // Handle result and call appropriate callback - remove any automatic timers
-  useEffect(() => {
-    // We're not going to automatically call the callbacks
-    // The ResultPopup will handle the dismissal, and then the user will manually continue
-  }, [popupVisible, isSuccess, task]);
-
   const showResults = () => {
     if (task.version === 3) {
       const success = Math.random() > 0.5;
       setIsSuccess(success);
+    } else if (task.version === 2) {
+      setIsSuccess(parseInt(selectedAnswer!) === task.correctAnswerIndex);
     } else {
       setIsSuccess(selectedAnswer === correctAnswer);
     }
@@ -82,7 +75,6 @@ const Task = (task: TaskProps) => {
 
   const handlePopupDismiss = () => {
     setPopupVisible(false);
-    // After dismissing the popup, now we can call the appropriate callback
     if (isSuccess && task.onComplete) {
       task.onComplete();
     } else if (!isSuccess && task.onFailure) {
@@ -108,7 +100,14 @@ const Task = (task: TaskProps) => {
     }
   };
 
-  const buttonStyle = selectedAnswer === correctAnswer ? "success" : "fail";
+  const buttonStyle =
+    task.version === 2
+      ? parseInt(selectedAnswer!) === task.correctAnswerIndex
+        ? "success"
+        : "fail"
+      : selectedAnswer === correctAnswer
+      ? "success"
+      : "fail";
 
   return task.version === 1 ? (
     <View className="flex-1 justify-center items-start">
@@ -162,7 +161,7 @@ const Task = (task: TaskProps) => {
             <AnswerBox
               key={index}
               onPress={handleAnswerPress}
-              image={{ uri: imageUrl }}
+              image={imageUrl}
               answerValue={`${index}`}
               isSelected={selectedAnswer === `${index}`}
             />

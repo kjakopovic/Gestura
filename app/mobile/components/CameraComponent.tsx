@@ -52,7 +52,6 @@ export default function CameraComponent({
       }
       setPhoto(photo);
       onSavePhoto(photo);
-      console.log(photo.uri);
     }
   }
 

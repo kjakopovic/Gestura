@@ -1,41 +1,25 @@
 import { router } from "expo-router";
 
 /**
- * Navigate to the home screen
+ * Navigate to a specific level
  */
-export const navigateToHome = () => {
-  router.replace("/(root)/(tabs)/Home");
-};
-
-/**
- * Navigate to a level
- * @param levelId Optional level ID
- */
-export const navigateToLevel = (levelId?: number) => {
+export const navigateToLevel = (levelId: number) => {
   router.push({
-    pathname: "/(root)/level",
-    params: levelId ? { id: levelId } : undefined,
+    pathname: "/level",
+    params: { id: levelId.toString() },
   });
 };
 
 /**
- * Navigate to a settings screen
- * @param settingType Type of setting (app or user)
- * @param screenName Name of the screen
+ * Navigate to a specific settings page
  */
-export const navigateToSetting = (
-  settingType: "app" | "user",
-  screenName: string
-) => {
-  router.push(
-    //@ts-ignore
-    `/(root)/(profile-options)/settings/${settingType}-settings/${screenName}`
-  );
+export const navigateToSetting = (type: "app" | "user", screen: string) => {
+  router.push(`/settings/${type}-settings/${screen}`);
 };
 
 /**
- * Navigate back to the previous screen
+ * Navigate to home screen
  */
-export const navigateBack = () => {
-  router.back();
+export const navigateToHome = () => {
+  router.push("/Home");
 };

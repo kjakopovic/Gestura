@@ -15,6 +15,7 @@ interface LevelMapProps {
   onLevelPress: (levelId: number) => void;
   onLoadMore?: () => void;
   isLoadingMore?: boolean;
+  currentLevel?: number;
 }
 
 const LevelMap = ({
@@ -22,12 +23,15 @@ const LevelMap = ({
   onLevelPress,
   onLoadMore,
   isLoadingMore = false,
+  currentLevel = 1,
 }: LevelMapProps) => {
   const pathWidth = screenWidth * 0.7;
   const levelSpacing = 230;
   const zigzagWidth = pathWidth - 32;
 
-  const lastUnlockedIndex = levels.map((l) => l.state).lastIndexOf("unlocked");
+  const lastUnlockedIndex = currentLevel
+    ? Math.min(currentLevel, levels.length) - 1
+    : levels.map((l) => l.state !== "locked").lastIndexOf(true);
 
   const renderLevelPath = () => {
     const rows = Math.ceil(levels.length / 2);

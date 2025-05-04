@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -28,18 +28,32 @@ const LevelButton = ({
 }: LevelButtonProps) => {
   const buttonStyle = getButtonStyle(type, state, style);
 
+  // Only disable if explicitly locked
+  const isDisabled = state === "locked";
+
   return type === "normal" ? (
     <TouchableOpacity
       onPress={onPress}
       className={`flex items-center justify-center border-8 ${
-        state === "unlocked" ? "shadow-md shadow-secondary/30" : ""
+        state === "unlocked"
+          ? "shadow-md shadow-secondary/30"
+          : state === "completed"
+          ? "shadow-md shadow-success/30"
+          : ""
       } border-grayscale-700 ${buttonStyle}`}
-      disabled={state === "locked"}
+      disabled={isDisabled}
     >
       <Image
         source={icon}
-        className={`w-12 h-12 ${state === "locked" ? "opacity-50" : ""}`}
+        className={`w-12 h-12 ${
+          state === "locked"
+            ? "opacity-50"
+            : state === "completed"
+            ? "opacity-90"
+            : ""
+        }`}
         resizeMode="contain"
+        tintColor={state === "completed" ? "#A162FF" : undefined}
       />
     </TouchableOpacity>
   ) : (
@@ -48,7 +62,7 @@ const LevelButton = ({
       className={`flex items-center justify-center ${
         state === "unlocked" ? "shadow-md shadow-secondary/50" : ""
       } ${buttonStyle}`}
-      disabled={state === "locked"}
+      disabled={isDisabled}
     >
       <Image
         source={icon}
@@ -56,7 +70,7 @@ const LevelButton = ({
           state === "locked" ? "opacity-50" : ""
         }`}
         resizeMode="contain"
-        tintColor={state === "locked" ? "gray" : undefined}
+        tintColor={state === "locked" ? "gray" : "#A162FF"}
       />
       <View
         className={`${

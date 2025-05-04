@@ -48,7 +48,12 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="light" />
-      <Stack>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          animation: "fade",
+        }}
+      >
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(root)" options={{ headerShown: false }} />
       </Stack>

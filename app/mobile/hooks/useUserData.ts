@@ -9,8 +9,13 @@ export const useUserData = () => {
   const setUserDataFromApi = useUserStore((state) => state.setUserDataFromApi);
   const userData = useUserStore((state) => state.user);
 
+  // Get the language ID
+  const language_id = userData?.language_id || "usa";
+
   // Create a stats object from user data
   const userStats = {
+    language_id: language_id,
+    current_level: userData?.current_level || { [language_id]: 1 },
     level: userData?.level || 1,
     xp: userData?.xp || 0,
     progress:
@@ -24,7 +29,9 @@ export const useUserData = () => {
     setError(null);
 
     try {
-      const result = await api.get<ApiUserResponse>("/users");
+      const result = await api.get<ApiUserResponse>("/users", {
+        apiBase: "user",
+      });
 
       if (result.success && result.data) {
         setUserDataFromApi(result.data);
