@@ -106,14 +106,16 @@ def lambda_handler(event, context):
         user.get("coins", 0) + coins,
     )
 
+    response_body = {
+        "message": "Level completed successfully",
+        "xp": xp,
+        "coins": coins,
+        "percentage": round(len(request.correct_answers_versions) / 15),
+    }
+
     return build_response(
         200,
-        {
-            "message": "Level completed successfully",
-            "xp": xp,
-            "coins": coins,
-            "percentage": round(len(request.correct_answers_versions) / 15),
-        },
+        convert_decimal_to_float(response_body)
     )
 
 
