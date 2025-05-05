@@ -9,7 +9,7 @@ import LoginCallback from "@/pages/LoginCallback";
 import { ProtectedRoute } from "@/components/auth";
 import { APP_ROUTES } from "@/constants/common";
 import ChatRoom from "@/pages/ChatRoom";
-import { RoomProvider } from "@/contexts/RoomContext";
+import { RoomProvider } from "@/contexts/RoomProvider";
 import CreateRoom from "@/pages/CreateRoom";
 import JoinRoom from "@/pages/JoinRoom";
 
