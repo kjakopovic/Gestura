@@ -1,5 +1,12 @@
-import { Modal, View, Text, Image } from "react-native";
-import React from "react";
+import {
+  Modal,
+  View,
+  Text,
+  Image,
+  BackHandler,
+  InteractionManager,
+} from "react-native";
+import React, { useEffect } from "react";
 import CustomButton from "../CustomButton";
 
 import * as icons from "@/constants/icons";
@@ -9,6 +16,7 @@ type PurchaseResultProps = {
   setVisible: (visible: boolean) => void;
   item: string;
   success: boolean;
+  message?: string; // Add message prop
 };
 
 const PurchaseResult = ({
@@ -16,34 +24,50 @@ const PurchaseResult = ({
   setVisible,
   item,
   success,
+  message = "", // Default to empty string
 }: PurchaseResultProps) => {
+  // Handle hardware back button
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        if (visible) {
+          handleContinue();
+          return true;
+        }
+        return false;
+      }
+    );
+
+    return () => backHandler.remove();
+  }, [visible]);
+
+  const handleContinue = () => {
+    // Use InteractionManager to ensure UI thread isn't blocked
+    InteractionManager.runAfterInteractions(() => {
+      setVisible(false);
+    });
+  };
+
   return (
     <Modal
-      animationType="slide"
+      animationType="none" // Try without animation to see if it helps
       transparent={true}
       visible={visible}
-      onRequestClose={() => setVisible(false)}
+      onRequestClose={handleContinue}
     >
       <View className="w-full h-1/2 z-10"></View>
       <View className="w-full h-1/2 flex flex-col items-center justify-center bg-grayscale-800 border-t-2 border-grayscale-400 z-100">
         {success ? (
           <>
             <Text className="text-grayscale-100 text-4xl font-inter m-8">
-              You've bought{" "}
-              <Text className="text-grayscale-100 text-4xl font-interBold">
-                {item}
-              </Text>
-              !
+              {message || `You've bought ${item}!`}
             </Text>
           </>
         ) : (
           <>
             <Text className="text-grayscale-100 text-4xl font-inter">
-              Not enough{" "}
-              <Text className="text-grayscale-100 text-4xl font-interBold">
-                coins
-              </Text>
-              !
+              {message || "Not enough coins!"}
             </Text>
             <Image
               source={icons.coin}
@@ -53,11 +77,7 @@ const PurchaseResult = ({
           </>
         )}
 
-        <CustomButton
-          text="CONTINUE"
-          style="base"
-          onPress={() => setVisible(false)}
-        />
+        <CustomButton text="CONTINUE" style="base" onPress={handleContinue} />
       </View>
     </Modal>
   );

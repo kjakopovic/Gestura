@@ -4,6 +4,7 @@
     "name": "Double XP",
     "category": "xp",
     "price": 200,
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/shopItems/xp.png",
     "effect": {
       "multiplier": 2,
       "seconds_in_use": 3600
@@ -14,6 +15,7 @@
     "name": "Full Hearts",
     "category": "hearts",
     "price": 100,
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/shopItems/hearts.png",
     "effect": {
       "multiplier": 5,
       "seconds_in_use": 1
@@ -24,6 +26,7 @@
     "name": "A Handful of Coins",
     "category": "coins",
     "price": 1,
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/shopItems/coins.png",
     "effect": {
       "coins": 1000,
       "seconds_in_use": 1
@@ -34,6 +37,7 @@
     "name": "A Bag of Coins",
     "category": "coins",
     "price": 4,
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/shopItems/bagOfCoins.png",
     "effect": {
       "coins": 10000,
       "seconds_in_use": 1
@@ -43,10 +47,51 @@
     "id": "45b08922-f596-44cd-8dda-520c9054ce1a",
     "name": "Chest",
     "category": "chest",
-    "price": 1000,
+    "price": 500,
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/shopItems/chest.png",
     "effect": {
-      "multiplier": 10000,
-      "seconds_in_use": 1
+      "items": [
+        {
+          "coins": 10,
+          "win_percentage": 15
+        },
+        {
+          "coins": 200,
+          "win_percentage": 15
+        },
+        {
+          "coins": 300,
+          "win_percentage": 15
+        },
+        {
+          "coins": 400,
+          "win_percentage": 15
+        },
+        {
+          "coins": 500,
+          "win_percentage": 12
+        },
+        {
+          "coins": 750,
+          "win_percentage": 8
+        },
+        {
+          "coins": 1000,
+          "win_percentage": 8
+        },
+        {
+          "coins": 1500,
+          "win_percentage": 8
+        },
+        {
+          "coins": 2500,
+          "win_percentage": 3
+        },
+        {
+          "coins": 50000,
+          "win_percentage": 1
+        }
+      ]
     }
   }
 ]

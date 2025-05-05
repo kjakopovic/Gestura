@@ -68,14 +68,14 @@ def lambda_handler(event, context):
     level = int(query_params.get("level", 1))
     section = (level // 10 + 1) * 10
 
-    if users_current_level + 1 == level:
+    if users_current_level == level:
         return get_list_of_tasks(tasks_dynamodb, section, language_id)
     else:
         logger.error(f"User {email} is not allowed to access level {level}.")
         return build_response(
             403,
             {
-                "message": f"User {email} is not allowed to access level {level}.",
+                "message": f"User {email} is not allowed to access level {convert_decimal_to_float(level)}.",
                 "current_level": users_current_level,
             },
         )
@@ -108,7 +108,7 @@ def get_users_current_level(dynamodb, email, language_id):
         dynamodb.table.update_item(
             Key={"email": email},
             UpdateExpression="SET current_level = :levels",
-            ExpressionAttributeValues={":levels": user_levels}
+            ExpressionAttributeValues={":levels": user_levels},
         )
 
     return user_levels.get(language_id, 0)

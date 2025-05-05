@@ -36,6 +36,10 @@ Resources:
     Properties:
       Name: !Sub "LearningApi-${StageName}"
       StageName: !Ref StageName
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'*'"
+        AllowMethods: "'*'"
       Auth:
         ApiKeyRequired: false
 
