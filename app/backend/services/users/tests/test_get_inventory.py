@@ -159,6 +159,15 @@ class TestGetInventory(BaseTestSetup):
         Test getting inventory when there is no active battlepass.
         """
         self.battlepass_table.delete_item(Key={"season": "3"})
+        self.battlepass_table.put_item(Item={
+            "season": "3",
+            "name": "Season 3",
+            "levels": [
+                {"level": 1, "coins": 30, "required_xp": 150}
+            ],
+            "start_date": "2020-01-01T00:00:00Z",
+            "end_date": "2020-12-31T23:59:59Z"  # Past end date
+        })
 
         email = "test@mail.com"
         jwt_token = generate_jwt_token(email)
@@ -174,9 +183,8 @@ class TestGetInventory(BaseTestSetup):
         self.assertIn("items", body)
         self.assertIn("message", body)
         self.assertEqual(body['message'], "User inventory fetched successfully")
-        self.assertIn("battlepass", body)
-        self.assertEqual(body['battlepass'], None)
-
+        self.assertIn("active_battlepass", body)
+        self.assertEqual(body['active_battlepass'], "No active battlepass found.")
 
 
     def tearDown(self):

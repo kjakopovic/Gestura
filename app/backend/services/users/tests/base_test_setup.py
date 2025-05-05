@@ -186,9 +186,6 @@ class BaseTestSetup(unittest.TestCase):
                     "quantity": 5,
                     "acquired_date": "2023-09-10T14:15:00Z"
                 },
-                {
-                    "item_id": "random_item"
-                }
             ],
         }
 

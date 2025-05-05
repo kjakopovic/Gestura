@@ -132,7 +132,12 @@ def get_active_battlepass_seasons(dynamodb):
     )
 
     active_battlepasses = response.get("Items", [])
-    logger.debug(f"Found {len(active_battlepasses)} active battlepasses")
-    logger.debug(f"Active battlepass season found: {active_battlepasses[0].get('season_id')}")
 
-    return active_battlepasses[0] if active_battlepasses else None
+    if not active_battlepasses:
+        logger.info(f"No active battlepasses found.")
+        return None
+    else:
+        logger.info(f"Active battlepasses found: {len(active_battlepasses)}")
+        logger.debug(f"Active battlepass season found: {active_battlepasses[0].get('season_id')}")
+
+        return active_battlepasses[0]
