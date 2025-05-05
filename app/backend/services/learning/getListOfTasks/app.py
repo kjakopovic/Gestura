@@ -68,7 +68,7 @@ def lambda_handler(event, context):
     level = int(query_params.get("level", 1))
     section = (level // 10 + 1) * 10
 
-    if users_current_level == level:
+    if users_current_level + 1 == level:
         return get_list_of_tasks(tasks_dynamodb, section, language_id)
     else:
         logger.error(f"User {email} is not allowed to access level {level}.")
@@ -199,7 +199,7 @@ def get_tasks_for_section(dynamodb, section, language_id):
 
 def chose_tasks(tasks, num_v1, num_v2, num_v3):
     tasks_by_version = {1: [], 2: [], 3: []}
-    print(f"choosing tasks from {len(tasks)} tasks")
+    logger.info(f"choosing tasks from {len(tasks)} tasks")
 
     for task in tasks:
         version = task.get("version")

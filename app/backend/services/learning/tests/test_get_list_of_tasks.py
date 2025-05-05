@@ -273,7 +273,6 @@ class TestGetListOfTasks(BaseTestSetup):
         print(f"Updated user: {updated_user}")
 
 
-
     def test_get_list_section_20(self):
         """
         Test response when the section is 20.
