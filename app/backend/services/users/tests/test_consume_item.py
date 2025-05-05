@@ -120,6 +120,7 @@ class TestConsumeItem(BaseTestSetup):
         """
         Test response when item is not found in user's inventory.
         """
+
         email = "test@mail.com"
         jwt_token = generate_jwt_token(email)
 
@@ -142,7 +143,36 @@ class TestConsumeItem(BaseTestSetup):
         """
         Test response when item is not found in items table.
         """
-        email = "test@mail.com"
+        self.users_table.put_item(Item={
+            "email": "randomitem@mail.com",
+            "items_inventory": [
+                {
+                    "item_id": "item-1",
+                    "quantity": 2,
+                    "acquired_date": "2023-06-15T12:30:00Z"
+                },
+                {
+                    "item_id": "item-3",
+                    "quantity": 1,
+                    "acquired_date": "2023-07-20T09:45:00Z"
+                },
+                {
+                    "item_id": "chest-1",
+                    "quantity": 3,
+                    "acquired_date": "2023-08-05T18:20:00Z"
+                },
+                {
+                    "item_id": "coins-1",
+                    "quantity": 5,
+                    "acquired_date": "2023-09-10T14:15:00Z"
+                },
+                {
+                    "item_id": "random_item"
+                }
+            ],
+        })
+
+        email = "randomitem@mail.com"
         jwt_token = generate_jwt_token(email)
 
         event = {
