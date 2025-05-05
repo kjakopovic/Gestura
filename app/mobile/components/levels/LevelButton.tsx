@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ interface LevelButtonProps {
   state: LevelState;
   style: string;
   icon: ImageSourcePropType;
-  onPress: () => void;
+  onPress: () => void; // This is a callback from parent, not direct navigation
 }
 
 const LevelButton = ({
@@ -33,13 +33,9 @@ const LevelButton = ({
 
   return type === "normal" ? (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={isDisabled ? undefined : onPress}
       className={`flex items-center justify-center border-8 ${
-        state === "unlocked"
-          ? "shadow-md shadow-secondary/30"
-          : state === "completed"
-          ? "shadow-md shadow-success/30"
-          : ""
+        state === "unlocked" ? "shadow-md shadow-secondary/30" : ""
       } border-grayscale-700 ${buttonStyle}`}
       disabled={isDisabled}
     >
@@ -53,12 +49,12 @@ const LevelButton = ({
             : ""
         }`}
         resizeMode="contain"
-        tintColor={state === "completed" ? "#A162FF" : undefined}
+        tintColor={state === "completed" ? "#000" : undefined}
       />
     </TouchableOpacity>
   ) : (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={isDisabled ? undefined : onPress}
       className={`flex items-center justify-center ${
         state === "unlocked" ? "shadow-md shadow-secondary/50" : ""
       } ${buttonStyle}`}

@@ -5,10 +5,11 @@ import * as characters from "@/constants/characters";
 
 import CustomButton from "../CustomButton";
 import { LevelCompletionStats } from "@/hooks/useLevelTasks";
-import { navigateToHome } from "@/utils/navigationUtils";
 import { StatsDisplay } from "./task-components/StatsDisplay";
 import { api } from "@/lib/api";
 import { LevelTask } from "@/hooks/useLevelTasks";
+import { extractLetterFromUrl } from "@/utils/taskUtils";
+import { navigateToHome } from "@/utils/navigationUtils";
 
 interface TaskCompleteProps {
   stats: LevelCompletionStats;
@@ -20,6 +21,13 @@ interface TaskCompleteProps {
   levelId?: number;
 }
 
+interface ServerStats {
+  xpEarned?: number;
+  coinsEarned?: number;
+  message?: string;
+  percentage?: number;
+}
+
 const TaskComplete = ({
   stats,
   onContinue,
@@ -29,10 +37,7 @@ const TaskComplete = ({
   startTime = new Date(Date.now() - 120000), // Default to 2 minutes ago if not provided
   levelId = 1,
 }: TaskCompleteProps) => {
-  const [serverStats, setServerStats] = useState<{
-    xpEarned?: number;
-    coinsEarned?: number;
-  }>({});
+  const [serverStats, setServerStats] = useState<ServerStats>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -54,25 +59,23 @@ const TaskComplete = ({
           if (!task) return;
 
           if (task.version === 1) {
-            // Type 1: question is the letter
-            lettersLearned.push(task.question.toLowerCase());
+            // Type 1: question is the letter or image URL
+            lettersLearned.push(extractLetterFromUrl(task.question));
           } else if (task.version === 2) {
-            // Type 2: question is the letter, parse from URL if needed
-            if (task.question.includes(".png")) {
-              // Extract letter from URL
-              const letter = task.question.split("/").pop()?.split(".")[0];
-              if (letter) lettersLearned.push(letter.toLowerCase());
-            } else {
-              lettersLearned.push(task.question.toLowerCase());
+            // Type 2: question is the letter, extract it using our utility
+            if (typeof task.question === "string") {
+              lettersLearned.push(extractLetterFromUrl(task.question));
             }
           }
           // Skip type 3 questions
         });
 
+        // Log the letters array for debugging
+        console.log("Letters learned:", lettersLearned);
+
         const response = await api.post(
           "/levels/complete",
           {
-            level_id: levelId,
             started_at: startTime.toISOString(),
             finished_at: new Date().toISOString(),
             correct_answers_versions: correctAnswersVersions,
@@ -83,10 +86,20 @@ const TaskComplete = ({
         );
 
         if (response.success && response.data) {
+          // Type the response data as ServerStats to ensure TypeScript recognizes the properties
+          const responseData = response.data as {
+            xp: number;
+            coins: number;
+            message: string;
+            percentage: number;
+          };
+
           // Update stats with server response
           setServerStats({
-            xpEarned: response.data.xp || stats.xpEarned,
-            coinsEarned: response.data.coins || stats.coinsEarned,
+            xpEarned: responseData.xp || stats.xpEarned,
+            coinsEarned: responseData.coins || stats.coinsEarned,
+            message: responseData.message,
+            percentage: responseData.percentage,
           });
         } else {
           console.error("Failed to submit level completion:", response.error);
@@ -103,8 +116,6 @@ const TaskComplete = ({
 
   // Handle continue button press
   const handleContinue = () => {
-    console.log("TaskComplete continue button pressed");
-
     if (onContinue) {
       onContinue();
     } else {
@@ -115,17 +126,27 @@ const TaskComplete = ({
   // Merge local stats with server stats
   const displayStats = {
     ...stats,
-    ...(serverStats.xpEarned && { xpEarned: serverStats.xpEarned }),
-    ...(serverStats.coinsEarned && { coinsEarned: serverStats.coinsEarned }),
+    ...(serverStats.xpEarned !== undefined && {
+      xpEarned: serverStats.xpEarned,
+    }),
+    ...(serverStats.coinsEarned !== undefined && {
+      coinsEarned: serverStats.coinsEarned,
+    }),
+    // Add percentage as an additional property without causing TypeScript errors
+    percentage: serverStats.percentage,
   };
 
   return (
     <View className="flex-1 w-full h-full justify-center items-center mt-24">
       <Image className="w-40 h-40" source={characters.character1_cut} />
-      <Text className="text-white text-4xl font-interBold">Nice one!</Text>
-      <Text className="text-white text-2xl font-inter">
-        You&apos;ve completed the level.
+      <Text className="text-white text-4xl font-interBold">
+        {serverStats.message || "Nice one!"}
       </Text>
+      {!serverStats.message && (
+        <Text className="text-white text-2xl font-inter">
+          You&apos;ve completed the level.
+        </Text>
+      )}
 
       <StatsDisplay stats={displayStats} />
 
