@@ -102,8 +102,6 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
             update_parts.append("hearts = :hearts")
             expression_attribute_values[":hearts"] = user_hearts + item_hearts
     elif item_category == "chest":
-        print(f"Item {item_id} is a chest item. Selecting random item from chest.")
-
         possible_items = item_effects.get("items", [])
         if not possible_items:
             logger.error(f"Item {item_id} has no possible items.")
@@ -114,14 +112,11 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
         logger.info(f"User {email} won {won_item} from chest {item_id}")
 
         if "coins" in won_item:
-            print(f"User won coins: {won_item['coins']}")
-
             user_coins = user.get("coins", 0)
             update_parts.append("coins = :coins")
             expression_attribute_values[":coins"] = user_coins + won_item["coins"]
         else:
             logger.info(f"Adding item {won_item} to user's inventory")
-            print(f"Adding item {won_item} to user's inventory")
             # Create a new inventory item
             new_inventory_item = {
                 "item_id": won_item.get("item_id", f"chest-reward-{random.randint(1000, 9999)}"),
@@ -199,7 +194,6 @@ def get_user_by_email(dynamodb, email):
 def select_random_item_from_chest(chest_items):
     items = []
     weights = []
-    print(f"Chest items: {chest_items}")
 
     for item in chest_items:
         items.append(item)
@@ -210,6 +204,6 @@ def select_random_item_from_chest(chest_items):
         logger.warning(f"Warning: Win percentages sum to {total_weight}, not 100")
 
     chosen_item = random.choices(items, weights=weights, k=1)[0]
-    print(f"Chosen item: {chosen_item}")
+    logger.info(f"Chosen item: {chosen_item}")
 
     return chosen_item
