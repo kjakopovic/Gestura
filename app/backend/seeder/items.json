@@ -47,11 +47,51 @@
     "id": "45b08922-f596-44cd-8dda-520c9054ce1a",
     "name": "Chest",
     "category": "chest",
-    "price": 1000,
+    "price": 500,
     "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/shopItems/chest.png",
     "effect": {
-      "multiplier": 10000,
-      "seconds_in_use": 1
+      "items": [
+        {
+          "coins": 10,
+          "win_percentage": 15
+        },
+        {
+          "coins": 200,
+          "win_percentage": 15
+        },
+        {
+          "coins": 300,
+          "win_percentage": 15
+        },
+        {
+          "coins": 400,
+          "win_percentage": 15
+        },
+        {
+          "coins": 500,
+          "win_percentage": 12
+        },
+        {
+          "coins": 750,
+          "win_percentage": 8
+        },
+        {
+          "coins": 1000,
+          "win_percentage": 8
+        },
+        {
+          "coins": 1500,
+          "win_percentage": 8
+        },
+        {
+          "coins": 2500,
+          "win_percentage": 3
+        },
+        {
+          "coins": 50000,
+          "win_percentage": 1
+        }
+      ]
     }
   }
 ]
