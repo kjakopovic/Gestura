@@ -185,6 +185,9 @@ class BaseTestSetup(unittest.TestCase):
                     "item_id": "coins-1",
                     "quantity": 5,
                     "acquired_date": "2023-09-10T14:15:00Z"
+                },
+                {
+                    "item_id": "random_item"
                 }
             ],
         }
@@ -279,15 +282,15 @@ class BaseTestSetup(unittest.TestCase):
                 "name": "Full Hearts",
                 "image_url": "https://example.com/images/full_hearts.png",
                 "price": Decimal("100.00"),
-                "category": "item",
-                "effect": {"hearts": {"amount": 5}}
+                "category": "hearts",
+                "effect": {"multiplier": 5}
             },
                 {
                     "id": "item-2",
                     "name": "One Heart",
                     "image_url": "https://example.com/images/one_heart.png",
                     "price": Decimal("25.00"),
-                    "category": "item",
+                    "category": "hearts",
                     "effect": {"hearts": {"amount": 1}}
                 },
                 {
@@ -316,11 +319,54 @@ class BaseTestSetup(unittest.TestCase):
                 },
                 {
                     "id": "chest-1",
-                    "name": "Bronze Chest",
-                    "image_url": "https://example.com/images/bronze_chest.png",
-                    "price": Decimal("50.00"),
+                    "name": "Chest",
                     "category": "chest",
-                    "effect": {"items": {"min_items": 1, "max_items": 3}}
+                    "price": 1000,
+                    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/shopItems/chest.png",
+                    "effect": {
+                        "items": [
+                            {
+                                "coins": 10,
+                                "win_percentage": 15
+                            },
+                            {
+                                "coins": 20,
+                                "win_percentage": 15
+                            },
+                            {
+                                "coins": 30,
+                                "win_percentage": 15
+                            },
+                            {
+                                "coins": 40,
+                                "win_percentage": 15
+                            },
+                            {
+                                "coins": 50,
+                                "win_percentage": 12
+                            },
+                            {
+                                "coins": 75,
+                                "win_percentage": 8
+                            },
+                            {
+                                "coins": 100,
+                                "win_percentage": 8
+                            },
+                            {
+                                "coins": 150,
+                                "win_percentage": 8
+                            },
+                            {
+                                "coins": 250,
+                                "win_percentage": 3
+                            },
+                            {
+                                "coins": 1000,
+                                "win_percentage": 1
+                            }
+                        ]
+                    }
                 },
                 {
                     "id": "chest-2",
