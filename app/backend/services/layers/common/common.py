@@ -99,30 +99,11 @@ def convert_decimal_to_float(obj):
         for i, v in enumerate(obj):
             if isinstance(v, Decimal):
                 obj[i] = float(v)
-            # Level 0 → dict or list or bare Decimal
             if isinstance(v, dict):
                 # Level 1
-                for k1, v1 in obj.items():
+                for k1, v1 in v.items():
                     if isinstance(v1, Decimal):
-                        obj[k1] = float(v1)
-
-                    elif isinstance(v1, dict):
-                        # Level 2
-                        for k2, v2 in v1.items():
-                            if isinstance(v2, Decimal):
-                                v1[k2] = float(v2)
-
-                            elif isinstance(v2, dict):
-                                # Level 3
-                                for k3, v3 in v2.items():
-                                    if isinstance(v3, Decimal):
-                                        v2[k3] = float(v3)
-
-                                    elif isinstance(v3, dict):
-                                        # Level 4
-                                        for k4, v4 in v3.items():
-                                            if isinstance(v4, Decimal):
-                                                v3[k4] = float(v4)
+                        v[k1] = float(v1)
     elif isinstance(obj, Decimal):
         return float(obj)
 
