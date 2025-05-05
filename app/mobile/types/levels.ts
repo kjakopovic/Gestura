@@ -11,4 +11,5 @@ export interface LevelData {
   state: LevelState;
   icon: ImageSourcePropType;
   style?: LevelStyle;
+  pathStyle?: string;
 }

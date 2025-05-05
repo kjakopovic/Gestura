@@ -15,12 +15,14 @@ interface LevelMapProps {
   onLevelPress: (levelId: number) => void;
   onLoadMore?: () => void;
   isLoadingMore?: boolean;
+  pathStyle?: "battlepass" | "mapLevel";
 }
 
 const LevelMap = ({
   levels,
   onLevelPress,
   onLoadMore,
+  pathStyle,
   isLoadingMore = false,
 }: LevelMapProps) => {
   const pathWidth = screenWidth * 0.7;
@@ -28,6 +30,10 @@ const LevelMap = ({
   const zigzagWidth = pathWidth - 32;
 
   const lastUnlockedIndex = levels.map((l) => l.state).lastIndexOf("unlocked");
+
+  // Determine path color based on style
+
+  const pathColor = pathStyle === "battlepass" ? "#FFC800" : "#A162FF"; // Use primary color for battlepass
 
   const renderLevelPath = () => {
     const rows = Math.ceil(levels.length / 2);
@@ -49,7 +55,7 @@ const LevelMap = ({
         {lastUnlockedIndex >= 0 && (
           <Path
             d={unlockedPathData}
-            stroke="#A162FF"
+            stroke={pathColor}
             strokeWidth={4}
             fill="none"
           />

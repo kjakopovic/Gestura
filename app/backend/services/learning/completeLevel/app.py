@@ -113,10 +113,7 @@ def lambda_handler(event, context):
         "percentage": round(len(request.correct_answers_versions) / 15),
     }
 
-    return build_response(
-        200,
-        convert_decimal_to_float(response_body)
-    )
+    return build_response(200, convert_decimal_to_float(response_body))
 
 
 def update_user(
