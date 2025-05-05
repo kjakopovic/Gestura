@@ -9,39 +9,40 @@ import React from "react";
 
 import * as icons from "@/constants/icons";
 
-type ItemType = "hearts" | "coins" | "xp" | "chest";
+type ItemType = "hearts" | "coins" | "xp" | "chest" | string;
 
 type ShopOptionProps = {
+  title?: string;
   type: ItemType;
   price: number;
   borderless: boolean;
   onPress?: () => void; // Optional onPress function
 };
 
-const ShopOption = ({ type, price, borderless, onPress }: ShopOptionProps) => {
+const ShopOption = ({
+  title,
+  type,
+  price,
+  borderless,
+  onPress,
+}: ShopOptionProps) => {
   let icon: ImageSourcePropType;
-  let title: string;
 
   switch (type) {
     case "hearts":
       icon = icons.heart;
-      title = "Hearts";
       break;
     case "coins":
       icon = icons.coin;
-      title = "Coins";
       break;
     case "xp":
       icon = icons.experience_token;
-      title = "Double XP";
       break;
     case "chest":
       icon = icons.chest;
-      title = "Chest";
       break;
     default:
       icon = icons.error_testing; // Fallback to error if type is unknown
-      title = "Error";
   }
 
   return (
@@ -51,9 +52,11 @@ const ShopOption = ({ type, price, borderless, onPress }: ShopOptionProps) => {
       } rounded-xl`}
       onPress={onPress}
     >
-      <Text className="text-grayscale-100 text-2xl font-interBold">
-        {title}
-      </Text>
+      {title && (
+        <Text className="text-grayscale-100 text-2xl font-interBold">
+          {title}
+        </Text>
+      )}
       <Image source={icon} className="w-16 h-16 my-2" resizeMode="contain" />
       <View className="bg-grayscale-800 w-3/4 h-8 rounded-xl border-b border-grayscale-100 flex flex-row items-center justify-center">
         <Image
@@ -68,7 +71,5 @@ const ShopOption = ({ type, price, borderless, onPress }: ShopOptionProps) => {
     </TouchableOpacity>
   );
 };
-
-// umjesto backbuttona neki xic koji stavlja na false
 
 export default ShopOption;
