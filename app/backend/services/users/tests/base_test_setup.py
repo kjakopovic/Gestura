@@ -416,6 +416,12 @@ class BaseTestSetup(unittest.TestCase):
             modules: List of module names to clear from cache
         """
         if modules:
-            for module in modules:
-                if module in sys.modules:
-                    del sys.modules[module]
+            for module_name in modules:
+                for name in list(sys.modules.keys()):
+                    if module_name in name:
+                        del sys.modules[name]
+
+            # Also clear any validation_schema modules to prevent schema conflicts
+            for name in list(sys.modules.keys()):
+                if 'validation_schema' in name:
+                    del sys.modules[name]
