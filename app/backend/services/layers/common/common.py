@@ -56,66 +56,42 @@ def parse_utc_isoformat(ts: str) -> datetime:
     return datetime.fromisoformat(ts)
 
 
-def convert_decimal_to_float(obj):
+def convert_decimal_to_float(obj: Any) -> Any:
     """
-    In-place convert any Decimal values up to 4 dict-levels deep into floats.
-    Lists are only scanned one level deep.
+    In-place convert every Decimal anywhere inside obj (dicts/lists mixed),
+    without using recursion.
     """
-    # Level 0 → dict or list or bare Decimal
-    if isinstance(obj, dict):
-        # Level 1
-        for k1, v1 in obj.items():
-            if isinstance(v1, Decimal):
-                obj[k1] = float(v1)
+    # Use a stack of (parent, key_or_index, value_to_process)
+    # parent = None/key means top-level
+    stack = [(None, None, obj)]
 
-            elif isinstance(v1, dict):
-                # Level 2
-                for k2, v2 in v1.items():
-                    if isinstance(v2, Decimal):
-                        v1[k2] = float(v2)
+    while stack:
+        parent, key, current = stack.pop()
 
-                    elif isinstance(v2, dict):
-                        # Level 3
-                        for k3, v3 in v2.items():
-                            if isinstance(v3, Decimal):
-                                v2[k3] = float(v3)
+        # If it's a Decimal, replace it with float in its parent container
+        if isinstance(current, Decimal):
+            new_val = float(current)
+            if parent is None:
+                # top-level Decimal → we just return it
+                return new_val
+            parent[key] = new_val
+            continue
 
-                            elif isinstance(v3, dict):
-                                # Level 4
-                                for k4, v4 in v3.items():
-                                    if isinstance(v4, Decimal):
-                                        v3[k4] = float(v4)
-    # Handle obj as a list
-    elif isinstance(obj, list):
-        for i, v in enumerate(obj):
-            # If item is a Decimal, convert to float
-            if isinstance(v, Decimal):
-                obj[i] = float(v)
-            # If item is a list, go trough a sub-list
-            elif isinstance(v, list):
-                # Level 1
-                for j, v1 in enumerate(v):
-                    # If item is a Decimal, convert to float
-                    if isinstance(v1, Decimal):
-                        v[j] = float(v1)
-                    # If item is a dict, go trough a sub-dict
-                    elif isinstance(v1, dict):
-                        # Level 2
-                        for k1, v1 in v1.items():
-                            if isinstance(v1, Decimal):
-                                v[k1] = float(v1)
-            elif isinstance(v, dict):
-                # Level 1
-                for k1, v1 in v.items():
-                    if isinstance(v1, Decimal):
-                        v[k1] = float(v1)
+        # If it's a dict, push its children onto the stack
+        if isinstance(current, dict):
+            for k, v in current.items():
+                # only push those needing conversion/scan
+                if isinstance(v, (Decimal, dict, list)):
+                    stack.append((current, k, v))
+            continue
 
-                    elif isinstance(v1, dict):
-                        # Level 2
-                        for k2, v2 in v1.items():
-                            if isinstance(v2, Decimal):
-                                v1[k2] = float(v2)
-    elif isinstance(obj, Decimal):
-        return float(obj)
+        # If it's a list, push its elements onto the stack
+        if isinstance(current, list):
+            for idx, v in enumerate(current):
+                if isinstance(v, (Decimal, dict, list)):
+                    stack.append((current, idx, v))
+            continue
+
+        # otherwise (int, str, etc.) we do nothing
 
     return obj
