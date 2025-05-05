@@ -561,11 +561,45 @@ Resources:
                 - "secretsmanager:GetSecretValue"
               Resource: "*"
       Events:
-        ClaimBattlePassLevelEndpoint:
+        GetInventoryEndpoint:
           Type: Api
           Properties:
-            Path: /battlepass
+            Path: /inventory
             Method: GET
+            RestApiId: !Ref UsersApi
+
+  ConsumeItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: consumeItem/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          ITEMS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ItemsTable"
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        ConsumeItemEndpoint:
+          Type: Api
+          Properties:
+            Path: /consume
+            Method: POST
             RestApiId: !Ref UsersApi
 
 Outputs:
