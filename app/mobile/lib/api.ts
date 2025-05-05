@@ -1,6 +1,8 @@
 import { getAccessToken, getRefreshToken, saveTokens } from "./auth";
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_USER_API_BASE_URL;
+const USER_API_BASE_URL = process.env.EXPO_PUBLIC_USER_API_BASE_URL;
+const LEARNING_API_BASE_URL = process.env.EXPO_PUBLIC_LEARNING_API_BASE_URL;
+const SHOP_API_BASE_URL = process.env.EXPO_PUBLIC_SHOP_API_BASE_URL;
 
 interface ApiResponse<T = any> {
   success: boolean;
@@ -17,6 +19,7 @@ interface RequestOptions {
   body?: any;
   headers?: Record<string, string>;
   requireAuth?: boolean;
+  apiBase?: "user" | "learning" | "shop";
 }
 
 /**
@@ -29,11 +32,16 @@ export async function apiCall<T = any>(
 ): Promise<ApiResponse<T>> {
   try {
     // Build the full URL
+    const baseUrl =
+      options.apiBase === "learning"
+        ? LEARNING_API_BASE_URL
+        : options.apiBase === "shop"
+        ? SHOP_API_BASE_URL
+        : USER_API_BASE_URL;
+
     const url = endpoint.startsWith("http")
       ? endpoint
-      : `${API_BASE_URL}${
-          endpoint.startsWith("/") ? endpoint : `/${endpoint}`
-        }`;
+      : `${baseUrl}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
 
     // Setup headers
     const headers: Record<string, string> = {

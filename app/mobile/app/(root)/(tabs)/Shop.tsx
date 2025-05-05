@@ -4,110 +4,140 @@ import {
   View,
   Image,
   SafeAreaView,
-  Alert,
-  Modal,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import React from "react";
 
 import ShopOption from "@/components/shop/ShopOption";
 import ChestOption from "@/components/shop/ChestOption";
 import CoinsOption from "@/components/shop/CoinsOption";
 import PurchaseModal from "@/components/shop/PurchaseModal";
+import { useShopData } from "@/hooks/useShopData";
+import { usePurchase } from "@/hooks/usePurchase";
+import { ShopItem } from "@/types/shop";
 
 import * as icons from "@/constants/icons";
+import CustomAppBar from "@/components/CustomAppBar";
 
 const Shop = () => {
-  let userCoins = 200;
-
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedItem, setSelectedItem] = useState({ type: "", price: 0 });
-
-  const handlePurchase = (itemType: string, price: number) => {
-    setSelectedItem({ type: itemType, price: price });
-    setModalVisible(true);
-  };
+  const { loading, shopItems, coins, chests } = useShopData();
+  const {
+    purchasing,
+    modalVisible,
+    setModalVisible,
+    selectedItem,
+    purchaseMessage,
+    userCoins,
+    handlePurchase,
+    completePurchase,
+  } = usePurchase();
 
   return (
-    <SafeAreaView className=" flex-1 bg-grayscale-800">
-      <PurchaseModal
-        visible={modalVisible}
-        setVisible={setModalVisible}
-        item={selectedItem}
-        price={selectedItem.price}
-        userCoins={userCoins}
-      />
-      <ScrollView
-        className="flex-1 w-full"
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
-        <View className="w-full flex flex-col items-center justify-start">
-          <View className="w-full flex flex-row items-center justify-center mt-32 mb-8">
-            <Image source={icons.coin} className="h-10 w-10" />
-            <Text className="text-primary text-4xl font-interBold m-2">
-              {userCoins}
-            </Text>
+    <>
+      <CustomAppBar title="SHOP" />
+      <SafeAreaView className="flex-1 bg-grayscale-800">
+        {loading ? (
+          <View className="flex-1 items-center justify-center">
+            <ActivityIndicator
+              size="large"
+              color="#0000ff"
+              className="w-1/2 h-1/2"
+            />
           </View>
-          {/* ITEMS */}
-          <View className="w-full flex flex-col items-center justify-start mb-10">
-            <Text className="text-grayscale-100 text-2xl font-interExtraBold">
-              ITEMS
-            </Text>
-            <View className="w-full flex flex-row items-center justify-between px-12 m-8">
-              <ShopOption
-                type="hearts"
-                price={100}
-                borderless={false}
-                onPress={() => handlePurchase("hearts", 100)}
-              />
-              <ShopOption
-                type="xp"
-                price={200}
-                borderless={false}
-                onPress={() => handlePurchase("xp", 200)}
-              />
-            </View>
-            <View className="w-full flex flex-row items-center justify-between px-12">
-              <ShopOption
-                type="hearts"
-                price={100}
-                borderless={false}
-                onPress={() => handlePurchase("hearts", 100)}
-              />
-              <ShopOption
-                type="xp"
-                price={200}
-                borderless={false}
-                onPress={() => handlePurchase("xp", 200)}
-              />
-            </View>
-          </View>
-          {/* COINS */}
-          <View className="w-full flex flex-col items-center justify-start">
-            <Text className="text-grayscale-100 text-2xl font-interExtraBold">
-              COINS
-            </Text>
-            <View className="w-full flex flex-row items-center justify-between px-12 m-8">
-              <CoinsOption type="handful" price={0.99} amount="1000" />
-              <CoinsOption type="bag" price={3.99} amount="10K" />
-            </View>
-          </View>
+        ) : (
+          <>
+            <PurchaseModal
+              purchasing={purchasing}
+              visible={modalVisible}
+              setVisible={setModalVisible}
+              item={selectedItem}
+              price={selectedItem?.price}
+              userCoins={userCoins}
+              message={purchaseMessage}
+              onPurchase={completePurchase}
+            />
+            <ScrollView
+              className="flex-1 w-full"
+              contentContainerStyle={{ paddingBottom: 120 }}
+            >
+              <View className="w-full flex flex-col items-center justify-start">
+                {/* User's Coins Display */}
+                <View className="w-full flex flex-row items-center justify-center mt-32 mb-8">
+                  <Image source={icons.coin} className="h-10 w-10" />
+                  <Text className="text-primary text-4xl font-interBold m-2">
+                    {userCoins}
+                  </Text>
+                </View>
 
-          {/* CHESTS */}
-          <View className="w-full flex flex-col items-center justify-center">
-            <Text className="text-grayscale-100 text-2xl font-interExtraBold">
-              CHESTS
-            </Text>
-            <View className="w-full flex flex-row items-center justify-center m-8">
-              <ChestOption
-                chestPrice={1000}
-                onPress={() => handlePurchase("chest", 1000)}
-              />
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+                {/* Shop Items Section */}
+                <ShopSection
+                  title="ITEMS"
+                  items={shopItems}
+                  renderItem={(item: ShopItem) => (
+                    <ShopOption
+                      key={item.id}
+                      title={item.name}
+                      type={item.category}
+                      price={item.price}
+                      borderless={false}
+                      onPress={() => handlePurchase(item)}
+                    />
+                  )}
+                />
+
+                {/* Coins Section */}
+                <ShopSection
+                  title="COINS"
+                  items={coins}
+                  renderItem={(coin: ShopItem) => (
+                    <CoinsOption
+                      key={coin.id}
+                      type={coin.name.includes("Handful") ? "handful" : "bag"}
+                      price={coin.price}
+                      amount={coin.name.includes("Handful") ? "1000" : "10K"}
+                    />
+                  )}
+                />
+
+                {/* Chests Section */}
+                <ShopSection
+                  title="CHESTS"
+                  items={chests}
+                  renderItem={(chest: ShopItem) => (
+                    <ChestOption
+                      key={chest.id}
+                      chestPrice={chest.price}
+                      onPress={() => handlePurchase(chest)}
+                    />
+                  )}
+                />
+              </View>
+            </ScrollView>
+          </>
+        )}
+      </SafeAreaView>
+    </>
   );
 };
+
+// Helper component for shop sections
+const ShopSection = ({
+  title,
+  items,
+  renderItem,
+}: {
+  title: string;
+  items: ShopItem[];
+  renderItem: (item: ShopItem) => React.ReactNode;
+}) => (
+  <View className="w-full flex flex-col items-center justify-start mb-10">
+    <Text className="text-grayscale-100 text-2xl font-interExtraBold">
+      {title}
+    </Text>
+    <View className="w-full flex flex-row flex-wrap gap-y-10 items-center justify-between px-12 my-8">
+      {items.map(renderItem)}
+    </View>
+  </View>
+);
 
 export default Shop;
