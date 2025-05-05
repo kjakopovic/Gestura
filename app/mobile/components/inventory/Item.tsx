@@ -15,7 +15,6 @@ const Item = ({ itemTitle, iconName, buttonText }: ItemProps) => {
   const [showChestModal, setShowChestModal] = useState(false);
   const icon = icons[iconName as keyof typeof icons] || icons.error_testing;
 
-  // const chest = itemTitle === "chest";
   const chest = buttonText === "OPEN";
 
   return (

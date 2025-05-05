@@ -19,12 +19,6 @@ const Inventory = () => {
           DAILY CHEST
         </Text>
 
-        {/* <Quest
-          title="Complete a task."
-          progress={0}
-          maxProgress={1}
-          iconName="chest"
-        /> */}
         <Quest
           title="Complete a task."
           progress={1}
@@ -45,7 +39,6 @@ const Inventory = () => {
           BATTLE PASS
         </Text>
         <BPRewards unclaimedRewards={7} />
-        {/* <BPRewards unclaimedRewards={0} /> */}
       </ScrollView>
     </SafeAreaView>
   );

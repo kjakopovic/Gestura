@@ -17,10 +17,6 @@ const BPRewards = ({ unclaimedRewards }: BPRewardsProps) => {
     <TouchableOpacity
       className="bg-grayscale-700 w-5/6 flex flex-row justify-between items-center border border-grayscale-400 rounded-xl py-4 px-4 m-4"
       onPress={() => {
-        // if (touchable) {
-        //   alert("Claimed rewards!");
-        // }
-        // mislim da ovo gore necemo koristiti
         router.push("/(root)/(inventory-options)/BattlePass");
       }}
     >

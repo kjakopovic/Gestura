@@ -24,7 +24,6 @@ const Quest = ({ title, progress, maxProgress, iconName }: QuestProps) => {
       }`}
       onPress={() => {
         if (isComplete) {
-          // Handle quest completion logic here
           alert("Claimed quest reward!");
         }
       }}
