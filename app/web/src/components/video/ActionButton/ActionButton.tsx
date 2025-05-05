@@ -17,7 +17,7 @@ const ActionButton = ({ className, icon, active, onClick }: Props) => {
       )}
       onClick={onClick}
     >
-      <img src={icon} alt="Action button for video" />
+      <img src={icon} alt="Action button for video" className="w-7 h-7" />
     </div>
   );
 };

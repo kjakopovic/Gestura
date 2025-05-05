@@ -64,35 +64,67 @@ const ChatRoom = () => {
 
   return (
     <div className="w-full h-screen flex flex-row">
-      <div className="w-[65%] h-full">
-        <div className="flex">
-          {screenSharingId && (
-            <div className="w-full z-0">
-              <VideoPlayer stream={screenSharingVideo} />
+      <div className="w-[65%] h-full p-2 md:p-5 flex flex-col gap-2">
+        {screenSharingId ? (
+          <>
+            <div className="w-full flex-shrink-0 relative z-0">
+              <VideoPlayer
+                stream={screenSharingVideo}
+                className="w-full h-auto rounded-xl overflow-hidden"
+              />
+              <div className="absolute bottom-4 left-1/2 w-full -translate-x-1/2 flex flex-row gap-4 px-4 py-2 overflow-x-auto z-10">
+                <div className="flex-shrink-0 w-[300px]">
+                  <VideoPlayer
+                    stream={stream}
+                    muted={true}
+                    className="w-full h-full rounded-lg overflow-hidden"
+                  />
+                </div>
+                {Object.values(peers as PeerState).map((peer) => (
+                  <div key={peer.peerId} className="flex-shrink-0 w-[300px]">
+                    <VideoPlayer
+                      stream={peer.stream}
+                      muted={isDeafened}
+                      className="w-full h-full rounded-lg overflow-hidden"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-          )}
-        </div>
-        <div className={`grid gap-5 w-full grid-cols-2 z-10`}>
-          <VideoPlayer stream={stream} muted={true} />
-          {Object.values(peers as PeerState).map((peer, index) => (
-            <div key={index}>
-              <VideoPlayer stream={peer.stream} muted={isDeafened} />
-              <div className="text-center text-white">{peer.peerId}</div>
-            </div>
-          ))}
-        </div>
+          </>
+        ) : (
+          <div className="grid gap-5 w-full grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 z-10">
+            <VideoPlayer
+              stream={stream}
+              muted={true}
+              className="w-full h-auto"
+            />
+            {Object.values(peers as PeerState).map((peer, index) => (
+              <div key={index}>
+                <VideoPlayer
+                  stream={peer.stream}
+                  muted={isDeafened}
+                  className="w-full h-auto"
+                />
+                <div className="text-center text-white text-sm">
+                  {peer.peerId}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-      <div className="w-[35%] h-full p-10 flex flex-col items-center justify-between">
+      <div className="w-[35%] h-full p-2 md:p-10 flex flex-col items-center justify-between">
         <Button
           type={ButtonType.PRIMARY_FULL}
           text={signer ? "Signer" : "Talker"}
           onClick={() => {
             setSigner((prev) => !prev);
           }}
-          styles="w-full"
+          styles="w-full px-4 md:px-15"
         />
         <div className="flex flex-col gap-5 w-full">
-          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             <ActionButton
               icon={icons.mic}
               active={!isMuted}

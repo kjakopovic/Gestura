@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Props {
   stream: MediaStream;
@@ -33,7 +33,7 @@ const VideoPlayer = ({ stream, muted, className }: Props) => {
         ref={videoRef}
         autoPlay
         muted={muted}
-        className={"w-full h-full object-cover bg-transparent"}
+        className={"w-full h-full object-cover"}
       />
     </div>
   );
