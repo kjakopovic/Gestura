@@ -100,7 +100,7 @@ def convert_decimal_to_float(obj):
             if isinstance(v, Decimal):
                 obj[i] = float(v)
             # Level 0 → dict or list or bare Decimal
-            if isinstance(obj, dict):
+            if isinstance(v, dict):
                 # Level 1
                 for k1, v1 in obj.items():
                     if isinstance(v1, Decimal):
@@ -125,13 +125,5 @@ def convert_decimal_to_float(obj):
                                                 v3[k4] = float(v4)
     elif isinstance(obj, Decimal):
         return float(obj)
-
-    return obj
-
-
-def convert_decimal_to_float_object(obj: dict):
-    for k, v in obj.items():
-        if isinstance(v, Decimal):
-            obj[k] = float(v)
 
     return obj
