@@ -1,4 +1,5 @@
 import logging
+import random
 
 from validation_schema import schema
 from dataclasses import dataclass
@@ -57,22 +58,23 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
         return build_response(404, {"message": "User not found"})
 
     user_items_inventory = user.get("items_inventory", [])
+
     item_to_consume = next((item for item in user_items_inventory if item.get("item_id") == item_id), None)
 
     if not item_to_consume:
         logger.error(f"Item with ID {item_id} not found in user's inventory.")
         return build_response(404, {"message": "Item not found in user's inventory."})
 
-    # Check if item exists in the items table
     item_info = items_dynamodb.table.get_item(Key={"id": item_id})
     item_info = item_info.get("Item")
+
     if not item_info:
         logger.error(f"Item with ID {item_id} not found in items table.")
         return build_response(404, {"message": "Item not found in items table."})
 
     activated_items = user.get("activated_items", [])
     item_category = item_info.get("category", "").lower()
-    item_effects = item_info.get("effects", {})
+    item_effects = item_info.get("effect", {})
 
     update_parts = []
     expression_attribute_values = {}
@@ -84,7 +86,7 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
 
         update_parts = ["coins = :coins"]
         expression_attribute_values[":coins"] = user_coins + item_coins
-    if item_category == "hearts":
+    elif item_category == "hearts":
         logger.info(f"Item {item_id} is a heart item. Updating user's hearts.")
         user_hearts = user.get("hearts", 0)
 
@@ -93,13 +95,41 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
             return build_response(400, {"message": "User already has maximum hearts."})
 
         item_hearts = item_effects.get("multiplier", 0)
-
         if user_hearts + item_hearts > 5:
             update_parts.append("hearts = :hearts")
             expression_attribute_values[":hearts"] = 5
         else:
             update_parts.append("hearts = :hearts")
             expression_attribute_values[":hearts"] = user_hearts + item_hearts
+    elif item_category == "chest":
+        print(f"Item {item_id} is a chest item. Selecting random item from chest.")
+
+        possible_items = item_effects.get("items", [])
+        if not possible_items:
+            logger.error(f"Item {item_id} has no possible items.")
+            return build_response(400, {"message": "Item has no possible items."})
+
+        won_item = select_random_item_from_chest(possible_items)
+
+        logger.info(f"User {email} won {won_item} from chest {item_id}")
+
+        if "coins" in won_item:
+            print(f"User won coins: {won_item['coins']}")
+
+            user_coins = user.get("coins", 0)
+            update_parts.append("coins = :coins")
+            expression_attribute_values[":coins"] = user_coins + won_item["coins"]
+        else:
+            logger.info(f"Adding item {won_item} to user's inventory")
+            print(f"Adding item {won_item} to user's inventory")
+            # Create a new inventory item
+            new_inventory_item = {
+                "item_id": won_item.get("item_id", f"chest-reward-{random.randint(1000, 9999)}"),
+                "quantity": Decimal('1'),
+                "acquired_date": datetime.now(timezone.utc).isoformat()
+            }
+
+            user_items_inventory.append(new_inventory_item)
     else:
         logger.info(f"Consuming item {item_id} of category {item_category}.")
 
@@ -108,6 +138,7 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
 
             seconds_in_use = item_effects.get("seconds_in_use", 0)
             item_effects.pop("seconds_in_use", None)
+            seconds_in_use = int(seconds_in_use)
 
             current_time = datetime.now(timezone.utc)
             expires_at = current_time + timedelta(seconds=seconds_in_use)
@@ -124,6 +155,7 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
             logger.debug(f"User {email} has activated items. Adding new activated item {item_id}.")
 
             seconds_in_use = item_effects.get("seconds_in_use", 0)
+            seconds_in_use = int(seconds_in_use)
             item_effects.pop("seconds_in_use", None)
 
             current_time = datetime.now(timezone.utc)
@@ -149,8 +181,8 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
 
     users_dynamodb.table.update_item(
         Key={"email": email},
-        UpdateExpression={update_expression},
-        ExpressionAttributeValues={expression_attribute_values},
+        UpdateExpression=update_expression,
+        ExpressionAttributeValues=expression_attribute_values,
     )
 
     logger.info(f"Item {item_id} consumed successfully for user {email}.")
@@ -162,3 +194,22 @@ def get_user_by_email(dynamodb, email):
     user = dynamodb.table.get_item(Key={"email": email})
 
     return user.get("Item")
+
+
+def select_random_item_from_chest(chest_items):
+    items = []
+    weights = []
+    print(f"Chest items: {chest_items}")
+
+    for item in chest_items:
+        items.append(item)
+        weights.append(float(item.get("win_percentage", 0)))
+
+    total_weight = sum(weights)
+    if abs(total_weight - 100) > 0.01:
+        logger.warning(f"Warning: Win percentages sum to {total_weight}, not 100")
+
+    chosen_item = random.choices(items, weights=weights, k=1)[0]
+    print(f"Chosen item: {chosen_item}")
+
+    return chosen_item
