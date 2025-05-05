@@ -302,7 +302,7 @@ export const handleRefreshToken = async (
     }
 
     return data["x-access-token"];
-  } catch (error) {
+  } catch {
     return null;
   }
 };
