@@ -57,11 +57,41 @@ def parse_utc_isoformat(ts: str) -> datetime:
 
 
 def convert_decimal_to_float(obj):
-    if isinstance(obj, Decimal):
-        return float(obj)
-    elif isinstance(obj, dict):
-        return {k: convert_decimal_to_float(v) for k, v in obj.items()}
-    elif isinstance(obj, list):
-        return [convert_decimal_to_float(i) for i in obj]
-    else:
-        return obj
+    """
+    In-place convert every Decimal anywhere inside obj (dicts/lists mixed),
+    without using recursion.
+    """
+    # Use a stack of (parent, key_or_index, value_to_process)
+    # parent = None/key means top-level
+    stack = [(None, None, obj)]
+
+    while stack:
+        parent, key, current = stack.pop()
+
+        # If it's a Decimal, replace it with float in its parent container
+        if isinstance(current, Decimal):
+            new_val = float(current)
+            if parent is None:
+                # top-level Decimal → we just return it
+                return new_val
+            parent[key] = new_val
+            continue
+
+        # If it's a dict, push its children onto the stack
+        if isinstance(current, dict):
+            for k, v in current.items():
+                # only push those needing conversion/scan
+                if isinstance(v, (Decimal, dict, list)):
+                    stack.append((current, k, v))
+            continue
+
+        # If it's a list, push its elements onto the stack
+        if isinstance(current, list):
+            for idx, v in enumerate(current):
+                if isinstance(v, (Decimal, dict, list)):
+                    stack.append((current, idx, v))
+            continue
+
+        # otherwise (int, str, etc.) we do nothing
+
+    return obj
