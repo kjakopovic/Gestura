@@ -56,16 +56,6 @@ def parse_utc_isoformat(ts: str) -> datetime:
     return datetime.fromisoformat(ts)
 
 
-def convert_decimals(obj):
-    if isinstance(obj, Decimal):
-        return float(obj)
-    if isinstance(obj, dict):
-        return {k: convert_decimals(v) for k, v in obj.items()}
-    if isinstance(obj, list):
-        return [convert_decimals(v) for v in obj]
-    return obj
-
-
 def convert_decimal_to_float(obj):
     """
     In-place convert any Decimal values up to 4 dict-levels deep into floats.
@@ -95,11 +85,26 @@ def convert_decimal_to_float(obj):
                                 for k4, v4 in v3.items():
                                     if isinstance(v4, Decimal):
                                         v3[k4] = float(v4)
+    # Handle obj as a list
     elif isinstance(obj, list):
         for i, v in enumerate(obj):
+            # If item is a Decimal, convert to float
             if isinstance(v, Decimal):
                 obj[i] = float(v)
-            if isinstance(v, dict):
+            # If item is a list, go trough a sub-list
+            elif isinstance(v, list):
+                # Level 1
+                for j, v1 in enumerate(v):
+                    # If item is a Decimal, convert to float
+                    if isinstance(v1, Decimal):
+                        v[j] = float(v1)
+                    # If item is a dict, go trough a sub-dict
+                    elif isinstance(v1, dict):
+                        # Level 2
+                        for k1, v1 in v1.items():
+                            if isinstance(v1, Decimal):
+                                v[k1] = float(v1)
+            elif isinstance(v, dict):
                 # Level 1
                 for k1, v1 in v.items():
                     if isinstance(v1, Decimal):
