@@ -65,11 +65,21 @@ def convert_decimal_to_float(obj):
         for k, v in obj.items():
             if isinstance(v, Decimal):
                 obj[k] = float(v)
+            elif isinstance(v, dict):
+                obj[k] = convert_decimal_to_float_object(v)
     elif isinstance(obj, list):
         for i, v in enumerate(obj):
             if isinstance(v, Decimal):
                 obj[i] = float(v)
     elif isinstance(obj, Decimal):
         return float(obj)
+
+    return obj
+
+
+def convert_decimal_to_float_object(obj: dict):
+    for k, v in obj.items():
+        if isinstance(v, Decimal):
+            obj[k] = float(v)
 
     return obj
