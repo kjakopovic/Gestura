@@ -104,6 +104,12 @@ def convert_decimal_to_float(obj):
                 for k1, v1 in v.items():
                     if isinstance(v1, Decimal):
                         v[k1] = float(v1)
+
+                    elif isinstance(v1, dict):
+                        # Level 2
+                        for k2, v2 in v1.items():
+                            if isinstance(v2, Decimal):
+                                v1[k2] = float(v2)
     elif isinstance(obj, Decimal):
         return float(obj)
 
