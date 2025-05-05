@@ -5,6 +5,7 @@ import bcrypt
 import json
 from moto import mock_aws
 from boto3 import resource, client
+from decimal import Decimal
 
 class LambdaDynamoDBClass:
     """
@@ -28,6 +29,7 @@ class BaseTestSetup(unittest.TestCase):
         os.environ["USERS_TABLE_NAME"] = "test_users_table"
         os.environ["LANGUAGES_TABLE_NAME"] = "test_languages_table"
         os.environ["BATTLEPASS_TABLE_NAME"] = "test_battlepass_table"
+        os.environ["ITEMS_TABLE_NAME"] = "test_items_table"
         os.environ["JWT_SECRET_NAME"] = "secret"
         os.environ["SECRETS_REGION_NAME"] = "eu-central-1"
         os.environ["AWS_REGION"] = "eu-central-1"
@@ -105,6 +107,34 @@ class BaseTestSetup(unittest.TestCase):
         )
         self.battlepass_table.meta.client.get_waiter('table_exists').wait(TableName=os.environ["BATTLEPASS_TABLE_NAME"])
 
+        # Items table
+        self.dynamodb = resource('dynamodb', region_name='eu-central-1')
+        self.items_table = self.dynamodb.create_table(
+            TableName=os.environ["ITEMS_TABLE_NAME"],
+            AttributeDefinitions=[
+                {"AttributeName": "id", "AttributeType": "S"},
+                {"AttributeName": "name", "AttributeType": "S"}
+            ],
+            KeySchema=[
+                {"AttributeName": "id", "KeyType": "HASH"}
+            ],
+            GlobalSecondaryIndexes=[
+                {
+                    'IndexName': 'name-index',
+                    'KeySchema': [
+                        {"AttributeName": "name", "KeyType": "HASH"}
+                    ],
+                    'Projection': {'ProjectionType': 'ALL'},
+                    'ProvisionedThroughput': {
+                        'ReadCapacityUnits': 5,
+                        'WriteCapacityUnits': 5
+                    }
+                }
+            ],
+            BillingMode="PAY_PER_REQUEST"
+        )
+        self.items_table.meta.client.get_waiter('table_exists').wait(TableName=os.environ["ITEMS_TABLE_NAME"])
+
         # Sample user data
         self.sample_user_pass = "password123"
 
@@ -135,6 +165,28 @@ class BaseTestSetup(unittest.TestCase):
                 }
             ],
             "coins": 100,
+            "items_inventory": [
+                {
+                    "item_id": "item-1",
+                    "quantity": 2,
+                    "acquired_date": "2023-06-15T12:30:00Z"
+                },
+                {
+                    "item_id": "item-3",
+                    "quantity": 1,
+                    "acquired_date": "2023-07-20T09:45:00Z"
+                },
+                {
+                    "item_id": "chest-1",
+                    "quantity": 3,
+                    "acquired_date": "2023-08-05T18:20:00Z"
+                },
+                {
+                    "item_id": "coins-1",
+                    "quantity": 5,
+                    "acquired_date": "2023-09-10T14:15:00Z"
+                }
+            ],
         }
 
         self.users_table.put_item(Item=self.sample_user)
@@ -219,6 +271,70 @@ class BaseTestSetup(unittest.TestCase):
         ]
         for battlepass in self.sample_battlepasses:
             self.battlepass_table.put_item(Item=battlepass)
+
+        # Sample items data
+        self.sample_items = [
+            {
+                "id": "item-1",
+                "name": "Full Hearts",
+                "image_url": "https://example.com/images/full_hearts.png",
+                "price": Decimal("100.00"),
+                "category": "item",
+                "effect": {"hearts": {"amount": 5}}
+            },
+                {
+                    "id": "item-2",
+                    "name": "One Heart",
+                    "image_url": "https://example.com/images/one_heart.png",
+                    "price": Decimal("25.00"),
+                    "category": "item",
+                    "effect": {"hearts": {"amount": 1}}
+                },
+                {
+                    "id": "item-3",
+                    "name": "Double XP",
+                    "image_url": "https://example.com/images/double_xp.png",
+                    "price": Decimal("150.00"),
+                    "category": "item",
+                    "effect": {"xp": {"multiplier": 2, "seconds_in_use": 3600}}
+                },
+                {
+                    "id": "coins-1",
+                    "name": "Small Coin Pack",
+                    "image_url": "https://example.com/images/small_coins.png",
+                    "price": Decimal("1.99"),
+                    "category": "coins",
+                    "effect": {"coins": 100}
+                },
+                {
+                    "id": "coin-2",
+                    "name": "Medium Coin Pack",
+                    "image_url": "https://example.com/images/medium_coins.png",
+                    "price": Decimal("4.99"),
+                    "category": "coins",
+                    "effect": {"coins": 600}
+                },
+                {
+                    "id": "chest-1",
+                    "name": "Bronze Chest",
+                    "image_url": "https://example.com/images/bronze_chest.png",
+                    "price": Decimal("50.00"),
+                    "category": "chest",
+                    "effect": {"items": {"min_items": 1, "max_items": 3}}
+                },
+                {
+                    "id": "chest-2",
+                    "name": "Gold Chest",
+                    "image_url": "https://example.com/images/gold_chest.png",
+                    "price": Decimal("50.00"),
+                    "category": "chest",
+                    "effect": {"items": {"min_items": 4, "max_items": 8}}
+                }
+            ]
+
+            # Insert sample items into the items table
+        for item in self.sample_items:
+            self.items_table.put_item(Item=item)
 
 
     @staticmethod

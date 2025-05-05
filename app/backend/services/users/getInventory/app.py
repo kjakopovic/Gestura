@@ -64,9 +64,9 @@ def lambda_handler(event, context):
 
     active_battlepass = get_active_battlepass_seasons(battlepass_dynamodb)
     if active_battlepass:
-        season_id = active_battlepass.get("season_id")
+        season_id = active_battlepass.get("season")
 
-        current_bp = next((bp for bp in user_battlepass or [] if bp.get("season_id") == season_id), None)
+        current_bp = next((bp for bp in user_battlepass or [] if bp.get("season") == season_id), None)
 
         if not current_bp:
             logger.info(f"User battlepass not found for season ID: {season_id}."
