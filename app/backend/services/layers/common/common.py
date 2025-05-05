@@ -3,6 +3,7 @@ import json
 import bcrypt
 import logging
 from decimal import Decimal
+from typing import Any, Union
 
 logger = logging.getLogger("common")
 logger.setLevel(logging.DEBUG)
@@ -56,12 +57,20 @@ def parse_utc_isoformat(ts: str) -> datetime:
     return datetime.fromisoformat(ts)
 
 
-def convert_decimal_to_float(obj):
-    if isinstance(obj, Decimal):
-        return float(obj)
-    elif isinstance(obj, dict):
-        return {k: convert_decimal_to_float(v) for k, v in obj.items()}
+def convert_decimal_to_float(obj: Union[dict, list]) -> Union[dict, list]:
+    """
+    In-place: convert any Decimal values in the top level of
+    `obj` (dict or list) into floats.
+    """
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if isinstance(v, Decimal):
+                obj[k] = float(v)
     elif isinstance(obj, list):
-        return [convert_decimal_to_float(i) for i in obj]
-    else:
-        return obj
+        for i, v in enumerate(obj):
+            if isinstance(v, Decimal):
+                obj[i] = float(v)
+    elif isinstance(obj, Decimal):
+        return float(obj)
+
+    return obj
