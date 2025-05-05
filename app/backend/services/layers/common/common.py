@@ -56,7 +56,7 @@ def parse_utc_isoformat(ts: str) -> datetime:
     return datetime.fromisoformat(ts)
 
 
-def convert_decimal_to_float(obj: Any) -> Any:
+def convert_decimal_to_float(obj):
     """
     In-place convert every Decimal anywhere inside obj (dicts/lists mixed),
     without using recursion.
