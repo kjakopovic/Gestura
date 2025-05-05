@@ -4,6 +4,7 @@ import json
 
 from boto3 import client
 from boto3.dynamodb.conditions import Key
+from botocore.exceptions import ClientError
 
 logger = logging.getLogger("OnDisconnectWss")
 logger.setLevel(logging.DEBUG)
@@ -43,43 +44,51 @@ def lambda_handler(event, context):
 
     rooms = chatRoomDb.table.scan().get("Items", [])
     logger.info(f"Rooms: {rooms}")
+
     for room in rooms:
-        users = room.get("user_connections")
+        room_id = room["chat_id"]
+        user_conns: dict = room.get("user_connections", {})
+        conn_ids = list(user_conns.keys())
 
-        logger.info(f"{room} - Users: {users}")
-        if connection_id in users:
-            if isinstance(users, set):
-                temp_users = list(users)
-                if len(temp_users) <= 1:
-                    logger.info(f"No users in room {room['chat_id']}")
-                    chatRoomDb.table.delete_item(Key={"chat_id": room["chat_id"]})
-                    logger.info(f"Deleted empty room {room['chat_id']}")
-                    continue
+        logger.debug(f"Room {room_id} has connections: {conn_ids}")
 
-            logger.info(
-                f"Removing connection {connection_id} from room {room['chat_id']}"
-            )
-            # remove
-            chatRoomDb.table.update_item(
-                Key={"chat_id": room["chat_id"]},
-                UpdateExpression="DELETE user_connections :u",
-                ExpressionAttributeValues={":u": {connection_id}},
-                ReturnValues="ALL_NEW",
-            )
+        # if this connection isn't here, skip
+        if connection_id not in conn_ids:
+            continue
 
-            # notify remaining
-            for other in users:
-                logger.info(f"Notifying {other} about disconnection.")
+        # get current connection peer id
+        peer_id = user_conns.get(connection_id, "")
 
-                if other == connection_id:
-                    continue
+        # if it was the only one, delete the room
+        if len(conn_ids) <= 1:
+            logger.info(f"No other users in room {room_id}; deleting room.")
+            chatRoomDb.table.delete_item(Key={"chat_id": room_id})
+            continue
 
+        # remove this connection from the map
+        logger.info(f"Removing connection {connection_id} from room {room_id}")
+        resp = chatRoomDb.table.update_item(
+            Key={"chat_id": room_id},
+            UpdateExpression="REMOVE user_connections.#conn",
+            ExpressionAttributeNames={"#conn": connection_id},
+            ReturnValues="ALL_NEW",
+        )
+
+        updated_conns: dict = resp["Attributes"].get("user_connections", {})
+        remaining_ids = list(updated_conns.keys())
+        logger.info(f"Room {room_id} now has connections: {remaining_ids}")
+
+        # notify everyone else that this peer disconnected
+        for other_conn in remaining_ids:
+            try:
                 ws.post_to_connection(
-                    ConnectionId=other,
+                    ConnectionId=other_conn,
                     Data=json.dumps(
-                        {"action": "user-disconnected", "peerId": connection_id}
+                        {"action": "user-disconnected", "peerId": peer_id}
                     ).encode("utf-8"),
                 )
+            except ClientError as e:
+                logger.info(f"Skipping stale connection {other_conn}: {e}")
 
     logger.info("Successfully disconnected.")
 

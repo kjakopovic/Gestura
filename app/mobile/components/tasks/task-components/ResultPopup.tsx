@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { router } from "expo-router";
 
 import CustomButton from "@/components/CustomButton";
 
@@ -67,7 +66,6 @@ const ResultPopup = ({
     if (onDismiss) {
       onDismiss();
     }
-    router.push("/(root)/(tabs)/Home");
   };
 
   // AppState listener

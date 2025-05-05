@@ -8,58 +8,60 @@ import SettingSection, {
   SettingItemConfig,
 } from "@/components/settings/SettingSection";
 import CustomButton from "@/components/CustomButton";
+import { logout } from "@/lib/auth";
+import { useUserStore } from "@/store/useUserStore";
+import { navigateToSetting } from "@/utils/navigationUtils";
+
+// Create setting config factories to clean up the component
+const createAppSettingsConfig = (): SettingItemConfig[] => [
+  {
+    title: "PREFERENCES",
+    type: "button",
+    onPress: () => navigateToSetting("app", "Preferences"),
+  },
+  {
+    title: "NOTIFICATIONS",
+    type: "button",
+    onPress: () => navigateToSetting("app", "Notifications"),
+  },
+];
+
+const createUserSettingsConfig = (): SettingItemConfig[] => [
+  {
+    title: "LANGUAGE SELECT",
+    type: "button",
+    onPress: () => navigateToSetting("user", "LanguageSelect"),
+  },
+  {
+    title: "PERSONAL INFO",
+    type: "button",
+    onPress: () => navigateToSetting("user", "PersonalInfo"),
+  },
+  {
+    title: "SUBSCRIPTION",
+    type: "button",
+    onPress: () => navigateToSetting("user", "Subscription"),
+  },
+  {
+    title: "CUSTOMER SUPPORT",
+    type: "button",
+    onPress: () => navigateToSetting("user", "CustomerSupport"),
+  },
+];
 
 const Settings = () => {
   const router = useRouter();
+  const clearUserData = useUserStore((state) => state.clearUserData);
 
-  //hooks can't be used outside of components, hence why these consts stay here
-  const APP_SETTINGS: SettingItemConfig[] = [
-    {
-      title: "PREFERENCES",
-      type: "button",
-      onPress: () => {
-        router.push("/settings/app-settings/Preferences");
-      },
-    },
-    {
-      title: "NOTIFICATIONS",
-      type: "button",
-      onPress: () => {
-        router.push("/settings/app-settings/Notifications");
-      },
-    },
-  ];
+  // Handle logout
+  const handleLogout = async () => {
+    await logout();
+    clearUserData();
+    router.replace("/(auth)");
+  };
 
-  const USER_SETTINGS: SettingItemConfig[] = [
-    {
-      title: "LANGUAGE SELECT",
-      type: "button",
-      onPress: () => {
-        router.push("/settings/user-settings/LanguageSelect");
-      },
-    },
-    {
-      title: "PERSONAL INFO",
-      type: "button",
-      onPress: () => {
-        router.push("/settings/user-settings/PersonalInfo");
-      },
-    },
-    {
-      title: "SUBSCRIPTION",
-      type: "button",
-      onPress: () => {
-        router.push("/settings/user-settings/Subscription");
-      },
-    },
-    {
-      title: "CUSTOMER SUPPORT",
-      type: "button",
-      onPress: () => {
-        router.push("/settings/user-settings/CustomerSupport");
-      },
-    },
-  ];
+  const APP_SETTINGS = createAppSettingsConfig();
+  const USER_SETTINGS = createUserSettingsConfig();
 
   return (
     <>
@@ -72,7 +74,7 @@ const Settings = () => {
           </View>
           <View className="mt-10">
             <CustomButton
-              onPress={() => {}}
+              onPress={handleLogout}
               text="LOG OUT"
               style="error"
               noMargin

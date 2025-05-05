@@ -73,7 +73,10 @@ def validate_refresh_token(refresh_token, refresh_secret, jwt_secret):
         logger.info(f"New JWT token created successfully for email: {user_email}")
         return build_response(
             200,
-            {"message": "JWT token verified successfully"},
+            {
+                "message": "JWT token verified successfully",
+                "x-access-token": new_jwt_token,
+            },
             {"x-access-token": new_jwt_token, "Content-Type": "application/json"},
         )
     except Exception as e:

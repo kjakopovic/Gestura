@@ -48,6 +48,10 @@ Resources:
     Properties:
       Name: !Sub "UsersApi-${StageName}"
       StageName: !Ref StageName
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'*'"
+        AllowMethods: "'*'"
       Auth:
         ApiKeyRequired: false
 
@@ -459,6 +463,72 @@ Resources:
           Type: Api
           Properties:
             Path: /refresh/token
+            Method: GET
+            RestApiId: !Ref UsersApi
+
+  ClaimBattlepassLevelFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: claimBattlepassLevel/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          BATTLEPASS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-BattlepassTable"
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        ClaimBattlePassLevelEndpoint:
+          Type: Api
+          Properties:
+            Path: /battlepass/claim
+            Method: POST
+            RestApiId: !Ref UsersApi
+
+  GetBattlepassLevelsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: getBattlepassLevels/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          BATTLEPASS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-BattlepassTable"
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        ClaimBattlePassLevelEndpoint:
+          Type: Api
+          Properties:
+            Path: /battlepass
             Method: GET
             RestApiId: !Ref UsersApi
 
