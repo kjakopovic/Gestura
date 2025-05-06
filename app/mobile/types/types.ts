@@ -82,3 +82,11 @@ export interface ApiUserResponse {
   languages: LanguageData[];
   message: string;
 }
+
+export interface HeartsApiResponse {
+  message: string;
+  data: {
+    hearts: number;
+    hearts_next_refill: string | null;
+  };
+}

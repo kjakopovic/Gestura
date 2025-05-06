@@ -6,6 +6,7 @@ interface UserState {
   user: UserData | null;
   languages: LanguageData[];
   selectedLanguage: string | null;
+  heartsNextRefill: string | null; // Add this to store the refill timestamp
 
   // Loading states
   isLoading: boolean;
@@ -20,6 +21,7 @@ interface UserState {
     value: UserData[K]
   ) => void;
   setUserDataFromApi: (apiResponse: ApiUserResponse) => void;
+  setHeartsNextRefill: (timestamp: string | null) => void;
   clearUserData: () => void;
 }
 
@@ -29,6 +31,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
   user: null,
   languages: [],
   selectedLanguage: null,
+  heartsNextRefill: null, // Initialize with null
   isLoading: false,
   error: null,
 
@@ -43,6 +46,8 @@ export const useUserStore = create<UserState>()((set, get) => ({
     set((state) => ({
       user: state.user ? { ...state.user, [key]: value } : null,
     })),
+
+  setHeartsNextRefill: (timestamp) => set({ heartsNextRefill: timestamp }),
 
   setUserDataFromApi: (apiResponse) => {
     if (apiResponse.users && apiResponse.languages) {
@@ -59,5 +64,6 @@ export const useUserStore = create<UserState>()((set, get) => ({
     }
   },
 
-  clearUserData: () => set({ user: null, selectedLanguage: null }),
+  clearUserData: () =>
+    set({ user: null, selectedLanguage: null, heartsNextRefill: null }),
 }));

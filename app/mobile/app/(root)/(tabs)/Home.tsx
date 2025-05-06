@@ -30,7 +30,7 @@ const Home = () => {
   // Use the extracted hooks
   const { levels, isLoadingMore, handleScrollToEnd, loadMoreLevels } =
     useLevel();
-  const { isLoading, userStats } = useUserData();
+  const { isLoading, userStats, heartsNextRefill } = useUserData();
 
   // Use the scroll handler
   const scrollHandlerProps = useScrollHandler(handleScrollToEnd);
@@ -57,7 +57,7 @@ const Home = () => {
 
   return (
     <View className="bg-grayscale-800 flex-1">
-      <PlayerInfoBar {...userStats} />
+      <PlayerInfoBar {...userStats} heartsNextRefill={heartsNextRefill} />
       <ScrollView
         ref={scrollViewRef}
         className="h-full w-full"

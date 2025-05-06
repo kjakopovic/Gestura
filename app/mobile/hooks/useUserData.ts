@@ -1,13 +1,18 @@
 import { useState, useEffect, useCallback } from "react";
 import { api } from "@/lib/api";
-import { ApiUserResponse } from "@/types/types";
+import { ApiUserResponse, HeartsApiResponse } from "@/types/types";
 import { useUserStore } from "@/store/useUserStore";
 
 export const useUserData = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const setUserDataFromApi = useUserStore((state) => state.setUserDataFromApi);
+  const setHeartsNextRefill = useUserStore(
+    (state) => state.setHeartsNextRefill
+  );
   const userData = useUserStore((state) => state.user);
+  const userHearts = useUserStore((state) => state.user?.hearts || 5);
+  const heartsNextRefill = useUserStore((state) => state.heartsNextRefill);
 
   // Create a stats object from user data
   const userStats = {
@@ -25,9 +30,18 @@ export const useUserData = () => {
 
     try {
       const result = await api.get<ApiUserResponse>("/users");
+      const heartsData = await api.get<HeartsApiResponse>("/hearts");
 
-      if (result.success && result.data) {
-        setUserDataFromApi(result.data);
+      // Check if the API call was successful and data exists
+      if (result.success && result.data && heartsData.data) {
+        // Store hearts_next_refill in the global state
+        setHeartsNextRefill(heartsData.data.data.hearts_next_refill);
+
+        const mergedData = {
+          ...result.data,
+          hearts: heartsData.data.data.hearts,
+        };
+        setUserDataFromApi(mergedData);
       } else {
         setError(result.error?.message || "Failed to fetch user data");
         console.error("Error fetching user data:", result.error);
@@ -40,7 +54,7 @@ export const useUserData = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [setUserDataFromApi]);
+  }, [setUserDataFromApi, setHeartsNextRefill]);
 
   // Fetch user data on mount
   useEffect(() => {
@@ -52,6 +66,8 @@ export const useUserData = () => {
     error,
     userStats,
     userData,
+    userHearts,
+    heartsNextRefill,
     refreshUserData: fetchUserData,
   };
 };
