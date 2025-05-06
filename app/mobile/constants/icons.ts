@@ -1,3 +1,4 @@
+import ads from "@/assets/icons/ads.png";
 import apple from "@/assets/icons/apple.png";
 import arrowBack from "@/assets/icons/arrow-back.png";
 import badge from "@/assets/icons/badge.png";
@@ -29,8 +30,10 @@ import nonPremium from "@/assets/icons/non-premium.png";
 import people from "@/assets/icons/people.png";
 import peopleBW from "@/assets/icons/peopleBW.png";
 import person from "@/assets/icons/person.png";
+import premiumBadge from "@/assets/icons/premium_badge_2.png";
 import profile from "@/assets/icons/profile.png";
 import shop from "@/assets/icons/shop.png";
+import speaker from "@/assets/icons/speaker.png";
 import star1 from "@/assets/icons/star1.png";
 import star2 from "@/assets/icons/star2.png";
 import starTrophy from "@/assets/icons/star-trophy.png";
@@ -40,6 +43,7 @@ import trophy from "@/assets/icons/trophy.png";
 
 
 export {
+  ads,
   apple,
   arrowBack,
   badge,
@@ -68,11 +72,13 @@ export {
   logoText,
   more,
   nonPremium,
+  premiumBadge,
   people,
   peopleBW,
   person,
   profile,
   shop,
+  speaker,
   star1,
   star2,
   starTrophy,

@@ -4,7 +4,7 @@ import React from "react";
 type CustomButtonProps = {
   onPress: () => void;
   text: string;
-  style?: "base" | "success" | "error" | "fail";
+  style?: "base" | "success" | "error" | "fail" | "primary";
   noMargin?: boolean;
   disabled?: boolean;
 };
@@ -24,6 +24,8 @@ const CustomButton = ({
           ? "border-grayscale-400 bg-grayscale-700"
           : style === "success"
           ? "border-success bg-grayscale-700"
+          : style === "primary"
+          ? "border-primary bg-primary"
           : "border-error bg-error/10"
       } rounded-2xl ${noMargin ? "" : "mt-16"} ${
         disabled ? "opacity-50" : "opacity-100"
@@ -38,6 +40,8 @@ const CustomButton = ({
             ? "text-grayscale-100"
             : style === "success"
             ? "text-success"
+            : style === "primary"
+            ? "text-grayscale-800"
             : "text-error"
         } text-lg font-interExtraBold text-center`}
       >
