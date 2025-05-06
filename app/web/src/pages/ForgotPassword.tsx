@@ -16,7 +16,6 @@ import {
   handleForgotPasswordValidate,
   handlePasswordChange,
 } from "@/utils/auth";
-import { set } from "lodash";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();

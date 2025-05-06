@@ -14,7 +14,6 @@ import { AuthFooter } from "@/components/auth";
 import { handleRegister } from "@/utils/auth";
 import { useAuth } from "@/hooks/useAuth";
 import { APP_ROUTES } from "@/constants/common";
-import { set } from "lodash";
 
 const SignUp = () => {
   const auth = useAuth();

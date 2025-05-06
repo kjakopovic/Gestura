@@ -1,6 +1,12 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, ButtonType, VideoPlayer } from "@/components/common";
+import {
+  Button,
+  ButtonType,
+  Typography,
+  TypographyType,
+  VideoPlayer,
+} from "@/components/common";
 import { RoomContext } from "@/contexts/RoomContext";
 import { PeerState } from "@/constants/peerActions";
 import { ActionButton } from "@/components/video";
@@ -44,6 +50,7 @@ const ChatRoom = () => {
   const didMountRef = useRef(false);
 
   const [signer, setSigner] = useState<boolean>(false);
+  const [spokenLetters, setSpokenLetters] = useState<string[]>([]);
 
   useEffect(() => {
     ort.InferenceSession.create(ASL_MODEL_PATH, {
@@ -85,7 +92,7 @@ const ChatRoom = () => {
       const tooSoon = now - lastSentTimeRef.current < 1000;
 
       if (!seenRecently || (seenRecently && !tooSoon)) {
-        console.log("Detected letter:", letter);
+        setSpokenLetters((prev) => [...prev, letter]);
         lastSentTimeRef.current = now;
         sendText(letter);
 
@@ -190,7 +197,7 @@ const ChatRoom = () => {
         )}
       </div>
       <div className="w-[35%] h-full p-2 md:p-10 flex flex-col items-center justify-between">
-        <div className="w-full flex flex-col gap-5">
+        <div className="w-full flex flex-col items-center justify-center gap-5">
           <Button
             type={ButtonType.PRIMARY_FULL}
             text={signer ? "Signer" : "Talker"}
@@ -209,6 +216,16 @@ const ChatRoom = () => {
               }}
             />
           )}
+          <div className="flex flex-wrap gap-2">
+            {spokenLetters.map((letter, idx) => (
+              <Typography
+                key={idx}
+                text={letter}
+                type={TypographyType.LANDING_SUBTITLE}
+                styles="whitespace-nowrap text-white"
+              />
+            ))}
+          </div>
         </div>
         <div className="flex flex-col gap-5 w-full">
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
