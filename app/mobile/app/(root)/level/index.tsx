@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ScrollView, ActivityIndicator, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
 import Task from "@/components/tasks/Task";
 import TaskComplete from "@/components/tasks/TaskComplete";
@@ -10,6 +10,7 @@ import { useLevelTasks, LevelTask } from "@/hooks/useLevelTasks";
 import { fetchLevelTasks } from "@/utils/levelApi";
 
 const LevelScreen = () => {
+  const router = useRouter();
   const { completeLevel } = useLevel();
   const params = useLocalSearchParams();
   const levelId = params.id ? parseInt(params.id as string, 10) : 1;
@@ -96,7 +97,9 @@ const LevelScreen = () => {
         {showCompletionScreen ? (
           <TaskComplete
             stats={completionStats}
-            onContinue={goToHome}
+            onContinue={() => {
+              goToHome(router);
+            }}
             correctTasksIndices={correctTaskIndices}
             allTasks={allTasks}
             startTime={startTime}

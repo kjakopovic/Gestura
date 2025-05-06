@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
+import { NavigationContainer } from "@react-navigation/native";
 
 import "./globals.css";
 import { StatusBar } from "expo-status-bar";
@@ -46,17 +47,9 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <NavigationContainer>
       <StatusBar style="light" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          animation: "fade",
-        }}
-      >
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(root)" options={{ headerShown: false }} />
-      </Stack>
-    </>
+      <Stack screenOptions={{ headerShown: false }} />
+    </NavigationContainer>
   );
 }

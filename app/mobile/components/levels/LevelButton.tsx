@@ -15,7 +15,7 @@ interface LevelButtonProps {
   state: LevelState;
   style: string;
   icon: ImageSourcePropType;
-  onPress: () => void; // This is a callback from parent, not direct navigation
+  onPress: () => void;
 }
 
 const LevelButton = ({

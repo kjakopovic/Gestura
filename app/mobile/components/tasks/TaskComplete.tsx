@@ -10,6 +10,7 @@ import { api } from "@/lib/api";
 import { LevelTask } from "@/hooks/useLevelTasks";
 import { extractLetterFromUrl } from "@/utils/taskUtils";
 import { navigateToHome } from "@/utils/navigationUtils";
+import { useRouter } from "expo-router";
 
 interface TaskCompleteProps {
   stats: LevelCompletionStats;
@@ -37,6 +38,7 @@ const TaskComplete = ({
   startTime = new Date(Date.now() - 120000), // Default to 2 minutes ago if not provided
   levelId = 1,
 }: TaskCompleteProps) => {
+  const router = useRouter();
   const [serverStats, setServerStats] = useState<ServerStats>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -116,11 +118,7 @@ const TaskComplete = ({
 
   // Handle continue button press
   const handleContinue = () => {
-    if (onContinue) {
-      onContinue();
-    } else {
-      navigateToHome();
-    }
+    navigateToHome(router);
   };
 
   // Merge local stats with server stats

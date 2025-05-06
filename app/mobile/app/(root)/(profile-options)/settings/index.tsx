@@ -13,44 +13,44 @@ import { useUserStore } from "@/store/useUserStore";
 import { navigateToSetting } from "@/utils/navigationUtils";
 
 // Create setting config factories to clean up the component
-const createAppSettingsConfig = (): SettingItemConfig[] => [
-  {
-    title: "PREFERENCES",
-    type: "button",
-    onPress: () => navigateToSetting("app", "Preferences"),
-  },
-  {
-    title: "NOTIFICATIONS",
-    type: "button",
-    onPress: () => navigateToSetting("app", "Notifications"),
-  },
-];
-
-const createUserSettingsConfig = (): SettingItemConfig[] => [
-  {
-    title: "LANGUAGE SELECT",
-    type: "button",
-    onPress: () => navigateToSetting("user", "LanguageSelect"),
-  },
-  {
-    title: "PERSONAL INFO",
-    type: "button",
-    onPress: () => navigateToSetting("user", "PersonalInfo"),
-  },
-  {
-    title: "SUBSCRIPTION",
-    type: "button",
-    onPress: () => navigateToSetting("user", "Subscription"),
-  },
-  {
-    title: "CUSTOMER SUPPORT",
-    type: "button",
-    onPress: () => navigateToSetting("user", "CustomerSupport"),
-  },
-];
 
 const Settings = () => {
   const router = useRouter();
+  const createAppSettingsConfig = (): SettingItemConfig[] => [
+    {
+      title: "PREFERENCES",
+      type: "button",
+      onPress: () => navigateToSetting("app", "Preferences", router),
+    },
+    {
+      title: "NOTIFICATIONS",
+      type: "button",
+      onPress: () => navigateToSetting("app", "Notifications", router),
+    },
+  ];
+
+  const createUserSettingsConfig = (): SettingItemConfig[] => [
+    {
+      title: "LANGUAGE SELECT",
+      type: "button",
+      onPress: () => navigateToSetting("user", "LanguageSelect", router),
+    },
+    {
+      title: "PERSONAL INFO",
+      type: "button",
+      onPress: () => navigateToSetting("user", "PersonalInfo", router),
+    },
+    {
+      title: "SUBSCRIPTION",
+      type: "button",
+      onPress: () => navigateToSetting("user", "Subscription", router),
+    },
+    {
+      title: "CUSTOMER SUPPORT",
+      type: "button",
+      onPress: () => navigateToSetting("user", "CustomerSupport", router),
+    },
+  ];
   const clearUserData = useUserStore((state) => state.clearUserData);
 
   // Handle logout

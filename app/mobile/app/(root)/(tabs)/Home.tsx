@@ -8,8 +8,10 @@ import { useUserData } from "@/hooks/useUserData";
 import { navigateToLevel } from "@/utils/navigationUtils";
 import { useScrollHandler } from "@/utils/levelPathUtils";
 import { LevelData } from "@/types/levels";
+import { useRouter } from "expo-router";
 
 const Home = () => {
+  const router = useRouter();
   const scrollViewRef = useRef<ScrollView>(null);
   const { isLoading, userStats } = useUserData();
 
@@ -50,7 +52,7 @@ const Home = () => {
 
   // Handle level press
   const handleLevelPress = (levelId: number) => {
-    navigateToLevel(levelId);
+    navigateToLevel(levelId, router);
   };
 
   // Show loading indicator when data is being fetched
