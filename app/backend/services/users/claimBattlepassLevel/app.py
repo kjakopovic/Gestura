@@ -87,21 +87,29 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
     user_battlepass = next(
         (bp for bp in user_battlepasses if bp.get("season_id") == battlepass_season_id), None
     )
+
     if not user_battlepass:
         logger.info(f"User battlepass not found for season ID: {battlepass_season_id}."
                     f" Adding new battlepass season to user.")
+
+        unlocked_levels = []
+        locked_levels = [level.get("level") for level in battlepass_levels]
+        current_level = 0
 
         new_battlepass = {
             "season_id": battlepass_season_id,
             "xp": 0,
             "claimed_levels": [],
+            "current_level": current_level,
+            "unlocked_levels": unlocked_levels,
+            "locked_levels": locked_levels
         }
 
         user_battlepasses.append(new_battlepass)
 
         user_dynamodb.table.update_item(
             Key={"email": email},
-            UpdateExpression="SET battlepass = :battlepass_",
+            UpdateExpression="SET battlepass = :battlepass",
             ExpressionAttributeValues={
                 ":battlepass": user_battlepasses
             }
@@ -111,26 +119,51 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
         logger.info(f"New battlepass season added to user: {user_battlepass}")
 
     user_xp = user_battlepass.get("xp", 0)
-
     if user_xp < required_xp:
         logger.error(f"User does not have enough XP to claim level {claim_level}")
         return build_response(400, {"message": "Not enough XP to claim this level"})
 
     claimed_levels = user_battlepass.get("claimed_levels", [])
+    unlocked_levels = user_battlepass.get("unlocked_levels", [])
+    locked_levels = user_battlepass.get("locked_levels", [])
 
+    # Check if the level is already claimed
     if claim_level in claimed_levels:
         logger.error(f"Battlepass level {claim_level} has already been claimed.")
         return build_response(400, {"message": f"Battlepass level {claim_level} has already been claimed."})
+
+    # Check if level is unlocked
+    if claim_level not in unlocked_levels or claim_level in locked_levels:
+        logger.error(f"Battlepass level {claim_level} is not available for claiming.")
+        return build_response(400, {"message": f"Battlepass level {claim_level} is not unlocked."})
 
     user_coins = user.get("coins", 0)
     level_coins = battlepass_level.get("coins", 0)
 
     user_coins += level_coins
     claimed_levels.append(int(claim_level))
+
+    current_level = 0
+    unlocked_levels = []
+    locked_levels = []
+    current_xp = 0
+    for level in sorted(battlepass_levels, key=lambda x: x.get("level")):
+        level_number = level.get("level")
+        level_required_xp = level.get("required_xp", 0)
+        current_xp += level_required_xp
+
+        if user_xp >= current_xp:
+            current_level = level_number
+            unlocked_levels.append(level_number)
+        else:
+            locked_levels.append(level_number)
+
     for i, bp in enumerate(user_battlepasses):
         if bp.get("season_id") == battlepass_season_id:
             user_battlepasses[i]["claimed_levels"] = claimed_levels
-
+            user_battlepasses[i]["current_level"] = current_level
+            user_battlepasses[i]["unlocked_levels"] = unlocked_levels
+            user_battlepasses[i]["locked_levels"] = locked_levels
 
     user_dynamodb.table.update_item(
         Key={"email": email},

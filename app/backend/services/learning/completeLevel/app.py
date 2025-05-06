@@ -80,9 +80,14 @@ def lambda_handler(event, context):
         user["letters_learned"], request.language_id, request.letters_learned
     )
 
+    active_items, item_removed = check_active_items(user, usersTable)
+
     xp, coins = calculate_xp_and_coins(request.correct_answers_versions)
     xp = Decimal(str(xp))
     coins = Decimal(str(coins))
+
+    multiplier = get_xp_multiplier(active_items)
+    xp *= multiplier
 
     # --- Updating user level for this language ---
     user_levels = user.get("current_level", {})
@@ -95,6 +100,9 @@ def lambda_handler(event, context):
         f"Updating user {email} with time played: {time_played}, task level: {user_levels[request.language_id]}, letters learned: {letters_learned}"
     )
 
+    if not item_removed:
+        active_items = None
+
     update_user(
         usersTable,
         email,
@@ -104,6 +112,7 @@ def lambda_handler(event, context):
         user.get("xp", 0) + xp,
         user_bp,
         user.get("coins", 0) + coins,
+        active_items
     )
 
     response_body = {
@@ -125,6 +134,7 @@ def update_user(
     xp,
     battlepass,
     coins,
+    activated_items,
 ):
     logger.info(f"Updating user with email: {email}")
 
@@ -154,6 +164,11 @@ def update_user(
     logger.debug(f"Updating coins to {coins}")
     update_expression += "coins = :coins, "
     expression_attribute_values[":coins"] = coins
+
+    if activated_items is not None:
+        logger.debug(f"Updating activated items to {activated_items}")
+        update_expression += "activated_items = :activated_items, "
+        expression_attribute_values[":activated_items"] = activated_items
 
     dynamodb.table.update_item(
         Key={"email": email},
@@ -302,3 +317,58 @@ def calculate_xp_and_coins(correct_answers_versions):
     coins = int(xp * multiplier)
 
     return xp, coins
+
+
+def check_active_items(user, dynamodb):
+    """
+    Check if the user has any active items and update the user accordingly.
+    """
+    active_items = user.get("activated_items", [])
+    if not active_items:
+        logger.debug(f"User {user['email']} has no active items.")
+        return None, False
+
+    logger.info(f"User {user['email']} has active items: {active_items}")
+    logger.info(f"Checking if active items are expired.")
+    current_time = datetime.now(timezone.utc)
+
+    item_removed = False
+
+    for item in active_items:
+        if "expires_at" in item:
+            expires_at = parse_utc_isoformat(item["expires_at"])
+            if expires_at < current_time:
+                logger.info(f"Item {item} has expired.")
+                active_items.remove(item)
+                item_removed = True
+
+    logger.info(f"User {user['email']} has active items after expiration check: {active_items}")
+    return active_items, item_removed
+
+
+def get_xp_multiplier(active_items):
+    """
+    Calculate the XP multiplier based on active items.
+
+    Args:
+        active_items: List of user's activated items
+
+    Returns:
+        Total XP multiplier (default 1.0 if no multipliers found)
+    """
+    if not active_items:
+        return Decimal('1.0')
+
+    multiplier = Decimal('1.0')
+    current_time = datetime.now(timezone.utc)
+
+    for item in active_items:
+        # Check if item has effects with a multiplier and is an XP boost
+        if (item.get("category") == "xp_boost" and
+                "effects" in item and
+                "multiplier" in item["effects"]):
+
+                multiplier *= item["effects"]["multiplier"]
+
+    logger.info(f"XP multiplier: {multiplier}")
+    return multiplier

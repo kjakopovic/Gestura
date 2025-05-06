@@ -2,8 +2,12 @@ import json
 import sys
 import os
 import unittest
+import random
+from decimal import Decimal
 from unittest.mock import patch
 from base_test_setup import BaseTestSetup
+from datetime import datetime, timezone, timedelta
+
 
 original_path = sys.path.copy()
 BaseTestSetup.setup_paths('completeLevel')
@@ -218,9 +222,6 @@ class TestCompleteLevel(BaseTestSetup):
         """
         Test successful level completion.
         """
-        from decimal import Decimal
-        import random
-
         original_uniform = random.uniform
         random.uniform = lambda a, b: 1.5
 
@@ -302,8 +303,6 @@ class TestCompleteLevel(BaseTestSetup):
         """
         Test when the user has no current level for given language.
         """
-        from decimal import Decimal
-
         email = "test@mail.com"
         jwt_token = generate_jwt_token(email)
 
@@ -363,8 +362,6 @@ class TestCompleteLevel(BaseTestSetup):
         """
         Test level completion when there's no active battlepass.
         """
-        from decimal import Decimal
-
         email = "test@mail.com"
         jwt_token = generate_jwt_token(email)
 
@@ -430,6 +427,244 @@ class TestCompleteLevel(BaseTestSetup):
         # Verify battlepass_xp array was preserved but not modified
         self.assertEqual(updated_battlepass_xp, initial_battlepass_xp,
                          "Battlepass XP should remain unchanged when no active battlepass")
+
+
+    def test_complete_level_with_xp_multiplier(self):
+        """
+        Test level completion with an active battlepass that has an XP multiplier.
+        """
+        # Fix random.uniform to return consistent value for testing
+        original_uniform = random.uniform
+        random.uniform = lambda a, b: 1.5
+
+        email = "test@mail.com"
+        jwt_token = generate_jwt_token(email)
+
+        # Get initial user state
+        initial_user = self.users_table.get_item(Key={'email': email})['Item']
+        initial_xp = Decimal(str(initial_user.get('xp', 0)))
+        initial_coins = Decimal(str(initial_user.get('coins', 0)))
+
+        # Create and add active XP multiplier to user
+        current_time = datetime.now(timezone.utc)
+        expiry_time = current_time + timedelta(hours=1)
+
+        xp_multiplier_item = {
+            "category": "xp_boost",
+            "effects": {
+                "multiplier": Decimal('2.0')  # 2x multiplier
+            },
+            "expires_at": expiry_time.isoformat()
+        }
+
+        # Update user with active item
+        self.users_table.update_item(
+            Key={'email': email},
+            UpdateExpression="SET activated_items = :items",
+            ExpressionAttributeValues={
+                ':items': [xp_multiplier_item]
+            }
+        )
+
+        # Define level completion request
+        versions = [1, 2, 3]
+        body_data = {
+            "correct_answers_versions": versions,
+            "started_at": "2023-10-01T12:00:00Z",
+            "finished_at": "2023-10-01T12:30:00Z",
+            "language_id": "en",
+            "letters_learned": ["A", "B", "C"]
+        }
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "body": json.dumps(body_data)
+        }
+
+        # Complete level
+        response = lambda_handler(event, {})
+
+        # Restore random function
+        random.uniform = original_uniform
+
+        # Verify response
+        body = json.loads(response['body'])
+        self.assertEqual(response['statusCode'], 200)
+        self.assertEqual(body['message'], "Level completed successfully")
+
+        # Get updated user
+        updated_user = self.users_table.get_item(Key={'email': email})['Item']
+        updated_xp = Decimal(str(updated_user.get('xp', 0)))
+        updated_coins = Decimal(str(updated_user.get('coins', 0)))
+
+        # Calculate expected rewards based on the algorithm with multiplier
+        xp_map = {1: 2, 2: 3, 3: 5}
+        base_xp_increase = sum(xp_map.get(v, 0) for v in versions)
+        multiplier = Decimal('2.0')
+
+        expected_xp_increase = base_xp_increase * multiplier
+        expected_xp = initial_xp + expected_xp_increase
+        expected_coins = initial_coins + Decimal(str(int(base_xp_increase * 1.5)))
+
+        print(f"Base XP: {base_xp_increase}, Multiplier: {multiplier}")
+        print(f"Expected XP increase: {expected_xp_increase}")
+        print(f"Initial XP: {initial_xp}, Expected final XP: {expected_xp}, Actual: {updated_xp}")
+
+        self.assertEqual(updated_xp, expected_xp,
+                         f"Expected XP to be {expected_xp} (base {base_xp_increase} × multiplier {multiplier}), got {updated_xp}")
+        self.assertEqual(updated_coins, expected_coins,
+                         f"Expected coins to be {expected_coins}, got {updated_coins}")
+
+    def test_complete_level_with_active_battlepass(self):
+        """
+        Test level completion when there's an active battlepass (no XP multiplier).
+        """
+        # Fix random.uniform to return consistent value for testing
+        original_uniform = random.uniform
+        random.uniform = lambda a, b: 1.5
+
+        email = "test@mail.com"
+        jwt_token = generate_jwt_token(email)
+
+        # Get initial user state
+        initial_user = self.users_table.get_item(Key={'email': email})['Item']
+        initial_xp = Decimal(str(initial_user.get('xp', 0)))
+        initial_coins = Decimal(str(initial_user.get('coins', 0)))
+        initial_battlepass = initial_user.get('battlepass', {})
+
+        print(f"INITIAL STATE:")
+        print(f"Initial XP: {initial_xp}, Initial Coins: {initial_coins}")
+        print(f"Initial battlepass: {json.dumps(initial_battlepass, default=str)}")
+
+        # Make sure user has no active items
+        self.users_table.update_item(
+            Key={'email': email},
+            UpdateExpression="REMOVE activated_items"
+        )
+
+        # Update the battlepass end date to ensure it's active
+        active_season = "1"
+        current_date = datetime.now(timezone.utc)
+        future_date = current_date + timedelta(days=30)
+
+        print(f"Setting battlepass season {active_season} as active:")
+        print(f"  Start date: {(current_date - timedelta(days=1)).isoformat()}")
+        print(f"  End date: {future_date.isoformat()}")
+
+        self.battlepass_table.update_item(
+            Key={'season': active_season},
+            UpdateExpression="SET start_date = :start, end_date = :end",
+            ExpressionAttributeValues={
+                ':start': (current_date - timedelta(days=1)).isoformat(),
+                ':end': future_date.isoformat()
+            }
+        )
+
+        # Verify there's an active battlepass
+        active_battlepass = self.battlepass_table.get_item(Key={'season': active_season})['Item']
+        self.assertIsNotNone(active_battlepass, "Battlepass should exist")
+        print(f"Active battlepass: {json.dumps(active_battlepass, default=str)}")
+
+        start_date = datetime.fromisoformat(active_battlepass['start_date'].replace('Z', '+00:00'))
+        end_date = datetime.fromisoformat(active_battlepass['end_date'].replace('Z', '+00:00'))
+        is_active = start_date < current_date < end_date
+        print(
+            f"Battlepass active: {is_active} (Current: {current_date.isoformat()}, Start: {start_date.isoformat()}, End: {end_date.isoformat()})")
+
+        self.assertTrue(is_active,
+                        f"Current date {current_date} should be between start {start_date} and end {end_date}")
+
+        # Define level completion request
+        versions = [1, 2, 3]
+        body_data = {
+            "correct_answers_versions": versions,
+            "started_at": "2023-10-01T12:00:00Z",
+            "finished_at": "2023-10-01T12:30:00Z",
+            "language_id": "en",
+            "letters_learned": ["A", "B", "C"]
+        }
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "body": json.dumps(body_data)
+        }
+
+        print(f"Completing level with versions: {versions}")
+
+        # Complete level
+        response = lambda_handler(event, {})
+        random.uniform = original_uniform
+
+        # Verify response
+        body = json.loads(response['body'])
+        print(f"Response: {json.dumps(body, default=str)}")
+        self.assertEqual(response['statusCode'], 200)
+        self.assertEqual(body['message'], "Level completed successfully")
+
+        # Get updated user
+        updated_user = self.users_table.get_item(Key={'email': email})['Item']
+        updated_xp = Decimal(str(updated_user.get('xp', 0)))
+        updated_coins = Decimal(str(updated_user.get('coins', 0)))
+        updated_battlepass = updated_user.get('battlepass', {})
+
+        print(f"\nUPDATED STATE:")
+        print(f"Updated XP: {updated_xp}, Updated Coins: {updated_coins}")
+        print(f"Updated battlepass: {json.dumps(updated_battlepass, default=str)}")
+
+        # Calculate expected rewards
+        xp_map = {1: 2, 2: 3, 3: 5}
+        base_xp_increase = sum(xp_map.get(v, 0) for v in versions)
+        expected_xp = initial_xp + base_xp_increase
+        expected_coins = initial_coins + Decimal(str(int(base_xp_increase * 1.5)))
+
+        print(f"\nEXPECTED CHANGES:")
+        print(f"Base XP increase: {base_xp_increase} (from versions {versions})")
+        print(f"Expected total XP: {expected_xp}, Expected total coins: {expected_coins}")
+
+        # Verify XP and coins were awarded correctly
+        self.assertEqual(updated_xp, expected_xp,
+                         f"Expected XP to be {expected_xp}, got {updated_xp}")
+        self.assertEqual(updated_coins, expected_coins,
+                         f"Expected coins to be {expected_coins}, got {updated_coins}")
+
+        # Verify battlepass structure exists
+        self.assertIsNotNone(updated_battlepass, "User should have a battlepass object")
+
+        # Verify the active season entry exists
+        self.assertIn(active_season, updated_battlepass,
+                      f"Battlepass should have an entry for active season {active_season}")
+
+        # Get initial XP for the season (0 if not previously set)
+        initial_season_xp = Decimal('0')
+        if active_season in initial_battlepass:
+            initial_season_xp = Decimal(str(initial_battlepass[active_season].get('xp', 0)))
+
+        print(f"Initial battlepass XP for season {active_season}: {initial_season_xp}")
+
+        # Calculate expected battlepass XP
+        expected_bp_xp = initial_season_xp + base_xp_increase
+        print(f"Expected battlepass XP: {expected_bp_xp} (initial {initial_season_xp} + increase {base_xp_increase})")
+
+        # Verify the battlepass XP was increased correctly
+        actual_bp_xp = Decimal(str(updated_battlepass[active_season].get('xp', 0)))
+        print(f"Actual battlepass XP: {actual_bp_xp}")
+
+        self.assertEqual(actual_bp_xp, expected_bp_xp,
+                         f"Battlepass XP should be {expected_bp_xp}, got {actual_bp_xp}")
+
+        # Verify XP was actually increased
+        self.assertTrue(actual_bp_xp > initial_season_xp,
+                        f"Battlepass XP should increase from {initial_season_xp} to {actual_bp_xp}")
+
+        # Verify the claimed_levels array exists
+        self.assertIn('claimed_levels', updated_battlepass[active_season],
+                      "Battlepass entry should have a claimed_levels array")
+        print(f"Claimed levels array: {updated_battlepass[active_season].get('claimed_levels', [])}")
+
 
     def _scan_table(self, table):
         """Helper method to scan entire table contents."""
