@@ -6,6 +6,7 @@ import { PeerState } from "@/constants/peerActions";
 import { ActionButton } from "@/components/video";
 import { icons } from "@/constants/icons";
 import { APP_ROUTES } from "@/constants/common";
+import useMediaQuery from "@/hooks/useMediaQuery";
 
 const ChatRoom = () => {
   const { id } = useParams();
@@ -60,13 +61,15 @@ const ChatRoom = () => {
     setRoomId(id);
   }, [setRoomId, id]);
 
+  const IS_SMALL = useMediaQuery("(max-width: 1100px)");
+
   const screenSharingVideo =
     screenSharingId === me?.id ? stream : peers[screenSharingId]?.stream;
 
   return (
     <div className="w-full h-screen flex flex-row">
       <div className="w-[65%] h-full p-2 md:p-5 flex flex-col gap-2">
-        {screenSharingId ? (
+        {screenSharingId && !IS_SMALL ? (
           <>
             <div className="w-full flex-shrink-0 relative z-0">
               <VideoPlayer
