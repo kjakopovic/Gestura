@@ -1,11 +1,26 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, ButtonType, VideoPlayer } from "@/components/common";
+import {
+  Button,
+  ButtonType,
+  Typography,
+  TypographyType,
+  VideoPlayer,
+} from "@/components/common";
 import { RoomContext } from "@/contexts/RoomContext";
 import { PeerState } from "@/constants/peerActions";
 import { ActionButton } from "@/components/video";
 import { icons } from "@/constants/icons";
 import { APP_ROUTES } from "@/constants/common";
+import useMediaQuery from "@/hooks/useMediaQuery";
+import * as ort from "onnxruntime-web";
+import Webcam from "react-webcam";
+import {
+  ASL_MODEL_PATH,
+  DETECTION_INTERVAL_MS,
+  MODEL_IMAGE_SIZE,
+} from "@/constants/model";
+import { inferenceYolo } from "@/utils/model";
 
 const ChatRoom = () => {
   const { id } = useParams();
@@ -21,15 +36,83 @@ const ChatRoom = () => {
     shareScreen,
     screenSharingId,
     setRoomId,
+    sendText,
+    isDeafened,
+    setIsDeafened,
   } = useContext(RoomContext);
   const navigate = useNavigate();
 
-  const [isDeafened, setIsDeafened] = useState(false);
+  const modelSessionRef = useRef<ort.InferenceSession | null>(null);
+  const detectIntervalRef = useRef<number | null>(null);
+  const webcamRef = useRef<Webcam>(null);
+  const lastLettersRef = useRef<string[]>([]);
+  const lastSentTimeRef = useRef<number>(0);
+  const didMountRef = useRef(false);
+
   const [signer, setSigner] = useState<boolean>(false);
+  const [spokenLetters, setSpokenLetters] = useState<string[]>([]);
+
+  useEffect(() => {
+    ort.InferenceSession.create(ASL_MODEL_PATH, {
+      executionProviders: ["wasm"],
+      graphOptimizationLevel: "all",
+    })
+      .then((session) => {
+        modelSessionRef.current = session;
+      })
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    // On first render, we just flip the flag and bail out…
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
+
+    // if we’re turning off “Signer”, clear the loop
+    if (!signer && detectIntervalRef.current) {
+      clearInterval(detectIntervalRef.current);
+      detectIntervalRef.current = null;
+      return;
+    }
+
+    // otherwise start a new interval
+    detectIntervalRef.current = window.setInterval(async () => {
+      const [predictions] = await inferenceYolo(
+        webcamRef,
+        modelSessionRef.current!
+      );
+      if (predictions.length === 0) return;
+
+      const letter = predictions[0].label;
+      const now = Date.now();
+
+      const seenRecently = lastLettersRef.current.includes(letter);
+      const tooSoon = now - lastSentTimeRef.current < 1000;
+
+      if (!seenRecently || (seenRecently && !tooSoon)) {
+        setSpokenLetters((prev) => [...prev, letter]);
+        lastSentTimeRef.current = now;
+        sendText(letter);
+
+        lastLettersRef.current.push(letter);
+        if (lastLettersRef.current.length > 2) {
+          lastLettersRef.current.shift();
+        }
+      }
+    }, DETECTION_INTERVAL_MS);
+
+    return () => {
+      if (detectIntervalRef.current) {
+        clearInterval(detectIntervalRef.current);
+      }
+    };
+  }, [signer, sendText]);
 
   useEffect(() => {
     const sock = socketRef.current;
-    if (!me || !sock) return;
+    if (!me) return;
 
     const sendJoin = () => {
       sock.send(
@@ -59,13 +142,15 @@ const ChatRoom = () => {
     setRoomId(id);
   }, [setRoomId, id]);
 
+  const IS_SMALL = useMediaQuery("(max-width: 1100px)");
+
   const screenSharingVideo =
     screenSharingId === me?.id ? stream : peers[screenSharingId]?.stream;
 
   return (
     <div className="w-full h-screen flex flex-row">
       <div className="w-[65%] h-full p-2 md:p-5 flex flex-col gap-2">
-        {screenSharingId ? (
+        {screenSharingId && !IS_SMALL ? (
           <>
             <div className="w-full flex-shrink-0 relative z-0">
               <VideoPlayer
@@ -106,23 +191,42 @@ const ChatRoom = () => {
                   muted={isDeafened}
                   className="w-full h-auto"
                 />
-                <div className="text-center text-white text-sm">
-                  {peer.peerId}
-                </div>
               </div>
             ))}
           </div>
         )}
       </div>
       <div className="w-[35%] h-full p-2 md:p-10 flex flex-col items-center justify-between">
-        <Button
-          type={ButtonType.PRIMARY_FULL}
-          text={signer ? "Signer" : "Talker"}
-          onClick={() => {
-            setSigner((prev) => !prev);
-          }}
-          styles="w-full px-4 md:px-15"
-        />
+        <div className="w-full flex flex-col items-center justify-center gap-5">
+          <Button
+            type={ButtonType.PRIMARY_FULL}
+            text={signer ? "Signer" : "Talker"}
+            onClick={() => {
+              setSigner((prev) => !prev);
+            }}
+            styles="w-full px-4 md:px-15"
+          />
+          {signer && (
+            <Webcam
+              ref={webcamRef}
+              audio={false}
+              style={{
+                width: MODEL_IMAGE_SIZE[0],
+                height: MODEL_IMAGE_SIZE[1],
+              }}
+            />
+          )}
+          <div className="flex flex-wrap gap-2">
+            {spokenLetters.map((letter, idx) => (
+              <Typography
+                key={idx}
+                text={letter}
+                type={TypographyType.LANDING_SUBTITLE}
+                styles="whitespace-nowrap text-white"
+              />
+            ))}
+          </div>
+        </div>
         <div className="flex flex-col gap-5 w-full">
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             <ActionButton

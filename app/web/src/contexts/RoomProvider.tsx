@@ -1,4 +1,4 @@
-import Peer from "peerjs";
+import Peer, { DataConnection, MediaConnection } from "peerjs";
 import {
   FunctionComponent,
   ReactNode,
@@ -23,6 +23,11 @@ if (!WS || !STAGE) {
 export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
   children,
 }) => {
+  const dataConns = useRef<{
+    [roomId: string]: { [peerId: string]: DataConnection };
+  }>({});
+  const callsRef = useRef<{ [peerId: string]: MediaConnection }>({});
+
   const navigate = useNavigate();
   const auth = useAuth();
 
@@ -31,6 +36,7 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
   const [peers, dispatchPeers] = useReducer(peersReducer, {});
   const [isMuted, setIsMuted] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [isDeafened, setIsDeafened] = useState(false);
   const [screenSharingId, setScreenSharingId] = useState<string>("");
   const [roomId, setRoomId] = useState<string>("");
 
@@ -42,6 +48,23 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
     const sock = socketRef.current;
     if (sock && sock.readyState === WebSocket.OPEN) {
       sock.send(JSON.stringify({ action, ...payload }));
+    }
+  };
+
+  const sendText = (text: string) => {
+    const conns = dataConns.current[roomId] || {};
+    Object.values(conns).forEach(
+      (conn) => conn.open && conn.send({ type: "chat", text })
+    );
+  };
+
+  const handleIncomingText = (msg: any) => {
+    if (msg.type === "chat" && typeof msg.text === "string") {
+      if ("speechSynthesis" in window && !isDeafened) {
+        const utter = new SpeechSynthesisUtterance(msg.text);
+        utter.lang = "hr-HR";
+        window.speechSynthesis.speak(utter);
+      }
     }
   };
 
@@ -60,9 +83,18 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
   const switchStream = (stream: MediaStream) => {
     setStream(stream);
 
-    Object.values(me?.connections || {}).forEach((connection: any) => {
-      const videoTrack = stream?.getVideoTracks()[0];
-      connection[0].peerConnection.getSenders()[1].replaceTrack(videoTrack);
+    const newVideoTrack = stream.getVideoTracks()[0];
+
+    Object.values(callsRef.current).forEach((call) => {
+      // PeerJS’s MediaConnection exposes .peerConnection
+      const senders = (call as any).peerConnection.getSenders();
+      // Find the video sender
+      const videoSender = senders.find(
+        (s: RTCRtpSender) => s.track?.kind === "video"
+      );
+      if (videoSender) {
+        videoSender.replaceTrack(newVideoTrack);
+      }
     });
   };
 
@@ -154,7 +186,6 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
 
       switch (msg.action) {
         case "room-created":
-          console.log("Room created", msg);
           enterRoom(msg.roomId);
           break;
         case "get-users":
@@ -193,7 +224,7 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
   }, [screenSharingId, roomId, me]);
 
   useEffect(() => {
-    if (!me || !stream) return;
+    if (!me || !stream || !roomId) return;
 
     // Update media track states
     stream.getVideoTracks().forEach((track) => {
@@ -204,16 +235,35 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
     });
 
     const handleUserJoined = ({ peerId }: { peerId: string }) => {
+      // Setup video connection
       const call = me.call(peerId, stream);
+      callsRef.current[peerId] = call;
       call.on("stream", (peerStream) => {
         dispatchPeers(addPeerAction(peerId, peerStream));
+      });
+
+      // Setup data transfer connection
+      const conn = me.connect(peerId);
+      conn.on("open", () => {
+        dataConns.current[roomId] = dataConns.current[roomId] || {};
+        dataConns.current[roomId][peerId] = conn;
+        conn.on("data", handleIncomingText);
       });
     };
 
     const handleCall = (call: any) => {
+      // Listen to video stream
+      callsRef.current[call.peer] = call;
       call.answer(stream);
       call.on("stream", (peerStream: MediaStream) => {
         dispatchPeers(addPeerAction(call.peer, peerStream));
+      });
+
+      // Listen to data transfer
+      me.on("connection", (conn: DataConnection) => {
+        dataConns.current[roomId] = dataConns.current[roomId] || {};
+        dataConns.current[roomId][conn.peer] = conn;
+        conn.on("data", handleIncomingText);
       });
     };
 
@@ -227,7 +277,7 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
     return () => {
       me.off("call", handleCall);
     };
-  }, [me, stream, isMuted, showCamera]);
+  }, [me, stream, isMuted, showCamera, roomId]);
 
   return (
     <RoomContext.Provider
@@ -243,6 +293,9 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
         shareScreen,
         screenSharingId,
         setRoomId,
+        sendText,
+        isDeafened,
+        setIsDeafened,
       }}
     >
       {children}

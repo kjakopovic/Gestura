@@ -14,7 +14,7 @@ interface Props {
 
 const Sidebar = ({ selected, setSelected }: Props) => {
   const auth = useAuth();
-  const isBigScreen = useMediaQuery("(min-width: 500px)");
+  const isBigScreen = useMediaQuery("(min-width: 851px)");
   const [isOpen, setIsOpen] = useState(false);
   const toggleSidebar = useCallback(() => setIsOpen((prev) => !prev), []);
   const navigate = useNavigate();
