@@ -1,5 +1,4 @@
 import { Routes, Route, Outlet } from "react-router-dom";
-import WebCam from "@/pages/WebCam";
 import Login from "@/pages/Login";
 import SignUp from "@/pages/SignUp";
 import ForgotPassword from "@/pages/ForgotPassword";
@@ -16,14 +15,6 @@ import JoinRoom from "@/pages/JoinRoom";
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route
-        path={APP_ROUTES.WEBCAM}
-        element={
-          <ProtectedRoute>
-            <WebCam />
-          </ProtectedRoute>
-        }
-      />
       <Route
         path={APP_ROUTES.MAIN_PAGE}
         element={

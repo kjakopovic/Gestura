@@ -35,6 +35,7 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
   const [peers, dispatchPeers] = useReducer(peersReducer, {});
   const [isMuted, setIsMuted] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [isDeafened, setIsDeafened] = useState(false);
   const [screenSharingId, setScreenSharingId] = useState<string>("");
   const [roomId, setRoomId] = useState<string>("");
 
@@ -60,7 +61,7 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
     if (msg.type === "chat" && typeof msg.text === "string") {
       console.log("Chat from peer:", msg.text);
       // if you want to speak it:
-      if ("speechSynthesis" in window) {
+      if ("speechSynthesis" in window && !isDeafened) {
         const utter = new SpeechSynthesisUtterance(msg.text);
         utter.lang = "hr-HR";
         window.speechSynthesis.speak(utter);
@@ -284,6 +285,8 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
         screenSharingId,
         setRoomId,
         sendText,
+        isDeafened,
+        setIsDeafened,
       }}
     >
       {children}
