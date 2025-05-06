@@ -156,9 +156,9 @@ class BaseTestSetup(unittest.TestCase):
             "password": bcrypt.hashpw(self.sample_user_pass.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"),
             "letters_learned": {},
             "current_level": {
-                "es": 0,
-                "hr": 10,
-                "fr": 20,
+                "es": 1,
+                "hr": 11,
+                "fr": 21,
             },
             "task_level": 0,
             "time_played": 0,
