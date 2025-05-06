@@ -1,4 +1,4 @@
-import Peer, { DataConnection } from "peerjs";
+import Peer, { DataConnection, MediaConnection } from "peerjs";
 import {
   FunctionComponent,
   ReactNode,
@@ -26,6 +26,7 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
   const dataConns = useRef<{
     [roomId: string]: { [peerId: string]: DataConnection };
   }>({});
+  const callsRef = useRef<{ [peerId: string]: MediaConnection }>({});
 
   const navigate = useNavigate();
   const auth = useAuth();
@@ -82,9 +83,18 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
   const switchStream = (stream: MediaStream) => {
     setStream(stream);
 
-    Object.values(me?.connections || {}).forEach((connection: any) => {
-      const videoTrack = stream?.getVideoTracks()[0];
-      connection[0].peerConnection.getSenders()[1].replaceTrack(videoTrack);
+    const newVideoTrack = stream.getVideoTracks()[0];
+
+    Object.values(callsRef.current).forEach((call) => {
+      // PeerJS’s MediaConnection exposes .peerConnection
+      const senders = (call as any).peerConnection.getSenders();
+      // Find the video sender
+      const videoSender = senders.find(
+        (s: RTCRtpSender) => s.track?.kind === "video"
+      );
+      if (videoSender) {
+        videoSender.replaceTrack(newVideoTrack);
+      }
     });
   };
 
@@ -227,6 +237,7 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
     const handleUserJoined = ({ peerId }: { peerId: string }) => {
       // Setup video connection
       const call = me.call(peerId, stream);
+      callsRef.current[peerId] = call;
       call.on("stream", (peerStream) => {
         dispatchPeers(addPeerAction(peerId, peerStream));
       });
@@ -242,6 +253,7 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
 
     const handleCall = (call: any) => {
       // Listen to video stream
+      callsRef.current[call.peer] = call;
       call.answer(stream);
       call.on("stream", (peerStream: MediaStream) => {
         dispatchPeers(addPeerAction(call.peer, peerStream));
