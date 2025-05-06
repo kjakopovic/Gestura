@@ -51,8 +51,6 @@ def lambda_handler(event, context):
     page_size = int(query_params.get("query_page_size", 10))
     next_token = query_params.get("next_token", None)
 
-    print(f"Page size: {page_size}, Next token: {next_token}\n")
-
     return get_achievements(achievements_dynamodb, page_size, next_token)
 
 
@@ -73,11 +71,9 @@ def get_achievements(dynamodb, page_size, next_token):
     scan_params = {
         "Limit": page_size,
     }
-    print(f"Query params: {scan_params}\n")
 
     # If next_token is provided, decode it and add to scan_params
     if next_token:
-        print(f"Next token provided: {next_token}\n")
         try:
             exclusive_start_key = json.loads(next_token)
             scan_params["ExclusiveStartKey"] = exclusive_start_key
@@ -87,11 +83,9 @@ def get_achievements(dynamodb, page_size, next_token):
             return build_response(400, {"message": "Invalid pagination token"})
 
     response = dynamodb.table.scan(**scan_params)
-    print(f"Response from DynamoDB: {response}\n")
 
     achievements = response.get("Items", [])
     logger.debug(f"Fetched achievements: {achievements}")
-    print(f"Achievements: {achievements}\n")
 
     # Convert Decimal values to float for JSON serialization
     converted_achievements = [convert_decimal_to_float(item) for item in achievements]
@@ -106,9 +100,6 @@ def get_achievements(dynamodb, page_size, next_token):
         next_token = json.dumps(response["LastEvaluatedKey"], cls=DecimalEncoder)
         result["next_token"] = next_token
         logger.debug(f"Next token generated: {next_token}")
-        print(f"Next token generated: {next_token}\n")
-
-    print(f"Response: {result}\n")
 
     return build_response(
         200,
