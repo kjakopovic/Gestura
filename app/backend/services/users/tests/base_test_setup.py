@@ -166,26 +166,10 @@ class BaseTestSetup(unittest.TestCase):
             ],
             "coins": 100,
             "items_inventory": [
-                {
-                    "item_id": "item-1",
-                    "quantity": 2,
-                    "acquired_date": "2023-06-15T12:30:00Z"
-                },
-                {
-                    "item_id": "item-3",
-                    "quantity": 1,
-                    "acquired_date": "2023-07-20T09:45:00Z"
-                },
-                {
-                    "item_id": "chest-1",
-                    "quantity": 3,
-                    "acquired_date": "2023-08-05T18:20:00Z"
-                },
-                {
-                    "item_id": "coins-1",
-                    "quantity": 5,
-                    "acquired_date": "2023-09-10T14:15:00Z"
-                },
+                "item-1",
+                "item-3",
+                "chest-1",
+                "coins-1",
             ],
         }
 

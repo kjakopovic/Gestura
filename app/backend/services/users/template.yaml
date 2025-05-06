@@ -598,7 +598,7 @@ Resources:
         ConsumeItemEndpoint:
           Type: Api
           Properties:
-            Path: /consume
+            Path: /items/consume
             Method: POST
             RestApiId: !Ref UsersApi
 

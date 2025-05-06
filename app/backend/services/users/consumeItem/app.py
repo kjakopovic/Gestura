@@ -59,7 +59,7 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
 
     user_items_inventory = user.get("items_inventory", [])
 
-    item_to_consume = next((item for item in user_items_inventory if item.get("item_id") == item_id), None)
+    item_to_consume = item_id if item_id in user_items_inventory else None
 
     if not item_to_consume:
         logger.error(f"Item with ID {item_id} not found in user's inventory.")
@@ -167,7 +167,8 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
             update_parts.append("activated_items = :activated_items")
             expression_attribute_values[":activated_items"] = activated_items
 
-    user_items_inventory.remove(item_to_consume)
+    if item_id in user_items_inventory:
+        user_items_inventory.remove(item_id)
     update_parts.append("items_inventory = :inventory")
     expression_attribute_values[":inventory"] = user_items_inventory
 

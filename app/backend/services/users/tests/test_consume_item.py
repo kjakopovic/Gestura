@@ -79,7 +79,6 @@ class TestConsumeItem(BaseTestSetup):
                 self.assertIn(case["expected_validation_message"], body['message'])
 
 
-
     def test_when_user_not_authorized(self):
         """
         Test response when a user is unauthorized.
@@ -146,29 +145,11 @@ class TestConsumeItem(BaseTestSetup):
         self.users_table.put_item(Item={
             "email": "randomitem@mail.com",
             "items_inventory": [
-                {
-                    "item_id": "item-1",
-                    "quantity": 2,
-                    "acquired_date": "2023-06-15T12:30:00Z"
-                },
-                {
-                    "item_id": "item-3",
-                    "quantity": 1,
-                    "acquired_date": "2023-07-20T09:45:00Z"
-                },
-                {
-                    "item_id": "chest-1",
-                    "quantity": 3,
-                    "acquired_date": "2023-08-05T18:20:00Z"
-                },
-                {
-                    "item_id": "coins-1",
-                    "quantity": 5,
-                    "acquired_date": "2023-09-10T14:15:00Z"
-                },
-                {
-                    "item_id": "random_item"
-                }
+                "item-1",
+                "item-3",
+                "chest-1",
+                "coins-1",
+                "random_item"
             ],
         })
 
@@ -221,10 +202,7 @@ class TestConsumeItem(BaseTestSetup):
             "email": "new@mail.com",
             "hearts": 0,
             "items_inventory": [
-                {
-                    "item_id": "item-1",
-                    "quantity": 1
-                }
+                "item-1",
             ]
         }
 
@@ -259,10 +237,7 @@ class TestConsumeItem(BaseTestSetup):
             "email": "xpboost@mail.com",
             "xp": Decimal('100'),
             "items_inventory": [
-                {
-                    "item_id": "xp-boost-1",
-                    "quantity": Decimal('1')
-                }
+                "xp-boost-1",
             ],
             "activated_items": []
         }
@@ -330,10 +305,7 @@ class TestConsumeItem(BaseTestSetup):
             "email": "chestuser@mail.com",
             "coins": Decimal('100'),
             "items_inventory": [
-                {
-                    "item_id": "coins-chest-1",
-                    "quantity": Decimal('1')
-                }
+                "coins-chest-1",
             ],
             "activated_items": []
         }
@@ -399,10 +371,7 @@ class TestConsumeItem(BaseTestSetup):
             "email": "itemchestuser@mail.com",
             "coins": Decimal('100'),
             "items_inventory": [
-                {
-                    "item_id": "items-chest-1",
-                    "quantity": Decimal('1')
-                }
+                "items-chest-1",
             ],
             "activated_items": []
         }
