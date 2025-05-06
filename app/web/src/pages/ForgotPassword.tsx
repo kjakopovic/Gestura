@@ -16,11 +16,13 @@ import {
   handleForgotPasswordValidate,
   handlePasswordChange,
 } from "@/utils/auth";
+import { set } from "lodash";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
 
   const [errors, setErrors] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(0);
   const [email, setEmail] = useState("");
   const [code, setCode] = useState(["", "", "", "", "", ""]);
@@ -65,11 +67,15 @@ const ForgotPassword = () => {
               type={ButtonType.SECONDARY_OUTLINE}
               text="Next"
               styles="w-full rounded-full p-3 mt-4"
+              isLoading={isLoading}
+              loadingText="Sending..."
               onClick={async () => {
+                setIsLoading(true);
                 const result = await handleForgotPasswordRequest(
                   email,
                   setErrors
                 );
+                setIsLoading(false);
 
                 if (result === HelperFunctionResponse.SUCCESS) {
                   setStep(1);
@@ -103,12 +109,16 @@ const ForgotPassword = () => {
               type={ButtonType.SECONDARY_OUTLINE}
               text="Verify Code"
               styles="w-full rounded-full p-3 mt-4"
+              isLoading={isLoading}
+              loadingText="Verifying..."
               onClick={async () => {
+                setIsLoading(true);
                 const result = await handleForgotPasswordValidate(
                   email,
                   code.join(""),
                   setErrors
                 );
+                setIsLoading(false);
 
                 if (result === HelperFunctionResponse.SUCCESS) {
                   setStep(2);
@@ -156,7 +166,10 @@ const ForgotPassword = () => {
               type={ButtonType.SECONDARY_OUTLINE}
               text="Reset Password"
               styles="w-full rounded-full p-3 mt-4"
+              isLoading={isLoading}
+              loadingText="Resetting..."
               onClick={async () => {
+                setIsLoading(true);
                 const result = await handlePasswordChange(
                   email,
                   code.join(""),
@@ -164,6 +177,7 @@ const ForgotPassword = () => {
                   confirmPassword,
                   setErrors
                 );
+                setIsLoading(false);
 
                 if (result === HelperFunctionResponse.SUCCESS) {
                   navigate(APP_ROUTES.LOGIN);
