@@ -21,6 +21,7 @@ const ChatRoom = () => {
     shareScreen,
     screenSharingId,
     setRoomId,
+    sendText,
   } = useContext(RoomContext);
   const navigate = useNavigate();
 
@@ -106,9 +107,6 @@ const ChatRoom = () => {
                   muted={isDeafened}
                   className="w-full h-auto"
                 />
-                <div className="text-center text-white text-sm">
-                  {peer.peerId}
-                </div>
               </div>
             ))}
           </div>
@@ -120,6 +118,7 @@ const ChatRoom = () => {
           text={signer ? "Signer" : "Talker"}
           onClick={() => {
             setSigner((prev) => !prev);
+            sendText(signer ? "Signer" : "Talker");
           }}
           styles="w-full px-4 md:px-15"
         />

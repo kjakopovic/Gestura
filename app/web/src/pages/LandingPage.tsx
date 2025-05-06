@@ -9,12 +9,9 @@ import {
   PricingType,
 } from "@/components/common";
 import { Dialog } from "@/components/elements";
+import { APP_ROUTES } from "@/constants/common";
 import { images } from "@/constants/images";
-import {
-  redirectToGoogleStore,
-  redirectToBuy,
-  redirectToLogin,
-} from "@/utils/common";
+import { redirectToGoogleStore, redirectToBuy } from "@/utils/common";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -49,7 +46,7 @@ const LandingPage = () => {
             text="Get started"
             type={ButtonType.PRIMARY_OUTLINE}
             styles="w-full"
-            onClick={() => redirectToLogin(navigate)}
+            onClick={() => navigate(APP_ROUTES.MAIN_PAGE)}
           />
           <Button
             text="Pricing"
@@ -155,7 +152,7 @@ const LandingPage = () => {
         secondButton={{
           type: ButtonType.SECONDARY_FULL,
           text: "Web",
-          onClick: () => redirectToLogin(navigate),
+          onClick: () => navigate(APP_ROUTES.LOGIN),
         }}
       />
 
