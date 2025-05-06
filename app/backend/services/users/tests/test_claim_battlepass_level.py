@@ -4,6 +4,7 @@ import os
 import unittest
 from unittest.mock import patch
 from base_test_setup import BaseTestSetup
+from decimal import Decimal
 
 original_path = sys.path.copy()
 BaseTestSetup.setup_paths('claimBattlepassLevel')
@@ -71,6 +72,32 @@ class TestClaimBattlepassLevel(BaseTestSetup):
             "end_date": "2025-12-31T23:59:59Z",
         }
         self.battlepass_table.put_item(Item=self.active_battlepass)
+
+        # Update the sample user's battlepass to include the new fields
+        user = self.users_table.get_item(Key={"email": "test@mail.com"})["Item"]
+        user_battlepasses = user.get("battlepass", [])
+
+        # Update Season 3 battlepass with the new fields
+        for i, bp in enumerate(user_battlepasses):
+            if bp.get("season_id") == "3":
+                user_battlepasses[i]["current_level"] = 3
+                user_battlepasses[i]["unlocked_levels"] = [1, 2, 3]
+                user_battlepasses[i]["locked_levels"] = [4, 5, 6]
+
+        # Update Season 1 battlepass with the new fields (if exists)
+        for i, bp in enumerate(user_battlepasses):
+            if bp.get("season_id") == "1":
+                user_battlepasses[i]["current_level"] = 0
+                user_battlepasses[i]["unlocked_levels"] = []
+                user_battlepasses[i]["locked_levels"] = [1, 2, 3, 4]
+
+        self.users_table.update_item(
+            Key={"email": "test@mail.com"},
+            UpdateExpression="SET battlepass = :battlepass",
+            ExpressionAttributeValues={
+                ":battlepass": user_battlepasses
+            }
+        )
 
 
     def test_when_user_not_authorized(self):
@@ -218,6 +245,9 @@ class TestClaimBattlepassLevel(BaseTestSetup):
         initial_user = self.users_table.get_item(Key={'email': email})['Item']
         initial_coins = initial_user['coins']
 
+        initial_battlepass = next((bp for bp in initial_user['battlepass'] if bp.get('season_id') == '3'), None)
+        initial_claimed_levels = initial_battlepass.get('claimed_levels', [])
+
         request_query = {
             "battlepass_level": "2"
         }
@@ -238,9 +268,22 @@ class TestClaimBattlepassLevel(BaseTestSetup):
         updated_user = self.users_table.get_item(Key={'email': email})['Item']
         updated_coins = updated_user['coins']
 
+        # Get the updated battlepass data
+        updated_battlepass = next((bp for bp in updated_user['battlepass'] if bp.get('season_id') == '3'), None)
+        updated_claimed_levels = updated_battlepass.get('claimed_levels', [])
+
+        # Verify the new fields are maintained
+        self.assertEqual(updated_battlepass.get('current_level'), initial_battlepass.get('current_level') + 1)
+        self.assertEqual(updated_battlepass.get('unlocked_levels'), [Decimal(1), Decimal(2), Decimal(3), Decimal(4)])
+        self.assertEqual(updated_battlepass.get('locked_levels'), [Decimal(5), Decimal(6)])
+
         # Check if the coins have been updated correctly
         expected_coins = initial_coins + self.active_battlepass['levels'][1]['coins']
         self.assertEqual(updated_coins, expected_coins)
+
+        # Check if claimed_levels was properly updated
+        expected_claimed_levels = initial_claimed_levels + [2]
+        self.assertCountEqual(updated_claimed_levels, expected_claimed_levels)
 
 
     def test_not_enough_xp(self):
@@ -265,6 +308,30 @@ class TestClaimBattlepassLevel(BaseTestSetup):
 
         self.assertEqual(response['statusCode'], 400)
         self.assertEqual(body['message'], "Not enough XP to claim this level")
+
+
+    def test_level_not_unlocked(self):
+        """
+        Test response when the battlepass level is not unlocked.
+        """
+        jwt_token = generate_jwt_token("test@mail.com")
+
+        request_query = {
+            "battlepass_level": "4"  # Level 4 should be in locked_levels
+        }
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "queryStringParameters": request_query
+        }
+
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        self.assertEqual(response['statusCode'], 400)
+        self.assertEqual(body['message'], "Battlepass level 4 is not unlocked.")
 
 
     def tearDown(self):
