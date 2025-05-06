@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import WebCam from "@/pages/WebCam";
 import Login from "@/pages/Login";
 import SignUp from "@/pages/SignUp";
@@ -8,6 +8,10 @@ import MainPage from "@/pages/MainPage";
 import LoginCallback from "@/pages/LoginCallback";
 import { ProtectedRoute } from "@/components/auth";
 import { APP_ROUTES } from "@/constants/common";
+import ChatRoom from "@/pages/ChatRoom";
+import { RoomProvider } from "@/contexts/RoomProvider";
+import CreateRoom from "@/pages/CreateRoom";
+import JoinRoom from "@/pages/JoinRoom";
 
 const AppRoutes = () => {
   return (
@@ -28,6 +32,38 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route
+        element={
+          <RoomProvider>
+            <Outlet />
+          </RoomProvider>
+        }
+      >
+        <Route
+          path="room/create"
+          element={
+            <ProtectedRoute>
+              <CreateRoom />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="room/join"
+          element={
+            <ProtectedRoute>
+              <JoinRoom />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="room/:id"
+          element={
+            <ProtectedRoute>
+              <ChatRoom />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
       <Route path={APP_ROUTES.LOGIN} element={<Login />} />
       <Route path={APP_ROUTES.SIGNUP} element={<SignUp />} />
       <Route path={APP_ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />

@@ -282,3 +282,27 @@ export const handlePasswordChange = async (
 
   return HelperFunctionResponse.SUCCESS;
 };
+
+export const handleRefreshToken = async (
+  refreshToken: string
+): Promise<string | null> => {
+  try {
+    const { data, status } = await axios.get(
+      `${BACKEND_AUTH_API}/${APP_STAGE}/refresh/token`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "x-refresh-token": refreshToken,
+        },
+      }
+    );
+
+    if (status !== 200) {
+      return null;
+    }
+
+    return data["x-access-token"];
+  } catch {
+    return null;
+  }
+};
