@@ -24,6 +24,7 @@ class Request:
 def lambda_handler(event, context):
     logger.debug(f"Received event {event}")
 
+    # Extract and validate JWT token to get user email
     jwt_token = event.get("headers").get("x-access-token")
     email = get_email_from_jwt_token(jwt_token)
 
@@ -31,6 +32,7 @@ def lambda_handler(event, context):
         logger.error(f"Invalid email in jwt token {email}")
         return build_response(400, {"message": "Invalid email in jwt token"})
 
+    # Validate query parameters against schema
     query_params = event.get("queryStringParameters", {})
     try:
         logger.debug(f"Validating query params: {query_params}")
@@ -40,6 +42,7 @@ def lambda_handler(event, context):
         logger.error(f"Validation failed: {e}")
         return build_response(400, {"message": str(e)})
 
+    # Initialize DynamoDB clients
     global _LAMBDA_USERS_TABLE_RESOURCE, _LAMBDA_BATTLEPASS_TABLE_RESOURCE
     user_dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
     battlepass_dynamodb = LambdaDynamoDBClass(_LAMBDA_BATTLEPASS_TABLE_RESOURCE)
@@ -50,18 +53,33 @@ def lambda_handler(event, context):
 
 
 def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_level):
+    """
+    Process a user's battlepass level claim request.
+
+    Parameters:
+        user_dynamodb (LambdaDynamoDBClass): DynamoDB client for users table
+        battlepass_dynamodb (LambdaDynamoDBClass): DynamoDB client for battlepass table
+        email (str): User's email
+        claim_level (Decimal): Battlepass level to claim
+
+    Returns:
+        dict: HTTP response with result of the claim operation
+    """
     logger.debug(f"Claiming battlepass level {claim_level} for user {email}")
 
+    # Fetch user data
     user = get_user_by_email(user_dynamodb, email)
     if not user:
         logger.error(f"User not found: {email}")
         return build_response(404, {"message": "User not found"})
 
+    # Fetch active battlepass season
     active_battlepass = get_active_battlepass_seasons(battlepass_dynamodb)
     if not active_battlepass:
         logger.debug(f"No active battlepasses found.")
         return build_response(404, {"message": "No active battlepasses found."})
 
+    # Find requested battlepass level in active battlepass
     battlepass_levels = active_battlepass.get("levels", [])
     battlepass_level = next(
         (level for level in battlepass_levels if level.get("level") == claim_level), None
@@ -75,6 +93,7 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
         logger.error(f"Battlepass season ID not found: {battlepass_season_id}")
         return build_response(404, {"message": "Battlepass season ID not found"})
 
+    # Calculate required XP for the requested level
     required_xp = 0
     for level in battlepass_levels:
         level_number = level.get("level")
@@ -83,6 +102,7 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
         else:
             break
 
+    # Get or create user battlepass data for current season
     user_battlepasses = user.get("battlepass", [])
     user_battlepass = next(
         (bp for bp in user_battlepasses if bp.get("season_id") == battlepass_season_id), None
@@ -90,7 +110,7 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
     if not user_battlepass:
         logger.info(f"User battlepass not found for season ID: {battlepass_season_id}."
                     f" Adding new battlepass season to user.")
-
+        # Initialize new battlepass data for user
         new_battlepass = {
             "season_id": battlepass_season_id,
             "xp": 0,
@@ -99,6 +119,7 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
 
         user_battlepasses.append(new_battlepass)
 
+        # Update user battlepass data in DynamoDB
         user_dynamodb.table.update_item(
             Key={"email": email},
             UpdateExpression="SET battlepass = :battlepass_",
@@ -110,28 +131,28 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
         user_battlepass = new_battlepass
         logger.info(f"New battlepass season added to user: {user_battlepass}")
 
+    # Check if user has enough XP to claim the level
     user_xp = user_battlepass.get("xp", 0)
-
     if user_xp < required_xp:
         logger.error(f"User does not have enough XP to claim level {claim_level}")
         return build_response(400, {"message": "Not enough XP to claim this level"})
 
+    # Check if the level has already been claimed
     claimed_levels = user_battlepass.get("claimed_levels", [])
-
     if claim_level in claimed_levels:
         logger.error(f"Battlepass level {claim_level} has already been claimed.")
         return build_response(400, {"message": f"Battlepass level {claim_level} has already been claimed."})
 
+    # Process rewards from the claimed level and update user data
     user_coins = user.get("coins", 0)
     level_coins = battlepass_level.get("coins", 0)
-
     user_coins += level_coins
     claimed_levels.append(int(claim_level))
     for i, bp in enumerate(user_battlepasses):
         if bp.get("season_id") == battlepass_season_id:
             user_battlepasses[i]["claimed_levels"] = claimed_levels
 
-
+    # Save updated user data to database
     user_dynamodb.table.update_item(
         Key={"email": email},
         UpdateExpression="SET coins = :coins, battlepass = :battlepass",
@@ -158,6 +179,16 @@ def get_user_by_email(dynamodb, email):
 
 
 def get_active_battlepass_seasons(dynamodb):
+    """
+    Retrieve currently active battlepass season.
+    Finds battlepass with start_date before current time and end_date after current time.
+
+    Parameters:
+        dynamodb (LambdaDynamoDBClass): DynamoDB client for battlepass table
+
+    Returns:
+        dict: Active battlepass data or None if no active battlepass found
+    """
     logger.info(f"Fetching active battlepass seasons")
 
     current_date = datetime.now(timezone.utc)
