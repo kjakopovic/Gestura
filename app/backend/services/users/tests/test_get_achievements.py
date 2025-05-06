@@ -25,7 +25,7 @@ class TestGetAchievements(BaseTestSetup):
         })
         self.achievements_resource_patcher.start()
 
-
+    #
     # def test_when_user_not_authorized(self):
     #     """
     #     Test response when a user is unauthorized.
@@ -108,52 +108,52 @@ class TestGetAchievements(BaseTestSetup):
         """
         self.sample_achievements = [
             {
-                "id": "1",
+                "id": "aaaaaaaaa",
                 "name": "Achievement 1",
                 "description": "Description 1"
             },
             {
-                "id": "2",
+                "id": "bbbbbbbbbb",
                 "name": "Achievement 2",
                 "description": "Description 2"
             },
             {
-                "id": "3",
+                "id": "ccccccccc",
                 "name": "Achievement 3",
                 "description": "Description 3"
             },
             {
-                "id": "4",
+                "id": "ddddddddd",
                 "name": "Achievement 4",
                 "description": "Description 4"
             },
             {
-                "id": "5",
+                "id": "eeeeeeeee",
                 "name": "Achievement 5",
                 "description": "Description 5"
             },
             {
-                "id": "6",
+                "id": "fffffffff",
                 "name": "Achievement 6",
                 "description": "Description 6"
             },
             {
-                "id": "7",
+                "id": "ggggggggg",
                 "name": "Achievement 7",
                 "description": "Description 7"
             },
             {
-                "id": "8",
+                "id": "hhhhhhhhh",
                 "name": "Achievement 8",
                 "description": "Description 8"
             },
             {
-                "id": "9",
+                "id": "iiiiiiiii",
                 "name": "Achievement 9",
                 "description": "Description 9"
             },
             {
-                "id": "10",
+                "id": "jjjjjjjjj",
                 "name": "Achievement 10",
                 "description": "Description 10"
             }
@@ -181,8 +181,91 @@ class TestGetAchievements(BaseTestSetup):
         self.assertEqual(len(body["data"]["achievements"]), 5)
         self.assertIn("next_token", body["data"])
         self.assertIsNotNone(body["data"]["next_token"])
-        self.assertEqual(body["data"]["next_token"], json.dumps({"id": "6"}))
+        self.assertEqual(body["data"]["next_token"], json.dumps({"id": "eeeeeeeee"}))
 
+
+    def test_get_achievements_with_next_token(self):
+        """
+        Test the get_achievements function with a next token.
+        """
+
+        self.sample_achievements = [
+            {
+                "id": "aaaaaaaaa",
+                "name": "Achievement 1",
+                "description": "Description 1"
+            },
+            {
+                "id": "bbbbbbbbbb",
+                "name": "Achievement 2",
+                "description": "Description 2"
+            },
+            {
+                "id": "ccccccccc",
+                "name": "Achievement 3",
+                "description": "Description 3"
+            },
+            {
+                "id": "ddddddddd",
+                "name": "Achievement 4",
+                "description": "Description 4"
+            },
+            {
+                "id": "eeeeeeeee",
+                "name": "Achievement 5",
+                "description": "Description 5"
+            },
+            {
+                "id": "fffffffff",
+                "name": "Achievement 6",
+                "description": "Description 6"
+            },
+            {
+                "id": "ggggggggg",
+                "name": "Achievement 7",
+                "description": "Description 7"
+            },
+            {
+                "id": "hhhhhhhhh",
+                "name": "Achievement 8",
+                "description": "Description 8"
+            },
+            {
+                "id": "iiiiiiiii",
+                "name": "Achievement 9",
+                "description": "Description 9"
+            },
+            {
+                "id": "jjjjjjjjj",
+                "name": "Achievement 10",
+                "description": "Description 10"
+            }
+        ]
+
+        for achievement in self.sample_achievements:
+            self.achievements_table.put_item(Item=achievement)
+
+        jwt_token = generate_jwt_token("test@mail.com")
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "queryStringParameters": {
+                "query_page_size": "2",
+                "next_token": json.dumps({"id": "ggggggggg"})
+            }
+        }
+
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        self.assertEqual(response['statusCode'], 200)
+        self.assertIn("achievements", body["data"])
+        self.assertEqual(len(body["data"]["achievements"]), 2)
+        self.assertIn("next_token", body["data"])
+        self.assertIsNotNone(body["data"]["next_token"])
+        self.assertEqual(body["data"]["next_token"], json.dumps({"id": "iiiiiiiii"}))
 
 
     def tearDown(self):
