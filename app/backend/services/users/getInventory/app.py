@@ -45,12 +45,7 @@ def lambda_handler(event, context):
         return build_response(404, {"message": "User not found."})
 
     full_items_info = []
-    for item in user_items_inventory:
-        item_id = item.get("item_id")
-        if not item_id:
-            logger.error(f"Item ID not found in user items inventory.")
-            continue
-
+    for item_id in user_items_inventory:
         item_info = items_dynamodb.table.get_item(Key={"id": item_id})
         item_info = item_info.get("Item", {})
         if not item_info:
