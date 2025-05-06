@@ -64,13 +64,9 @@ const ChatRoom = () => {
     }
 
     // if we’re turning off “Signer”, clear the loop
-    if (!signer) {
-      console.log("Stopping detection loop");
-      if (detectIntervalRef.current) {
-        console.log("Clearing interval");
-        clearInterval(detectIntervalRef.current);
-        detectIntervalRef.current = null;
-      }
+    if (!signer && detectIntervalRef.current) {
+      clearInterval(detectIntervalRef.current);
+      detectIntervalRef.current = null;
       return;
     }
 

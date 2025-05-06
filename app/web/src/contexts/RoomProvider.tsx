@@ -59,8 +59,6 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
 
   const handleIncomingText = (msg: any) => {
     if (msg.type === "chat" && typeof msg.text === "string") {
-      console.log("Chat from peer:", msg.text);
-      // if you want to speak it:
       if ("speechSynthesis" in window && !isDeafened) {
         const utter = new SpeechSynthesisUtterance(msg.text);
         utter.lang = "hr-HR";
@@ -178,7 +176,6 @@ export const RoomProvider: FunctionComponent<{ children: ReactNode }> = ({
 
       switch (msg.action) {
         case "room-created":
-          console.log("Room created", msg);
           enterRoom(msg.roomId);
           break;
         case "get-users":
