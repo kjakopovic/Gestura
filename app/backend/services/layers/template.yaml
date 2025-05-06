@@ -165,6 +165,20 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
+  AchievementsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "achievements-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
 Outputs:
   UsersTable:
     Description: "DynamoDB table for users"
@@ -201,3 +215,8 @@ Outputs:
     Value: !Ref BattlepassTable
     Export:
       Name: !Sub "${AWS::StackName}-BattlepassTable"
+  AchievementsTable:
+    Description: "DynamoDB table for achievements"
+    Value: !Ref AchievementsTable
+    Export:
+      Name: !Sub "${AWS::StackName}-AchievementsTable"

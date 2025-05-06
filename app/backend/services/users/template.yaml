@@ -602,6 +602,38 @@ Resources:
             Method: POST
             RestApiId: !Ref UsersApi
 
+  GetAchievementsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: getAchievements/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          ACHIEVEMENTS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-AchievementsTable"
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        AchievementsEndpoint:
+          Type: Api
+          Properties:
+            Path: /achievements
+            Method: GET
+            RestApiId: !Ref UsersApi
+
 Outputs:
   UsersApiUrl:
     Description: "API Gateway endpoint URL for Users microservice apis"
