@@ -14,11 +14,13 @@ import { AuthFooter } from "@/components/auth";
 import { handleRegister } from "@/utils/auth";
 import { useAuth } from "@/hooks/useAuth";
 import { APP_ROUTES } from "@/constants/common";
+import { set } from "lodash";
 
 const SignUp = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   const [errors, setErrors] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [user, setUser] = useState<{
@@ -140,8 +142,11 @@ const SignUp = () => {
             type={ButtonType.SECONDARY_OUTLINE}
             text="Register"
             styles="w-full rounded-full p-3 mt-4"
-            onClick={() => {
-              handleRegister(
+            isLoading={isLoading}
+            loadingText="Registering..."
+            onClick={async () => {
+              setIsLoading(true);
+              await handleRegister(
                 user.email,
                 user.password,
                 user.confirm_password,
@@ -150,6 +155,7 @@ const SignUp = () => {
                 auth,
                 setErrors
               );
+              setIsLoading(false);
             }}
           />
         </div>
