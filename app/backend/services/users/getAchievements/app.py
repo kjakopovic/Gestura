@@ -18,6 +18,7 @@ logger.setLevel(logging.DEBUG)
 @dataclass
 class Request:
     query_page_size: str
+    next_token: str
 
 
 @middleware
@@ -69,28 +70,28 @@ def get_achievements(dynamodb, page_size, next_token):
     """
     logger.info(f"Fetching achievements with page size: {page_size} and next token: {next_token}")
 
-    query_params = {
-        "KeyConditionExpression": Key("id").eq("ALL"),
+    scan_params = {
         "Limit": page_size,
     }
-    print(f"Query params: {query_params}\n")
+    print(f"Query params: {scan_params}\n")
 
     # If next_token is provided, decode it and add to scan_params
     if next_token:
         print(f"Next token provided: {next_token}\n")
         try:
             exclusive_start_key = json.loads(next_token)
-            query_params["ExclusiveStartKey"] = exclusive_start_key
+            scan_params["ExclusiveStartKey"] = exclusive_start_key
             logger.debug(f"Using ExclusiveStartKey: {exclusive_start_key}")
-        except json.JSONDecoder as e:
+        except json.JSONDecodeError as e:
             logger.error(f"Error decoding next token: {e}")
             return build_response(400, {"message": "Invalid pagination token"})
 
-    response = dynamodb.table.query(**query_params)
+    response = dynamodb.table.scan(**scan_params)
     print(f"Response from DynamoDB: {response}\n")
 
     achievements = response.get("Items", [])
     logger.debug(f"Fetched achievements: {achievements}")
+    print(f"Achievements: {achievements}\n")
 
     # Convert Decimal values to float for JSON serialization
     converted_achievements = [convert_decimal_to_float(item) for item in achievements]
@@ -105,6 +106,7 @@ def get_achievements(dynamodb, page_size, next_token):
         next_token = json.dumps(response["LastEvaluatedKey"], cls=DecimalEncoder)
         result["next_token"] = next_token
         logger.debug(f"Next token generated: {next_token}")
+        print(f"Next token generated: {next_token}\n")
 
     print(f"Response: {result}\n")
 
