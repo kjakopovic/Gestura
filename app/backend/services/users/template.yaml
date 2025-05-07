@@ -525,7 +525,7 @@ Resources:
                 - "secretsmanager:GetSecretValue"
               Resource: "*"
       Events:
-        ClaimBattlePassLevelEndpoint:
+        GetBattlePassLevelsEndpoint:
           Type: Api
           Properties:
             Path: /battlepass
