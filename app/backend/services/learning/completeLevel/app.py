@@ -116,7 +116,7 @@ def lambda_handler(event, context):
         user.get("xp", 0) + xp,
         user_bp,
         user.get("coins", 0) + coins,
-        active_items
+        active_items,
     )
 
     new_achievements = update_user_achievements(
@@ -126,7 +126,7 @@ def lambda_handler(event, context):
         user.get("time_played", 0) + time_played,
         user.get("xp", 0) + xp,
         user_levels,
-        user.get("achievements", [])
+        user.get("achievements", []),
     )
 
     response_body = {
@@ -196,7 +196,7 @@ def update_user(
 
 
 def update_users_battlepass_xp(user, xp, battlepassDb):
-    user_bp: dict = user.setdefault("battlepass", {})
+    user_bp: list = user.setdefault("battlepass", [])
 
     # 1) fetch & validate active season
     active_bp = get_active_battlepass_seasons(battlepassDb)
@@ -206,24 +206,34 @@ def update_users_battlepass_xp(user, xp, battlepassDb):
         )
         return None
 
-    season_id = active_bp.get("season")
+    season_id = active_bp.get("season_id")
     if not season_id:
         logger.error(
             f"Active battlepass found but missing season ID; skipping XP bump."
         )
         return None
 
-    # 2) Get or create this season’s entry
-    #    Defaults: xp=0, claimed_levels=[]
-    season_entry = user_bp.setdefault(season_id, {"xp": 0, "claimed_levels": []})
+    # 3) Find or initialize this season’s entry
+    season_entry = next(
+        (entry for entry in user_bp if entry.get("season_id") == season_id), None
+    )
+    if not season_entry:
+        season_entry = {
+            "season_id": season_id,
+            "xp": 0,
+            "claimed_levels": [],
+            "current_level": 0,
+            "unlocked_levels": [],
+            "locked_levels": [],
+        }
+        user_bp.append(season_entry)
+        logger.info(f"Initialized new battlepass entry for season {season_id}")
 
     # 3) Update the XP counter
     old_xp = season_entry.get("xp", 0)
-    season_entry["xp"] = old_xp + xp
-    logger.info(f"Battlepass '{season_id}' XP: {old_xp} → {season_entry['xp']}")
-
-    # 4) Update user battlepass for new season entry
-    user_bp[season_id] = season_entry
+    new_xp = old_xp + xp
+    season_entry["xp"] = new_xp
+    logger.info(f"Battlepass '{season_id}' XP updated: {old_xp} → {new_xp}")
 
     return user_bp
 
@@ -360,7 +370,9 @@ def check_active_items(user, dynamodb):
                 active_items.remove(item)
                 item_removed = True
 
-    logger.info(f"User {user['email']} has active items after expiration check: {active_items}")
+    logger.info(
+        f"User {user['email']} has active items after expiration check: {active_items}"
+    )
     return active_items, item_removed
 
 
@@ -375,24 +387,28 @@ def get_xp_multiplier(active_items):
         Total XP multiplier (default 1.0 if no multipliers found)
     """
     if not active_items:
-        return Decimal('1.0')
+        return Decimal("1.0")
 
-    multiplier = Decimal('1.0')
+    multiplier = Decimal("1.0")
     current_time = datetime.now(timezone.utc)
 
     for item in active_items:
         # Check if item has effects with a multiplier and is an XP boost
-        if (item.get("category") == "xp_boost" and
-                "effects" in item and
-                "multiplier" in item["effects"]):
+        if (
+            item.get("category") == "xp_boost"
+            and "effects" in item
+            and "multiplier" in item["effects"]
+        ):
 
-                multiplier *= item["effects"]["multiplier"]
+            multiplier *= item["effects"]["multiplier"]
 
     logger.info(f"XP multiplier: {multiplier}")
     return multiplier
 
 
-def update_user_achievements(usersTable, achievementsTable, email, time_played, xp, user_levels, achievements):
+def update_user_achievements(
+    usersTable, achievementsTable, email, time_played, xp, user_levels, achievements
+):
     logger.info(f"Checking for new achievements for user {email}")
 
     user_achievements = achievements
@@ -413,20 +429,18 @@ def update_user_achievements(usersTable, achievementsTable, email, time_played, 
     achievement_types = [
         {"type": "time_played", "value": time_played},
         {"type": "xp", "value": xp},
-        {"type": "level", "value": max_level}
+        {"type": "level", "value": max_level},
     ]
 
     for achievement_type in achievement_types:
         response = achievementsTable.table.scan(
-            FilterExpression=Attr("type").eq(achievement_type["type"]) &
-                             Attr("requires").lte(achievement_type["value"])
+            FilterExpression=Attr("type").eq(achievement_type["type"])
+            & Attr("requires").lte(achievement_type["value"])
         )
 
         # Sort achievements by requires in descending order
         achievements = sorted(
-            response.get("Items", []),
-            key=lambda a: a.get("requires", 0),
-            reverse=True
+            response.get("Items", []), key=lambda a: a.get("requires", 0), reverse=True
         )
 
         for achievement in achievements:
@@ -445,7 +459,7 @@ def update_user_achievements(usersTable, achievementsTable, email, time_played, 
         usersTable.table.update_item(
             Key={"email": email},
             UpdateExpression="SET achievements = :achievements",
-            ExpressionAttributeValues={":achievements": user_achievements}
+            ExpressionAttributeValues={":achievements": user_achievements},
         )
 
     return new_achievements
