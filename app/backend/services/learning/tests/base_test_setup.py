@@ -156,9 +156,9 @@ class BaseTestSetup(unittest.TestCase):
             "password": bcrypt.hashpw(self.sample_user_pass.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"),
             "letters_learned": {},
             "current_level": {
-                "es": 0,
-                "hr": 10,
-                "fr": 20,
+                "es": 1,
+                "hr": 11,
+                "fr": 21,
             },
             "task_level": 0,
             "time_played": 0,
@@ -265,6 +265,7 @@ class BaseTestSetup(unittest.TestCase):
         for battlepass in self.sample_battlepasses:
             self.battlepass_table.put_item(Item=battlepass)
 
+
     @staticmethod
     def setup_paths(service_name=None):
         """
@@ -291,6 +292,7 @@ class BaseTestSetup(unittest.TestCase):
             if path not in sys.path and os.path.exists(path):
                 sys.path.insert(0, path)
 
+
     @staticmethod
     def clear_module_cache(modules=None):
         """
@@ -300,6 +302,12 @@ class BaseTestSetup(unittest.TestCase):
             modules: List of module names to clear from cache
         """
         if modules:
-            for module in modules:
-                if module in sys.modules:
-                    del sys.modules[module]
+            for module_name in modules:
+                for name in list(sys.modules.keys()):
+                    if module_name in name:
+                        del sys.modules[name]
+
+            # Also clear any validation_schema modules to prevent schema conflicts
+            for name in list(sys.modules.keys()):
+                if 'validation_schema' in name:
+                    del sys.modules[name]

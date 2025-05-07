@@ -4,10 +4,6 @@ import { NavigateFunction } from "react-router-dom";
 export const BACKEND_AUTH_API = import.meta.env.VITE_BACKEND_AUTH_API || "";
 export const APP_STAGE = import.meta.env.VITE_STAGE || "";
 
-export const redirectToLogin = (navigate: NavigateFunction) => {
-  navigate(APP_ROUTES.LOGIN);
-};
-
 export const redirectToBuy = (navigate: NavigateFunction) => {
   navigate(APP_ROUTES.BUY);
 };
@@ -34,4 +30,11 @@ export const handleThirdPartyLogin = async (type_of_service: string) => {
     `${BACKEND_AUTH_API}/login/third-party?type_of_service=${type_of_service}&platform=web`,
     "_self"
   );
+};
+
+// only go back if there’s somewhere to go
+export const handleBack = (navigate: NavigateFunction) => {
+  if (window.history.length > 1) {
+    navigate(-1);
+  }
 };

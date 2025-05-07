@@ -133,7 +133,7 @@ class TestGetListOfTasks(BaseTestSetup):
         self.assertIn("message", body)
 
         self.assertEqual(body["message"], "User test@mail.com is not allowed to access level 41.")
-        self.assertEqual(body["current_level"], 0)
+        self.assertEqual(body["current_level"], 1)
 
 
     def test_get_list_section_10(self):
@@ -271,7 +271,6 @@ class TestGetListOfTasks(BaseTestSetup):
 
         updated_user = self.users_table.get_item(Key={'email': 'test@mail.com'})
         print(f"Updated user: {updated_user}")
-
 
 
     def test_get_list_section_20(self):

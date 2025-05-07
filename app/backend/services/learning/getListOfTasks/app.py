@@ -103,7 +103,7 @@ def get_users_current_level(dynamodb, email, language_id):
 
     if language_id not in user_levels:
         logger.info(f"Adding new language {language_id} to user {email}")
-        user_levels[language_id] = 0
+        user_levels[language_id] = 1
 
         dynamodb.table.update_item(
             Key={"email": email},
@@ -199,7 +199,7 @@ def get_tasks_for_section(dynamodb, section, language_id):
 
 def chose_tasks(tasks, num_v1, num_v2, num_v3):
     tasks_by_version = {1: [], 2: [], 3: []}
-    print(f"choosing tasks from {len(tasks)} tasks")
+    logger.info(f"choosing tasks from {len(tasks)} tasks")
 
     for task in tasks:
         version = task.get("version")

@@ -5,13 +5,19 @@ import { options, SideBarOptions } from "@/constants/sidebar";
 import useMediaQuery from "@/hooks/useMediaQuery";
 import SidebarToggleButton from "./SidebarToggleButton";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
-const Sidebar = () => {
+interface Props {
+  selected: string;
+  setSelected: (selected: string) => void;
+}
+
+const Sidebar = ({ selected, setSelected }: Props) => {
   const auth = useAuth();
-  const [selected, setSelected] = useState(SideBarOptions.HOME);
-  const isBigScreen = useMediaQuery("(min-width: 500px)");
+  const isBigScreen = useMediaQuery("(min-width: 851px)");
   const [isOpen, setIsOpen] = useState(false);
   const toggleSidebar = useCallback(() => setIsOpen((prev) => !prev), []);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -40,7 +46,15 @@ const Sidebar = () => {
             key={index}
             icon={option.icon}
             label={option.label}
-            onClick={() => setSelected(option.label)}
+            onClick={() => {
+              if (option.label === SideBarOptions.CREATE_ROOM) {
+                navigate("/room/create");
+              } else if (option.label === SideBarOptions.JOIN_ROOM) {
+                navigate("/room/join");
+              }
+
+              setSelected(option.label);
+            }}
             isSelected={selected === option.label}
           />
         ))}

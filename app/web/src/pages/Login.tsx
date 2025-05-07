@@ -19,6 +19,7 @@ const Login = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   const [errors, setErrors] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState<{ email: string; password: string }>({
     email: "",
@@ -116,8 +117,18 @@ const Login = () => {
             type={ButtonType.SECONDARY_OUTLINE}
             text="Login"
             styles="w-full rounded-full p-3 mt-4"
-            onClick={() => {
-              handleLogin(user.email, user.password, navigate, auth, setErrors);
+            isLoading={isLoading}
+            loadingText="Logging in..."
+            onClick={async () => {
+              setIsLoading(true);
+              await handleLogin(
+                user.email,
+                user.password,
+                navigate,
+                auth,
+                setErrors
+              );
+              setIsLoading(false);
             }}
           />
         </div>

@@ -9,16 +9,15 @@ import {
   PricingType,
 } from "@/components/common";
 import { Dialog } from "@/components/elements";
+import { APP_ROUTES } from "@/constants/common";
 import { images } from "@/constants/images";
-import {
-  redirectToGoogleStore,
-  redirectToBuy,
-  redirectToLogin,
-} from "@/utils/common";
+import useMediaQuery from "@/hooks/useMediaQuery";
+import { redirectToGoogleStore, redirectToBuy } from "@/utils/common";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+  const IS_MOBILE = useMediaQuery("(max-width: 700px)");
   const [openDialog, setOpenDialog] = useState(false);
   const navigate = useNavigate();
 
@@ -49,7 +48,7 @@ const LandingPage = () => {
             text="Get started"
             type={ButtonType.PRIMARY_OUTLINE}
             styles="w-full"
-            onClick={() => redirectToLogin(navigate)}
+            onClick={() => navigate(APP_ROUTES.MAIN_PAGE)}
           />
           <Button
             text="Pricing"
@@ -116,7 +115,7 @@ const LandingPage = () => {
 
       <section
         id="pricing"
-        className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-full sm:h-[85vh]"
+        className="z-10 flex items-center justify-center gap-4 mt-10 mb-10 w-[90%] h-full sm:h-[100vh]"
       >
         <div className="h-full flex flex-col sm:flex-row w-full lg:w-[90%] items-center justify-between text-center">
           <Pricing
@@ -155,12 +154,12 @@ const LandingPage = () => {
         secondButton={{
           type: ButtonType.SECONDARY_FULL,
           text: "Web",
-          onClick: () => redirectToLogin(navigate),
+          onClick: () => navigate(APP_ROUTES.LOGIN),
         }}
       />
 
       {/* Background */}
-      <div className="absolute top-0 left-0 w-full h-full ">
+      <div className="absolute top-0 left-0 w-full h-full">
         <img
           src={images.bgImage}
           alt="Gestura background image"
@@ -181,11 +180,13 @@ const LandingPage = () => {
           alt="Gestura background image"
           className="object-cover w-full h-screen transform rotate-180 scale-x-[-1] bg-background-600 -mt-1"
         />
-        <img
-          src={images.bgImage}
-          alt="Gestura background image"
-          className="object-cover w-full h-[130vh] bg-background-600 sm:hidden"
-        />
+        {!IS_MOBILE && (
+          <img
+            src={images.bgImage}
+            alt="Gestura background image"
+            className="object-cover w-full h-[130vh] bg-background-600 sm:hidden"
+          />
+        )}
       </div>
     </div>
   );
