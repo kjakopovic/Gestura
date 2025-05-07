@@ -6,10 +6,9 @@ from validation_schema import schema
 from dataclasses import dataclass
 from aws_lambda_powertools.utilities.validation import SchemaValidationError, validate
 from common import build_response, convert_decimal_to_float
-from boto import LambdaDynamoDBClass, _LAMBDA_ACHIEVEMENTS_TABLE_RESOURCE
+from boto import LambdaDynamoDBClass, _LAMBDA_ACHIEVEMENTS_TABLE_RESOURCE, _LAMBDA_USERS_TABLE_RESOURCE
 from middleware import middleware
 from auth import get_email_from_jwt_token
-from boto3.dynamodb.conditions import Key
 
 logger = logging.getLogger("GetAchievements")
 logger.setLevel(logging.DEBUG)
@@ -44,17 +43,24 @@ def lambda_handler(event, context):
         return build_response(400, {"message": str(e)})
 
     # Initialize DynamoDB clients
-    global _LAMBDA_ACHIEVEMENTS_TABLE_RESOURCE
+    global _LAMBDA_ACHIEVEMENTS_TABLE_RESOURCE, _LAMBDA_USERS_TABLE_RESOURCE
     achievements_dynamodb = LambdaDynamoDBClass(_LAMBDA_ACHIEVEMENTS_TABLE_RESOURCE)
+    users_dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
+
+    user = get_user_by_email(users_dynamodb, email)
+    if not user:
+        logger.error(f"User with email {email} does not exist")
+        return build_response(404, {"message": "User does not exist"})
+    user_achievements = user.get("achievements", [])
 
     # Extract query parameters
     page_size = int(query_params.get("query_page_size", 10))
     next_token = query_params.get("next_token", None)
 
-    return get_achievements(achievements_dynamodb, page_size, next_token)
+    return get_achievements(achievements_dynamodb, page_size, next_token, user_achievements)
 
 
-def get_achievements(dynamodb, page_size, next_token):
+def get_achievements(dynamodb, page_size, next_token, user_achievements):
     """
     Retrieve achievements with pagination.
 
@@ -62,6 +68,7 @@ def get_achievements(dynamodb, page_size, next_token):
         dynamodb (LambdaDynamoDBClass): DynamoDB client for achievements table
         page_size (int): Number of items to return per page
         next_token (str): Token for retrieving the next page (optional)
+        user_achievements (list): List of user achievements
 
     Returns:
         dict: HTTP response with achievements data and next page token
@@ -90,6 +97,14 @@ def get_achievements(dynamodb, page_size, next_token):
     # Convert Decimal values to float for JSON serialization
     converted_achievements = [convert_decimal_to_float(item) for item in achievements]
 
+    # Add info to converted_achievements if user has each achievement or not
+    for achievement in converted_achievements:
+        achievement_id = achievement.get("id")
+        if achievement_id in user_achievements:
+            achievement["acquired"] = True
+        else:
+            achievement["acquired"] = False
+
     result = {
         "achievements": converted_achievements,
         "next_token": None
@@ -108,6 +123,13 @@ def get_achievements(dynamodb, page_size, next_token):
             "data": result
         }
     )
+
+
+def get_user_by_email(dynamodb, email):
+    logger.info(f"Getting user by email {email}")
+    user = dynamodb.table.get_item(Key={"email": email})
+
+    return user.get("Item")
 
 
 class DecimalEncoder(json.JSONEncoder):
