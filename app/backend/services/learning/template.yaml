@@ -145,6 +145,8 @@ Resources:
             Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
           BATTLEPASS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-BattlepassTable"
+          ACHIEVEMENTS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-AchievementsTable"
           JWT_SECRET_NAME: !Ref JwtSecretName
           SECRETS_REGION_NAME: !Ref SecretsRegionName
       Layers:

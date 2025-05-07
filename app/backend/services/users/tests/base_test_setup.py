@@ -30,6 +30,7 @@ class BaseTestSetup(unittest.TestCase):
         os.environ["LANGUAGES_TABLE_NAME"] = "test_languages_table"
         os.environ["BATTLEPASS_TABLE_NAME"] = "test_battlepass_table"
         os.environ["ITEMS_TABLE_NAME"] = "test_items_table"
+        os.environ["ACHIEVEMENTS_TABLE_NAME"] = "test_achievements_table"
         os.environ["JWT_SECRET_NAME"] = "secret"
         os.environ["SECRETS_REGION_NAME"] = "eu-central-1"
         os.environ["AWS_REGION"] = "eu-central-1"
@@ -134,6 +135,38 @@ class BaseTestSetup(unittest.TestCase):
             BillingMode="PAY_PER_REQUEST"
         )
         self.items_table.meta.client.get_waiter('table_exists').wait(TableName=os.environ["ITEMS_TABLE_NAME"])
+
+        # Achievements table
+        self.achievements_table = self.dynamodb.create_table(
+            TableName=os.environ["ACHIEVEMENTS_TABLE_NAME"],
+            AttributeDefinitions=[
+                {"AttributeName": "id", "AttributeType": "S"},
+                {"AttributeName": "type", "AttributeType": "S"},
+            ],
+            KeySchema=[
+                {"AttributeName": "id", "KeyType": "HASH"}
+            ],
+            GlobalSecondaryIndexes=[
+                {
+                    "IndexName": "type-index",
+                    "KeySchema": [
+                        {"AttributeName": "type", "KeyType": "HASH"}
+                    ],
+                    "Projection": {
+                        "ProjectionType": "ALL"
+                    },
+                    "ProvisionedThroughput": {
+                        "ReadCapacityUnits": 1,
+                        "WriteCapacityUnits": 1
+                    }
+                }
+            ],
+            ProvisionedThroughput={
+                "ReadCapacityUnits": 5,
+                "WriteCapacityUnits": 5
+            }
+        )
+        self.achievements_table.meta.client.get_waiter('table_exists').wait(TableName=os.environ["ACHIEVEMENTS_TABLE_NAME"])
 
         # Sample user data
         self.sample_user_pass = "password123"
