@@ -614,6 +614,8 @@ Resources:
           SECRETS_REGION_NAME: !Ref SecretsRegionName
           ACHIEVEMENTS_TABLE_NAME: !ImportValue
             Fn::Sub: "${LayerStackName}-${StageName}-AchievementsTable"
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
       Layers:
         - !Sub "{{resolve:ssm:/layers/common/latest}}"
       Architectures:
