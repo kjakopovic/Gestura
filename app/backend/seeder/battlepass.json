@@ -1,0 +1,60 @@
+[
+  {
+    "season": "Season-1",
+    "name": "Season 1",
+    "start_date": "2025-05-06T23:59:59Z",
+    "end_date": "2025-05-25T23:59:59Z",
+    "levels": [
+      {
+        "level": 1,
+        "required_xp": 100,
+        "coins": 25
+      },
+      {
+        "level": 2,
+        "required_xp": 110,
+        "coins": 30
+      },
+      {
+        "level": 3,
+        "required_xp": 120,
+        "coins": 35
+      },
+      {
+        "level": 4,
+        "required_xp": 130,
+        "coins": 40
+      },
+      {
+        "level": 5,
+        "required_xp": 140,
+        "coins": 45
+      },
+      {
+        "level": 6,
+        "required_xp": 150,
+        "coins": 50
+      },
+      {
+        "level": 7,
+        "required_xp": 160,
+        "coins": 55
+      },
+      {
+        "level": 8,
+        "required_xp": 170,
+        "coins": 60
+      },
+      {
+        "level": 9,
+        "required_xp": 180,
+        "coins": 75
+      },
+      {
+        "level": 10,
+        "required_xp": 190,
+        "coins": 100
+      }
+    ]
+  }
+]

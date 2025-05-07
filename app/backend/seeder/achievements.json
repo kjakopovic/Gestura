@@ -1,0 +1,42 @@
+[
+  {
+    "id": "8a1736be-4b79-4c97-805c-032f1c03ee81",
+    "requires": 100,
+    "type": "xp",
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/achievements/experience.png",
+    "title": "Show them how it's done",
+    "description": "Earn 100 XP going through lessons"
+  },
+  {
+    "id": "89198b85-21f3-4bc4-863b-836951492f64",
+    "requires": 1000,
+    "type": "xp",
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/achievements/expertise.png",
+    "title": "Beast mode activated",
+    "description": "Earn 1000 XP going through lessons"
+  },
+  {
+    "id": "d14d8b61-5568-4c7a-b989-a2a43c675de6",
+    "requires": 600,
+    "type": "time_played",
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/achievements/studying.png",
+    "title": "Busy learnin'",
+    "description": "Spend 10 minutes learning"
+  },
+  {
+    "id": "84805c26-06bc-4bcc-8541-fc9343ccf491",
+    "requires": 20,
+    "type": "words",
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/achievements/people.png",
+    "title": "We've got a long way ahead of us",
+    "description": "Learn your first 10 letters"
+  },
+  {
+    "id": "92894022-7a78-47c2-b47b-4a5ef5a28f11",
+    "requires": 10,
+    "type": "words",
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/achievements/confetti.png",
+    "title": "A Motivational Beginning",
+    "description": "Learn your first 3 letters"
+  }
+]

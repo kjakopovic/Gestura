@@ -18,3 +18,9 @@ insert-tasks-into-table:
 
 insert-languages-into-table:
 	python ./backend/scripts/insert_into_table.py --table languages-$(stageName) --items-file ./backend/seeder/languages.json --region eu-central-1
+
+insert-achievements-into-table:
+	python ./backend/scripts/insert_into_table.py --table achievements-$(stageName) --items-file ./backend/seeder/achievements.json --region eu-central-1
+
+insert-battlepass-into-table:
+	python ./backend/scripts/insert_into_table.py --table battlepass-$(stageName) --items-file ./backend/seeder/battlepass.json --region eu-central-1
