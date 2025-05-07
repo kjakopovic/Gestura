@@ -832,7 +832,7 @@ class TestCompleteLevel(BaseTestSetup):
         updated_user = self.users_table.get_item(Key={'email': "achievement@mail.com"})['Item']
         user_achievements = updated_user.get('achievements', [])
 
-        print(f"\nUser achievements before: {self.achievements_user.get("achievements")}")
+        print(f"\nUser achievements before: {self.achievements_user.get('achievements')}")
         print(f"\nUser achievements after completion: {user_achievements}")
         print(f"\nNew achievements: {body['new_achievements']}")
 
