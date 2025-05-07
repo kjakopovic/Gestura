@@ -235,6 +235,13 @@ def update_users_battlepass_xp(user, xp, battlepassDb):
     season_entry["xp"] = new_xp
     logger.info(f"Battlepass '{season_id}' XP updated: {old_xp} → {new_xp}")
 
+    # 4) update user_bp with new data
+    for idx, entry in enumerate(user_bp):
+        if entry.get("season_id") == season_id:
+            # replace the existing entry in‐place
+            user_bp[idx] = season_entry
+            break
+
     return user_bp
 
 
