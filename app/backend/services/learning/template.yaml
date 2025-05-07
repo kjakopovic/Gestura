@@ -99,38 +99,6 @@ Resources:
             Method: GET
             RestApiId: !Ref LearningApi
 
-  CreateTaskFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: createTask/
-      Handler: app.lambda_handler
-      Runtime: python3.12
-      Environment:
-        Variables:
-          TASKS_TABLE_NAME: !ImportValue
-            Fn::Sub: "${LayerStackName}-${StageName}-TasksTable"
-          JWT_SECRET_NAME: !Ref JwtSecretName
-          SECRETS_REGION_NAME: !Ref SecretsRegionName
-      Layers:
-        - !Sub "{{resolve:ssm:/layers/common/latest}}"
-      Architectures:
-        - x86_64
-      Policies:
-        - Version: "2012-10-17"
-          Statement:
-            - Effect: "Allow"
-              Action:
-                - "dynamodb:*"
-                - "secretsmanager:GetSecretValue"
-              Resource: "*"
-      Events:
-        GetListOfTasksEndpoint:
-          Type: Api
-          Properties:
-            Path: /tasks
-            Method: POST
-            RestApiId: !Ref LearningApi
-
   CompleteLevelFunction:
     Type: AWS::Serverless::Function
     Properties:
