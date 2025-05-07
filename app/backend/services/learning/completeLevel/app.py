@@ -394,12 +394,11 @@ def get_xp_multiplier(active_items):
         return Decimal("1.0")
 
     multiplier = Decimal("1.0")
-    current_time = datetime.now(timezone.utc)
 
     for item in active_items:
         # Check if item has effects with a multiplier and is an XP boost
         if (
-            item.get("category") == "xp_boost"
+            item.get("category") == "xp"
             and "effects" in item
             and "multiplier" in item["effects"]
         ):
