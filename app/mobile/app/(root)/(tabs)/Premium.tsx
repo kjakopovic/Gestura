@@ -6,7 +6,7 @@ import UpgradeToPremium from "../(premium-options)/UpgradeToPremium";
 import CommChoice from "../(premium-options)/CommChoice";
 
 const Premium = () => {
-  const hasPremium = true; // ovo replaceat za stvarnim premium statusom
+  const hasPremium = false; // ovo replaceat za stvarnim premium statusom
 
   return (
     <SafeAreaView className="flex-1 bg-grayscale-800">
