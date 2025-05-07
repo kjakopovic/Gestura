@@ -30,7 +30,16 @@ const Home = () => {
   // Use the extracted hooks
   const { levels, isLoadingMore, handleScrollToEnd, loadMoreLevels } =
     useLevel();
-  const { isLoading, userStats } = useUserData();
+  const { isLoading, userStats, userData } = useUserData();
+
+  // Get the current language ID with fallback
+  const languageId = userData?.language_id || "usa";
+
+  // Get the current level for the selected language
+  const currentLevel = userData?.current_level?.[languageId] || 1;
+
+  // Log for debugging
+  console.log(`Current level for ${languageId}: ${currentLevel}`);
 
   // Use the scroll handler
   const scrollHandlerProps = useScrollHandler(handleScrollToEnd);
@@ -38,7 +47,7 @@ const Home = () => {
   // Handle level press
   const handleLevelPress = (levelId: number) => {
     console.log(`Level ${levelId} press`);
-    navigateToLevel(levelId);
+    navigateToLevel(levelId, languageId);
   };
 
   // Show loading indicator when data is being fetched
@@ -75,6 +84,7 @@ const Home = () => {
             onLevelPress={handleLevelPress}
             onLoadMore={loadMoreLevels}
             isLoadingMore={isLoadingMore}
+            currentLevel={currentLevel}
           />
         </View>
       </ScrollView>

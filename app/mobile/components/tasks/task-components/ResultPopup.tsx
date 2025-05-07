@@ -109,7 +109,7 @@ const ResultPopup = ({
               {correctImage ? (
                 <Image
                   source={correctImage}
-                  className="w-100% h-100%"
+                  className="size-32"
                   resizeMode="contain"
                 />
               ) : (

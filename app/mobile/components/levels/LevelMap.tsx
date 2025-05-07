@@ -16,6 +16,7 @@ interface LevelMapProps {
   onLoadMore?: () => void;
   isLoadingMore?: boolean;
   pathStyle?: "battlepass" | "mapLevel";
+  currentLevel?: number;
 }
 
 const LevelMap = ({
@@ -24,12 +25,13 @@ const LevelMap = ({
   onLoadMore,
   pathStyle,
   isLoadingMore = false,
+  currentLevel = 1,
 }: LevelMapProps) => {
   const pathWidth = screenWidth * 0.7;
   const levelSpacing = 230;
   const zigzagWidth = pathWidth - 32;
 
-  const lastUnlockedIndex = levels.map((l) => l.state).lastIndexOf("unlocked");
+  const lastUnlockedIndex = currentLevel - 1; // Adjusted to zero-based index
 
   // Determine path color based on style
 

@@ -11,10 +11,13 @@ export const navigateToHome = () => {
  * Navigate to a level
  * @param levelId Optional level ID
  */
-export const navigateToLevel = (levelId?: number) => {
+export const navigateToLevel = (levelId?: number, language_id?: string) => {
   router.push({
     pathname: "/(root)/level",
-    params: levelId ? { id: levelId } : undefined,
+    params:
+      levelId && language_id
+        ? { id: levelId, language: language_id }
+        : undefined,
   });
 };
 

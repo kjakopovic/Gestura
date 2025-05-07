@@ -1,5 +1,5 @@
-import React from "react";
-import { ScrollView } from "react-native";
+import React, { useEffect } from "react";
+import { ScrollView, ActivityIndicator, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 
@@ -11,14 +11,62 @@ import { getLevelTasks } from "@/utils/taskUtils";
 
 // Import the task data from a separate file
 import { levelTasksMap } from "@/data/levelTasks";
+import { api } from "@/lib/api";
+import { ApiTasksResponse } from "@/types/types";
+import { LevelTask } from "@/hooks/useLevelTasks";
+import { convertApiTaskToLevelTask } from "@/utils/levelTaskUtils";
+import { useLevelStatsStore } from "@/store/useLevelStatsStore";
 
 const LevelScreen = () => {
   const { completeLevel } = useLevel();
   const params = useLocalSearchParams();
   const levelId = params.id ? parseInt(params.id as string, 10) : 3;
+  const languageId = params.language || "usa";
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [tasks, setTasks] = React.useState<LevelTask[]>([]);
 
-  // Get tasks for the current level
-  const levelTasks = getLevelTasks(levelId, levelTasksMap);
+  const setLevelId = useLevelStatsStore((state) => state.setLevelId);
+  const setStartedAt = useLevelStatsStore((state) => state.setStartedAt);
+  const setLanguageId = useLevelStatsStore((state) => state.setLanguageId);
+
+  const fetchLevelTasks = async (): Promise<LevelTask[]> => {
+    try {
+      setLoading(true);
+      const response = await api.get<ApiTasksResponse>(
+        `/tasks?level=${levelId}&language=${languageId}`,
+        { apiBase: "learning" }
+      );
+
+      if (response.success && response.data?.tasks) {
+        setLanguageId(languageId.toString());
+        setLevelId(levelId);
+        setStartedAt(new Date().toISOString());
+        return response.data.tasks.map(convertApiTaskToLevelTask);
+      } else {
+        setError("Failed to fetch tasks");
+        console.error("Failed to fetch level tasks:", response.error);
+        return [];
+      }
+    } catch (error) {
+      console.error("Error fetching level tasks:", error);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const tasks = await fetchLevelTasks();
+      if (tasks.length > 0) {
+        setTasks(tasks);
+        console.log("Fetched tasks:", tasks);
+      }
+    };
+
+    fetchTasks();
+  }, [levelId, languageId]);
 
   // Handle level completion
   const handleLevelComplete = (levelId: number, stats: any) => {
@@ -34,7 +82,7 @@ const LevelScreen = () => {
     completionStats,
     goToHome,
   } = useLevelTasks({
-    tasks: levelTasks,
+    tasks,
     levelId,
     onLevelComplete: handleLevelComplete,
   });
@@ -43,6 +91,25 @@ const LevelScreen = () => {
   const handleTaskComplete = (isCorrect: boolean) => {
     setTimeout(() => completeTask(isCorrect), 100);
   };
+
+  if (loading) {
+    return (
+      <View className="w-full h-full bg-grayscale-800 flex items-center justify-center">
+        <ActivityIndicator size="large" color="#ffffff" />
+        <Text className="text-white mt-4">Loading tasks...</Text>
+      </View>
+    );
+  }
+
+  if (error || tasks.length === 0) {
+    return (
+      <View className="w-full h-full bg-grayscale-800 flex items-center justify-center p-4">
+        <Text className="text-white text-lg text-center mb-4">
+          {error || "No tasks available for this level."}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView className="w-full h-full bg-grayscale-800">

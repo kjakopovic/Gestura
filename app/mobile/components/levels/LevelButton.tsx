@@ -56,7 +56,13 @@ const LevelButton = ({
           state === "locked" ? "opacity-50" : ""
         }`}
         resizeMode="contain"
-        tintColor={state === "locked" ? "gray" : undefined}
+        tintColor={
+          state === "locked"
+            ? "gray"
+            : state === "unlocked"
+            ? "#A162FF"
+            : "#A162FF"
+        }
       />
       <View
         className={`${

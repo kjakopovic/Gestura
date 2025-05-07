@@ -1,87 +1,103 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { LevelData } from "@/types/levels";
 import * as icons from "@/constants/icons";
+import { useUserData } from "@/hooks/useUserData";
 
 export function useLevel() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const { userData } = useUserData();
 
-  // Initial 10 levels
-  const initialLevels: LevelData[] = [
+  // Get the current level from userData
+  const languageId = userData?.language_id || "usa";
+  const currentUserLevel = userData?.current_level?.[languageId] || 1;
+
+  // Function to determine level state based on current user level
+  const getLevelState = (levelNumber: number) => {
+    if (levelNumber < currentUserLevel) return "completed" as const;
+    if (levelNumber === currentUserLevel) return "current" as const;
+    return "locked" as const;
+  };
+
+  // Level templates (without state - we'll apply state dynamically)
+  const levelTemplates: Omit<LevelData, "state">[] = [
     {
       id: 1,
       level: 1,
       type: "special",
-      state: "unlocked",
       icon: icons.star1,
     },
     {
       id: 2,
       level: 2,
       type: "normal",
-      state: "unlocked",
       icon: icons.star2,
     },
     {
       id: 3,
       level: 3,
       type: "special",
-      state: "unlocked",
       icon: icons.star1,
     },
     {
       id: 4,
       level: 4,
       type: "normal",
-      state: "locked",
       icon: icons.star2,
     },
     {
       id: 5,
       level: 5,
       type: "special",
-      state: "locked",
       icon: icons.starTrophy,
     },
     {
       id: 6,
       level: 6,
       type: "special",
-      state: "locked",
       icon: icons.starTrophy,
     },
     {
       id: 7,
       level: 7,
       type: "normal",
-      state: "locked",
       icon: icons.star2,
     },
     {
       id: 8,
       level: 8,
       type: "normal",
-      state: "locked",
       icon: icons.star2,
     },
     {
       id: 9,
       level: 9,
       type: "special",
-      state: "locked",
       icon: icons.starTrophy,
     },
     {
       id: 10,
       level: 10,
       type: "normal",
-      state: "locked",
       icon: icons.star2,
     },
   ];
 
-  const [levels, setLevels] = useState<LevelData[]>(initialLevels);
+  // Generate initial levels with proper states
+  const generateInitialLevels = useCallback(() => {
+    return levelTemplates.map((template) => ({
+      ...template,
+      state: getLevelState(template.level),
+    }));
+  }, [currentUserLevel]);
 
-  // Function to generate more levels by cycling through the pattern
+  const [levels, setLevels] = useState<LevelData[]>([]);
+
+  // Update levels when user data changes
+  useEffect(() => {
+    setLevels(generateInitialLevels());
+  }, [generateInitialLevels, currentUserLevel]);
+
+  // Function to generate more levels
   const loadMoreLevels = useCallback(() => {
     if (isLoadingMore) return;
 
@@ -95,21 +111,22 @@ export function useLevel() {
         .map((_, index) => {
           const currentLength = newLevels.length;
           const newId = currentLength + index + 1;
+          const newLevel = newId;
           const templateIndex = index % 10; // Cycle through the pattern
-          const templateLevel = initialLevels[templateIndex];
+          const templateLevel = levelTemplates[templateIndex];
 
           return {
             ...templateLevel,
             id: newId,
-            level: newId,
-            state: "locked" as const,
+            level: newLevel,
+            state: getLevelState(newLevel),
           };
         });
 
       setLevels([...newLevels, ...nextBatch]);
       setIsLoadingMore(false);
     }, 500);
-  }, [levels, isLoadingMore]);
+  }, [levels, isLoadingMore, currentUserLevel]);
 
   // Function to handle scroll end for infinite loading
   const handleScrollToEnd = useCallback(() => {
@@ -122,7 +139,7 @@ export function useLevel() {
   const unlockLevel = useCallback((levelId: number) => {
     setLevels((currentLevels) =>
       currentLevels.map((level) =>
-        level.id === levelId ? { ...level, state: "unlocked" as const } : level
+        level.id === levelId ? { ...level, state: "current" as const } : level
       )
     );
   }, []);
@@ -130,17 +147,15 @@ export function useLevel() {
   // Function to complete a level
   const completeLevel = useCallback((levelId: number) => {
     setLevels((currentLevels) => {
-      const updatedLevels = currentLevels.map((level) => {
+      return currentLevels.map((level) => {
         if (level.id === levelId) {
           return { ...level, state: "completed" as const };
         }
-        // Unlock the next level if it exists and is currently locked
-        if (level.id === levelId + 1 && level.state === "locked") {
-          return { ...level, state: "unlocked" as const };
+        if (level.id === levelId + 1) {
+          return { ...level, state: "current" as const };
         }
         return level;
       });
-      return updatedLevels;
     });
   }, []);
 
