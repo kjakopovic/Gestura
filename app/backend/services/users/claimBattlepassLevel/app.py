@@ -102,15 +102,10 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
             f" Adding new battlepass season to user."
         )
 
-        unlocked_levels = []
-        locked_levels = []
-
         new_battlepass = {
             "season_id": battlepass_season_id,
             "xp": 0,
             "claimed_levels": [],
-            "unlocked_levels": unlocked_levels,
-            "locked_levels": locked_levels,
         }
 
         user_battlepasses.append(new_battlepass)

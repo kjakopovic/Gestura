@@ -222,8 +222,6 @@ def update_users_battlepass_xp(user, xp, battlepassDb):
             "season_id": season_id,
             "xp": 0,
             "claimed_levels": [],
-            "unlocked_levels": [],
-            "locked_levels": [],
         }
         user_bp.append(season_entry)
         logger.info(f"Initialized new battlepass entry for season {season_id}")

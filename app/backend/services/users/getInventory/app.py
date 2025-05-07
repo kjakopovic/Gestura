@@ -58,48 +58,54 @@ def lambda_handler(event, context):
     new_battlepass = None
 
     active_battlepass = get_active_battlepass_seasons(battlepass_dynamodb)
-    if active_battlepass:
-        season_id = active_battlepass.get("season")
+    if not active_battlepass:
+        logger.info(f"No active battlepass seasons found {active_battlepass}")
+        response_body["active_battlepass"] = []
+        return build_response(200, convert_decimal_to_float(response_body))
 
-        current_bp = next(
-            (bp for bp in user_battlepass or [] if bp.get("season_id") == season_id),
-            None,
+    season_id = active_battlepass.get("season")
+
+    current_bp = next(
+        (bp for bp in user_battlepass or [] if bp.get("season_id") == season_id),
+        None,
+    )
+
+    if not current_bp:
+        logger.info(
+            f"User battlepass not found for season ID: {season_id}."
+            f" Adding new battlepass season to user."
         )
 
-        if not current_bp:
-            logger.info(
-                f"User battlepass not found for season ID: {season_id}."
-                f" Adding new battlepass season to user."
-            )
+        new_battlepass = {
+            "season_id": season_id,
+            "xp": 0,
+            "claimed_levels": [],
+        }
 
-            new_battlepass = {
-                "season_id": season_id,
-                "xp": 0,
-                "claimed_levels": [],
-                "unlocked_levels": [],
-                "locked_levels": [],
-            }
+        user_battlepass = user_battlepass or []
 
-            user_battlepass = user_battlepass or []
+        user_battlepass.append(new_battlepass)
 
-            user_battlepass.append(new_battlepass)
+        users_dynamodb.table.update_item(
+            Key={"email": email},
+            UpdateExpression="SET battlepass = :battlepass",
+            ExpressionAttributeValues={":battlepass": user_battlepass},
+        )
 
-            users_dynamodb.table.update_item(
-                Key={"email": email},
-                UpdateExpression="SET battlepass = :battlepass",
-                ExpressionAttributeValues={":battlepass": user_battlepass},
-            )
+        logger.info(f"New battlepass season added to user: {new_battlepass}")
 
-            logger.info(f"New battlepass season added to user: {new_battlepass}")
+        current_bp = new_battlepass
+        response_body["user_battlepass"] = new_battlepass
+    else:
+        logger.info(f"User already has battlepass for season ID: {season_id}")
+        response_body["user_battlepass"] = current_bp
 
-            response_body["user_battlepass"] = new_battlepass
-        else:
-            logger.info(f"User already has battlepass for season ID: {season_id}")
-            response_body["user_battlepass"] = current_bp
-
-    response_body["active_battlepass"] = (
-        active_battlepass or "No active battlepass found."
+    response_body["user_battlepass"]["unlocked_levels"] = get_unlocked_levels(
+        active_battlepass.get("levels", []),
+        current_bp.get("xp", 0),
+        current_bp.get("claimed_levels", []),
     )
+    response_body["active_battlepass"] = active_battlepass or []
 
     return build_response(200, convert_decimal_to_float(response_body))
 
@@ -143,3 +149,39 @@ def get_active_battlepass_seasons(dynamodb):
         )
 
         return active_battlepasses[0]
+
+
+def get_unlocked_levels(
+    active_battlepass_levels, user_battlepass_xp, already_claimed_levels=[]
+):
+    """
+    Given:
+      - active_battlepass_levels: sorted or unsorted list of dicts with keys
+          { "required_xp": X, "level": N, ... }
+      - user_battlepass_xp: the user's total XP
+      - already_claimed_levels: list of level numbers the user has claimed
+
+    Returns a list of newly unlocked levels whose cumulative XP requirement
+    is <= user_battlepass_xp, excluding any in already_claimed_levels.
+    """
+
+    # Sort levels by their numeric level value
+    sorted_levels = sorted(active_battlepass_levels, key=lambda lvl: lvl["level"])
+
+    unlocked = []
+    running_xp = 0.0
+
+    for lvl in sorted_levels:
+        xp_needed = lvl.get("required_xp", 0)
+        running_xp += xp_needed
+
+        # stop once they lack the XP for this level
+        if running_xp > user_battlepass_xp:
+            break
+
+        level_num = lvl["level"]
+        # only add if they haven't claimed it yet
+        if level_num not in already_claimed_levels:
+            unlocked.append(level_num)
+
+    return unlocked
