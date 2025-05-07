@@ -206,7 +206,7 @@ def update_users_battlepass_xp(user, xp, battlepassDb):
         )
         return None
 
-    season_id = active_bp.get("season_id")
+    season_id = active_bp.get("season")
     if not season_id:
         logger.error(
             f"Active battlepass found but missing season ID; skipping XP bump."
