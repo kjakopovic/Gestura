@@ -13,6 +13,7 @@ from boto import (
     _LAMBDA_LANGUAGES_TABLE_RESOURCE,
     _LAMBDA_USERS_TABLE_RESOURCE,
     _LAMBDA_BATTLEPASS_TABLE_RESOURCE,
+    _LAMBDA_ACHIEVEMENTS_TABLE_RESOURCE,
 )
 from middleware import middleware
 from typing import List
@@ -58,9 +59,12 @@ def lambda_handler(event, context):
     global _LAMBDA_LANGUAGES_TABLE_RESOURCE
     global _LAMBDA_USERS_TABLE_RESOURCE
     global _LAMBDA_BATTLEPASS_TABLE_RESOURCE
+    global _LAMBDA_ACHIEVEMENTS_TABLE_RESOURCE
+
     languagesTable = LambdaDynamoDBClass(_LAMBDA_LANGUAGES_TABLE_RESOURCE)
     usersTable = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
     battlepassTable = LambdaDynamoDBClass(_LAMBDA_BATTLEPASS_TABLE_RESOURCE)
+    achievementsTable = LambdaDynamoDBClass(_LAMBDA_ACHIEVEMENTS_TABLE_RESOURCE)
 
     user = get_user_by_email(usersTable, email)
     if not user:
@@ -115,12 +119,26 @@ def lambda_handler(event, context):
         active_items
     )
 
+    new_achievements = update_user_achievements(
+        usersTable,
+        achievementsTable,
+        email,
+        user.get("time_played", 0) + time_played,
+        user.get("xp", 0) + xp,
+        user_levels,
+        user.get("achievements", [])
+    )
+
     response_body = {
         "message": "Level completed successfully",
         "xp": xp,
         "coins": coins,
         "percentage": round(len(request.correct_answers_versions) / 15),
+        "new_achievements": [],
     }
+
+    if new_achievements:
+        response_body["new_achievements"] = new_achievements
 
     return build_response(200, convert_decimal_to_float(response_body))
 
@@ -372,3 +390,62 @@ def get_xp_multiplier(active_items):
 
     logger.info(f"XP multiplier: {multiplier}")
     return multiplier
+
+
+def update_user_achievements(usersTable, achievementsTable, email, time_played, xp, user_levels, achievements):
+    logger.info(f"Checking for new achievements for user {email}")
+
+    user_achievements = achievements
+    if not user_achievements:
+        user_achievements = []
+
+    # Ensure values are Decimal
+    # xp = float(str(xp))
+    # time_played = float(str("time_played")) if time_played else Decimal('0')
+
+    # Calculate max level across all languages
+    max_level = max(user_levels.values()) if user_levels else 0
+    max_level = Decimal(str(max_level))
+
+    new_achievements = []
+
+    # Get achievements for each type, sorted by requires in descending order
+    achievement_types = [
+        {"type": "time_played", "value": time_played},
+        {"type": "xp", "value": xp},
+        {"type": "level", "value": max_level}
+    ]
+
+    for achievement_type in achievement_types:
+        response = achievementsTable.table.scan(
+            FilterExpression=Attr("type").eq(achievement_type["type"]) &
+                             Attr("requires").lte(achievement_type["value"])
+        )
+
+        # Sort achievements by requires in descending order
+        achievements = sorted(
+            response.get("Items", []),
+            key=lambda a: a.get("requires", 0),
+            reverse=True
+        )
+
+        for achievement in achievements:
+            # If we find an achievement the user already has, break the loop
+            # (assumes achievements are earned in order)
+            if achievement["id"] in user_achievements:
+                break
+
+            # Otherwise, add this achievement
+            new_achievements.append(achievement["id"])
+            user_achievements.append(achievement["id"])
+
+    # Update user if new achievements were earned
+    if new_achievements:
+        logger.info(f"User {email} earned new achievements: {new_achievements}")
+        usersTable.table.update_item(
+            Key={"email": email},
+            UpdateExpression="SET achievements = :achievements",
+            ExpressionAttributeValues={":achievements": user_achievements}
+        )
+
+    return new_achievements

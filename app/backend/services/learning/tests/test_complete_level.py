@@ -36,10 +36,15 @@ class TestCompleteLevel(BaseTestSetup):
             "resource": self.dynamodb,
             "table_name": os.environ["BATTLEPASS_TABLE_NAME"]
         })
+        self.achievements_resource_patcher = patch('completeLevel.app._LAMBDA_ACHIEVEMENTS_TABLE_RESOURCE', {
+            "resource": self.dynamodb,
+            "table_name": os.environ["ACHIEVEMENTS_TABLE_NAME"]
+        })
 
         self.battlepass_resource_patcher.start()
         self.users_resource_patcher.start()
         self.languages_resource_patcher.start()
+        self.achievements_resource_patcher.start()
 
 
     def test_when_user_not_authorized(self):
@@ -517,6 +522,7 @@ class TestCompleteLevel(BaseTestSetup):
         self.assertEqual(updated_coins, expected_coins,
                          f"Expected coins to be {expected_coins}, got {updated_coins}")
 
+
     def test_complete_level_with_active_battlepass(self):
         """
         Test level completion when there's an active battlepass (no XP multiplier).
@@ -666,6 +672,171 @@ class TestCompleteLevel(BaseTestSetup):
         print(f"Claimed levels array: {updated_battlepass[active_season].get('claimed_levels', [])}")
 
 
+    def test_with_new_achievement(self):
+        """
+        Test level completion where a user gets a new achievement.
+        """
+        self.sample_achievement = {
+            "id": "new_achievement",
+            "type": "xp",
+            "name": "New Achievement",
+            "description": "You have completed a new achievement.",
+            "icon": "https://example.com/icon.png",
+            "requires": 1
+        }
+        self.achievements_table.put_item(Item=self.sample_achievement)
+
+        email = "test@mail.com"
+        jwt_token = generate_jwt_token(email)
+
+        # Get initial user state
+        initial_user = self.users_table.get_item(Key={'email': email})['Item']
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "body": json.dumps({
+                "correct_answers_versions": [1, 2, 3],
+                "started_at": "2023-10-01T12:00:00Z",
+                "finished_at": "2023-10-01T12:30:00Z",
+                "language_id": "en",
+                "letters_learned": ["A", "B", "C"]
+            })
+        }
+
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        self.assertEqual(response['statusCode'], 200)
+        self.assertEqual(body['message'], "Level completed successfully")
+        self.assertIn("new_achievement", body['new_achievements'], "User should have received the new achievement")
+        updated_user = self.users_table.get_item(Key={'email': email})['Item']
+
+        # Check if the new achievement is in the user's achievements
+        user_achievements = updated_user.get('achievements', [])
+        self.assertIn("new_achievement", user_achievements, "User should have the new achievement")
+        self.assertEqual(len(user_achievements), len(initial_user.get('achievements', [])) + 1,
+                         "User should have one more achievement after completion")
+
+        print(f"User achievements after completion: {user_achievements}")
+
+
+    def test_with_achievements(self):
+        """
+        Test response when user gets a new achievement while having existing ones.
+        """
+        self.sample_achievements = [
+            {
+                "id": "new_achievement",
+                "type": "xp",
+                "requires": 1
+            },
+            {
+                "id": "existing_achievement",
+                "type": "xp",
+                "requires": 0
+            },
+            {
+                "id": "random_achievement",
+                "type": "xp",
+                "requires": 20
+            },
+            {
+                "id": "high_xp_achievement",
+                "type": "xp",
+                "requires": 10000
+            },
+            {
+                "id": "time_played_achievement",
+                "type": "time_played",
+                "requires": 500
+            },
+            {
+                "id": "time_played_achievement_2",
+                "type": "time_played",
+                "requires": 1000
+            },
+            {
+                "id": "time_played_achievement_3",
+                "type": "time_played",
+                "requires": 7000
+            },
+            {
+                "id": "level_achievement",
+                "type": "level",
+                "requires": 1
+            },
+            {
+                "id": "level_achievement_2",
+                "type": "level",
+                "requires": 2
+            },
+            {
+                "id": "level_achievement_3",
+                "type": "level",
+                "requires": 3
+            },
+            {
+                "id": "no_time_played_achievement",
+                "type": "time_played",
+                "requires": 0
+            }
+        ]
+        for achievement in self.sample_achievements:
+            self.achievements_table.put_item(Item=achievement)
+
+        self.achievements_user = {
+            "email": "achievement@mail.com",
+            "time_played": 20,
+            "xp": 10,
+            "current_level": {
+                "en": 2,
+                "de": 1
+            },
+            "achievements": [
+                "existing_achievement",
+                "level_achievement",
+                "no_time_played_achievement"
+            ],
+            "letters_learned": {},
+        }
+        self.users_table.put_item(Item=self.achievements_user)
+
+        jwt_token = generate_jwt_token("achievement@mail.com")
+
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "body": json.dumps({
+                "correct_answers_versions": [1, 2, 3],
+                "started_at": "2023-10-01T12:00:00Z",
+                "finished_at": "2023-10-01T12:30:00Z",
+                "language_id": "en",
+                "letters_learned": ["A", "B", "C"]
+            })
+        }
+
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        self.assertEqual(response['statusCode'], 200)
+        self.assertEqual(body['message'], "Level completed successfully")
+        self.assertIn("new_achievements", body, "Response should contain new achievements")
+        self.assertIn("new_achievement", body['new_achievements'], "User should have received the new achievement")
+        self.assertIn("level_achievement_2", body['new_achievements'], "User should have received the new achievement")
+        self.assertIn("time_played_achievement", body['new_achievements'], "User should have received the new achievement")
+        self.assertIn("time_played_achievement_2", body['new_achievements'], "User should have received the new achievement")
+
+        updated_user = self.users_table.get_item(Key={'email': "achievement@mail.com"})['Item']
+        user_achievements = updated_user.get('achievements', [])
+
+        print(f"\nUser achievements before: {self.achievements_user.get('achievements')}")
+        print(f"\nUser achievements after completion: {user_achievements}")
+        print(f"\nNew achievements: {body['new_achievements']}")
+
+
     def _scan_table(self, table):
         """Helper method to scan entire table contents."""
         response = table.scan()
@@ -676,6 +847,7 @@ class TestCompleteLevel(BaseTestSetup):
         self.users_resource_patcher.stop()
         self.languages_resource_patcher.stop()
         self.battlepass_resource_patcher.stop()
+        self.achievements_resource_patcher.stop()
         super().tearDown()
 
 
