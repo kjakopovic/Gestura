@@ -165,6 +165,8 @@ def get_unlocked_levels(
     is <= user_battlepass_xp, excluding any in already_claimed_levels.
     """
 
+    user_battlepass_xp_float = convert_decimal_to_float(user_battlepass_xp)
+
     # Sort levels by their numeric level value
     sorted_levels = sorted(active_battlepass_levels, key=lambda lvl: lvl["level"])
 
@@ -172,14 +174,15 @@ def get_unlocked_levels(
     running_xp = 0.0
 
     for lvl in sorted_levels:
-        xp_needed = lvl.get("required_xp", 0)
+        xp_needed = convert_decimal_to_float(lvl.get("required_xp", 0))
         running_xp += xp_needed
 
         # stop once they lack the XP for this level
-        if running_xp > user_battlepass_xp:
+        if running_xp > user_battlepass_xp_float:
             break
 
-        level_num = lvl["level"]
+        level_num = convert_decimal_to_float(lvl.get("level", 0))
+
         # only add if they haven't claimed it yet
         if level_num not in already_claimed_levels:
             unlocked.append(level_num)
