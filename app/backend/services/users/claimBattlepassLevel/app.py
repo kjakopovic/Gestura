@@ -104,13 +104,11 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
 
         unlocked_levels = []
         locked_levels = []
-        current_level = 0
 
         new_battlepass = {
             "season_id": battlepass_season_id,
             "xp": 0,
             "claimed_levels": [],
-            "current_level": current_level,
             "unlocked_levels": unlocked_levels,
             "locked_levels": locked_levels,
         }

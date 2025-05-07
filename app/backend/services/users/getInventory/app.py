@@ -7,7 +7,7 @@ from boto import (
     LambdaDynamoDBClass,
     _LAMBDA_USERS_TABLE_RESOURCE,
     _LAMBDA_ITEMS_TABLE_RESOURCE,
-    _LAMBDA_BATTLEPASS_TABLE_RESOURCE
+    _LAMBDA_BATTLEPASS_TABLE_RESOURCE,
 )
 from auth import get_email_from_jwt_token
 from datetime import datetime, timezone
@@ -61,16 +61,23 @@ def lambda_handler(event, context):
     if active_battlepass:
         season_id = active_battlepass.get("season")
 
-        current_bp = next((bp for bp in user_battlepass or [] if bp.get("season") == season_id), None)
+        current_bp = next(
+            (bp for bp in user_battlepass or [] if bp.get("season_id") == season_id),
+            None,
+        )
 
         if not current_bp:
-            logger.info(f"User battlepass not found for season ID: {season_id}."
-                        f" Adding new battlepass season to user.")
+            logger.info(
+                f"User battlepass not found for season ID: {season_id}."
+                f" Adding new battlepass season to user."
+            )
 
             new_battlepass = {
                 "season_id": season_id,
                 "xp": 0,
                 "claimed_levels": [],
+                "unlocked_levels": [],
+                "locked_levels": [],
             }
 
             user_battlepass = user_battlepass or []
@@ -80,9 +87,7 @@ def lambda_handler(event, context):
             users_dynamodb.table.update_item(
                 Key={"email": email},
                 UpdateExpression="SET battlepass = :battlepass",
-                ExpressionAttributeValues={
-                    ":battlepass": user_battlepass
-                }
+                ExpressionAttributeValues={":battlepass": user_battlepass},
             )
 
             logger.info(f"New battlepass season added to user: {new_battlepass}")
@@ -92,12 +97,11 @@ def lambda_handler(event, context):
             logger.info(f"User already has battlepass for season ID: {season_id}")
             response_body["user_battlepass"] = current_bp
 
-    response_body["active_battlepass"] = active_battlepass or "No active battlepass found."
-
-    return build_response(
-        200,
-        convert_decimal_to_float(response_body)
+    response_body["active_battlepass"] = (
+        active_battlepass or "No active battlepass found."
     )
+
+    return build_response(200, convert_decimal_to_float(response_body))
 
 
 def get_user_by_email(dynamodb, email):
@@ -123,7 +127,8 @@ def get_active_battlepass_seasons(dynamodb):
     current_date_str = current_date.isoformat()
 
     response = dynamodb.table.scan(
-        FilterExpression=Attr("start_date").lte(current_date_str) & Attr("end_date").gte(current_date_str)
+        FilterExpression=Attr("start_date").lte(current_date_str)
+        & Attr("end_date").gte(current_date_str)
     )
 
     active_battlepasses = response.get("Items", [])
@@ -133,6 +138,8 @@ def get_active_battlepass_seasons(dynamodb):
         return None
     else:
         logger.info(f"Active battlepasses found: {len(active_battlepasses)}")
-        logger.debug(f"Active battlepass season found: {active_battlepasses[0].get('season_id')}")
+        logger.debug(
+            f"Active battlepass season found: {active_battlepasses[0].get('season_id')}"
+        )
 
         return active_battlepasses[0]
