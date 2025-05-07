@@ -11,6 +11,7 @@ const PostLoginLayout = () => {
         name="(inventory-options)"
         options={{ headerShown: false }}
       />
+      <Stack.Screen name="(premium-options)" options={{ headerShown: false }} />
     </Stack>
   );
 };
