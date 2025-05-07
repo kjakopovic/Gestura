@@ -29,7 +29,6 @@ class BaseTestSetup(unittest.TestCase):
         os.environ["USERS_TABLE_NAME"] = "test_users_table"
         os.environ["LANGUAGES_TABLE_NAME"] = "test_languages_table"
         os.environ["BATTLEPASS_TABLE_NAME"] = "test_battlepass_table"
-        os.environ["ACHIEVEMENTS_TABLE_NAME"] = "test_achievements_table"
         os.environ["ITEMS_TABLE_NAME"] = "test_items_table"
         os.environ["ACHIEVEMENTS_TABLE_NAME"] = "test_achievements_table"
         os.environ["JWT_SECRET_NAME"] = "secret"
@@ -142,11 +141,30 @@ class BaseTestSetup(unittest.TestCase):
             TableName=os.environ["ACHIEVEMENTS_TABLE_NAME"],
             AttributeDefinitions=[
                 {"AttributeName": "id", "AttributeType": "S"},
+                {"AttributeName": "type", "AttributeType": "S"},
             ],
             KeySchema=[
                 {"AttributeName": "id", "KeyType": "HASH"}
             ],
-            BillingMode="PAY_PER_REQUEST"
+            GlobalSecondaryIndexes=[
+                {
+                    "IndexName": "type-index",
+                    "KeySchema": [
+                        {"AttributeName": "type", "KeyType": "HASH"}
+                    ],
+                    "Projection": {
+                        "ProjectionType": "ALL"
+                    },
+                    "ProvisionedThroughput": {
+                        "ReadCapacityUnits": 1,
+                        "WriteCapacityUnits": 1
+                    }
+                }
+            ],
+            ProvisionedThroughput={
+                "ReadCapacityUnits": 5,
+                "WriteCapacityUnits": 5
+            }
         )
         self.achievements_table.meta.client.get_waiter('table_exists').wait(TableName=os.environ["ACHIEVEMENTS_TABLE_NAME"])
 
