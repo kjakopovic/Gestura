@@ -11,5 +11,5 @@ schema = {
         }
     },
     "required": ["query_page_size"],
-    "additionalProperties": False
+    "additionalProperties": True
 }
