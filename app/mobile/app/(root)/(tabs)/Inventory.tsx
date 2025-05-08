@@ -6,7 +6,6 @@ import {
   Alert,
 } from "react-native";
 import React, { useCallback, useState } from "react";
-import Quest from "@/components/inventory/Quest";
 import Item from "@/components/inventory/Item";
 import BPRewards from "@/components/inventory/BPRewards";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -142,16 +141,6 @@ const Inventory = () => {
         }
       >
         <Text className="text-xl text-grayscale-100 font-interBold mt-16">
-          DAILY CHEST
-        </Text>
-
-        <Quest
-          title="Complete a task."
-          progress={1}
-          maxProgress={1}
-          iconName="chest"
-        />
-        <Text className="text-xl text-grayscale-100 font-interBold mt-16">
           ITEMS
         </Text>
         {items.map((item) => (
@@ -167,7 +156,7 @@ const Inventory = () => {
         <Text className="text-xl text-grayscale-100 font-interBold mt-16">
           BATTLE PASS
         </Text>
-        <BPRewards unclaimedRewards={unclaimedCount} />
+        <BPRewards unclaimedRewards={userBattlepass.unlocked_levels.length} />
       </ScrollView>
     </SafeAreaView>
   );

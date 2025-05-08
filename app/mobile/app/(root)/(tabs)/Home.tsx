@@ -1,5 +1,10 @@
-import React, { useRef } from "react";
-import { ScrollView, View, ActivityIndicator } from "react-native";
+import React, { useCallback, useRef, useState } from "react";
+import {
+  ScrollView,
+  View,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
 import Toast, { ErrorToast } from "react-native-toast-message";
 
 import PlayerInfoBar from "@/components/PlayerInfoBar";
@@ -44,11 +49,18 @@ const useScrollHandler = (onScrollEnd: () => void) => {
 
 const Home = () => {
   const scrollViewRef = useRef<ScrollView>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Use the extracted hooks
-  const { levels, isLoadingMore, handleScrollToEnd, loadMoreLevels } =
-    useLevel();
-  const { isLoading, userStats, userData, heartsNextRefill } = useUserData();
+  const {
+    levels,
+    isLoadingMore,
+    handleScrollToEnd,
+    loadMoreLevels,
+    refreshLevels,
+  } = useLevel();
+  const { isLoading, userStats, userData, heartsNextRefill, refreshUserData } =
+    useUserData();
 
   // Get the current language ID with fallback
   const languageId = userData?.language_id || "usa";
@@ -63,6 +75,15 @@ const Home = () => {
   const handleLevelPress = (levelId: number) => {
     navigateToLevel(levelId, languageId);
   };
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+
+    // Refresh user data and levels in parallel
+    await Promise.all([refreshUserData(), refreshLevels()]);
+
+    setRefreshing(false);
+  }, [refreshUserData, refreshLevels]);
 
   // Show loading indicator when data is being fetched
   if (isLoading) {
@@ -91,6 +112,16 @@ const Home = () => {
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
         {...scrollHandlerProps}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#A162FF"]}
+            tintColor="#A162FF"
+            title="Refreshing..."
+            titleColor="#FFFFFF"
+          />
+        }
       >
         <View className="mt-20">
           <LevelMap

@@ -161,6 +161,17 @@ export function useLevel() {
     });
   }, []);
 
+  const refreshLevels = useCallback(async () => {
+    // Reset loading state
+    setIsLoadingMore(false);
+
+    // Reset levels to initial state based on current user level
+    setLevels(generateInitialLevels());
+
+    // Return a resolved promise to work with Promise.all
+    return Promise.resolve();
+  }, [generateInitialLevels]);
+
   return {
     levels,
     isLoadingMore,
@@ -168,5 +179,6 @@ export function useLevel() {
     handleScrollToEnd,
     unlockLevel,
     completeLevel,
+    refreshLevels,
   };
 }
