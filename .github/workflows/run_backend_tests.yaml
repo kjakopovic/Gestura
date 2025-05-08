@@ -18,6 +18,7 @@ env:
   USERS_SERVICE_PATH: app/backend/services/users
   LEARNING_SERVICE_PATH: app/backend/services/learning
   SHOP_SERVICE_PATH: app/backend/services/shop
+  INVENTORY_SERVICE_PATH: app/backend/services/inventory
 
 jobs:
   test_users:
