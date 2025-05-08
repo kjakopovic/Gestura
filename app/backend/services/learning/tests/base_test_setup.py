@@ -188,7 +188,11 @@ class BaseTestSetup(unittest.TestCase):
             "email": "test@mail.com",
             "username": "TestUser",
             "password": bcrypt.hashpw(self.sample_user_pass.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"),
-            "letters_learned": {},
+            "letters_learned": {
+                "en": ["z", "y", "x"],
+                "de": ["a", "b", "c"],
+                "hr": ["d", "e", "f"],
+            },
             "current_level": {
                 "es": 1,
                 "hr": 11,
