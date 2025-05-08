@@ -238,8 +238,6 @@ class TestCompleteLevel(BaseTestSetup):
         initial_coins = Decimal(str(initial_user['coins']))
         initial_current_level = initial_user.get('current_level', {})
 
-        print(f"User: {initial_user}")
-
         # Define versions for correct answers
         versions = [1, 2, 3]
 
@@ -275,7 +273,7 @@ class TestCompleteLevel(BaseTestSetup):
         updated_user = self.users_table.get_item(Key={'email': email})['Item']
 
         current_level = updated_user.get('current_level', {})
-        print(f"Initial current level: {initial_current_level}, Updated current level: {current_level}")
+        # print(f"Initial current level: {initial_current_level}, Updated current level: {current_level}")
 
         # If the initial level doesn't exist, the Lambda sets it to 1+1=2
         expected_level = 2
@@ -286,17 +284,17 @@ class TestCompleteLevel(BaseTestSetup):
 
         updated_xp = Decimal(str(updated_user['xp']))
         updated_coins = Decimal(str(updated_user['coins']))
-        print(f"Updated user state - XP: {updated_xp}, Coins: {updated_coins}")
-        print(f"XP difference: {updated_xp - initial_xp}, Coins difference: {updated_coins - initial_coins}")
+        # print(f"Updated user state - XP: {updated_xp}, Coins: {updated_coins}")
+        # print(f"XP difference: {updated_xp - initial_xp}, Coins difference: {updated_coins - initial_coins}")
 
         # Calculate expected rewards based on the actual algorithm
         xp_map = {1: 2, 2: 3, 3: 5}
         expected_xp_increase = sum(xp_map.get(v, 0) for v in versions)
-        print(f"Expected XP increase: {expected_xp_increase} = {' + '.join([f'{xp_map.get(v, 0)}' for v in versions])}")
+        # print(f"Expected XP increase: {expected_xp_increase} = {' + '.join([f'{xp_map.get(v, 0)}' for v in versions])}")
 
         expected_xp = initial_xp + Decimal(str(expected_xp_increase))
         expected_coins = initial_coins + Decimal(str(int(expected_xp_increase * 1.5)))
-        print(f"Expected final values - XP: {expected_xp}, Coins: {expected_coins}")
+        # print(f"Expected final values - XP: {expected_xp}, Coins: {expected_coins}")
 
         self.assertEqual(updated_xp, expected_xp,
                          f"Expected XP to be {expected_xp}, got {updated_xp}")
@@ -513,9 +511,9 @@ class TestCompleteLevel(BaseTestSetup):
         expected_xp = initial_xp + expected_xp_increase
         expected_coins = initial_coins + Decimal(str(int(base_xp_increase * 1.5)))
 
-        print(f"Base XP: {base_xp_increase}, Multiplier: {multiplier}")
-        print(f"Expected XP increase: {expected_xp_increase}")
-        print(f"Initial XP: {initial_xp}, Expected final XP: {expected_xp}, Actual: {updated_xp}")
+        # print(f"Base XP: {base_xp_increase}, Multiplier: {multiplier}")
+        # print(f"Expected XP increase: {expected_xp_increase}")
+        # print(f"Initial XP: {initial_xp}, Expected final XP: {expected_xp}, Actual: {updated_xp}")
 
         self.assertEqual(updated_xp, expected_xp,
                          f"Expected XP to be {expected_xp} (base {base_xp_increase} × multiplier {multiplier}), got {updated_xp}")
@@ -661,7 +659,7 @@ class TestCompleteLevel(BaseTestSetup):
             if bp_entry.get('season_id') == active_season:  # Note: using 'season_id' instead of 'season'
                 actual_bp_xp = Decimal(str(bp_entry.get('xp', 0)))
                 break
-        print(f"Actual battlepass XP: {actual_bp_xp}")
+        # print(f"Actual battlepass XP: {actual_bp_xp}")
 
         self.assertEqual(actual_bp_xp, expected_bp_xp,
                          f"Battlepass XP should be {expected_bp_xp}, got {actual_bp_xp}")
@@ -674,7 +672,7 @@ class TestCompleteLevel(BaseTestSetup):
                 break
 
         self.assertIsNotNone(claimed_levels, "Battlepass entry should have a claimed_levels array")
-        print(f"Claimed levels array: {claimed_levels}")
+        # print(f"Claimed levels array: {claimed_levels}")
 
         self.assertEqual(actual_bp_xp, expected_bp_xp,
                          f"Battlepass XP should be {expected_bp_xp}, got {actual_bp_xp}")
@@ -748,7 +746,7 @@ class TestCompleteLevel(BaseTestSetup):
         self.assertEqual(len(user_achievements), len(initial_user.get('achievements', [])) + 1,
                          "User should have one more achievement after completion")
 
-        print(f"User achievements after completion: {user_achievements}")
+        # print(f"User achievements after completion: {user_achievements}")
 
 
     def test_with_achievements(self):
@@ -886,9 +884,9 @@ class TestCompleteLevel(BaseTestSetup):
         updated_user = self.users_table.get_item(Key={'email': "achievement@mail.com"})['Item']
         user_achievements = updated_user.get('achievements', [])
 
-        print(f"\nUser achievements before: {self.achievements_user.get('achievements')}")
-        print(f"\nUser achievements after completion: {user_achievements}")
-        print(f"\nNew achievements: {body['new_achievements']}")
+        # print(f"\nUser achievements before: {self.achievements_user.get('achievements')}")
+        # print(f"\nUser achievements after completion: {user_achievements}")
+        # print(f"\nNew achievements: {body['new_achievements']}")
 
 
     def _scan_table(self, table):

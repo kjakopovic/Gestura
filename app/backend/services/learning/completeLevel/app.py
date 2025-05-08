@@ -79,14 +79,10 @@ def lambda_handler(event, context):
     logger.info("Calculating time played")
     time_played = Decimal(str(seconds_between(request.started_at, request.finished_at)))
 
-    current_letters_learned = user.get("letters_learned", {})
-    print(f"Current letters learned: {current_letters_learned}")
-
     logger.info(f"Updating users letters learned {user['letters_learned']}")
     letters_learned = update_letters_learned(
         user["letters_learned"], request.language_id, request.letters_learned
     )
-    print(f"Updated letters learned: {letters_learned}")
 
     active_items, item_removed = check_active_items(user, usersTable)
 
@@ -425,7 +421,6 @@ def update_user_achievements(
     # Calculate total words/letters learned across all languages
     total_words_learned = sum(len(words_list) for words_list in letters_learned.values())
     total_words_learned = Decimal(str(total_words_learned))
-    print(f"\nTotal words learned: {total_words_learned}\n")
 
     new_achievements = []
     new_achievements_details = []
