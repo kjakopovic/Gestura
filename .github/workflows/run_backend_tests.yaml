@@ -79,3 +79,23 @@ jobs:
         uses: ./.github/composite/run_backend_tests
         with:
           service_path: ${{ env.SHOP_SERVICE_PATH }}
+
+  test_inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: false
+
+      - name: Run Dependencies Setup
+        uses: ./.github/composite/common_build_setup
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
+
+      - name: Run Tests
+        uses: ./.github/composite/run_backend_tests
+        with:
+          service_path: ${{ env.INVENTORY_SERVICE_PATH }}
