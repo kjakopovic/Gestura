@@ -1,0 +1,202 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  This service contains all apis related to inventory, achievements and battlepass
+
+Parameters:
+  StageName:
+    Type: String
+    Description: Stage of app deployment (develop, prod)
+    Default: prod
+  LayerStackName:
+    Type: String
+    Description: Name of the stack where the layer is deployed
+    Default: layers
+  JwtSecretName:
+    Type: String
+    Description: Name of the secret in Secrets Manager that contains the JWT secret
+    Default: auth
+  SecretsRegionName:
+    Type: String
+    Description: Region name where the secrets are stored
+    Default: eu-central-1
+
+Globals:
+  Function:
+    Timeout: 60
+    MemorySize: 512
+
+Resources:
+  InventoryApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub "InventoryApi-${StageName}"
+      StageName: !Ref StageName
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'*'"
+        AllowMethods: "'*'"
+      Auth:
+        ApiKeyRequired: false
+
+  # Lambdas
+  HealthcheckFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: healthcheck/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Events:
+        HealthcheckEndpoint:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId: !Ref InventoryApi
+
+  ClaimBattlepassLevelFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: claimBattlepassLevel/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          BATTLEPASS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-BattlepassTable"
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        ClaimBattlePassLevelEndpoint:
+          Type: Api
+          Properties:
+            Path: /battlepass/claim
+            Method: POST
+            RestApiId: !Ref InventoryApi
+
+  GetInventoryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: getInventory/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          BATTLEPASS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-BattlepassTable"
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          ITEMS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ItemsTable"
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        GetInventoryEndpoint:
+          Type: Api
+          Properties:
+            Path: /inventory
+            Method: GET
+            RestApiId: !Ref InventoryApi
+
+  ConsumeItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: consumeItem/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          ITEMS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ItemsTable"
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        ConsumeItemEndpoint:
+          Type: Api
+          Properties:
+            Path: /items/consume
+            Method: POST
+            RestApiId: !Ref InventoryApi
+
+  GetAchievementsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: getAchievements/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          ACHIEVEMENTS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-AchievementsTable"
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        AchievementsEndpoint:
+          Type: Api
+          Properties:
+            Path: /achievements
+            Method: GET
+            RestApiId: !Ref InventoryApi
+
+Outputs:
+  InventoryApiUrl:
+    Description: "API Gateway endpoint URL for Inventory microservice apis"
+    Value: !Sub "https://${InventoryApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"
