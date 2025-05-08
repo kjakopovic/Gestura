@@ -134,6 +134,14 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
             {"message": f"Battlepass level {claim_level} has already been claimed."},
         )
 
+    locked_levels = user_battlepass.get('locked_levels', [])
+    if claim_level in [Decimal(level) for level in locked_levels]:
+        logger.error(f"Battlepass level {claim_level} is not unlocked.")
+        return build_response(
+            400,
+            {"message": f"Battlepass level {claim_level} is not unlocked."},
+        )
+
     user_coins = user.get("coins", 0)
     level_coins = battlepass_level.get("coins", 0)
 
