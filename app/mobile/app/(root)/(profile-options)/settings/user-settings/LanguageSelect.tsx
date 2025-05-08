@@ -41,6 +41,7 @@ const LanguageSelect = () => {
         chosenLanguage: getInitialLanguage(),
       }));
     }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [languages, userSelectedLanguage, user, chosenLanguage, setState]);
 
   // Show error alert if there's an error

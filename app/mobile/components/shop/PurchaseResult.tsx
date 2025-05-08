@@ -40,6 +40,7 @@ const PurchaseResult = ({
     );
 
     return () => backHandler.remove();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const handleContinue = () => {
