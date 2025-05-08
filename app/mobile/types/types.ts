@@ -99,3 +99,11 @@ export interface ApiTasksResponse {
   message: string;
   tasks: ApiTask[];
 }
+
+export interface HeartsApiResponse {
+  message: string;
+  data: {
+    hearts: number;
+    hearts_next_refill: string | null;
+  };
+}

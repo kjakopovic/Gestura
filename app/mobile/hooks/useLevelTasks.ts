@@ -3,6 +3,10 @@ import { calculateLevelStats } from "@/utils/taskUtils";
 import { navigateToHome } from "@/utils/navigationUtils";
 import { useLevelStatsStore } from "@/store/useLevelStatsStore";
 import { extractLetterFromUrl } from "@/utils/levelTaskUtils";
+import { api } from "@/lib/api";
+import { useUserStore } from "@/store/useUserStore";
+import { HeartsApiResponse } from "@/types/types";
+import Toast from "react-native-toast-message"; // Add this import
 
 export interface LevelTask {
   id: string;
@@ -47,6 +51,11 @@ export const useLevelTasks = ({
     (state) => state.setCorrectAnswersVersions
   );
 
+  const setHearts = useUserStore((state) => state.setHearts);
+  const setHeartsNextRefill = useUserStore(
+    (state) => state.setHeartsNextRefill
+  );
+
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [completedTasks, setCompletedTasks] = useState<boolean[]>([]);
   const [showCompletionScreen, setShowCompletionScreen] = useState(false);
@@ -66,7 +75,7 @@ export const useLevelTasks = ({
 
   // Record task result and move to next task
   const completeTask = useCallback(
-    (isCorrect: boolean) => {
+    async (isCorrect: boolean) => {
       // Make a copy of completed tasks and mark current task
       const updatedCompletedTasks = [...completedTasks];
       updatedCompletedTasks[currentTaskIndex] = isCorrect;
@@ -75,16 +84,12 @@ export const useLevelTasks = ({
       if (isCorrect) {
         if (currentTask.version === 3) {
           setCorrectAnswersVersions((prev) => [...prev, currentTask.version]);
-          console.log(`Version 3 task completed - No letter learning`);
         } else {
           let letterLearned = currentTask.question;
 
           if (currentTask.version === 1) {
             // Extract the letter from the URL
             letterLearned = extractLetterFromUrl(currentTask.question);
-            console.log(
-              `Extracted letter from URL: ${letterLearned} from ${currentTask.question}`
-            );
           } else if (currentTask.version === 2) {
             letterLearned = letterLearned.toLowerCase();
           }
@@ -94,13 +99,40 @@ export const useLevelTasks = ({
               ? prev
               : [...prev, letterLearned];
           });
-
-          console.log(
-            `Letter learned: ${letterLearned} from task version ${currentTask.version}`
-          );
-
           // Track the version of correct answers
           setCorrectAnswersVersions((prev) => [...prev, currentTask.version]);
+        }
+      } else {
+        try {
+          const response = await api.patch<HeartsApiResponse>(
+            "/hearts/consume"
+          );
+
+          if (response.success && response.data) {
+            setHearts(response.data.data.hearts);
+            setHeartsNextRefill(response.data.data.hearts_next_refill);
+
+            if (response.data.data.hearts === 0) {
+              // Navigate to home first
+              navigateToHome();
+
+              // Then show toast on home screen
+              setTimeout(() => {
+                Toast.show({
+                  type: "error",
+                  text1: "Level Failed",
+                  text2: "You ran out of hearts. Try again later.",
+                  position: "bottom",
+                  bottomOffset: 100,
+                  visibilityTime: 4000,
+                });
+              }, 1000); // Small delay to ensure navigation completes first
+            }
+          } else {
+            console.error("Failed to consume heart:", response.error);
+          }
+        } catch (error) {
+          console.error("Error consuming hearts:", error);
         }
       }
 

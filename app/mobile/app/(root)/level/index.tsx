@@ -59,7 +59,6 @@ const LevelScreen = () => {
       const tasks = await fetchLevelTasks();
       if (tasks.length > 0) {
         setTasks(tasks);
-        console.log("Fetched tasks:", tasks);
       }
     };
 

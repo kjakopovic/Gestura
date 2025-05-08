@@ -67,7 +67,6 @@ const TaskComplete = ({ stats, onContinue }: TaskCompleteProps) => {
           coins: Number(response.data.coins),
           xp: Number(response.data.xp),
         });
-        console.log("Level completion data sent successfully:", response.data);
       } else {
         setError("Invalid response format");
         console.error("Invalid earnings data structure:", response.data);
@@ -96,8 +95,6 @@ const TaskComplete = ({ stats, onContinue }: TaskCompleteProps) => {
 
   // Handle continue button press
   const handleContinue = () => {
-    console.log("TaskComplete continue button pressed");
-
     if (onContinue) {
       onContinue();
     } else {

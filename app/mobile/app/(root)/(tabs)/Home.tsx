@@ -1,11 +1,29 @@
 import React, { useRef } from "react";
 import { ScrollView, View, ActivityIndicator } from "react-native";
+import Toast, { ErrorToast } from "react-native-toast-message";
 
 import PlayerInfoBar from "@/components/PlayerInfoBar";
 import LevelMap from "@/components/levels/LevelMap";
 import { useLevel } from "@/hooks/useLevel";
 import { useUserData } from "@/hooks/useUserData";
 import { navigateToLevel } from "@/utils/navigationUtils";
+
+const toastConfig = {
+  error: (props: any) => (
+    <ErrorToast
+      {...props}
+      style={{
+        backgroundColor: "#FF3B30", // Red background
+        borderLeftColor: "#990000", // Darker red border
+        marginBottom: 20, // Extra bottom margin
+        width: "90%", // Slightly smaller width
+      }}
+      text1Style={{ fontSize: 16, fontWeight: "bold", color: "white" }}
+      text2Style={{ fontSize: 14, color: "white" }}
+    />
+  ),
+  // You can customize other toast types similarly
+};
 
 // Extract scroll handler to a separate function
 const useScrollHandler = (onScrollEnd: () => void) => {
@@ -30,7 +48,7 @@ const Home = () => {
   // Use the extracted hooks
   const { levels, isLoadingMore, handleScrollToEnd, loadMoreLevels } =
     useLevel();
-  const { isLoading, userStats, userData } = useUserData();
+  const { isLoading, userStats, userData, heartsNextRefill } = useUserData();
 
   // Get the current language ID with fallback
   const languageId = userData?.language_id || "usa";
@@ -38,15 +56,11 @@ const Home = () => {
   // Get the current level for the selected language
   const currentLevel = userData?.current_level?.[languageId] || 1;
 
-  // Log for debugging
-  console.log(`Current level for ${languageId}: ${currentLevel}`);
-
   // Use the scroll handler
   const scrollHandlerProps = useScrollHandler(handleScrollToEnd);
 
   // Handle level press
   const handleLevelPress = (levelId: number) => {
-    console.log(`Level ${levelId} press`);
     navigateToLevel(levelId, languageId);
   };
 
@@ -66,7 +80,7 @@ const Home = () => {
 
   return (
     <View className="bg-grayscale-800 flex-1">
-      <PlayerInfoBar {...userStats} />
+      <PlayerInfoBar {...userStats} heartsNextRefill={heartsNextRefill} />
       <ScrollView
         ref={scrollViewRef}
         className="h-full w-full"
@@ -88,6 +102,7 @@ const Home = () => {
           />
         </View>
       </ScrollView>
+      <Toast config={toastConfig} />
     </View>
   );
 };
