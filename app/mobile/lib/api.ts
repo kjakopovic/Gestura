@@ -146,7 +146,7 @@ export const api = {
   put: <T>(endpoint: string, body: any, options?: RequestOptions) =>
     apiCall<T>(endpoint, "PUT", { ...options, body }),
 
-  patch: <T>(endpoint: string, body: any, options?: RequestOptions) =>
+  patch: <T>(endpoint: string, body?: any, options?: RequestOptions) =>
     apiCall<T>(endpoint, "PATCH", { ...options, body }),
 
   delete: <T>(endpoint: string, options?: RequestOptions) =>

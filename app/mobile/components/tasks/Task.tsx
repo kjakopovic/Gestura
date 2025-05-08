@@ -29,7 +29,6 @@ interface TaskProps {
 const Task = (task: TaskProps) => {
   const handleAnswerPress = (text: string) => {
     setSelectedAnswer(text);
-    console.log("Answer pressed!");
   };
 
   const correctAnswer = task.possibleAnswers[task.correctAnswerIndex];
