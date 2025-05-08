@@ -1,6 +1,8 @@
 import { useState, useCallback } from "react";
 import { calculateLevelStats } from "@/utils/taskUtils";
 import { navigateToHome } from "@/utils/navigationUtils";
+import { useLevelStatsStore } from "@/store/useLevelStatsStore";
+import { extractLetterFromUrl } from "@/utils/levelTaskUtils";
 
 export interface LevelTask {
   id: string;
@@ -26,11 +28,25 @@ export interface LevelCompletionStats {
   correctTasks: number;
 }
 
+export interface Earnings {
+  message: string;
+  percentage: number;
+  coins: number;
+  xp: number;
+}
+
 export const useLevelTasks = ({
   tasks,
   levelId,
   onLevelComplete,
 }: UseLevelTasksProps) => {
+  const setLettersLearned = useLevelStatsStore(
+    (state) => state.setLettersLearned
+  );
+  const setCorrectAnswersVersions = useLevelStatsStore(
+    (state) => state.setCorrectAnswersVersions
+  );
+
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [completedTasks, setCompletedTasks] = useState<boolean[]>([]);
   const [showCompletionScreen, setShowCompletionScreen] = useState(false);
@@ -56,6 +72,38 @@ export const useLevelTasks = ({
       updatedCompletedTasks[currentTaskIndex] = isCorrect;
       setCompletedTasks(updatedCompletedTasks);
 
+      if (isCorrect) {
+        if (currentTask.version === 3) {
+          setCorrectAnswersVersions((prev) => [...prev, currentTask.version]);
+          console.log(`Version 3 task completed - No letter learning`);
+        } else {
+          let letterLearned = currentTask.question;
+
+          if (currentTask.version === 1) {
+            // Extract the letter from the URL
+            letterLearned = extractLetterFromUrl(currentTask.question);
+            console.log(
+              `Extracted letter from URL: ${letterLearned} from ${currentTask.question}`
+            );
+          } else if (currentTask.version === 2) {
+            letterLearned = letterLearned.toLowerCase();
+          }
+
+          setLettersLearned((prev) => {
+            return prev.includes(letterLearned)
+              ? prev
+              : [...prev, letterLearned];
+          });
+
+          console.log(
+            `Letter learned: ${letterLearned} from task version ${currentTask.version}`
+          );
+
+          // Track the version of correct answers
+          setCorrectAnswersVersions((prev) => [...prev, currentTask.version]);
+        }
+      }
+
       // Calculate stats
       const correctCount = updatedCompletedTasks.filter(Boolean).length;
       const stats = calculateLevelStats(correctCount, tasks.length);
@@ -65,20 +113,29 @@ export const useLevelTasks = ({
 
       // If this is the last task, show completion screen
       if (isLastTask) {
-        setShowCompletionScreen(true);
-        onLevelComplete(levelId, stats);
+        // Important: Set the completion time here
+        useLevelStatsStore.getState().setFinishedAt(new Date().toISOString());
+
+        // Use setTimeout to break potential render cycles
+        setTimeout(() => {
+          setShowCompletionScreen(true);
+          onLevelComplete(levelId, stats);
+        }, 0);
       } else {
         // Move to next task
         setCurrentTaskIndex((prev) => prev + 1);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       currentTaskIndex,
       completedTasks,
       tasks.length,
-      isLastTask,
       levelId,
       onLevelComplete,
+      currentTask,
+      setLettersLearned,
+      setCorrectAnswersVersions,
     ]
   );
 
