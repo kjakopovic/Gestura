@@ -60,7 +60,7 @@ def lambda_handler(event, context):
     active_battlepass = get_active_battlepass_seasons(battlepass_dynamodb)
     if not active_battlepass:
         logger.info(f"No active battlepass seasons found {active_battlepass}")
-        response_body["active_battlepass"] = []
+        response_body["active_battlepass"] = "No active battlepass found."
         return build_response(200, convert_decimal_to_float(response_body))
 
     season_id = active_battlepass.get("season")
