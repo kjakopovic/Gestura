@@ -340,7 +340,7 @@ jobs:
         with:
           service_path: ${{ env.INVENTORY_SERVICE_PATH }}
           service_name: ${{ env.INVENTORY_SERVICE_NAME }}
-          layer_stack_name: ${{ env.INVENTORY_SERVICE_NAME }}
+          layer_stack_name: ${{ env.LAYER_SERVICE_NAME }}
           stage_name: "develop"
           continue-on-error: true
 
@@ -367,7 +367,7 @@ jobs:
         with:
           service_path: ${{ env.INVENTORY_SERVICE_PATH }}
           service_name: ${{ env.INVENTORY_SERVICE_NAME }}
-          layer_stack_name: ${{ env.INVENTORY_SERVICE_NAME }}
+          layer_stack_name: ${{ env.LAYER_SERVICE_NAME }}
           stage_name: "prod"
           continue-on-error: true
 
