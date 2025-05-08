@@ -24,6 +24,7 @@ import heart from "@/assets/icons/heart.png";
 import home from "@/assets/icons/home.png";
 import lock from "@/assets/icons/lock.png";
 import logo from "@/assets/icons/logo.png";
+import logoG from "@/assets/icons/logoG.png";
 import logoText from "@/assets/icons/logo-text.png";
 import more from "@/assets/icons/more.png";
 import nonPremium from "@/assets/icons/non-premium.png";
@@ -69,6 +70,7 @@ export {
   home,
   lock,
   logo,
+  logoG,
   logoText,
   more,
   nonPremium,

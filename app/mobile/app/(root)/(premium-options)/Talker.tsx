@@ -23,7 +23,7 @@ const Talker = () => {
         <Image source={handSigns.letter_v} className="size-12" />
       </View>
       <CustomButton
-        text="SWITCH TO TALKER"
+        text="SWITCH TO SIGNER"
         style="base"
         onPress={() => router.push("/(root)/(premium-options)/Signer")}
       />
