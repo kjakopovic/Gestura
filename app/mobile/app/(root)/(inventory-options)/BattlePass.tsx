@@ -100,7 +100,7 @@ const BattlePass = () => {
             paddingBottom: 120,
           }}
         >
-          <View className="flex flex-col justify-center items-center mt-40 mb-20">
+          <View className="flex flex-col justify-center items-center mt-24 mb-20">
             <View className="absolute top-6 left-0 right-0 h-full items-center justify-center">
               <Image
                 source={images.season_banner}

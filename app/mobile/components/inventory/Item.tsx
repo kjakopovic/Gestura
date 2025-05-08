@@ -3,23 +3,35 @@ import React, { useState } from "react";
 
 import ChestOpening from "./ChestOpening";
 
-import * as icons from "@/constants/icons";
-
 type ItemProps = {
   itemTitle: string;
-  iconName: string;
-  buttonText: string;
+  icon: string;
+  category?: string;
+  onPress: () => void;
+  activating?: boolean;
 };
 
-const Item = ({ itemTitle, iconName, buttonText }: ItemProps) => {
+const Item = ({
+  itemTitle,
+  icon,
+  category,
+  onPress,
+  activating,
+}: ItemProps) => {
   const [showChestModal, setShowChestModal] = useState(false);
-  const icon = icons[iconName as keyof typeof icons] || icons.error_testing;
 
-  const chest = buttonText === "OPEN";
+  const buttonText =
+    category === "chest"
+      ? activating
+        ? "OPENING..."
+        : "OPEN"
+      : activating
+      ? "ACTIVATING..."
+      : "ACTIVATE";
 
   return (
-    <View className="bg-grayscale-700 w-5/6 flex flex-row justify-between items-center border border-grayscale-400 rounded-xl p-4 m-4">
-      <Image source={icon} className="size-12" />
+    <View className="bg-grayscale-700 w-full flex flex-row justify-between items-center border border-grayscale-400 rounded-xl p-4 my-4">
+      <Image source={{ uri: icon }} className="size-12" />
 
       <View className="flex flex-col justify-center items-center w-5/6">
         <Text className="text-xl text-grayscale-100 font-interBold mb-1">
@@ -28,10 +40,11 @@ const Item = ({ itemTitle, iconName, buttonText }: ItemProps) => {
         <TouchableOpacity
           className="w-3/4 border border-grayscale-300 rounded-xl"
           onPress={() => {
-            if (chest) {
+            if (category === "chest") {
               setShowChestModal(true);
+              onPress();
             } else {
-              alert("Activated item!");
+              onPress();
             }
           }}
         >

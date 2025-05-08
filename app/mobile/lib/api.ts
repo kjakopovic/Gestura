@@ -140,7 +140,7 @@ export const api = {
   get: <T>(endpoint: string, options?: RequestOptions) =>
     apiCall<T>(endpoint, "GET", options),
 
-  post: <T>(endpoint: string, body: any, options?: RequestOptions) =>
+  post: <T>(endpoint: string, body?: any, options?: RequestOptions) =>
     apiCall<T>(endpoint, "POST", { ...options, body }),
 
   put: <T>(endpoint: string, body: any, options?: RequestOptions) =>
