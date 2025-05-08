@@ -7,10 +7,8 @@ import Task from "@/components/tasks/Task";
 import TaskComplete from "@/components/tasks/TaskComplete";
 import { useLevel } from "@/hooks/useLevel";
 import { useLevelTasks } from "@/hooks/useLevelTasks";
-import { getLevelTasks } from "@/utils/taskUtils";
 
 // Import the task data from a separate file
-import { levelTasksMap } from "@/data/levelTasks";
 import { api } from "@/lib/api";
 import { ApiTasksResponse } from "@/types/types";
 import { LevelTask } from "@/hooks/useLevelTasks";
@@ -66,6 +64,7 @@ const LevelScreen = () => {
     };
 
     fetchTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [levelId, languageId]);
 
   // Handle level completion

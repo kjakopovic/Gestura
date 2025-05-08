@@ -88,6 +88,7 @@ export function useLevel() {
       ...template,
       state: getLevelState(template.level),
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUserLevel]);
 
   const [levels, setLevels] = useState<LevelData[]>([]);
@@ -126,6 +127,7 @@ export function useLevel() {
       setLevels([...newLevels, ...nextBatch]);
       setIsLoadingMore(false);
     }, 500);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [levels, isLoadingMore, currentUserLevel]);
 
   // Function to handle scroll end for infinite loading

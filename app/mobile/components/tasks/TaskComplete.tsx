@@ -85,6 +85,7 @@ const TaskComplete = ({ stats, onContinue }: TaskCompleteProps) => {
       setResultsSent(true); // Set flag to prevent further calls
       fetchResults();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     correct_answers_versions,
     letters_learned,
