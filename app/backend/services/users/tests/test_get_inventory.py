@@ -179,6 +179,9 @@ class TestGetInventory(BaseTestSetup):
         response = lambda_handler(event, {})
         body = json.loads(response['body'])
 
+        print(f"Response: {response}\n\n")
+        print(f"Body: {body}\n\n")
+
         self.assertEqual(response['statusCode'], 200)
         self.assertIn("items", body)
         self.assertIn("message", body)
