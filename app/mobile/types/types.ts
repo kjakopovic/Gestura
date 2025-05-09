@@ -6,6 +6,11 @@ import { registerSchema } from "@/schemas/authSchemas";
 import { forgotEmailSchema } from "@/schemas/authSchemas";
 import { forgotCodeSchema } from "@/schemas/authSchemas";
 import { forgotPasswordSchema } from "@/schemas/authSchemas";
+import {
+  InventoryItem,
+  UserBattlepass,
+  ActiveBattlepass,
+} from "@/store/useInventoryStore";
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -106,4 +111,11 @@ export interface HeartsApiResponse {
     hearts: number;
     hearts_next_refill: string | null;
   };
+}
+
+export interface InventoryApiResponse {
+  message: string;
+  items: InventoryItem[];
+  user_battlepass: UserBattlepass;
+  active_battlepass: ActiveBattlepass;
 }

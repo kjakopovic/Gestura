@@ -59,6 +59,8 @@ const LevelButton = ({
             ? "gray"
             : state === "unlocked" && style === "battlepass"
             ? "#FFC800"
+            : state === "completed" && style === "battlepass"
+            ? "#89E219"
             : "#A162FF"
         }
       />
@@ -67,7 +69,11 @@ const LevelButton = ({
           state === "locked"
             ? "bg-grayscale-400"
             : style === "battlepass"
-            ? "bg-primary"
+            ? state === "unlocked"
+              ? "bg-primary"
+              : state === "completed"
+              ? "bg-success"
+              : ""
             : "bg-secondary"
         } h-0.5 w-full `}
       />
@@ -76,7 +82,11 @@ const LevelButton = ({
           state === "locked"
             ? "opacity-50 text-grayscale-300"
             : style === "battlepass"
-            ? "text-primary"
+            ? state === "unlocked"
+              ? "text-primary"
+              : state === "completed"
+              ? "text-success"
+              : ""
             : "text-secondary"
         }`}
       >

@@ -9,7 +9,11 @@ export const getButtonStyle = (type: string, state: string, style: string) => {
         state === "locked"
           ? "border-grayscale-400"
           : style === "battlepass"
-          ? "border-primary"
+          ? state === "unlocked"
+            ? "border-primary"
+            : state === "completed"
+            ? "border-success"
+            : "border-grayscale-400"
           : "border-secondary"
       }
         rounded-2xl bg-grayscale-700 border`;

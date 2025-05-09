@@ -64,6 +64,21 @@ export const useUserData = () => {
     fetchUserData();
   }, [fetchUserData]);
 
+  const refreshUserData = useCallback(() => {
+    setIsLoading(true);
+    setError(null);
+    fetchUserData()
+      .catch((err) => {
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error";
+        setError(errorMessage);
+        console.error("Error refreshing user data:", err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [fetchUserData]);
+
   return {
     isLoading,
     error,
@@ -71,6 +86,6 @@ export const useUserData = () => {
     userData,
     userHearts, // Added userHearts
     heartsNextRefill, // Added heartsNextRefill
-    refreshUserData: fetchUserData,
+    refreshUserData,
   };
 };
