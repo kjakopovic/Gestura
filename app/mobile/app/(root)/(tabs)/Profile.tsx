@@ -18,7 +18,8 @@ const Profile = () => {
     username: userData?.username || "johndoe123",
     level: userData?.level || 1,
     xp: userData?.xp || 0,
-    battlePassXp: userData?.battlepass_xp || 0,
+    xpProgress: userData?.progress || 0,
+    battlePassXp: userData?.battlepass?.[0]?.xp || 0,
     achievements: userData?.achievements || [],
     wordsLearned: userData?.wordsLearned || [],
   };
@@ -59,14 +60,14 @@ const Profile = () => {
         </View>
         <View className="flex-row justify-between items-center mx-16 mt-7 z-10">
           <CircularProgressIndicator
-            progress={profileInfo.xp / 100}
+            progress={profileInfo.xpProgress}
             level={profileInfo.level}
             type="Your"
             style="secondary"
           />
           <CircularProgressIndicator
-            progress={profileInfo.battlePassXp / 100}
-            level={profileInfo.battlePassXp / 100 || 1}
+            progress={profileInfo.battlePassXp % 100}
+            level={Math.floor(profileInfo.battlePassXp / 100) || 1}
             type="Battlepass"
             style="primary"
           />
