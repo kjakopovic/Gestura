@@ -53,7 +53,11 @@ const BattlePass = () => {
       try {
         setClaiming(true);
         const response = await api.post(
-          `/battlepass/claim?battlepass_level=${level.level}`
+          `/battlepass/claim?battlepass_level=${level.level}`,
+          {},
+          {
+            apiBase: "inventory",
+          }
         );
         if (response.success) {
           // Update the userBattlepass state in the store

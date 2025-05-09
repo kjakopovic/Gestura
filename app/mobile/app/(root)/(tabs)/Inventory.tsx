@@ -23,13 +23,14 @@ const Inventory = () => {
   const [activating, setActivating] = React.useState(false);
   const [refreshing, setRefreshing] = useState(false);
   // Get store state
-  const { items, userBattlepass, activeBattlepass, isLoading, error } =
-    useInventoryStore();
+  const { items, userBattlepass, isLoading, error } = useInventoryStore();
 
   const fetchInventory = async () => {
     try {
       setLoading(true);
-      const response = await api.get<InventoryApiResponse>("/inventory");
+      const response = await api.get<InventoryApiResponse>("/inventory", {
+        apiBase: "inventory",
+      });
 
       if (response.success && response.data) {
         // Save to store
@@ -53,9 +54,27 @@ const Inventory = () => {
     try {
       console.log("Activating item with ID:", itemId);
       setActivating(true);
-      const response = await api.post("/items/consume?item_id=" + itemId);
+      const response = await api.post(
+        "/items/consume?item_id=" + itemId,
+        {},
+        {
+          apiBase: "inventory",
+        }
+      );
 
       if (!response.success) {
+        //@ts-ignore
+        if (response.error?.status === 400) {
+          Alert.alert(
+            "Oops",
+            "Looks like you can't use this right now!",
+            [{ text: "OK" }],
+            {
+              cancelable: false,
+            }
+          );
+          return;
+        }
         console.error("Error activating item:", response.error);
         return;
       }
@@ -86,6 +105,7 @@ const Inventory = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchInventory().finally(() => setRefreshing(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
@@ -115,11 +135,6 @@ const Inventory = () => {
       </SafeAreaView>
     );
   }
-
-  // Get battlepass info for the rewards component
-  const unclaimedCount =
-    userBattlepass?.unlocked_levels.length -
-      userBattlepass?.claimed_levels.length || 0;
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-grayscale-800">

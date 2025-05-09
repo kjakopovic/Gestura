@@ -3,6 +3,7 @@ import { getAccessToken, getRefreshToken, saveTokens } from "./auth";
 const USER_API_BASE_URL = process.env.EXPO_PUBLIC_USER_API_BASE_URL;
 const LEARNING_API_BASE_URL = process.env.EXPO_PUBLIC_LEARNING_API_BASE_URL;
 const SHOP_API_BASE_URL = process.env.EXPO_PUBLIC_SHOP_API_BASE_URL;
+const INVENTORY_API_BASE_URL = process.env.EXPO_PUBLIC_INVENTORY_API_BASE_URL;
 
 interface ApiResponse<T = any> {
   success: boolean;
@@ -19,7 +20,7 @@ interface RequestOptions {
   body?: any;
   headers?: Record<string, string>;
   requireAuth?: boolean;
-  apiBase?: "user" | "learning" | "shop";
+  apiBase?: "user" | "learning" | "shop" | "inventory";
 }
 
 /**
@@ -37,6 +38,8 @@ export async function apiCall<T = any>(
         ? LEARNING_API_BASE_URL
         : options.apiBase === "shop"
         ? SHOP_API_BASE_URL
+        : options.apiBase === "inventory"
+        ? INVENTORY_API_BASE_URL
         : USER_API_BASE_URL;
 
     const url = endpoint.startsWith("http")
@@ -77,6 +80,13 @@ export async function apiCall<T = any>(
     if (options.body && method !== "GET") {
       requestOptions.body = JSON.stringify(options.body);
     }
+
+    console.log("Making API call:", {
+      url,
+      method,
+      headers,
+      body: options.body,
+    });
 
     // Make the request
     const response = await fetch(url, requestOptions);
