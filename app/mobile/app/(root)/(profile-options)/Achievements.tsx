@@ -51,10 +51,6 @@ const Achievements = () => {
 
       if (response.success && response.data) {
         setAchievements(response.data.data.achievements);
-        console.log(
-          "Achievements data loaded:",
-          response.data.data.achievements
-        );
       } else if (response.error) {
         setError("Failed to fetch achievements");
         console.error("Error fetching achievements data:", response.error);
@@ -113,6 +109,7 @@ const Achievements = () => {
       <CustomAppBar title="ACHIEVEMENTS" backButton />
       <ScrollView
         className="bg-grayscale-800 mt-28 px-10"
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

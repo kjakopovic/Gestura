@@ -161,6 +161,11 @@ const Inventory = () => {
           <Text className="text-xl text-grayscale-100 font-interBold mt-20">
             ITEMS
           </Text>
+          {items.length === 0 && (
+            <Text className="text-lg text-center text-grayscale-100 font-interBold mt-16">
+              No items available
+            </Text>
+          )}
           {items.map((item) => (
             <Item
               key={item.id}
