@@ -1,9 +1,15 @@
 import { LabelMap } from "@/types/model";
+import { Asset } from "expo-asset";
 
 export const MODEL_IMAGE_SIZE = [224, 224];
 export const DETECTION_THRESHOLD = 0.7;
 export const DETECTION_INTERVAL_MS = 16.7;
-export const ASL_MODEL_PATH = "/models/asl.onnx";
+
+export const getModelPath = async () => {
+  const modelAsset = Asset.fromModule(require("../assets/models/asl.onnx"));
+  await modelAsset.downloadAsync();
+  return modelAsset.localUri;
+};
 
 export const LABEL_MAP: LabelMap = {
   0: "A",

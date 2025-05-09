@@ -1,18 +1,33 @@
 declare module "onnxruntime-react-native" {
   import type {
-    Tensor as OrtTensor,
+    Tensor,
     InferenceSession as OrtSession,
+    InferenceSessionSingleton as OrtSessionSingleton,
+    SessionOptions as OrtSessionOptions,
   } from "onnxruntime-common";
+
+  export interface SessionOptions extends OrtSessionOptions {
+    executionProviders?: string[];
+    executionProviderOptions?: {
+      cpuexecutionprovider?: {
+        useArena?: boolean;
+        threadCount?: number;
+      };
+      // Add other provider options as needed
+    };
+  }
 
   export type InferenceSession = OrtSession;
 
-  // Re-export any helpers you use
-  export function InferenceSession_create(
-    model: string | Uint8Array,
-    options?: any
-  ): Promise<OrtSession>;
-  // Or, if the default export is a class:
   export const InferenceSession: {
-    create(model: string | Uint8Array, options?: any): Promise<OrtSession>;
+    create(
+      model: string | Uint8Array,
+      options?: SessionOptions
+    ): Promise<InferenceSession>;
   };
+
+  export type InferenceSessionSingleton = OrtSessionSingleton;
+  export type Tensor = Tensor;
+
+  // Add any other exports you need
 }
