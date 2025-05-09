@@ -184,7 +184,7 @@ class TestGetInventory(BaseTestSetup):
         self.assertIn("message", body)
         self.assertEqual(body['message'], "User inventory fetched successfully")
         self.assertIn("active_battlepass", body)
-        self.assertEqual(body['active_battlepass'], "No active battlepass found.")
+        self.assertEqual(body['active_battlepass'], [])
 
 
     def tearDown(self):

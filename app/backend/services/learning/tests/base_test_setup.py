@@ -188,7 +188,11 @@ class BaseTestSetup(unittest.TestCase):
             "email": "test@mail.com",
             "username": "TestUser",
             "password": bcrypt.hashpw(self.sample_user_pass.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"),
-            "letters_learned": {},
+            "letters_learned": {
+                "en": ["z", "y", "x"],
+                "de": ["a", "b", "c"],
+                "hr": ["d", "e", "f"],
+            },
             "current_level": {
                 "es": 1,
                 "hr": 11,
@@ -203,7 +207,8 @@ class BaseTestSetup(unittest.TestCase):
                     "sum_of_xp": 0
                 }
             ],
-            "coins": 0
+            "coins": 0,
+            "subscription": 1
         }
 
         self.users_table.put_item(Item=self.sample_user)
