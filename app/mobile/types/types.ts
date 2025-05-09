@@ -58,6 +58,7 @@ export interface UserData {
   progress?: number; // Progress percentage (0-100)
   coins: number;
   hearts: number;
+  achievements?: string[]; // Array of achievement IDs
   subscription?: number;
   current_level?: Record<string, number>; // Changed from number to language-level mapping
   battlepass?: any; // Changed from battlepass_xp
