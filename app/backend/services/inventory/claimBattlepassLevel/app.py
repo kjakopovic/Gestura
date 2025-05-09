@@ -170,7 +170,7 @@ def claim_battlepass_level(user_dynamodb, battlepass_dynamodb, email, claim_leve
     claimed_levels.append(int(claim_level))
     user_battlepass["claimed_levels"] = claimed_levels
 
-    # update user_battlepasses with new data
+    # Update user_battlepasses with new data
     for idx, entry in enumerate(user_battlepasses):
         if entry.get("season_id") == battlepass_season_id:
             # replace the existing entry in‐place

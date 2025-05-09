@@ -14,6 +14,7 @@ from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
 logger = logging.getLogger("ForgotPasswordRequest")
 logger.setLevel(logging.DEBUG)
 
+# Initialize AWS Simple Email Service client for sending emails
 client = boto3.client("ses", region_name=os.environ.get("SECRETS_REGION_NAME"))
 
 
@@ -25,6 +26,7 @@ class Request:
 def lambda_handler(event, context):
     logger.debug(f"Received event {event}")
 
+    # Extract request body from event and validate against validation schema
     body = event.get("body")
     if body is not None:
         request_body = json.loads(body)
@@ -44,21 +46,35 @@ def lambda_handler(event, context):
     global _LAMBDA_USERS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
 
+    # Process the password reset request
     return send_email(dynamodb, request.email)
 
 
 def send_email(dynamodb, email):
-    source_email = os.environ.get("SOURCE_EMAIL")
-    user_exists = check_user_exists(dynamodb, email)
+    """
+    Generate a password reset code and send it to the user's email.
 
+    Parameters:
+        dynamodb: DynamoDB client for users table
+        email: Email address of the user requesting password reset
+
+    Returns:
+        HTTP response indicating success or failure of the email operation
+    """
+    source_email = os.environ.get("SOURCE_EMAIL")
+
+    # Verify user exists before proceeding
+    user_exists = check_user_exists(dynamodb, email)
     if not user_exists:
         logger.debug(f"User with email {email} does not exist")
         return build_response(400, {"message": "User does not exist."})
 
     try:
+        # Generate a random 6-digit code and save it to user's record
         random_code = generate_code()
         code_save_success = save_reset_code(dynamodb, email, random_code)
 
+        # Check if the code was saved successfully
         if code_save_success["ResponseMetadata"]["HTTPStatusCode"] != 200:
             logger.error(f"Error saving reset code: {code_save_success}")
             return build_response(500, {"message": "Error saving reset code."})
@@ -67,6 +83,7 @@ def send_email(dynamodb, email):
             f"Reset code {random_code} generated for {email}"
         )  # Logged as a warning to be more visible
 
+        # Send email with the reset code to the user
         # TODO: Improve the email content
         response = client.send_email(
             Destination={"ToAddresses": [email]},
@@ -103,12 +120,28 @@ def generate_code():
 
 
 def save_reset_code(dynamodb, email, random_code):
+    """
+    Save the generated reset code to the user's record in DynamoDB
+    along with an expiration timestamp.
+
+    Parameters:
+        dynamodb: DynamoDB client for users table
+        email: User's email address
+        random_code: Generated reset code to save
+
+    Returns:
+        Response from DynamoDB update operation
+
+    Raises:
+        Exception if there's an error during the DynamoDB operation
+    """
     # Calculate expiration time (10 minutes from now)
     expiration_time = int(
         (datetime.now(timezone.utc) + timedelta(minutes=10)).timestamp()
     )
 
     try:
+        # Update user record with reset code and expiration time
         response = dynamodb.table.update_item(
             Key={"email": email},
             UpdateExpression="SET reset_code = :code, code_expiration_time = :code_exp_time",

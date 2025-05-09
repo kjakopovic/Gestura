@@ -82,6 +82,18 @@ def lambda_handler(event, context):
 
 
 def update_user(dynamodb, email, request):
+    """
+    Apply requested changes to the user profile in DynamoDB.
+    Only updates fields that were included in the request.
+
+    Parameters:
+        dynamodb: DynamoDB client for users table
+        email: User's email address (primary key)
+        request: Request object containing fields to update
+
+    Returns:
+        HTTP response indicating success or that no changes were made
+    """
     logger.info(f"Updating user {email} with settings {request}")
 
     update_parts = []

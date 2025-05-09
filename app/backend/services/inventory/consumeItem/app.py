@@ -91,7 +91,7 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
         logger.error(f"Item with ID {item_id} not found in items table.")
         return build_response(404, {"message": "Item not found in items table."})
 
-    # Get users's currently active items and their effects
+    # Get users currently active items and their effects
     activated_items = user.get("activated_items", [])
     item_category = item_info.get("category", "").lower()
     item_effects = item_info.get("effect", {})
