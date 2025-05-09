@@ -58,7 +58,7 @@ def lambda_handler(event, context):
         logger.error(f"Language with id {language_id} not found")
         return build_response(404, {"message": "Language not found"})
 
-    users_current_level = get_users_current_level(user_dynamodb, email, language_id)
+    users_current_level, subscription = get_users_current_level_and_subscription(user_dynamodb, email, language_id)
     if users_current_level is None:
         logger.error(f"User {email} not found in the database.")
         return build_response(404, {"message": "User not found"})
@@ -68,8 +68,9 @@ def lambda_handler(event, context):
     level = int(query_params.get("level", 1))
     section = (level // 10 + 1) * 10
 
+
     if users_current_level == level:
-        return get_list_of_tasks(tasks_dynamodb, section, language_id)
+        return get_list_of_tasks(tasks_dynamodb, section, language_id, subscription)
     else:
         logger.error(f"User {email} is not allowed to access level {level}.")
         return build_response(
@@ -90,7 +91,7 @@ def get_language_by_id(dynamodb, id):
     return language_item
 
 
-def get_users_current_level(dynamodb, email, language_id):
+def get_users_current_level_and_subscription(dynamodb, email, language_id):
     logger.info(f"Getting user level for email {email} and language {language_id}")
     user = dynamodb.table.get_item(Key={"email": email})
 
@@ -111,10 +112,10 @@ def get_users_current_level(dynamodb, email, language_id):
             ExpressionAttributeValues={":levels": user_levels},
         )
 
-    return user_levels.get(language_id, 0)
+    return user_levels.get(language_id, 0), user_item.get("subscription", 0)
 
 
-def get_list_of_tasks(dynamodb, section, language_id):
+def get_list_of_tasks(dynamodb, section, language_id, subscription):
     logger.info(f"Getting list of tasks for section {section}")
 
     tasks = get_tasks_for_section(dynamodb, section, language_id)
@@ -149,30 +150,47 @@ def get_list_of_tasks(dynamodb, section, language_id):
             tasks_2 = get_tasks_for_section(dynamodb, section_1, language_id)
             tasks_3 = get_tasks_for_section(dynamodb, section_2, language_id)
 
-        selected_tasks_1 = chose_tasks(tasks_1, 3, 3, 2)
-        selected_tasks_2 = chose_tasks(tasks_2, 2, 1, 1)
-        selected_tasks_3 = chose_tasks(tasks_3, 1, 1, 1)
+        if subscription >= 1:
+            selected_tasks_1 = chose_tasks(tasks_1, 3, 3, 2)
+            selected_tasks_2 = chose_tasks(tasks_2, 2, 1, 1)
+            selected_tasks_3 = chose_tasks(tasks_3, 1, 1, 1)
+        else:
+            selected_tasks_1 = chose_tasks(tasks_1, 4, 4, 0)
+            selected_tasks_2 = chose_tasks(tasks_2, 3, 1, 0)
+            selected_tasks_3 = chose_tasks(tasks_3, 2, 1, 0)
 
         selected_tasks = selected_tasks_1 + selected_tasks_2 + selected_tasks_3
         random.shuffle(selected_tasks)
     else:
         logger.info(f"Tasks found for section {section}.")
-        selected_tasks = chose_tasks(tasks, 4, 4, 2)
+
+        if subscription >= 1:
+            selected_tasks = chose_tasks(tasks, 4, 4, 2)
+        else:
+            selected_tasks = chose_tasks(tasks, 5, 5, 0)
 
         if section == 10:
             for i in range(5):
                 selected_tasks.append(random.choice(tasks))
         elif section == 20:
             tasks = get_tasks_for_section(dynamodb, 10, language_id)
-            prev_section_tasks = chose_tasks(tasks, 2, 2, 1)
+
+            if subscription >= 1:
+                prev_section_tasks = chose_tasks(tasks, 2, 2, 1)
+            else:
+                prev_section_tasks = chose_tasks(tasks, 3, 2, 0)
 
             selected_tasks.extend(prev_section_tasks)
         else:
             prev_tasks_1 = get_tasks_for_section(dynamodb, section - 10, language_id)
             prev_tasks_2 = get_tasks_for_section(dynamodb, section - 20, language_id)
 
-            prev_section_tasks_1 = chose_tasks(prev_tasks_1, 1, 1, 1)
-            prev_section_tasks_2 = chose_tasks(prev_tasks_2, 1, 1, 0)
+            if subscription >= 1:
+                prev_section_tasks_1 = chose_tasks(prev_tasks_1, 1, 1, 1)
+                prev_section_tasks_2 = chose_tasks(prev_tasks_2, 1, 1, 0)
+            else:
+                prev_section_tasks_1 = chose_tasks(prev_tasks_1, 2, 1, 0)
+                prev_section_tasks_2 = chose_tasks(prev_tasks_2, 1, 1, 0)
 
             selected_tasks.extend(prev_section_tasks_1)
             selected_tasks.extend(prev_section_tasks_2)
