@@ -59,10 +59,10 @@ async function runInference(
 }
 
 export async function inferenceCamera(
-  cameraRef: React.MutableRefObject<CameraView>,
+  cameraRef: React.MutableRefObject<CameraView | null>,
   session: ort.InferenceSession
 ): Promise<[PredictionResult[], number]> {
-  if (!cameraRef.current) {
+  if (!cameraRef || !cameraRef.current) {
     return [[], 0];
   }
 

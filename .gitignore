@@ -13,6 +13,7 @@
 
 # AI
 **/ai/**/data/
+**/ai/**/data.zip
 **/runs/
 **/yolo11n-cls.pt
 **/yolo11n.pt
