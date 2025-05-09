@@ -48,26 +48,27 @@ export interface UserData {
   username?: string;
   email?: string;
   phone?: string;
-  level: number;
+  level?: number;
   xp: number;
   progress?: number; // Progress percentage (0-100)
   coins: number;
   hearts: number;
   subscription?: number;
-  current_level?: number;
-  battlepass_xp?: number;
+  current_level?: Record<string, number>; // Changed from number to language-level mapping
+  battlepass?: any; // Changed from battlepass_xp
   hearts_next_refill?: string | null;
   time_played?: number;
   task_level?: number;
-  phone_numer?: string | null;
-  letters_learned?: Record<string, any>;
-  items_inventory?: any[];
+  phone_number?: string | null; // Corrected from phone_numer
+  letters_learned?: Record<string, string[]>; // Changed to map languages to arrays of letters
+  items_inventory?: string[]; // Array of UUIDs
   // User preferences
   sound_effects?: boolean;
   haptic_feedback?: boolean;
   push_notifications?: boolean;
   daily_reminder?: boolean;
   heart_refill?: boolean;
+  language_id?: string;
   [key: string]: any; // For flexibility with API responses
 }
 
@@ -81,4 +82,28 @@ export interface ApiUserResponse {
   users: UserData;
   languages: LanguageData[];
   message: string;
+}
+
+export interface ApiTask {
+  section_name: string;
+  question: string;
+  correct_answer_index: number;
+  version: number;
+  section: number;
+  task_id: string;
+  possible_answers: string[];
+  language_id: string;
+}
+
+export interface ApiTasksResponse {
+  message: string;
+  tasks: ApiTask[];
+}
+
+export interface HeartsApiResponse {
+  message: string;
+  data: {
+    hearts: number;
+    hearts_next_refill: string | null;
+  };
 }

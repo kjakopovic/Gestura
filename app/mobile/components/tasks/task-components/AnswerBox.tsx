@@ -1,16 +1,12 @@
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  ImageSourcePropType,
-} from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
+
+import * as hands from "@/constants/hand-signs";
 
 type AnswerBoxProps = {
   onPress: (text: string) => void;
   text?: string;
-  image?: ImageSourcePropType;
+  image?: string;
   answerValue: string;
   style?: string;
   isSelected: boolean;
@@ -28,6 +24,12 @@ const AnswerBox = ({
     onPress(answerValue);
   };
 
+  const imageSource = image
+    ? typeof image === "string"
+      ? { uri: image }
+      : image
+    : hands.error_testing;
+
   return (
     <View>
       <TouchableOpacity
@@ -38,7 +40,7 @@ const AnswerBox = ({
       >
         {/* <Text className="text-white text-8xl font-interExtraBold">{text}</Text> */}
         {image ? (
-          <Image source={image} className="w-100% h-100%" />
+          <Image source={imageSource} className="size-32" />
         ) : (
           <Text className="text-white text-8xl font-interExtraBold">
             {text}

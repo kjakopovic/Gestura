@@ -41,6 +41,7 @@ const LanguageSelect = () => {
         chosenLanguage: getInitialLanguage(),
       }));
     }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [languages, userSelectedLanguage, user, chosenLanguage, setState]);
 
   // Show error alert if there's an error
@@ -57,19 +58,6 @@ const LanguageSelect = () => {
   const handleLanguageSelect = async (language_id: string) => {
     if (isLoading || chosenLanguage === language_id) return;
 
-    // Create a logging function to debug values
-    const logLanguageInfo = () => {
-      console.log("Selected Language ID:", language_id);
-      console.log("Current chosen language:", chosenLanguage);
-      console.log("User chosen_language:", user?.chosen_language);
-      console.log("Language being sent to API:", {
-        chosenLanguage: language_id,
-      });
-    };
-
-    // Log before the update
-    logLanguageInfo();
-
     // Update the state with the selected language ID
     setState((prev) => ({ ...prev, chosenLanguage: language_id }));
 
@@ -77,9 +65,6 @@ const LanguageSelect = () => {
     const success = await saveChanges({ chosenLanguage: language_id });
 
     if (success) {
-      // Log after successful update
-      logLanguageInfo();
-
       Alert.alert(
         "Language Updated",
         "Your language has been updated successfully.",

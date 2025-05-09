@@ -2,7 +2,7 @@ import { ImageSourcePropType } from "react-native";
 
 export type LevelType = "normal" | "special";
 export type LevelStyle = "battlepass" | "mapLevel";
-export type LevelState = "locked" | "unlocked" | "completed";
+export type LevelState = "locked" | "unlocked" | "completed" | "current";
 
 export interface LevelData {
   id: number;

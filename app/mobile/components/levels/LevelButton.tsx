@@ -45,9 +45,7 @@ const LevelButton = ({
   ) : (
     <TouchableOpacity
       onPress={onPress}
-      className={`flex items-center justify-center ${
-        state === "unlocked" ? "shadow-md shadow-secondary/50" : ""
-      } ${buttonStyle}`}
+      className={`flex items-center justify-center ${buttonStyle}`}
       disabled={state === "locked"}
     >
       <Image
@@ -56,7 +54,13 @@ const LevelButton = ({
           state === "locked" ? "opacity-50" : ""
         }`}
         resizeMode="contain"
-        tintColor={state === "locked" ? "gray" : undefined}
+        tintColor={
+          state === "locked"
+            ? "gray"
+            : state === "unlocked" && style === "battlepass"
+            ? "#FFC800"
+            : "#A162FF"
+        }
       />
       <View
         className={`${

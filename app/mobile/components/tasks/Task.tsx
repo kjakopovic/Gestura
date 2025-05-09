@@ -29,7 +29,6 @@ interface TaskProps {
 const Task = (task: TaskProps) => {
   const handleAnswerPress = (text: string) => {
     setSelectedAnswer(text);
-    console.log("Answer pressed!");
   };
 
   const correctAnswer = task.possibleAnswers[task.correctAnswerIndex];
@@ -59,6 +58,8 @@ const Task = (task: TaskProps) => {
     if (task.version === 3) {
       const success = Math.random() > 0.5;
       setIsSuccess(success);
+    } else if (task.version === 2) {
+      setIsSuccess(parseInt(selectedAnswer!) === task.correctAnswerIndex);
     } else {
       setIsSuccess(selectedAnswer === correctAnswer);
     }
@@ -108,7 +109,14 @@ const Task = (task: TaskProps) => {
     }
   };
 
-  const buttonStyle = selectedAnswer === correctAnswer ? "success" : "fail";
+  const buttonStyle =
+    task.version === 2
+      ? parseInt(selectedAnswer || "-1") === task.correctAnswerIndex
+        ? "success"
+        : "fail"
+      : selectedAnswer === correctAnswer
+      ? "success"
+      : "fail";
 
   return task.version === 1 ? (
     <View className="flex-1 justify-center items-start">
@@ -162,7 +170,7 @@ const Task = (task: TaskProps) => {
             <AnswerBox
               key={index}
               onPress={handleAnswerPress}
-              image={{ uri: imageUrl }}
+              image={imageUrl}
               answerValue={`${index}`}
               isSelected={selectedAnswer === `${index}`}
             />
