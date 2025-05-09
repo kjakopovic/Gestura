@@ -125,7 +125,7 @@ def lambda_handler(event, context):
         email,
         user.get("time_played", 0) + time_played,
         user.get("xp", 0) + xp,
-        user_levels,
+        letters_learned,
         user.get("achievements", []),
     )
 
@@ -410,7 +410,7 @@ def get_xp_multiplier(active_items):
 
 
 def update_user_achievements(
-    usersTable, achievementsTable, email, time_played, xp, user_levels, achievements
+    usersTable, achievementsTable, email, time_played, xp, letters_learned, achievements
 ):
     logger.info(f"Checking for new achievements for user {email}")
 
@@ -418,21 +418,18 @@ def update_user_achievements(
     if not user_achievements:
         user_achievements = []
 
-    # Ensure values are Decimal
-    # xp = float(str(xp))
-    # time_played = float(str("time_played")) if time_played else Decimal('0')
-
-    # Calculate max level across all languages
-    max_level = max(user_levels.values()) if user_levels else 0
-    max_level = Decimal(str(max_level))
+    # Calculate total words/letters learned across all languages
+    total_words_learned = sum(len(words_list) for words_list in letters_learned.values())
+    total_words_learned = Decimal(str(total_words_learned))
 
     new_achievements = []
+    new_achievements_details = []
 
     # Get achievements for each type, sorted by requires in descending order
     achievement_types = [
         {"type": "time_played", "value": time_played},
         {"type": "xp", "value": xp},
-        {"type": "level", "value": max_level},
+        {"type": "words", "value": total_words_learned},
     ]
 
     for achievement_type in achievement_types:
@@ -454,6 +451,7 @@ def update_user_achievements(
 
             # Otherwise, add this achievement
             new_achievements.append(achievement["id"])
+            new_achievements_details.append(achievement)
             user_achievements.append(achievement["id"])
 
     # Update user if new achievements were earned
@@ -465,4 +463,4 @@ def update_user_achievements(
             ExpressionAttributeValues={":achievements": user_achievements},
         )
 
-    return new_achievements
+    return new_achievements_details
