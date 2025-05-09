@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { api } from "@/lib/api";
 import { InventoryApiResponse } from "@/types/types";
 import { useInventoryStore } from "@/store/useInventoryStore";
+import CustomAppBar from "@/components/CustomAppBar";
 
 const Inventory = () => {
   // Get store actions
@@ -137,43 +138,46 @@ const Inventory = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 items-center justify-center bg-grayscale-800">
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        className="w-full p-2 px-5"
-        contentContainerStyle={{
-          paddingBottom: 120,
-        }}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={["#A162FF"]} // Match your theme color
-            tintColor="#A162FF"
-            title="Refreshing inventory..."
-            titleColor="#FFFFFF"
-          />
-        }
-      >
-        <Text className="text-xl text-grayscale-100 font-interBold mt-16">
-          ITEMS
-        </Text>
-        {items.map((item) => (
-          <Item
-            key={item.id}
-            itemTitle={item.name}
-            icon={item.image_url}
-            category={item.category}
-            onPress={() => activateItem(item.id)}
-          />
-        ))}
+    <>
+      <CustomAppBar title="INVENTORY" />
+      <SafeAreaView className="flex-1 items-center justify-center bg-grayscale-800">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          className="w-full p-2 px-5"
+          contentContainerStyle={{
+            paddingBottom: 120,
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#A162FF"]} // Match your theme color
+              tintColor="#A162FF"
+              title="Refreshing inventory..."
+              titleColor="#FFFFFF"
+            />
+          }
+        >
+          <Text className="text-xl text-grayscale-100 font-interBold mt-20">
+            ITEMS
+          </Text>
+          {items.map((item) => (
+            <Item
+              key={item.id}
+              itemTitle={item.name}
+              icon={item.image_url}
+              category={item.category}
+              onPress={() => activateItem(item.id)}
+            />
+          ))}
 
-        <Text className="text-xl text-grayscale-100 font-interBold mt-16">
-          BATTLE PASS
-        </Text>
-        <BPRewards unclaimedRewards={userBattlepass.unlocked_levels.length} />
-      </ScrollView>
-    </SafeAreaView>
+          <Text className="text-xl text-grayscale-100 font-interBold mt-16">
+            BATTLE PASS
+          </Text>
+          <BPRewards unclaimedRewards={userBattlepass.unlocked_levels.length} />
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 };
 
