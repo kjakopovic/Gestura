@@ -13,6 +13,7 @@
 
 # AI
 **/ai/**/data/
+**/ai/**/data.zip
 **/runs/
 **/yolo11n-cls.pt
 **/yolo11n.pt
@@ -31,6 +32,10 @@
 **/dist
 **/dist-ssr
 **/*.local
+
+# MOBILE
+**/mobile/**/ios/
+**/mobile/**/android/
 
 # Editor directories and files
 **/.vscode/*

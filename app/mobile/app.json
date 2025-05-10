@@ -34,7 +34,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "onnxruntime-react-native"
     ],
     "experiments": {
       "typedRoutes": true
