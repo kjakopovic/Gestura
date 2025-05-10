@@ -139,9 +139,10 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
 
         # Select a random item from the chest based on win percentages
         won_item = select_random_item_from_chest(possible_items)
+        won_item = convert_decimal_to_float(won_item)
         logger.info(f"User {email} won {won_item} from chest {item_id}")
 
-        response_data["won_item"] = convert_decimal_to_float(won_item)
+        response_data["won_item"] = won_item
 
         if "coins" in won_item:
             # If the won item is coins, add them to user's balance
