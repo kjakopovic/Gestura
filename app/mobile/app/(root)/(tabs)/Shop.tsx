@@ -40,7 +40,7 @@ const Shop = () => {
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator
               size="large"
-              color="#0000ff"
+              color="#A162FF"
               className="w-1/2 h-1/2"
             />
           </View>
@@ -62,7 +62,7 @@ const Shop = () => {
             >
               <View className="w-full flex flex-col items-center justify-start">
                 {/* User's Coins Display */}
-                <View className="w-full flex flex-row items-center justify-center mt-32 mb-8">
+                <View className="w-full flex flex-row items-center justify-center mt-24 mb-8">
                   <Image source={icons.coin} className="h-10 w-10" />
                   <Text className="text-primary text-4xl font-interBold m-2">
                     {userCoins}

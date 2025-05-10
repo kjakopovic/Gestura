@@ -15,7 +15,7 @@ const BPRewards = ({ unclaimedRewards }: BPRewardsProps) => {
 
   return (
     <TouchableOpacity
-      className="bg-grayscale-700 w-5/6 flex flex-row justify-between items-center border border-grayscale-400 rounded-xl py-4 px-4 m-4"
+      className="bg-grayscale-700 w-full flex flex-row justify-between items-center border border-grayscale-400 rounded-xl py-4 px-4 my-4"
       onPress={() => {
         router.push("/(root)/(inventory-options)/BattlePass");
       }}

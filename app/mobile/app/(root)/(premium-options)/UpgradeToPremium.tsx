@@ -1,13 +1,21 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
+
+import { useRouter } from "expo-router";
 
 import * as icons from "@/constants/icons";
 
 import CustomButton from "@/components/CustomButton";
 
-const UpgradeToPremium = () => {
+type UpgradeToPremiumProps = {
+  hasButton?: boolean;
+};
+
+const UpgradeToPremium = ({ hasButton }: UpgradeToPremiumProps) => {
+  const router = useRouter();
+
   return (
-    <View className="flex flex-col bg-grayscale-800 justify-center items-center mx-6">
+    <View className="flex flex-col h-full bg-grayscale-800 justify-center items-center mx-6">
       <View className="flex flex-col justify-center items-center">
         <Image source={icons.logo} className="size-44 m-2 mt-20" />
         <Text className="text-white font-inter text-4xl text-center m-8 mt-0">
@@ -76,17 +84,18 @@ const UpgradeToPremium = () => {
         }}
         noMargin={true}
       />
-      {/* maybe we use it later for ads */}
-      {/* <TouchableOpacity className="w-2/6 h-8 m-4 flex-1 justify-center items-center border border-grayscale-400 rounded-xl">
-        <Text
-          className="text-grayscale-100 font-inter"
-          onPress={() => {
-            alert("No, thanks clicked!");
-          }}
-        >
-          No, thanks
-        </Text>
-      </TouchableOpacity> */}
+      {hasButton && (
+        <TouchableOpacity className="w-1/2 m-6 mb-24 flex-1 justify-center items-center border border-grayscale-400 rounded-xl">
+          <Text
+            className="text-grayscale-100 font-inter"
+            onPress={() => {
+              router.back();
+            }}
+          >
+            No, thanks
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

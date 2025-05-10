@@ -46,9 +46,25 @@ def lambda_handler(event, context):
 
 
 def sign_up_user(dynamodb, email, username, password):
+    """
+    Register a new user after validating email and username uniqueness.
+    Creates the user record and generates authentication tokens.
+
+    Parameters:
+        dynamodb: DynamoDB client for users table
+        email: User's email address
+        username: User's display name
+        password: Plain text password to hash and store
+
+    Returns:
+        HTTP response with access and refresh tokens if successful,
+        or error message if registration fails
+    """
+    # Check if email or username already exist in the database
     existing_email_user = get_user_by_email(dynamodb, email)
     existing_username_user = get_user_by_username(dynamodb, username)
 
+    # Return appropriate error if email or username is already in use
     if existing_email_user:
         logger.debug(f"User with email {email} already exists")
         return build_response(400, {"message": "Email already in use."})

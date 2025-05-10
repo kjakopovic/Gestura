@@ -6,6 +6,11 @@ import { registerSchema } from "@/schemas/authSchemas";
 import { forgotEmailSchema } from "@/schemas/authSchemas";
 import { forgotCodeSchema } from "@/schemas/authSchemas";
 import { forgotPasswordSchema } from "@/schemas/authSchemas";
+import {
+  InventoryItem,
+  UserBattlepass,
+  ActiveBattlepass,
+} from "@/store/useInventoryStore";
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -41,6 +46,12 @@ export type ForgotPasswordResult = {
   error?: { message: string };
 };
 
+export interface BattlePass {
+  xp: number;
+  seasonId: string;
+  claimed_levels: number[];
+}
+
 // User data type
 export interface UserData {
   id?: string;
@@ -50,12 +61,13 @@ export interface UserData {
   phone?: string;
   level?: number;
   xp: number;
-  progress?: number; // Progress percentage (0-100)
+  progress?: number;
   coins: number;
   hearts: number;
+  achievements?: string[]; // Array of achievement IDs
   subscription?: number;
   current_level?: Record<string, number>; // Changed from number to language-level mapping
-  battlepass?: any; // Changed from battlepass_xp
+  battlepass?: BattlePass[];
   hearts_next_refill?: string | null;
   time_played?: number;
   task_level?: number;
@@ -106,4 +118,11 @@ export interface HeartsApiResponse {
     hearts: number;
     hearts_next_refill: string | null;
   };
+}
+
+export interface InventoryApiResponse {
+  message: string;
+  items: InventoryItem[];
+  user_battlepass: UserBattlepass;
+  active_battlepass: ActiveBattlepass;
 }

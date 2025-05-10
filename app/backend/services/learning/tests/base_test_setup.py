@@ -207,7 +207,8 @@ class BaseTestSetup(unittest.TestCase):
                     "sum_of_xp": 0
                 }
             ],
-            "coins": 0
+            "coins": 0,
+            "subscription": 1
         }
 
         self.users_table.put_item(Item=self.sample_user)

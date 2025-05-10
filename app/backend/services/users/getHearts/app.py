@@ -10,6 +10,7 @@ from auth import get_email_from_jwt_token
 logger = logging.getLogger("GetHearts")
 logger.setLevel(logging.DEBUG)
 
+# Get refill rate from environment variable, default to 3 hours if not set
 HEARTS_REFILL_RATE_HOURS = int(os.environ.get("HEARTS_REFILL_RATE_HOURS", 3))
 
 
@@ -17,6 +18,7 @@ HEARTS_REFILL_RATE_HOURS = int(os.environ.get("HEARTS_REFILL_RATE_HOURS", 3))
 def lambda_handler(event, context):
     logger.debug(f"Received event {event}")
 
+    # Extract and validate JWT token
     jwt_token = event.get("headers").get("x-access-token")
     email = get_email_from_jwt_token(jwt_token)
 
@@ -24,9 +26,11 @@ def lambda_handler(event, context):
         logger.error(f"Invalid email in jwt token {email}")
         return build_response(400, {"message": "Invalid email in jwt token"})
 
+    # Initialize DynamoDB resource
     global _LAMBDA_USERS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
 
+    # Retrieve user's heart data and validate that the user exists
     user_data = get_user_by_email(dynamodb, email)
     if not user_data:
         logger.debug(f"User with email {email} not found.")
@@ -34,6 +38,7 @@ def lambda_handler(event, context):
 
     hearts, hearts_next_refill_str = user_data
 
+    # If user has maximum hearts, no refill time is needed
     if hearts == 5:
         logger.debug(f"User with email {email} has 5 hearts")
         return build_response(
@@ -44,11 +49,13 @@ def lambda_handler(event, context):
             },
         )
 
+    # Get current time for refill calculations
     current_time = datetime.now(timezone.utc)
     logger.debug(f"Current time: {current_time}")
 
     hearts_next_refill = None
 
+    # Parse the next refill timestamp, ensuring it's timezone-aware
     if hearts_next_refill_str:
         try:
             hearts_next_refill = datetime.fromisoformat(hearts_next_refill_str)
@@ -60,14 +67,19 @@ def lambda_handler(event, context):
 
     filled_hearts = False
 
+    # Check if it's time to refill hearts and calculate how many to add
     if hearts_next_refill <= current_time:
+        # Calculate hours elapsed since last refill
         time_delta = current_time - hearts_next_refill
         hours_elapsed = time_delta.days * 24 + time_delta.seconds // 3600
+
+        # Calculate hearts to add based on elapsed time and refill rate
         hearts_to_add = min(hours_elapsed // HEARTS_REFILL_RATE_HOURS + 1, 5 - hearts)
 
         hearts += hearts_to_add
         filled_hearts = hearts_to_add > 0
 
+        # Calculate next refill time or set to None if hearts are full
         if hearts < 5:
             hearts_next_refill = current_time + timedelta(
                 hours=HEARTS_REFILL_RATE_HOURS
@@ -76,10 +88,12 @@ def lambda_handler(event, context):
             hearts_next_refill = None
             hearts = 5
 
+    # Update user record if hearts were refilled
     if filled_hearts:
         update_expression = "SET hearts = :hearts"
         expression_attribute_values = {":hearts": hearts}
 
+        # Handle next refill time (either set a time or remove it)
         if hearts_next_refill:
             update_expression += ", hearts_next_refill = :hearts_next_refill"
             expression_attribute_values[":hearts_next_refill"] = (
@@ -95,6 +109,7 @@ def lambda_handler(event, context):
             ExpressionAttributeValues=expression_attribute_values,
         )
 
+    # Prepare response data
     response_data = {
         "hearts": int(hearts),
         "hearts_next_refill": (
@@ -109,6 +124,17 @@ def lambda_handler(event, context):
 
 
 def get_user_by_email(dynamodb, email):
+    """
+    Retrieve user heart data from DynamoDB by email address.
+
+    Parameters:
+        dynamodb: DynamoDB client for users table
+        email: User's email to look up
+
+    Returns:
+        tuple: (hearts, hearts_next_refill) containing heart count and next refill time,
+               or None if user not found
+    """
     logger.info(f"Getting user by email {email}")
     user = dynamodb.table.get_item(Key={"email": email})
 
