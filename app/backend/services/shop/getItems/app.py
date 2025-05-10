@@ -13,6 +13,7 @@ logger.setLevel(logging.DEBUG)
 def lambda_handler(event, context):
     logger.debug(f"Received event {event}")
 
+    # Extract JWT token from headers and authenticate the user
     jwt_token = event.get("headers").get("x-access-token")
     email = get_email_from_jwt_token(jwt_token)
 
@@ -20,19 +21,24 @@ def lambda_handler(event, context):
         logger.error(f"Invalid email in jwt token {email}")
         return build_response(400, {"message": "Invalid email in jwt token"})
 
+    # Initialize DynamoDB client for the items table
     global _LAMBDA_ITEMS_TABLE_RESOURCE
     dynamodb = LambdaDynamoDBClass(_LAMBDA_ITEMS_TABLE_RESOURCE)
 
+    # Retrieve all items from the items table
     items = get_items(dynamodb)
 
+    # Check if items were found, if not return 404
     if not items:
         logger.debug(f"No items found.")
         return build_response(404, {"message": "No items found."})
 
+    # Process items into categories
     regular_items = []
     coins = []
     chests = []
 
+    # Iterate through items and categorize them
     for item in items:
         category = item.get("category", "").lower()
         processed_item = convert_decimal_to_float(item)
@@ -44,6 +50,7 @@ def lambda_handler(event, context):
         else:
             regular_items.append(processed_item)
 
+    # Return the categorized items
     return build_response(
         200,
         {
