@@ -197,6 +197,8 @@ class BaseTestSetup(unittest.TestCase):
                 "es": 1,
                 "hr": 11,
                 "fr": 21,
+                "ru": 21,
+                "it": 11
             },
             "task_level": 0,
             "time_played": 0,
@@ -234,6 +236,14 @@ class BaseTestSetup(unittest.TestCase):
             {
                 "id": "de",
                 "name": "German"
+            },
+            {
+                "id": "ru",
+                "name": "Russian"
+            },
+            {
+                "id": "it",
+                "name": "Italian"
             }
 
         ]
