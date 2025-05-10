@@ -20,7 +20,7 @@ const PlayerInfoBar = ({
   heartsNextRefill,
 }: PlayerInfoBarProps) => {
   return (
-    <View className="w-full bg-grayscale-700 shadow-sm shadow-grayscale-400 rounded-b-xl flex flex-row items-center justify-between px-6 pt-20">
+    <View className="w-full bg-grayscale-700 shadow-sm shadow-grayscale-400 rounded-b-xl flex flex-row items-center justify-between px-6 pt-12">
       <View className="flex flex-row items-center">
         <Image source={icons.coin} className="size-6" />
         <Text className="text-primary text-xl font-interExtraBold ml-2">

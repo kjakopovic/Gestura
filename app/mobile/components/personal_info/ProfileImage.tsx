@@ -9,10 +9,10 @@ type ProfileImageProps = {
 const ProfileImage = ({ character, backgroundColor }: ProfileImageProps) => {
   return (
     <View
-      className="w-24 h-24 rounded-full border border-grayscale-100 overflow-hidden"
+      className="size-24 rounded-full items-center justify-center border border-grayscale-100 overflow-hidden"
       style={{ backgroundColor: backgroundColor }}
     >
-      <Image source={character} className="w-full h-full p-4" />
+      <Image source={character} className="size-16 p-4" />
     </View>
   );
 };

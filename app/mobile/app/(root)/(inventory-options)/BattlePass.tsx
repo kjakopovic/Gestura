@@ -105,7 +105,7 @@ const BattlePass = () => {
       <CustomAppBar title="BATTLE PASS" backButton />
       <SafeAreaView className="flex-1 items-center bg-grayscale-800">
         <ScrollView
-          className="h-full w-full"
+          className="h-full w-full mt-20"
           contentContainerStyle={{
             paddingBottom: 120,
           }}

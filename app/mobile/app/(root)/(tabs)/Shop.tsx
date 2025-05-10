@@ -57,7 +57,7 @@ const Shop = () => {
               onPurchase={completePurchase}
             />
             <ScrollView
-              className="flex-1 w-full"
+              className="flex-1 w-full mt-20"
               contentContainerStyle={{ paddingBottom: 120 }}
             >
               <View className="w-full flex flex-col items-center justify-start">

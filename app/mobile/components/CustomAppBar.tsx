@@ -9,8 +9,8 @@ type CustomAppBarProps = {
 
 const CustomAppBar = ({ title, backButton }: CustomAppBarProps) => {
   return (
-    <View className="bg-grayscale-700 h-32 flex flex-row items-end justify-start rounded-b-2xl p-4 absolute top-0 w-full z-50">
-      {backButton && <BackButton absolute top={55} />}
+    <View className="bg-grayscale-700 h-28 flex flex-row items-end justify-start rounded-b-2xl p-4 absolute top-0 w-full z-50">
+      {backButton && <BackButton absolute top={45} />}
       <Text className="text-white text-lg font-interExtraBold w-full text-center">
         {title}
       </Text>

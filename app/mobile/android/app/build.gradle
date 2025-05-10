@@ -86,13 +86,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.mobile'
+    namespace "com.mobile"
     defaultConfig {
-        applicationId 'com.anonymous.mobile'
+        applicationId "com.mobile"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0"
     }
     signingConfigs {
         debug {
@@ -147,9 +147,6 @@ android {
 }
 
 dependencies {
-    // onnxruntime-react-native @generated begin onnxruntime-react-native - expo prebuild (DO NOT MODIFY) sync-ec94e2a0d49f04b1bbc51ec3f57c45710b04aad8
-    implementation project(':onnxruntime-react-native')
-    // onnxruntime-react-native @generated end onnxruntime-react-native
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
