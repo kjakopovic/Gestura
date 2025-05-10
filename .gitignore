@@ -33,6 +33,10 @@
 **/dist-ssr
 **/*.local
 
+# MOBILE
+**/mobile/**/ios/
+**/mobile/**/android/
+
 # Editor directories and files
 **/.vscode/*
 **/!.vscode/extensions.json

@@ -30,7 +30,8 @@ const CustomerSupport = () => {
   }, []);
 
   useEffect(() => {
-    let isActive = true; // Track if effect is still active
+    // Track if effect is still active
+    let isActive = true;
     let intervalId: NodeJS.Timeout | null = null;
 
     const setupDetection = async () => {
@@ -54,25 +55,22 @@ const CustomerSupport = () => {
           graphOptimizationLevel: "all",
         });
 
-        if (!isActive) return; // Check if component unmounted during async operation
+        if (!isActive) return;
 
         modelSessionRef.current = session;
         console.log("ASL model session created successfully");
 
         // Start detection interval AFTER model is loaded
-        let isProcessing = false; // Prevent overlapping processing
-
-        const SAFER_INTERVAL = 500; // 500ms instead of 16.7ms
+        let isProcessing = false;
 
         intervalId = setInterval(() => {
-          // Skip if already processing or model/camera not ready
           if (
             isProcessing ||
             !modelSessionRef.current ||
             !cameraRef.current ||
             !cameraReady
           ) {
-            return; // Don't log this - it will spam the console
+            return;
           }
 
           isProcessing = true;
@@ -118,12 +116,11 @@ const CustomerSupport = () => {
               console.error("Inference error:", error.message);
             })
             .finally(() => {
-              // Add a small delay before processing again
               setTimeout(() => {
                 isProcessing = false;
               }, 100);
             });
-        }, SAFER_INTERVAL);
+        }, DETECTION_INTERVAL_MS);
 
         detectIntervalRef.current = intervalId;
         console.log("Detection interval started");
@@ -160,7 +157,6 @@ const CustomerSupport = () => {
         ref={cameraRef}
         onCameraReady={() => {
           console.log("Camera reports ready");
-          // Add a small delay to ensure camera is truly ready
           setTimeout(() => {
             setCameraReady(true);
           }, 500);

@@ -3,7 +3,7 @@ import { Asset } from "expo-asset";
 
 export const MODEL_IMAGE_SIZE = [224, 224];
 export const DETECTION_THRESHOLD = 0.7;
-export const DETECTION_INTERVAL_MS = 16.7;
+export const DETECTION_INTERVAL_MS = 500;
 
 export const getModelPath = async () => {
   const modelAsset = Asset.fromModule(require("../assets/models/asl.onnx"));
