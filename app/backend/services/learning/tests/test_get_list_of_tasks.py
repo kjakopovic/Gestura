@@ -685,7 +685,8 @@ class TestGetListOfTasks(BaseTestSetup):
                 "es": 1,
                 "hr": 11,
                 "fr": 21,
-                "en": 11
+                "en": 11,
+                "it": 11
             },
             "subscription": 0
         }
@@ -704,7 +705,7 @@ class TestGetListOfTasks(BaseTestSetup):
                     "language_id": "it"
                 })
 
-        jwt_token = generate_jwt_token("test@mail.com")
+        jwt_token = generate_jwt_token("nosub@mail.com")
 
         # Patch the get_two_random_sections function to always return (10, 10)
         with patch('getListOfTasks.app.get_two_random_sections') as mock_get_sections:
@@ -726,9 +727,23 @@ class TestGetListOfTasks(BaseTestSetup):
             self.assertEqual(response['statusCode'], 200)
             self.assertIn("tasks", body)
 
+            # In test_get_sections_when_max_section_is_10_subscription_is_0
             section_10_tasks = [task for task in body["tasks"] if task["section"] == 10]
             print(f"\n\nSection 10 tasks: {len(section_10_tasks)}")
 
+            # Add version filtering
+            version_1_tasks = [task for task in body["tasks"] if task["version"] == 1]
+            version_2_tasks = [task for task in body["tasks"] if task["version"] == 2]
+            version_3_tasks = [task for task in body["tasks"] if task["version"] == 3]
+
+            print(f"Version 1 tasks: {len(version_1_tasks)}")
+            print(f"Version 2 tasks: {len(version_2_tasks)}")
+            print(f"Version 3 tasks: {len(version_3_tasks)}")
+
+            # Assert the expected version distribution
+            self.assertGreater(len(version_1_tasks), 0, "Should have tasks with version 1")
+            self.assertGreater(len(version_2_tasks), 0, "Should have tasks with version 2")
+            self.assertEqual(len(version_3_tasks), 0, "Should have no tasks with version 3")
 
             # All tasks should be from section 10
             for task in body["tasks"]:
@@ -745,7 +760,8 @@ class TestGetListOfTasks(BaseTestSetup):
                 "es": 1,
                 "hr": 11,
                 "fr": 21,
-                "en": 11
+                "en": 11,
+                "ru": 21
             },
             "subscription": 0
         }
@@ -776,7 +792,7 @@ class TestGetListOfTasks(BaseTestSetup):
                     "language_id": "ru"
                 })
 
-        jwt_token = generate_jwt_token("test@mail.com")
+        jwt_token = generate_jwt_token("nosub@mail.com")
 
         # Patch the get_two_random_sections function to return (10, 20)
         with patch('getListOfTasks.app.get_two_random_sections') as mock_get_sections:
@@ -816,6 +832,18 @@ class TestGetListOfTasks(BaseTestSetup):
             # Verify the total count of tasks
             self.assertEqual(len(section_10_tasks) + len(section_20_tasks), len(body["tasks"]))
 
+            # After the section filtering code
+            version_1_tasks = [task for task in body["tasks"] if task["version"] == 1]
+            version_2_tasks = [task for task in body["tasks"] if task["version"] == 2]
+            version_3_tasks = [task for task in body["tasks"] if task["version"] == 3]
+
+            print(f"Version 1 tasks: {len(version_1_tasks)}")
+            print(f"Version 2 tasks: {len(version_2_tasks)}")
+            print(f"Version 3 tasks: {len(version_3_tasks)}")
+
+            self.assertGreater(len(version_1_tasks), 0, "Should have tasks with version 1")
+            self.assertGreater(len(version_2_tasks), 0, "Should have tasks with version 2")
+            self.assertEqual(len(version_3_tasks), 0, "Should have no tasks with version 3")
 
 
     def tearDown(self):

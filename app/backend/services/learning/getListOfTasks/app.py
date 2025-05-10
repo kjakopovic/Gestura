@@ -193,11 +193,14 @@ def get_list_of_tasks(dynamodb, section, language_id, subscription):
         # Select tasks based on subscription status
         # Premium users get more advanced tasks (version 3)
         if subscription >= 1:
+            logger.info(f"User is premium, selecting more advanced tasks")
+
             selected_tasks_1 = chose_tasks(tasks_1, 3, 3, 2)
             selected_tasks_2 = chose_tasks(tasks_2, 2, 1, 1)
             selected_tasks_3 = chose_tasks(tasks_3, 1, 1, 1)
-
         else:
+            logger.info(f"User is free, selecting basic tasks")
+
             selected_tasks_1 = chose_tasks(tasks_1, 4, 4, 0)
             selected_tasks_2 = chose_tasks(tasks_2, 3, 1, 0)
             selected_tasks_3 = chose_tasks(tasks_3, 2, 1, 0)
@@ -211,18 +214,20 @@ def get_list_of_tasks(dynamodb, section, language_id, subscription):
         logger.info(f"Tasks found for section {section}.")
         # Select base tasks from current section based on subscription
         if subscription >= 1:
-            selected_tasks = chose_tasks(tasks, 4, 4, 2)
+            if section == 10:
+                logger.info(f"User is premium, selecting more advanced tasks")
+                selected_tasks = chose_tasks(tasks, 6, 5, 4)
+            else:
+                selected_tasks = chose_tasks(tasks, 4, 4, 2)
         else:
-            selected_tasks = chose_tasks(tasks, 5, 5, 0)
-
-        # Special handling for initial sections
-        if section == 10:
-            # For first section, add 5 more random tasks for extra practice
-            for i in range(5):
-                selected_tasks.append(random.choice(tasks))
+            logger.info(f"User is free, selecting basic tasks")
+            if section == 10:
+                selected_tasks = chose_tasks(tasks, 8, 7, 0)
+            else:
+                selected_tasks = chose_tasks(tasks, 5, 5, 0)
 
         # For second section, include some tasks from first section
-        elif section == 20:
+        if section == 20:
             tasks = get_tasks_for_section(dynamodb, 10, language_id)
 
             if subscription >= 1:
