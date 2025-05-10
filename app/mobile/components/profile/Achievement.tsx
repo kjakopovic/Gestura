@@ -1,10 +1,12 @@
-import { View, Text, Image, ImageSourcePropType } from "react-native";
+import { View, Text, Image } from "react-native";
 import React from "react";
+
+import * as hands from "@/constants/hand-signs";
 
 type AchievementProps = {
   title: string;
   description: string;
-  icon: ImageSourcePropType;
+  icon: string;
   completed: boolean;
 };
 
@@ -14,24 +16,32 @@ const Achievement = ({
   icon,
   completed,
 }: AchievementProps) => {
+  const imageSource = icon
+    ? typeof icon === "string"
+      ? { uri: icon }
+      : icon
+    : hands.error_testing;
+
   return (
     <View className="m-2 w-full flex-row items-center justify-start px-4 py-2">
       <Image
-        source={icon}
+        source={imageSource}
         className={`size-12 ${completed ? "opacity-100" : "opacity-20"}`}
       />
-      <View className="flex-column items-start justify-center py-1 ml-5">
+      <View className="flex-1 flex-column items-start justify-center py-1 ml-5">
         <Text
-          className={`text-2xl overflow-hidden font-interBold my-2 ${
+          className={`text-2xl flex-wrap font-interBold my-2 ${
             completed ? "text-grayscale-100" : "text-grayscale-400"
           }`}
+          numberOfLines={2}
         >
           {title}
         </Text>
         <Text
-          className={`font-interLight text-xl ${
+          className={`font-interLight text-xl flex-wrap ${
             completed ? "text-grayscale-100" : "text-grayscale-400"
           }`}
+          numberOfLines={3}
         >
           {description}
         </Text>

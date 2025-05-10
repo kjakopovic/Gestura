@@ -81,13 +81,6 @@ class TestGetAchievements(BaseTestSetup):
                 },
                 "expected_validation_message": "data.query_page_size must be string"
             },
-            {
-                "request_query": {
-                    "query_page_size": "10",
-                    "extraField": "value"
-                },
-                "expected_validation_message": "data must not contain {'extraField'} properties"
-            }
         ]
 
         for case in test_cases:

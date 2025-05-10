@@ -14,7 +14,7 @@ const ChestOption = ({ chestPrice, onPress }: ChestOptionProps) => {
 
   return (
     <TouchableOpacity
-      className="bg-grayscale-700 w-5/6 h-44 flex flex-row items-start justify-center border border-grayscale-400 border-b-2 rounded-xl"
+      className="bg-grayscale-700 w-full h-44 flex flex-row items-start justify-center border border-grayscale-400 border-b-2 rounded-xl"
       onPress={onPress}
     >
       <ShopOption type="chest" price={chestPrice} borderless={true} />

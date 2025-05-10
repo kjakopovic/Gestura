@@ -1,94 +1,104 @@
-import { SafeAreaView, ScrollView, View, Text, Image } from "react-native";
-import React, { useState } from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  View,
+  Text,
+  Image,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
+import React from "react";
 
 import CustomAppBar from "@/components/CustomAppBar";
-import { LevelData } from "@/types/levels";
-import * as icons from "@/constants/icons";
 import * as images from "@/constants/images";
-import LevelMap from "@/components/levels/LevelMap";
+import { BattlepassLevel, useInventoryStore } from "@/store/useInventoryStore";
+import BattlepassMap from "@/components/inventory/BattlepassMap";
+import { api } from "@/lib/api";
 
 const BattlePass = () => {
-  const season = 1;
-  const seasonName = "LIGHTS OUT";
+  const activeBattlepass = useInventoryStore((state) => state.activeBattlepass);
 
-  const [levels] = useState<LevelData[]>([
-    {
-      id: 1,
-      level: 1,
-      type: "special",
-      style: "battlepass",
-      pathStyle: "battlepass",
-      state: "unlocked",
-      icon: icons.bp_chest_map,
-    },
-    {
-      id: 2,
-      level: 2,
-      type: "special",
-      style: "battlepass",
-      pathStyle: "battlepass",
-      state: "unlocked",
-      icon: icons.coin,
-    },
-    {
-      id: 3,
-      level: 3,
-      type: "special",
-      style: "battlepass",
-      pathStyle: "battlepass",
-      state: "unlocked",
-      icon: icons.coin,
-    },
-    {
-      id: 4,
-      level: 4,
-      type: "special",
-      style: "battlepass",
-      pathStyle: "battlepass",
-      state: "locked",
-      icon: icons.coin,
-    },
-    {
-      id: 5,
-      level: 5,
-      type: "special",
-      style: "battlepass",
-      pathStyle: "battlepass",
-      state: "locked",
-      icon: icons.bp_chest_map,
-    },
-    {
-      id: 6,
-      level: 6,
-      type: "special",
-      style: "battlepass",
-      pathStyle: "battlepass",
-      state: "locked",
-      icon: icons.coin,
-    },
-    {
-      id: 7,
-      level: 7,
-      type: "special",
-      style: "battlepass",
-      pathStyle: "battlepass",
-      state: "locked",
-      icon: icons.coin,
-    },
-    {
-      id: 8,
-      level: 8,
-      type: "special",
-      style: "battlepass",
-      pathStyle: "battlepass",
-      state: "locked",
-      icon: icons.coin,
-    },
-  ]);
+  const userBattlepass = useInventoryStore((state) => state.userBattlepass);
 
-  const handleLevelPress = (levelId: number) => {
-    alert("claimed reward " + levelId);
+  const [claiming, setClaiming] = React.useState(false);
+  const season = activeBattlepass.season;
+  const seasonName = activeBattlepass.name;
+  const endDate = activeBattlepass.end_date;
+
+  const getDaysRemaining = () => {
+    if (!endDate) return "Unknown";
+
+    const now = new Date();
+    const end = new Date(endDate);
+
+    // Calculate difference in milliseconds
+    const diffMs = end.getTime() - now.getTime();
+
+    // Convert to days
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 0) return "Ended";
+    if (diffDays === 1) return "1 day";
+    return `${diffDays} days`;
   };
+
+  const daysRemaining = getDaysRemaining();
+
+  const handleLevelPress = async (level: BattlepassLevel) => {
+    // Check if level is unlocked and not already claimed
+    if (
+      userBattlepass.xp >= level.required_xp &&
+      !userBattlepass.claimed_levels.includes(level.level)
+    ) {
+      try {
+        setClaiming(true);
+        const response = await api.post(
+          `/battlepass/claim?battlepass_level=${level.level}`,
+          {},
+          {
+            apiBase: "inventory",
+          }
+        );
+        if (response.success) {
+          // Update the userBattlepass state in the store
+          useInventoryStore.setState((state) => ({
+            userBattlepass: {
+              ...state.userBattlepass,
+              claimed_levels: [
+                ...state.userBattlepass.claimed_levels,
+                level.level,
+              ],
+            },
+          }));
+          Alert.alert(
+            "Reward Claimed",
+            `You have claimed ${level.coins} coins!`,
+            [{ text: "OK" }]
+          );
+        } else {
+          console.error("Error claiming level reward:", response.error);
+        }
+      } catch (error) {
+        console.error("Error claiming level reward:", error);
+      } finally {
+        setClaiming(false);
+      }
+      // Show reward dialog or claim the reward
+      console.log(`Claiming level ${level.level} reward: ${level.coins} coins`);
+    }
+  };
+
+  if (claiming) {
+    return (
+      <SafeAreaView className="flex-1 items-center bg-grayscale-800">
+        <ActivityIndicator
+          size="large"
+          color="#FFCC00"
+          className="flex-1 justify-center items-center"
+        />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <>
@@ -100,7 +110,7 @@ const BattlePass = () => {
             paddingBottom: 120,
           }}
         >
-          <View className="flex flex-col justify-center items-center mt-40 mb-20">
+          <View className="flex flex-col justify-center items-center mt-16 mb-20">
             <View className="absolute top-6 left-0 right-0 h-full items-center justify-center">
               <Image
                 source={images.season_banner}
@@ -108,19 +118,22 @@ const BattlePass = () => {
                 resizeMode="contain"
               />
             </View>
-
-            <Text className="text-3xl text-primary font-interExtraBold">
-              SEASON {season}
+            <Text className="text-lg text-primary font-interLight">
+              Ends in {daysRemaining}
             </Text>
-            <Text className="text-xl text-primary/50 font-interBold">
+            <Text className="text-3xl text-primary font-interExtraBold">
+              {season}
+            </Text>
+            <Text className="text-xl text-primary/50 font-interBold mb-4">
               {seasonName}
             </Text>
           </View>
           <View>
-            <LevelMap
-              levels={levels}
+            <BattlepassMap
+              levels={activeBattlepass.levels}
+              userBattlepassXp={userBattlepass.xp}
+              claimedLevels={userBattlepass.claimed_levels}
               onLevelPress={handleLevelPress}
-              pathStyle="battlepass"
             />
           </View>
         </ScrollView>

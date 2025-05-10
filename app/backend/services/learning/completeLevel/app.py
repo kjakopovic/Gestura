@@ -40,6 +40,7 @@ def lambda_handler(event, context):
     jwt_token = event.get("headers").get("x-access-token")
     email = get_email_from_jwt_token(jwt_token)
 
+    # Extract request body from event and validate it against validation schema
     body = event.get("body")
     if body is not None:
         request_body = json.loads(body)
@@ -53,9 +54,11 @@ def lambda_handler(event, context):
         logger.error(f"Validation failed: {e}")
         return build_response(400, {"message": str(e)})
 
+    # Parse validated request into data class
     logger.info("Parsing request body")
     request = Request(**request_body)
 
+    # Initialize DynamoDB resources for required tables
     global _LAMBDA_LANGUAGES_TABLE_RESOURCE
     global _LAMBDA_USERS_TABLE_RESOURCE
     global _LAMBDA_BATTLEPASS_TABLE_RESOURCE
@@ -66,6 +69,7 @@ def lambda_handler(event, context):
     battlepassTable = LambdaDynamoDBClass(_LAMBDA_BATTLEPASS_TABLE_RESOURCE)
     achievementsTable = LambdaDynamoDBClass(_LAMBDA_ACHIEVEMENTS_TABLE_RESOURCE)
 
+    # Retrieve user and language data from DynamoDB and check if they exist
     user = get_user_by_email(usersTable, email)
     if not user:
         logger.error(f"User with email {email} not found")
@@ -76,16 +80,21 @@ def lambda_handler(event, context):
         logger.error(f"Language with id {request.language_id} not found")
         return build_response(404, {"message": "Language not found"})
 
+    # Calculate time spent on this learning session
     logger.info("Calculating time played")
     time_played = Decimal(str(seconds_between(request.started_at, request.finished_at)))
 
+    # Update user's list of learned letters/words for this language
     logger.info(f"Updating users letters learned {user['letters_learned']}")
     letters_learned = update_letters_learned(
         user["letters_learned"], request.language_id, request.letters_learned
     )
 
+    # Check for active items (e.g., XP boosters) and remove expired ones
+    # active_items contains the list of active items ids, item_removed indicates if any item was removed
     active_items, item_removed = check_active_items(user, usersTable)
 
+    # Calculate base XP and coins earned from this session and apply multipliers
     xp, coins = calculate_xp_and_coins(request.correct_answers_versions)
     xp = Decimal(str(xp))
     coins = Decimal(str(coins))
@@ -93,20 +102,23 @@ def lambda_handler(event, context):
     multiplier = get_xp_multiplier(active_items)
     xp *= multiplier
 
-    # --- Updating user level for this language ---
+    # Update user's level for this specific language
     user_levels = user.get("current_level", {})
     current_lang_level = user_levels.get(request.language_id, 1) + 1
     user_levels[request.language_id] = current_lang_level
 
+    # Update user's battlepass XP with newly earned XP
     user_bp = update_users_battlepass_xp(user, xp, battlepassTable)
 
     logger.info(
         f"Updating user {email} with time played: {time_played}, task level: {user_levels[request.language_id]}, letters learned: {letters_learned}"
     )
 
+    # Only update active_items in DB if something was removed
     if not item_removed:
         active_items = None
 
+    # Update user record with all progress changes
     update_user(
         usersTable,
         email,
@@ -119,16 +131,18 @@ def lambda_handler(event, context):
         active_items,
     )
 
+    # Check for and award any newly earned achievements
     new_achievements = update_user_achievements(
         usersTable,
         achievementsTable,
         email,
         user.get("time_played", 0) + time_played,
         user.get("xp", 0) + xp,
-        user_levels,
+        letters_learned,
         user.get("achievements", []),
     )
 
+    # Prepare success response with rewards and achievement info
     response_body = {
         "message": "Level completed successfully",
         "xp": xp,
@@ -140,6 +154,7 @@ def lambda_handler(event, context):
     if new_achievements:
         response_body["new_achievements"] = new_achievements
 
+    # Return final response with all rewards and progress
     return build_response(200, convert_decimal_to_float(response_body))
 
 
@@ -154,11 +169,27 @@ def update_user(
     coins,
     activated_items,
 ):
+    """
+        Update multiple user attributes in DynamoDB in a single atomic operation.
+
+        Parameters:
+            dynamodb: DynamoDB table resource
+            email: User's email (primary key)
+            current_level: Dictionary of language levels
+            time_played: Total time played in seconds
+            letters_learned: Dictionary of learned letters by language
+            xp: Total experience points
+            battlepass: User's battlepass data
+            coins: User's coin balance
+            activated_items: List of active items (or None if no changes)
+        """
     logger.info(f"Updating user with email: {email}")
 
+    # Build the update expression and attribute values dynamically
     update_expression = "SET "
     expression_attribute_values = {}
 
+    # Add each attribute to the update expression
     logger.debug(f"Updating current level to {current_level}")
     update_expression += "current_level = :current_level, "
     expression_attribute_values[":current_level"] = current_level
@@ -183,11 +214,13 @@ def update_user(
     update_expression += "coins = :coins, "
     expression_attribute_values[":coins"] = coins
 
+    # Only update activated items if there was a change
     if activated_items is not None:
         logger.debug(f"Updating activated items to {activated_items}")
         update_expression += "activated_items = :activated_items, "
         expression_attribute_values[":activated_items"] = activated_items
 
+    # Execute DynamoDB update operation
     dynamodb.table.update_item(
         Key={"email": email},
         UpdateExpression=update_expression.rstrip(", "),
@@ -196,9 +229,21 @@ def update_user(
 
 
 def update_users_battlepass_xp(user, xp, battlepassDb):
+    """
+    Update the user's battlepass XP for the current active season.
+    If user doesn't have an entry for the current season, creates one.
+
+    Parameters:
+        user: User document from DynamoDB
+        xp: Experience points to add
+        battlepassDb: DynamoDB table resource for battlepass data
+
+    Returns:
+        Updated battlepass list or None if no active battlepass
+    """
     user_bp: list = user.setdefault("battlepass", [])
 
-    # 1) fetch & validate active season
+    # Fetch & validate active season
     active_bp = get_active_battlepass_seasons(battlepassDb)
     if not active_bp:
         logger.error(
@@ -213,7 +258,7 @@ def update_users_battlepass_xp(user, xp, battlepassDb):
         )
         return None
 
-    # 3) Find or initialize this season’s entry
+    # Find or initialize this season’s entry
     season_entry = next(
         (entry for entry in user_bp if entry.get("season_id") == season_id), None
     )
@@ -226,13 +271,13 @@ def update_users_battlepass_xp(user, xp, battlepassDb):
         user_bp.append(season_entry)
         logger.info(f"Initialized new battlepass entry for season {season_id}")
 
-    # 3) Update the XP counter
+    # Update the XP counter
     old_xp = season_entry.get("xp", 0)
     new_xp = old_xp + xp
     season_entry["xp"] = new_xp
     logger.info(f"Battlepass '{season_id}' XP updated: {old_xp} → {new_xp}")
 
-    # 4) update user_bp with new data
+    # Update user_bp with new data
     for idx, entry in enumerate(user_bp):
         if entry.get("season_id") == season_id:
             # replace the existing entry in‐place
@@ -265,12 +310,24 @@ def get_user_by_email(dynamodb, email):
 
 
 def get_active_battlepass_seasons(dynamodb):
+    """
+    Retrieve currently active battlepass season.
+    Finds battlepass with start_date before current time and end_date after current time.
+
+    Parameters:
+        dynamodb: DynamoDB table resource for battlepass
+
+    Returns:
+        Active battlepass document or None if not found
+    """
     logger.info(f"Fetching active battlepass seasons")
 
+    # Get current date/time in UTC to compare with battlepass dates
     current_date = datetime.now(timezone.utc)
     logger.debug(f"Current date: {current_date}")
     current_date_str = current_date.isoformat()
 
+    # Query for active battlepass (current date between start and end dates)
     response = dynamodb.table.scan(
         FilterExpression=Attr("start_date").lte(current_date_str)
         & Attr("end_date").gte(current_date_str)
@@ -286,9 +343,12 @@ def seconds_between(started_at: str, finished_at: str) -> float:
     """
     Calculate how many seconds elapsed between two UTC timestamp strings.
 
-    :param started_at: ISO‑8601 UTC string, e.g. '2025-04-18T14:30:00Z'
-    :param finished_at: same format
-    :return: difference in seconds (finished_at – started_at)
+    Parameters:
+        started_at: ISO‑8601 UTC string, e.g. '2025-04-18T14:30:00Z'
+        finished_at: same format
+
+    Returns:
+        difference in seconds (finished_at – started_at)
     """
     start_dt = parse_utc_isoformat(started_at)
     end_dt = parse_utc_isoformat(finished_at)
@@ -307,12 +367,17 @@ def update_letters_learned(
     current_state: dict, language_id: str, new_letters: list
 ) -> dict:
     """
-    Given:
-      - current_state: e.g. {"en": ["A","B","C"], "hr": ["Z"]}
-      - language_id: e.g. "en" or "hr" or a new code
-      - new_letters: list of letters/words to add
+    Update the list of letters/words learned for a specific language.
+    Only adds new unique letters that weren't already learned.
 
-    Returns the updated state (mutating the dict in-place, but also returning it).
+    Parameters:
+        current_state: Dictionary mapping language codes to learned letters
+                      e.g. {"en": ["A","B","C"], "hr": ["Z"]}
+        language_id: Language code to update (e.g. "en" or "hr")
+        new_letters: List of new letters/words to add
+
+    Returns:
+        Updated dictionary with new letters added
     """
     # Ensure there’s a list for this language
     if language_id not in current_state:
@@ -329,20 +394,28 @@ def update_letters_learned(
 
 def calculate_xp_and_coins(correct_answers_versions):
     """
-    :param correct_answers_versions: list of ints in [1,2,3]
-    :return: tuple (xp, coins), where
-             xp    = 2 per 1, 3 per 2, 5 per 3
+    Calculate XP and coins earned based on difficulty levels of correct answers.
+
+    Parameters:
+        correct_answers_versions: list of ints in [1,2,3] representing difficulty levels
+
+    Returns:
+        tuple (xp, coins), where
+             xp    = 2 per level 1, 3 per level 2, 5 per level 3
              coins = floor(xp * random_multiplier) with multiplier in [1.0, 2.0]
     """
     logger.debug(f"Calculating XP and coins for versions: {correct_answers_versions}")
 
+    # Map difficulty levels to XP values
     xp_map = {1: 2, 2: 3, 3: 5}
     logger.debug(f"XP map: {xp_map}")
 
+    # Sum XP for all correct answers
     logger.info(f"Calculating XP for versions: {correct_answers_versions}")
     xp = sum(xp_map.get(v, 0) for v in correct_answers_versions)
     logger.debug(f"XP calculated: {xp}")
 
+    # Apply random multiplier to determine coins
     multiplier = random.uniform(1.0, 2.0)
 
     logger.info(f"Calculating coins: {xp} * {multiplier}")
@@ -353,7 +426,16 @@ def calculate_xp_and_coins(correct_answers_versions):
 
 def check_active_items(user, dynamodb):
     """
-    Check if the user has any active items and update the user accordingly.
+    Check if user has active items and remove any that are expired.
+
+    Parameters:
+        user: User document from DynamoDB
+        dynamodb: DynamoDB table resource
+
+    Returns:
+        tuple (updated_active_items, was_item_removed)
+          where updated_active_items is the new list or None if no items
+          and was_item_removed is True if any expired items were removed
     """
     active_items = user.get("activated_items", [])
     if not active_items:
@@ -366,6 +448,7 @@ def check_active_items(user, dynamodb):
 
     item_removed = False
 
+    # Check each item for expiration
     for item in active_items:
         if "expires_at" in item:
             expires_at = parse_utc_isoformat(item["expires_at"])
@@ -395,6 +478,7 @@ def get_xp_multiplier(active_items):
 
     multiplier = Decimal("1.0")
 
+    # Apply multiplier for each active item
     for item in active_items:
         # Check if item has effects with a multiplier and is an XP boost
         if (
@@ -410,50 +494,65 @@ def get_xp_multiplier(active_items):
 
 
 def update_user_achievements(
-    usersTable, achievementsTable, email, time_played, xp, user_levels, achievements
+    usersTable, achievementsTable, email, time_played, xp, letters_learned, achievements
 ):
+    """
+    Check for and award new achievements based on user's updated stats.
+
+    Parameters:
+        usersTable: DynamoDB table resource for users
+        achievementsTable: DynamoDB table resource for achievements
+        email: User's email
+        time_played: User's total time played
+        xp: User's total XP
+        letters_learned: Dictionary of letters learned by language
+        achievements: List of achievement IDs already earned
+
+    Returns:
+        List of newly earned achievement details, or empty list if none
+    """
     logger.info(f"Checking for new achievements for user {email}")
 
+    # Initialize achievements list if not present
     user_achievements = achievements
     if not user_achievements:
         user_achievements = []
 
-    # Ensure values are Decimal
-    # xp = float(str(xp))
-    # time_played = float(str("time_played")) if time_played else Decimal('0')
-
-    # Calculate max level across all languages
-    max_level = max(user_levels.values()) if user_levels else 0
-    max_level = Decimal(str(max_level))
+    # Calculate total words/letters learned across all languages
+    total_words_learned = sum(len(words_list) for words_list in letters_learned.values())
+    total_words_learned = Decimal(str(total_words_learned))
 
     new_achievements = []
+    new_achievements_details = []
 
-    # Get achievements for each type, sorted by requires in descending order
+    # Check each achievement type (time, XP, words learned)
     achievement_types = [
         {"type": "time_played", "value": time_played},
         {"type": "xp", "value": xp},
-        {"type": "level", "value": max_level},
+        {"type": "words", "value": total_words_learned},
     ]
 
     for achievement_type in achievement_types:
+        # Query for achievements of this type that user has met requirements for
         response = achievementsTable.table.scan(
             FilterExpression=Attr("type").eq(achievement_type["type"])
             & Attr("requires").lte(achievement_type["value"])
         )
 
         # Sort achievements by requires in descending order
+        # (to ensure we award the highest tier first)
         achievements = sorted(
             response.get("Items", []), key=lambda a: a.get("requires", 0), reverse=True
         )
 
         for achievement in achievements:
-            # If we find an achievement the user already has, break the loop
-            # (assumes achievements are earned in order)
+            # If an achievement is found that the user already has, break the loop
             if achievement["id"] in user_achievements:
                 break
 
             # Otherwise, add this achievement
             new_achievements.append(achievement["id"])
+            new_achievements_details.append(achievement)
             user_achievements.append(achievement["id"])
 
     # Update user if new achievements were earned
@@ -465,4 +564,4 @@ def update_user_achievements(
             ExpressionAttributeValues={":achievements": user_achievements},
         )
 
-    return new_achievements
+    return new_achievements_details

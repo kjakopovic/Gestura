@@ -9,6 +9,7 @@ import { navigateToHome } from "@/utils/navigationUtils";
 import { StatsDisplay } from "./task-components/StatsDisplay";
 import { useLevelStatsStore } from "@/store/useLevelStatsStore";
 import { api } from "@/lib/api";
+import { AchievementModal } from "./task-components/AchievementModal";
 
 // Extract the Stats display into a separate component
 
@@ -36,6 +37,10 @@ const TaskComplete = ({ stats, onContinue }: TaskCompleteProps) => {
   const language_id = useLevelStatsStore((state) => state.language_id);
   const started_at = useLevelStatsStore((state) => state.startedAt);
   const clearLevelStats = useLevelStatsStore((state) => state.clearLevelStats);
+
+  const [newAchievements, setNewAchievements] = useState<any[]>([]);
+  const [showAchievementModal, setShowAchievementModal] = useState(false);
+  const [currentAchievementIndex, setCurrentAchievementIndex] = useState(0);
 
   const fetchResults = async () => {
     try {
@@ -67,6 +72,16 @@ const TaskComplete = ({ stats, onContinue }: TaskCompleteProps) => {
           coins: Number(response.data.coins),
           xp: Number(response.data.xp),
         });
+
+        // Check for new achievements
+        if (
+          "new_achievements" in response.data &&
+          Array.isArray(response.data.new_achievements) &&
+          response.data.new_achievements.length > 0
+        ) {
+          setNewAchievements(response.data.new_achievements);
+          setShowAchievementModal(true);
+        }
       } else {
         setError("Invalid response format");
         console.error("Invalid earnings data structure:", response.data);
@@ -132,6 +147,27 @@ const TaskComplete = ({ stats, onContinue }: TaskCompleteProps) => {
       <View className="w-full items-center px-8">
         <CustomButton onPress={handleContinue} text="CONTINUE" style="base" />
       </View>
+
+      {/* Achievement Modal */}
+      {newAchievements.length > 0 && (
+        <AchievementModal
+          achievement={newAchievements[currentAchievementIndex]}
+          isLastAchievement={
+            currentAchievementIndex === newAchievements.length - 1
+          }
+          visible={showAchievementModal}
+          onClose={() => {
+            if (currentAchievementIndex < newAchievements.length - 1) {
+              // Show next achievement
+              setCurrentAchievementIndex(currentAchievementIndex + 1);
+            } else {
+              // Close modal after showing all achievements
+              setShowAchievementModal(false);
+              setCurrentAchievementIndex(0);
+            }
+          }}
+        />
+      )}
     </View>
   );
 };

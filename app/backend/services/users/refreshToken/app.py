@@ -35,6 +35,7 @@ def lambda_handler(event, context):
         environ.get("JWT_SECRET_NAME"), environ.get("SECRETS_REGION_NAME")
     )
 
+    # Validate refresh token
     response = validate_refresh_token(jwt_token, secrets["refresh_secret"], secrets["jwt_secret"])
 
     return response

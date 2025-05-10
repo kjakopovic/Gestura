@@ -16,15 +16,9 @@ export const useUserData = () => {
 
   // Create a stats object from user data
   const userStats = {
-    level:
-      typeof userData?.xp === "number" ? Math.floor(userData.xp / 300) + 1 : 1,
-    xp: typeof userData?.xp === "number" ? userData.xp % 300 : 0,
-    progress:
-      userData?.progress ||
-      Math.min(
-        ((typeof userData?.xp === "number" ? userData.xp : 0) / 100) * 100,
-        100
-      ),
+    level: userData?.level || 1,
+    xp: userData?.xp || 0,
+    progress: userData?.progress || 0,
     coins: userData?.coins || 0,
     hearts: userData?.hearts || 0,
   };
@@ -40,11 +34,40 @@ export const useUserData = () => {
       if (result.success && result.data && heartsData.data) {
         setHeartsNextRefill(heartsData.data.data.hearts_next_refill);
 
+        // Get raw data first
+        const rawData = result.data.users;
+        const totalXp = rawData.xp || 0;
+
+        console.log("Total XP:", rawData.battlepass);
+
+        // Calculate level and remaining XP
+        const level = Math.floor(totalXp / 300) + 1;
+        const remainingXp = totalXp % 300;
+
+        const xpProgress = (remainingXp / 300) * 100;
+
+        console.log("Level:", level);
+        console.log("Remaining XP:", remainingXp);
+
+        // Create merged data with proper XP calculation
         const mergedData = {
-          ...result.data,
-          hearts: heartsData.data.data.hearts, // Merge heart data with user data
+          ...rawData,
+          level: level, // Store calculated level
+          xp: remainingXp, // Store only the remainder XP
+          totalXp: totalXp, // Keep original total XP for reference
+          hearts: heartsData.data.data.hearts,
+          progress: xpProgress, // Store progress as a percentage
         };
-        setUserDataFromApi(mergedData);
+
+        // Create a properly typed ApiUserResponse object
+        const apiResponse: ApiUserResponse = {
+          users: mergedData,
+          languages: result.data.languages,
+          message: result.data.message,
+        };
+
+        // Now pass the correctly typed object
+        setUserDataFromApi(apiResponse);
       } else {
         setError(result.error?.message || "Failed to fetch user data");
         console.error("Error fetching user data:", result.error);
@@ -64,6 +87,21 @@ export const useUserData = () => {
     fetchUserData();
   }, [fetchUserData]);
 
+  const refreshUserData = useCallback(() => {
+    setIsLoading(true);
+    setError(null);
+    fetchUserData()
+      .catch((err) => {
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error";
+        setError(errorMessage);
+        console.error("Error refreshing user data:", err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [fetchUserData]);
+
   return {
     isLoading,
     error,
@@ -71,6 +109,6 @@ export const useUserData = () => {
     userData,
     userHearts, // Added userHearts
     heartsNextRefill, // Added heartsNextRefill
-    refreshUserData: fetchUserData,
+    refreshUserData,
   };
 };

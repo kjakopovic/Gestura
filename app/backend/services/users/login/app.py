@@ -44,6 +44,18 @@ def lambda_handler(event, context):
 
 
 def login_user(dynamodb, email, password):
+    """
+    Authenticate a user with email and password, then generate auth tokens.
+
+    Parameters:
+        dynamodb: DynamoDB client for users table
+        email: User's email address
+        password: Plain text password to verify
+
+    Returns:
+        HTTP response with access and refresh tokens if successful,
+        or error message if authentication fails
+    """
     user = get_user_by_email(dynamodb, email)
 
     if not user or not verify_hash_string(password, user.get("password", "")):

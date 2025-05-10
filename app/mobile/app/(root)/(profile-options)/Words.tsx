@@ -11,7 +11,7 @@ import Word from "@/components/profile/Word";
 const Words = () => {
   const userData = useUserStore((state) => state.user);
 
-  const lettersLearned = userData?.lettersLearned || {};
+  const lettersLearned = userData?.letters_learned || {};
 
   const usaLetters = lettersLearned.usa || [];
 
@@ -19,7 +19,7 @@ const Words = () => {
     letter.toUpperCase()
   );
 
-  const progress = usaLetters.length / 26;
+  const progress = (usaLetters.length / 26) * 100;
 
   // Array of words to display in the table
   const wordsList = [
@@ -35,7 +35,10 @@ const Words = () => {
   return (
     <>
       <CustomAppBar title="WORDS" backButton />
-      <ScrollView className="bg-grayscale-800 mt-24 px-10">
+      <ScrollView
+        className="bg-grayscale-800 mt-24 px-10"
+        showsVerticalScrollIndicator={false}
+      >
         <SafeAreaView className="bg-grayscale-800 flex-1">
           <View className="flex-1 justify-center items-start mt-14">
             <SettingSubtitle title="LETTERS" />
