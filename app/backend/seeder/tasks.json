@@ -6,12 +6,7 @@
     "version": 1,
     "task_id": "76c5d8a4-a877-4da2-8443-151dcbeceb39",
     "section": 10,
-    "possible_answers": [
-      "T",
-      "D",
-      "J",
-      "Z"
-    ],
+    "possible_answers": ["T", "D", "J", "Z"],
     "language_id": "usa"
   },
   {
@@ -25,7 +20,7 @@
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/M.png"
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png"
     ],
     "language_id": "usa"
   },
@@ -52,7 +47,7 @@
     "task_id": "be16ba41-5320-4b33-a85a-7e7e859df2c5",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
       "",
       "",
       ""
@@ -96,12 +91,7 @@
     "version": 1,
     "task_id": "077e2f79-e5c0-4bd2-97f2-701d5eaee7dc",
     "section": 10,
-    "possible_answers": [
-      "Q",
-      "R",
-      "E",
-      "K"
-    ],
+    "possible_answers": ["Q", "R", "E", "K"],
     "language_id": "usa"
   },
   {
@@ -112,7 +102,7 @@
     "task_id": "b9d37b71-5f83-4da1-a7ed-b896ef698ea3",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
       "",
       "",
       ""
@@ -126,12 +116,7 @@
     "version": 1,
     "task_id": "cf4929d2-ac8b-4c4f-a074-d929e1dd194b",
     "section": 10,
-    "possible_answers": [
-      "G",
-      "P",
-      "E",
-      "U"
-    ],
+    "possible_answers": ["G", "P", "E", "U"],
     "language_id": "usa"
   },
   {
@@ -141,12 +126,7 @@
     "version": 1,
     "task_id": "86fd5492-5ce3-4e55-ab8c-3fa6081e805b",
     "section": 10,
-    "possible_answers": [
-      "Z",
-      "O",
-      "F",
-      "T"
-    ],
+    "possible_answers": ["Z", "O", "F", "T"],
     "language_id": "usa"
   },
   {
@@ -172,7 +152,7 @@
     "task_id": "86b8f940-60ad-4845-a92a-834e6d00af81",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
       "",
       "",
       ""
@@ -186,12 +166,7 @@
     "version": 1,
     "task_id": "824a0da8-a5a7-4cc9-b996-467f412a4207",
     "section": 10,
-    "possible_answers": [
-      "R",
-      "Z",
-      "F",
-      "H"
-    ],
+    "possible_answers": ["R", "Z", "F", "H"],
     "language_id": "usa"
   },
   {
@@ -202,7 +177,7 @@
     "task_id": "f0deae84-e8f5-40b9-bfc0-3b96c31ff0c5",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
       "",
       "",
       ""
@@ -217,7 +192,7 @@
     "task_id": "b064cd4e-dca9-4d23-a1e0-de56a5a7a9fe",
     "section": 10,
     "possible_answers": [
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/T.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png"
@@ -231,12 +206,7 @@
     "version": 1,
     "task_id": "72905d85-5967-44e6-b020-9721d378d459",
     "section": 10,
-    "possible_answers": [
-      "V",
-      "U",
-      "S",
-      "K"
-    ],
+    "possible_answers": ["V", "U", "S", "K"],
     "language_id": "usa"
   },
   {
@@ -246,12 +216,7 @@
     "version": 1,
     "task_id": "066fcc35-d6ab-4f50-8117-45a70f08a59f",
     "section": 10,
-    "possible_answers": [
-      "E",
-      "Z",
-      "K",
-      "W"
-    ],
+    "possible_answers": ["E", "Z", "K", "W"],
     "language_id": "usa"
   },
   {
@@ -262,7 +227,7 @@
     "task_id": "329c6589-e73e-4b4b-ad07-7aac7b8af4c2",
     "section": 10,
     "possible_answers": [
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/D.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png"
@@ -278,7 +243,7 @@
     "section": 10,
     "possible_answers": [
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/T.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png"
     ],
@@ -291,12 +256,7 @@
     "version": 1,
     "task_id": "c77f784e-2656-46b4-ba0c-68b9f79bf828",
     "section": 10,
-    "possible_answers": [
-      "L",
-      "B",
-      "R",
-      "C"
-    ],
+    "possible_answers": ["L", "B", "R", "C"],
     "language_id": "usa"
   },
   {
@@ -306,12 +266,7 @@
     "version": 1,
     "task_id": "e3859cd9-308b-45ed-95d5-c1f9dfdbe772",
     "section": 10,
-    "possible_answers": [
-      "T",
-      "U",
-      "I",
-      "S"
-    ],
+    "possible_answers": ["T", "U", "I", "S"],
     "language_id": "usa"
   },
   {
@@ -321,12 +276,7 @@
     "version": 1,
     "task_id": "785460fe-f400-488b-a89a-c0edfa2749c7",
     "section": 10,
-    "possible_answers": [
-      "T",
-      "Q",
-      "W",
-      "R"
-    ],
+    "possible_answers": ["T", "Q", "W", "R"],
     "language_id": "usa"
   },
   {
@@ -337,7 +287,7 @@
     "task_id": "c95e0d98-283c-4086-a3cf-40a885b61719",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
       "",
       "",
       ""
@@ -355,7 +305,7 @@
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/T.png"
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png"
     ],
     "language_id": "usa"
   },
@@ -396,12 +346,7 @@
     "version": 1,
     "task_id": "772f0eb9-e539-4123-a7e2-b320a61f50b5",
     "section": 10,
-    "possible_answers": [
-      "Y",
-      "H",
-      "O",
-      "X"
-    ],
+    "possible_answers": ["Y", "H", "O", "X"],
     "language_id": "usa"
   },
   {
@@ -426,12 +371,7 @@
     "version": 1,
     "task_id": "be2202e0-cfd3-46c5-b331-f0ac87b49ced",
     "section": 10,
-    "possible_answers": [
-      "A",
-      "U",
-      "V",
-      "Z"
-    ],
+    "possible_answers": ["A", "U", "V", "Z"],
     "language_id": "usa"
   },
   {
@@ -441,12 +381,7 @@
     "version": 1,
     "task_id": "581d489b-25ed-498d-aaeb-0715f02171d1",
     "section": 10,
-    "possible_answers": [
-      "H",
-      "K",
-      "P",
-      "X"
-    ],
+    "possible_answers": ["H", "K", "P", "X"],
     "language_id": "usa"
   },
   {
@@ -456,12 +391,7 @@
     "version": 1,
     "task_id": "375692e5-1db2-4221-947c-b2f3cf8b7250",
     "section": 10,
-    "possible_answers": [
-      "A",
-      "Y",
-      "R",
-      "T"
-    ],
+    "possible_answers": ["A", "Y", "R", "T"],
     "language_id": "usa"
   },
   {
@@ -475,7 +405,7 @@
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/N.png"
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png"
     ],
     "language_id": "usa"
   },
@@ -486,12 +416,7 @@
     "version": 1,
     "task_id": "bc789a95-b4e4-4b8b-9a59-223e7b12c91a",
     "section": 10,
-    "possible_answers": [
-      "L",
-      "E",
-      "Y",
-      "N"
-    ],
+    "possible_answers": ["L", "E", "Y", "N"],
     "language_id": "usa"
   },
   {
@@ -501,12 +426,7 @@
     "version": 1,
     "task_id": "6a4fb1f2-44ab-4f4d-92e4-d71813d29267",
     "section": 10,
-    "possible_answers": [
-      "R",
-      "U",
-      "G",
-      "Z"
-    ],
+    "possible_answers": ["R", "U", "G", "Z"],
     "language_id": "usa"
   },
   {
@@ -517,7 +437,7 @@
     "task_id": "0de95a6f-8727-48cd-b86b-bc07cd07b646",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png",
       "",
       "",
       ""
@@ -531,12 +451,7 @@
     "version": 1,
     "task_id": "2694fd0d-bb69-4b59-a64d-4815382063c4",
     "section": 10,
-    "possible_answers": [
-      "G",
-      "F",
-      "R",
-      "O"
-    ],
+    "possible_answers": ["G", "F", "R", "O"],
     "language_id": "usa"
   },
   {
@@ -561,12 +476,7 @@
     "version": 1,
     "task_id": "8ecb66ae-6bd9-4a11-9f0d-98a510930f95",
     "section": 10,
-    "possible_answers": [
-      "B",
-      "Z",
-      "H",
-      "X"
-    ],
+    "possible_answers": ["B", "Z", "H", "X"],
     "language_id": "usa"
   },
   {
@@ -576,12 +486,7 @@
     "version": 1,
     "task_id": "40590720-235c-4093-a7c7-4122a42483d1",
     "section": 10,
-    "possible_answers": [
-      "H",
-      "T",
-      "F",
-      "Y"
-    ],
+    "possible_answers": ["H", "T", "F", "Y"],
     "language_id": "usa"
   },
   {
@@ -591,12 +496,7 @@
     "version": 1,
     "task_id": "6e724758-ab7e-4f3f-a610-a15193556426",
     "section": 10,
-    "possible_answers": [
-      "P",
-      "F",
-      "G",
-      "S"
-    ],
+    "possible_answers": ["P", "F", "G", "S"],
     "language_id": "usa"
   },
   {
@@ -606,12 +506,7 @@
     "version": 1,
     "task_id": "7bf692fa-01de-4156-966e-7de92db5b4dd",
     "section": 10,
-    "possible_answers": [
-      "L",
-      "P",
-      "G",
-      "E"
-    ],
+    "possible_answers": ["L", "P", "G", "E"],
     "language_id": "usa"
   },
   {
@@ -636,12 +531,7 @@
     "version": 1,
     "task_id": "502c530d-79cb-49b7-a909-20f887b05c37",
     "section": 10,
-    "possible_answers": [
-      "X",
-      "U",
-      "P",
-      "L"
-    ],
+    "possible_answers": ["X", "U", "P", "L"],
     "language_id": "usa"
   },
   {
@@ -651,12 +541,7 @@
     "version": 1,
     "task_id": "97d67284-146f-4994-b658-61d67565c8fa",
     "section": 10,
-    "possible_answers": [
-      "K",
-      "J",
-      "Y",
-      "V"
-    ],
+    "possible_answers": ["K", "J", "Y", "V"],
     "language_id": "usa"
   },
   {
@@ -666,12 +551,7 @@
     "version": 1,
     "task_id": "a3f79494-db56-4dd3-af70-2c26986d5e90",
     "section": 10,
-    "possible_answers": [
-      "H",
-      "M",
-      "Y",
-      "J"
-    ],
+    "possible_answers": ["H", "M", "Y", "J"],
     "language_id": "usa"
   },
   {
@@ -681,12 +561,7 @@
     "version": 1,
     "task_id": "993fb5e9-942f-4f55-a4b2-89aad2b74694",
     "section": 10,
-    "possible_answers": [
-      "Z",
-      "T",
-      "X",
-      "E"
-    ],
+    "possible_answers": ["Z", "T", "X", "E"],
     "language_id": "usa"
   },
   {
@@ -696,12 +571,7 @@
     "version": 1,
     "task_id": "c44b4d23-22d9-4557-8b3d-6fe156f9c010",
     "section": 10,
-    "possible_answers": [
-      "W",
-      "E",
-      "C",
-      "I"
-    ],
+    "possible_answers": ["W", "E", "C", "I"],
     "language_id": "usa"
   },
   {
@@ -711,12 +581,7 @@
     "version": 1,
     "task_id": "a7493ec6-669d-4f87-a73b-be5ebfbc14f9",
     "section": 10,
-    "possible_answers": [
-      "B",
-      "C",
-      "S",
-      "A"
-    ],
+    "possible_answers": ["B", "C", "S", "A"],
     "language_id": "usa"
   },
   {
@@ -741,12 +606,7 @@
     "version": 1,
     "task_id": "7153e95d-5644-4374-82c7-a26c96836038",
     "section": 10,
-    "possible_answers": [
-      "Y",
-      "I",
-      "L",
-      "K"
-    ],
+    "possible_answers": ["Y", "I", "L", "K"],
     "language_id": "usa"
   },
   {
@@ -759,7 +619,7 @@
     "possible_answers": [
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/T.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png"
     ],
     "language_id": "usa"
@@ -801,12 +661,7 @@
     "version": 1,
     "task_id": "c19c191d-d042-4266-8c9c-d5e5b3be5b3e",
     "section": 10,
-    "possible_answers": [
-      "Y",
-      "H",
-      "N",
-      "D"
-    ],
+    "possible_answers": ["Y", "H", "N", "D"],
     "language_id": "usa"
   },
   {
@@ -816,12 +671,7 @@
     "version": 1,
     "task_id": "7b846d0c-b749-4902-95bf-b5635f8e48e3",
     "section": 10,
-    "possible_answers": [
-      "T",
-      "P",
-      "Q",
-      "W"
-    ],
+    "possible_answers": ["T", "P", "Q", "W"],
     "language_id": "usa"
   },
   {
@@ -831,12 +681,7 @@
     "version": 1,
     "task_id": "ef82ed6e-5d12-4c2f-8ef7-147aa9df0471",
     "section": 10,
-    "possible_answers": [
-      "W",
-      "C",
-      "Q",
-      "I"
-    ],
+    "possible_answers": ["W", "C", "Q", "I"],
     "language_id": "usa"
   },
   {
@@ -847,7 +692,7 @@
     "task_id": "0b3f7954-a8ac-424f-83e2-94fc47848700",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
       "",
       "",
       ""
@@ -862,7 +707,7 @@
     "task_id": "4cf077ae-323f-4d9f-ad04-8020d3301941",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
       "",
       "",
       ""
@@ -876,12 +721,7 @@
     "version": 1,
     "task_id": "d4b38609-8fba-4049-a251-ec1a4e6fc0d0",
     "section": 10,
-    "possible_answers": [
-      "Q",
-      "M",
-      "B",
-      "E"
-    ],
+    "possible_answers": ["Q", "M", "B", "E"],
     "language_id": "usa"
   },
   {
@@ -891,12 +731,7 @@
     "version": 1,
     "task_id": "0a73c663-ad42-455e-91b9-ba34abdaaacf",
     "section": 10,
-    "possible_answers": [
-      "K",
-      "L",
-      "O",
-      "U"
-    ],
+    "possible_answers": ["K", "L", "O", "U"],
     "language_id": "usa"
   },
   {
@@ -906,12 +741,7 @@
     "version": 1,
     "task_id": "49d0d6b2-b3c0-4b73-8f60-5cc891637261",
     "section": 10,
-    "possible_answers": [
-      "I",
-      "V",
-      "K",
-      "U"
-    ],
+    "possible_answers": ["I", "V", "K", "U"],
     "language_id": "usa"
   },
   {
@@ -937,7 +767,7 @@
     "task_id": "e0cb36c0-9e37-41dd-9cad-c073f29e150c",
     "section": 10,
     "possible_answers": [
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/N.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/S.png"
@@ -951,12 +781,7 @@
     "version": 1,
     "task_id": "2ec1214a-4bd2-4cb7-860a-40f022f248f8",
     "section": 10,
-    "possible_answers": [
-      "G",
-      "P",
-      "I",
-      "F"
-    ],
+    "possible_answers": ["G", "P", "I", "F"],
     "language_id": "usa"
   },
   {
@@ -968,8 +793,8 @@
     "section": 10,
     "possible_answers": [
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/N.png",
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/D.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png"
     ],
     "language_id": "usa"
@@ -981,12 +806,7 @@
     "version": 1,
     "task_id": "5f26565f-daa2-4545-a889-047d22ca8ab2",
     "section": 10,
-    "possible_answers": [
-      "U",
-      "P",
-      "V",
-      "X"
-    ],
+    "possible_answers": ["U", "P", "V", "X"],
     "language_id": "usa"
   },
   {
@@ -1041,12 +861,7 @@
     "version": 1,
     "task_id": "af052f18-129a-4944-bb2f-0c2884ee0512",
     "section": 10,
-    "possible_answers": [
-      "R",
-      "J",
-      "G",
-      "F"
-    ],
+    "possible_answers": ["R", "J", "G", "F"],
     "language_id": "usa"
   },
   {
@@ -1056,12 +871,7 @@
     "version": 1,
     "task_id": "64243122-b958-4048-99a2-1482b6c65b04",
     "section": 10,
-    "possible_answers": [
-      "G",
-      "S",
-      "P",
-      "O"
-    ],
+    "possible_answers": ["G", "S", "P", "O"],
     "language_id": "usa"
   },
   {
@@ -1087,7 +897,7 @@
     "task_id": "dc33553a-f8a1-4292-8139-3a5a3e47b6fb",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png",
       "",
       "",
       ""
@@ -1102,7 +912,7 @@
     "task_id": "970dcea0-ef41-48ba-a088-9b93912dafb0",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
       "",
       "",
       ""
@@ -1131,12 +941,7 @@
     "version": 1,
     "task_id": "f348f5ee-2b04-4f31-b169-7c9103e0e068",
     "section": 10,
-    "possible_answers": [
-      "A",
-      "R",
-      "I",
-      "B"
-    ],
+    "possible_answers": ["A", "R", "I", "B"],
     "language_id": "usa"
   },
   {
@@ -1146,12 +951,7 @@
     "version": 1,
     "task_id": "d1cacf45-94ea-40e7-9730-b90b3a644fce",
     "section": 10,
-    "possible_answers": [
-      "V",
-      "Q",
-      "P",
-      "O"
-    ],
+    "possible_answers": ["V", "Q", "P", "O"],
     "language_id": "usa"
   },
   {
@@ -1176,12 +976,7 @@
     "version": 1,
     "task_id": "05ba5097-0550-4f2f-9d21-f4fdc97f9abf",
     "section": 10,
-    "possible_answers": [
-      "V",
-      "Z",
-      "K",
-      "W"
-    ],
+    "possible_answers": ["V", "Z", "K", "W"],
     "language_id": "usa"
   },
   {
@@ -1192,7 +987,7 @@
     "task_id": "75b5568e-b60d-440b-a1b2-aea79e8deb3c",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png",
       "",
       "",
       ""
@@ -1207,7 +1002,7 @@
     "task_id": "9fdcd1f9-2c79-4a29-b510-8082fb23fab8",
     "section": 10,
     "possible_answers": [
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/T.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png"
@@ -1221,12 +1016,7 @@
     "version": 1,
     "task_id": "280d32d8-8701-430e-8a0a-b6eb510d99a4",
     "section": 10,
-    "possible_answers": [
-      "E",
-      "S",
-      "C",
-      "V"
-    ],
+    "possible_answers": ["E", "S", "C", "V"],
     "language_id": "usa"
   },
   {
@@ -1236,12 +1026,7 @@
     "version": 1,
     "task_id": "be6277fc-e65e-4097-bf8c-90fe575e7820",
     "section": 10,
-    "possible_answers": [
-      "E",
-      "A",
-      "U",
-      "D"
-    ],
+    "possible_answers": ["E", "A", "U", "D"],
     "language_id": "usa"
   },
   {
@@ -1251,12 +1036,7 @@
     "version": 1,
     "task_id": "ceaa99fb-c8bc-49d0-baa2-4c19d919de28",
     "section": 10,
-    "possible_answers": [
-      "O",
-      "P",
-      "R",
-      "K"
-    ],
+    "possible_answers": ["O", "P", "R", "K"],
     "language_id": "usa"
   },
   {
@@ -1266,12 +1046,7 @@
     "version": 1,
     "task_id": "cde32bc3-1cf3-4c91-8a5f-87a562e8e0d9",
     "section": 10,
-    "possible_answers": [
-      "B",
-      "T",
-      "J",
-      "O"
-    ],
+    "possible_answers": ["B", "T", "J", "O"],
     "language_id": "usa"
   },
   {
@@ -1281,12 +1056,7 @@
     "version": 1,
     "task_id": "65ff389a-7ca9-425a-b210-a6a7b508fc4b",
     "section": 10,
-    "possible_answers": [
-      "V",
-      "Q",
-      "W",
-      "K"
-    ],
+    "possible_answers": ["V", "Q", "W", "K"],
     "language_id": "usa"
   },
   {
@@ -1296,12 +1066,7 @@
     "version": 1,
     "task_id": "363e01ca-079e-4ba4-b04b-15f1c387bd06",
     "section": 10,
-    "possible_answers": [
-      "V",
-      "S",
-      "J",
-      "P"
-    ],
+    "possible_answers": ["V", "S", "J", "P"],
     "language_id": "usa"
   },
   {
@@ -1356,12 +1121,7 @@
     "version": 1,
     "task_id": "bd91c320-95a1-4210-bc09-fad5e49c3889",
     "section": 10,
-    "possible_answers": [
-      "K",
-      "O",
-      "C",
-      "V"
-    ],
+    "possible_answers": ["K", "O", "C", "V"],
     "language_id": "usa"
   },
   {
@@ -1386,12 +1146,7 @@
     "version": 1,
     "task_id": "7b179be0-43db-4809-8414-e0991ec1ca19",
     "section": 10,
-    "possible_answers": [
-      "C",
-      "P",
-      "Q",
-      "I"
-    ],
+    "possible_answers": ["C", "P", "Q", "I"],
     "language_id": "usa"
   },
   {
@@ -1401,12 +1156,7 @@
     "version": 1,
     "task_id": "48de16b2-8124-4ee7-b44a-0995f77acf74",
     "section": 10,
-    "possible_answers": [
-      "I",
-      "J",
-      "U",
-      "C"
-    ],
+    "possible_answers": ["I", "J", "U", "C"],
     "language_id": "usa"
   },
   {
@@ -1431,12 +1181,7 @@
     "version": 1,
     "task_id": "0e4a791d-04a3-41ba-b0e1-cabd434c50ba",
     "section": 10,
-    "possible_answers": [
-      "W",
-      "F",
-      "R",
-      "O"
-    ],
+    "possible_answers": ["W", "F", "R", "O"],
     "language_id": "usa"
   },
   {
@@ -1446,12 +1191,7 @@
     "version": 1,
     "task_id": "a47bab0a-0064-4b64-89a9-c9a63c15d054",
     "section": 10,
-    "possible_answers": [
-      "A",
-      "Z",
-      "V",
-      "Y"
-    ],
+    "possible_answers": ["A", "Z", "V", "Y"],
     "language_id": "usa"
   },
   {
@@ -1465,7 +1205,7 @@
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/M.png"
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png"
     ],
     "language_id": "usa"
   },
@@ -1476,12 +1216,7 @@
     "version": 1,
     "task_id": "1c9ec6f1-54bd-426e-980c-62bfb319da3b",
     "section": 10,
-    "possible_answers": [
-      "Z",
-      "A",
-      "R",
-      "B"
-    ],
+    "possible_answers": ["Z", "A", "R", "B"],
     "language_id": "usa"
   },
   {
@@ -1493,7 +1228,7 @@
     "section": 10,
     "possible_answers": [
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/T.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png"
     ],
@@ -1507,7 +1242,7 @@
     "task_id": "a7a2ba90-2482-445d-a5e8-165029dc586b",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
       "",
       "",
       ""
@@ -1521,12 +1256,7 @@
     "version": 1,
     "task_id": "cefb45ad-9b6f-4154-af0c-4e51605ef250",
     "section": 10,
-    "possible_answers": [
-      "P",
-      "I",
-      "V",
-      "W"
-    ],
+    "possible_answers": ["P", "I", "V", "W"],
     "language_id": "usa"
   },
   {
@@ -1536,12 +1266,7 @@
     "version": 1,
     "task_id": "1bf56df0-15ee-4491-b49c-1ce48c02319a",
     "section": 10,
-    "possible_answers": [
-      "V",
-      "D",
-      "Q",
-      "G"
-    ],
+    "possible_answers": ["V", "D", "Q", "G"],
     "language_id": "usa"
   },
   {
@@ -1551,12 +1276,7 @@
     "version": 1,
     "task_id": "49a6d6da-ad27-49a6-b5cc-edb8d4669bd7",
     "section": 10,
-    "possible_answers": [
-      "L",
-      "C",
-      "T",
-      "R"
-    ],
+    "possible_answers": ["L", "C", "T", "R"],
     "language_id": "usa"
   },
   {
@@ -1581,12 +1301,7 @@
     "version": 1,
     "task_id": "05b9f253-3876-4f7f-968d-8b8a7cf3d9b4",
     "section": 10,
-    "possible_answers": [
-      "H",
-      "Z",
-      "W",
-      "Q"
-    ],
+    "possible_answers": ["H", "Z", "W", "Q"],
     "language_id": "usa"
   },
   {
@@ -1611,12 +1326,7 @@
     "version": 1,
     "task_id": "cc9f5dc5-d58d-4235-9a3f-c5634a62c2ed",
     "section": 10,
-    "possible_answers": [
-      "Z",
-      "H",
-      "N",
-      "D"
-    ],
+    "possible_answers": ["Z", "H", "N", "D"],
     "language_id": "usa"
   },
   {
@@ -1626,12 +1336,7 @@
     "version": 1,
     "task_id": "23388949-ad50-416e-8079-80c6d40d0739",
     "section": 10,
-    "possible_answers": [
-      "P",
-      "G",
-      "D",
-      "K"
-    ],
+    "possible_answers": ["P", "G", "D", "K"],
     "language_id": "usa"
   },
   {
@@ -1671,12 +1376,7 @@
     "version": 1,
     "task_id": "cc909894-bd09-4238-b7a8-0c3a22822903",
     "section": 10,
-    "possible_answers": [
-      "K",
-      "O",
-      "R",
-      "F"
-    ],
+    "possible_answers": ["K", "O", "R", "F"],
     "language_id": "usa"
   },
   {
@@ -1702,7 +1402,7 @@
     "task_id": "e651e9f3-3f0c-4baf-b107-78540afb9d39",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/S.png",
       "",
       "",
       ""
@@ -1716,12 +1416,7 @@
     "version": 1,
     "task_id": "318f6d99-d680-483f-b1d0-a40b8b74acf8",
     "section": 10,
-    "possible_answers": [
-      "J",
-      "X",
-      "G",
-      "P"
-    ],
+    "possible_answers": ["J", "X", "G", "P"],
     "language_id": "usa"
   },
   {
@@ -1731,12 +1426,7 @@
     "version": 1,
     "task_id": "0cd3f28e-4860-4aef-9bb5-bf30f5bf06c0",
     "section": 10,
-    "possible_answers": [
-      "Q",
-      "S",
-      "Z",
-      "P"
-    ],
+    "possible_answers": ["Q", "S", "Z", "P"],
     "language_id": "usa"
   },
   {
@@ -1761,12 +1451,7 @@
     "version": 1,
     "task_id": "11a123d8-df71-4484-83d4-dd3d38cfd09a",
     "section": 10,
-    "possible_answers": [
-      "F",
-      "G",
-      "Z",
-      "K"
-    ],
+    "possible_answers": ["F", "G", "Z", "K"],
     "language_id": "usa"
   },
   {
@@ -1776,12 +1461,7 @@
     "version": 1,
     "task_id": "1ff6e022-cf83-4650-80e5-396f2de3fee6",
     "section": 10,
-    "possible_answers": [
-      "S",
-      "Z",
-      "F",
-      "H"
-    ],
+    "possible_answers": ["S", "Z", "F", "H"],
     "language_id": "usa"
   },
   {
@@ -1791,12 +1471,7 @@
     "version": 1,
     "task_id": "68012028-6c49-48ef-878b-a5d00f2d22c4",
     "section": 10,
-    "possible_answers": [
-      "Z",
-      "A",
-      "B",
-      "G"
-    ],
+    "possible_answers": ["Z", "A", "B", "G"],
     "language_id": "usa"
   },
   {
@@ -1821,12 +1496,7 @@
     "version": 1,
     "task_id": "e451da03-f526-436b-934f-3f054a478fb4",
     "section": 10,
-    "possible_answers": [
-      "B",
-      "A",
-      "U",
-      "T"
-    ],
+    "possible_answers": ["B", "A", "U", "T"],
     "language_id": "usa"
   },
   {
@@ -1836,12 +1506,7 @@
     "version": 1,
     "task_id": "71d1c29e-1e42-4333-9f0a-b6d34ce175e4",
     "section": 10,
-    "possible_answers": [
-      "H",
-      "G",
-      "Q",
-      "E"
-    ],
+    "possible_answers": ["H", "G", "Q", "E"],
     "language_id": "usa"
   },
   {
@@ -1852,7 +1517,7 @@
     "task_id": "91311ea1-4cbd-4006-89cb-84e3141f20a9",
     "section": 10,
     "possible_answers": [
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/N.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png"
@@ -1866,12 +1531,7 @@
     "version": 1,
     "task_id": "a2133852-9b57-4899-af4d-a467ef9e3ab4",
     "section": 10,
-    "possible_answers": [
-      "V",
-      "K",
-      "E",
-      "U"
-    ],
+    "possible_answers": ["V", "K", "E", "U"],
     "language_id": "usa"
   },
   {
@@ -1896,12 +1556,7 @@
     "version": 1,
     "task_id": "8b682e94-6f7e-41be-9e70-c43ec9051457",
     "section": 10,
-    "possible_answers": [
-      "K",
-      "O",
-      "C",
-      "W"
-    ],
+    "possible_answers": ["K", "O", "C", "W"],
     "language_id": "usa"
   },
   {
@@ -1914,7 +1569,7 @@
     "possible_answers": [
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/M.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png"
     ],
     "language_id": "usa"
@@ -1926,12 +1581,7 @@
     "version": 1,
     "task_id": "999b8160-c946-443e-b834-486777e00395",
     "section": 10,
-    "possible_answers": [
-      "F",
-      "R",
-      "E",
-      "J"
-    ],
+    "possible_answers": ["F", "R", "E", "J"],
     "language_id": "usa"
   },
   {
@@ -1956,12 +1606,7 @@
     "version": 1,
     "task_id": "b4870a73-e0c6-413b-972f-de0f7742ce98",
     "section": 10,
-    "possible_answers": [
-      "H",
-      "Z",
-      "W",
-      "R"
-    ],
+    "possible_answers": ["H", "Z", "W", "R"],
     "language_id": "usa"
   },
   {
@@ -1971,12 +1616,7 @@
     "version": 1,
     "task_id": "32b0ee0c-c93b-47fe-9baa-4d0c784afe3c",
     "section": 10,
-    "possible_answers": [
-      "I",
-      "P",
-      "Q",
-      "F"
-    ],
+    "possible_answers": ["I", "P", "Q", "F"],
     "language_id": "usa"
   },
   {
@@ -1986,12 +1626,7 @@
     "version": 1,
     "task_id": "fd05318e-d6f5-4ea6-8333-c78471b0475d",
     "section": 10,
-    "possible_answers": [
-      "A",
-      "I",
-      "B",
-      "H"
-    ],
+    "possible_answers": ["A", "I", "B", "H"],
     "language_id": "usa"
   },
   {
@@ -2001,12 +1636,7 @@
     "version": 1,
     "task_id": "5567b95f-b122-4d97-98f5-4fba695e18d6",
     "section": 10,
-    "possible_answers": [
-      "S",
-      "A",
-      "U",
-      "T"
-    ],
+    "possible_answers": ["S", "A", "U", "T"],
     "language_id": "usa"
   },
   {
@@ -2032,7 +1662,7 @@
     "task_id": "c254bb96-a378-47a7-920c-bc0f914a015b",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
       "",
       "",
       ""
@@ -2046,12 +1676,7 @@
     "version": 1,
     "task_id": "905e602d-6eb4-48fd-8c60-c53e52f83321",
     "section": 10,
-    "possible_answers": [
-      "W",
-      "U",
-      "P",
-      "L"
-    ],
+    "possible_answers": ["W", "U", "P", "L"],
     "language_id": "usa"
   },
   {
@@ -2061,12 +1686,7 @@
     "version": 1,
     "task_id": "306107ed-300c-43be-82ec-99267184de55",
     "section": 10,
-    "possible_answers": [
-      "V",
-      "P",
-      "E",
-      "K"
-    ],
+    "possible_answers": ["V", "P", "E", "K"],
     "language_id": "usa"
   },
   {
@@ -2076,12 +1696,7 @@
     "version": 1,
     "task_id": "8d9b3c8c-500b-4aed-85bc-8acd0cd8156b",
     "section": 10,
-    "possible_answers": [
-      "P",
-      "T",
-      "R",
-      "I"
-    ],
+    "possible_answers": ["P", "T", "R", "I"],
     "language_id": "usa"
   },
   {
@@ -2121,12 +1736,7 @@
     "version": 1,
     "task_id": "aec487ac-124c-4d23-b066-2250df5ca13a",
     "section": 10,
-    "possible_answers": [
-      "F",
-      "E",
-      "T",
-      "C"
-    ],
+    "possible_answers": ["F", "E", "T", "C"],
     "language_id": "usa"
   },
   {
@@ -2166,12 +1776,7 @@
     "version": 1,
     "task_id": "c6df130d-342d-4e5e-9c41-3c0184909d49",
     "section": 10,
-    "possible_answers": [
-      "F",
-      "P",
-      "E",
-      "W"
-    ],
+    "possible_answers": ["F", "P", "E", "W"],
     "language_id": "usa"
   },
   {
@@ -2181,12 +1786,7 @@
     "version": 1,
     "task_id": "8d6589e9-a1a9-4443-b1a3-e9ec6e0fe337",
     "section": 10,
-    "possible_answers": [
-      "H",
-      "T",
-      "F",
-      "X"
-    ],
+    "possible_answers": ["H", "T", "F", "X"],
     "language_id": "usa"
   },
   {
@@ -2227,7 +1827,7 @@
     "task_id": "9d36a3c3-f80d-41f5-9d85-3f2ebd7d6a17",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
       "",
       "",
       ""
@@ -2241,12 +1841,7 @@
     "version": 1,
     "task_id": "eedbc49a-e96b-4d6c-811e-80d5e778e093",
     "section": 10,
-    "possible_answers": [
-      "X",
-      "T",
-      "S",
-      "Y"
-    ],
+    "possible_answers": ["X", "T", "S", "Y"],
     "language_id": "usa"
   },
   {
@@ -2271,12 +1866,7 @@
     "version": 1,
     "task_id": "6cee4cf2-15c3-4db0-b370-b74b0ca0b3c2",
     "section": 10,
-    "possible_answers": [
-      "J",
-      "O",
-      "E",
-      "I"
-    ],
+    "possible_answers": ["J", "O", "E", "I"],
     "language_id": "usa"
   },
   {
@@ -2286,12 +1876,7 @@
     "version": 1,
     "task_id": "69b9f3f2-b891-4382-ba35-8d51861e8b67",
     "section": 10,
-    "possible_answers": [
-      "L",
-      "S",
-      "D",
-      "H"
-    ],
+    "possible_answers": ["L", "S", "D", "H"],
     "language_id": "usa"
   },
   {
@@ -2320,7 +1905,7 @@
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Q.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/M.png"
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png"
     ],
     "language_id": "usa"
   },
@@ -2331,12 +1916,7 @@
     "version": 1,
     "task_id": "4700237e-dab4-457a-8ddd-d42c1ae8676b",
     "section": 10,
-    "possible_answers": [
-      "H",
-      "P",
-      "E",
-      "X"
-    ],
+    "possible_answers": ["H", "P", "E", "X"],
     "language_id": "usa"
   },
   {
@@ -2365,7 +1945,7 @@
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/N.png"
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png"
     ],
     "language_id": "usa"
   },
@@ -2377,7 +1957,7 @@
     "task_id": "a495cb63-2cfb-4792-b6de-cb7454b94d39",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
       "",
       "",
       ""
@@ -2406,12 +1986,7 @@
     "version": 1,
     "task_id": "2f3e227c-7834-4c8a-9db0-bc17edef222c",
     "section": 10,
-    "possible_answers": [
-      "M",
-      "A",
-      "J",
-      "Z"
-    ],
+    "possible_answers": ["M", "A", "J", "Z"],
     "language_id": "usa"
   },
   {
@@ -2455,7 +2030,7 @@
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
       "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
-      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/N.png"
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png"
     ],
     "language_id": "usa"
   },
@@ -2466,12 +2041,7 @@
     "version": 1,
     "task_id": "54483e2c-2543-41e8-982f-24595cb2f2d6",
     "section": 10,
-    "possible_answers": [
-      "Z",
-      "A",
-      "R",
-      "H"
-    ],
+    "possible_answers": ["Z", "A", "R", "H"],
     "language_id": "usa"
   },
   {
@@ -2481,12 +2051,7 @@
     "version": 1,
     "task_id": "a45733ae-304d-4156-a96f-2ec91d5ad9d7",
     "section": 10,
-    "possible_answers": [
-      "U",
-      "E",
-      "F",
-      "I"
-    ],
+    "possible_answers": ["U", "E", "F", "I"],
     "language_id": "usa"
   },
   {
@@ -2496,12 +2061,7 @@
     "version": 1,
     "task_id": "075cafa5-58f7-4838-a6f5-f132fb518b7d",
     "section": 10,
-    "possible_answers": [
-      "E",
-      "H",
-      "N",
-      "C"
-    ],
+    "possible_answers": ["E", "H", "N", "C"],
     "language_id": "usa"
   },
   {
@@ -2511,12 +2071,7 @@
     "version": 1,
     "task_id": "5d2bbefe-0f7b-48cf-911d-a26c405be636",
     "section": 10,
-    "possible_answers": [
-      "T",
-      "U",
-      "I",
-      "S"
-    ],
+    "possible_answers": ["T", "U", "I", "S"],
     "language_id": "usa"
   },
   {
@@ -2526,12 +2081,7 @@
     "version": 1,
     "task_id": "66eb160d-e7eb-465b-9c63-f1bde6f8fd62",
     "section": 10,
-    "possible_answers": [
-      "D",
-      "S",
-      "C",
-      "V"
-    ],
+    "possible_answers": ["D", "S", "C", "V"],
     "language_id": "usa"
   },
   {
@@ -2541,12 +2091,7 @@
     "version": 1,
     "task_id": "56b01d62-1ec4-4cff-b9a0-f804a770aa77",
     "section": 10,
-    "possible_answers": [
-      "H",
-      "Z",
-      "D",
-      "P"
-    ],
+    "possible_answers": ["H", "Z", "D", "P"],
     "language_id": "usa"
   },
   {
@@ -2556,12 +2101,7 @@
     "version": 1,
     "task_id": "46cb8669-93c6-4b84-b5df-0ddb21618a6d",
     "section": 10,
-    "possible_answers": [
-      "P",
-      "L",
-      "R",
-      "K"
-    ],
+    "possible_answers": ["P", "L", "R", "K"],
     "language_id": "usa"
   },
   {
@@ -2571,12 +2111,7 @@
     "version": 1,
     "task_id": "49331a29-233c-4aac-852b-ce0cca222d94",
     "section": 10,
-    "possible_answers": [
-      "E",
-      "L",
-      "O",
-      "X"
-    ],
+    "possible_answers": ["E", "L", "O", "X"],
     "language_id": "usa"
   },
   {
@@ -2586,12 +2121,7 @@
     "version": 1,
     "task_id": "94ecffaa-7efc-4d74-8414-c7ec62f063a3",
     "section": 10,
-    "possible_answers": [
-      "H",
-      "W",
-      "S",
-      "G"
-    ],
+    "possible_answers": ["H", "W", "S", "G"],
     "language_id": "usa"
   },
   {
@@ -2601,12 +2131,7 @@
     "version": 1,
     "task_id": "b9af3298-d63b-4b3d-930f-118f189f2ce4",
     "section": 10,
-    "possible_answers": [
-      "Y",
-      "K",
-      "W",
-      "L"
-    ],
+    "possible_answers": ["Y", "K", "W", "L"],
     "language_id": "usa"
   },
   {
@@ -2617,7 +2142,7 @@
     "task_id": "84c94b4e-3d7a-4b61-b94e-8b1027f82109",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
       "",
       "",
       ""
@@ -2631,12 +2156,7 @@
     "version": 1,
     "task_id": "6867fcf3-64db-43ba-9853-bf0481a43853",
     "section": 10,
-    "possible_answers": [
-      "G",
-      "P",
-      "U",
-      "X"
-    ],
+    "possible_answers": ["G", "P", "U", "X"],
     "language_id": "usa"
   },
   {
@@ -2646,12 +2166,7 @@
     "version": 1,
     "task_id": "29b71bdc-4fe3-42d3-b106-c89b430ddbfc",
     "section": 10,
-    "possible_answers": [
-      "E",
-      "C",
-      "A",
-      "D"
-    ],
+    "possible_answers": ["E", "C", "A", "D"],
     "language_id": "usa"
   },
   {
@@ -2662,7 +2177,7 @@
     "task_id": "63d226fd-e754-4fd4-9781-1f41c13289b6",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
       "",
       "",
       ""
@@ -2676,27 +2191,7 @@
     "version": 1,
     "task_id": "31c7b2ed-d891-4c57-8abd-c6b7adaf4498",
     "section": 10,
-    "possible_answers": [
-      "T",
-      "Z",
-      "V",
-      "R"
-    ],
-    "language_id": "usa"
-  },
-  {
-    "section_name": "Alphabet",
-    "question": "D",
-    "correct_answer_index": 0,
-    "version": 3,
-    "task_id": "5bf07d48-5b09-404d-ba14-2ee506469ac2",
-    "section": 10,
-    "possible_answers": [
-      "",
-      "",
-      "",
-      ""
-    ],
+    "possible_answers": ["T", "Z", "V", "R"],
     "language_id": "usa"
   },
   {
@@ -2706,12 +2201,7 @@
     "version": 1,
     "task_id": "9a4fbba6-9c88-4bc8-9712-f92342856139",
     "section": 10,
-    "possible_answers": [
-      "N",
-      "M",
-      "H",
-      "G"
-    ],
+    "possible_answers": ["N", "M", "H", "G"],
     "language_id": "usa"
   },
   {
@@ -2721,12 +2211,7 @@
     "version": 1,
     "task_id": "f3fe0b70-1eb3-4c13-9895-93470d86a770",
     "section": 10,
-    "possible_answers": [
-      "U",
-      "S",
-      "Z",
-      "P"
-    ],
+    "possible_answers": ["U", "S", "Z", "P"],
     "language_id": "usa"
   },
   {
@@ -2736,12 +2221,7 @@
     "version": 1,
     "task_id": "05ff6156-8cb5-4992-a209-001bb3f834f4",
     "section": 10,
-    "possible_answers": [
-      "N",
-      "C",
-      "R",
-      "B"
-    ],
+    "possible_answers": ["N", "C", "R", "B"],
     "language_id": "usa"
   },
   {
@@ -2751,12 +2231,7 @@
     "version": 1,
     "task_id": "24bb4284-e10c-4861-8812-08c1dc2e2b8e",
     "section": 10,
-    "possible_answers": [
-      "A",
-      "D",
-      "G",
-      "T"
-    ],
+    "possible_answers": ["A", "D", "G", "T"],
     "language_id": "usa"
   },
   {
@@ -2781,12 +2256,7 @@
     "version": 1,
     "task_id": "eda4b543-e74f-4e27-adb4-d1794818c970",
     "section": 10,
-    "possible_answers": [
-      "L",
-      "B",
-      "R",
-      "J"
-    ],
+    "possible_answers": ["L", "B", "R", "J"],
     "language_id": "usa"
   },
   {
@@ -2796,12 +2266,7 @@
     "version": 1,
     "task_id": "a0f3314a-8fe8-4e7d-aa00-2e58117b3e4e",
     "section": 10,
-    "possible_answers": [
-      "J",
-      "R",
-      "W",
-      "E"
-    ],
+    "possible_answers": ["J", "R", "W", "E"],
     "language_id": "usa"
   },
   {
@@ -2812,7 +2277,7 @@
     "task_id": "ee2e29d1-80fe-45b1-9754-df64386afdb3",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
       "",
       "",
       ""
@@ -2827,7 +2292,7 @@
     "task_id": "de3a0967-0b38-4ca9-a259-333b82cd8146",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
       "",
       "",
       ""
@@ -2841,12 +2306,7 @@
     "version": 1,
     "task_id": "3c708fcb-d54e-4fc1-a70e-c219042714ae",
     "section": 10,
-    "possible_answers": [
-      "H",
-      "C",
-      "A",
-      "R"
-    ],
+    "possible_answers": ["H", "C", "A", "R"],
     "language_id": "usa"
   },
   {
@@ -2856,12 +2316,7 @@
     "version": 1,
     "task_id": "85dad90d-56cc-4ae9-a1f5-5a7417d85977",
     "section": 10,
-    "possible_answers": [
-      "A",
-      "X",
-      "R",
-      "E"
-    ],
+    "possible_answers": ["A", "X", "R", "E"],
     "language_id": "usa"
   },
   {
@@ -2886,12 +2341,7 @@
     "version": 1,
     "task_id": "c8eaf3c4-60ef-4475-92a4-2bfa562285ae",
     "section": 10,
-    "possible_answers": [
-      "U",
-      "E",
-      "H",
-      "K"
-    ],
+    "possible_answers": ["U", "E", "H", "K"],
     "language_id": "usa"
   },
   {
@@ -2902,7 +2352,7 @@
     "task_id": "ba543ca0-3e86-4c19-b19b-a45fa6896c03",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
       "",
       "",
       ""
@@ -2916,12 +2366,7 @@
     "version": 1,
     "task_id": "995af7b6-1577-4be5-a59b-a4da81cc19f1",
     "section": 10,
-    "possible_answers": [
-      "S",
-      "K",
-      "J",
-      "T"
-    ],
+    "possible_answers": ["S", "K", "J", "T"],
     "language_id": "usa"
   },
   {
@@ -2932,7 +2377,7 @@
     "task_id": "6cad5cc3-798d-45fa-bd45-83330e620a3f",
     "section": 10,
     "possible_answers": [
-      "",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Q.png",
       "",
       "",
       ""

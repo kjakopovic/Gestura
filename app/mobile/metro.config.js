@@ -5,9 +5,10 @@ const { withNativeWind } = require("nativewind/metro");
 const projectRoot = __dirname;
 let config = getDefaultConfig(projectRoot);
 
-// Include your ONNX (and wasm) as assets
+// Treat .onnx and .wasm as static assets
 config.resolver.assetExts = [...config.resolver.assetExts, "onnx", "wasm"];
 
+// Fix up any extraNodeModules
 config.resolver.extraNodeModules = {
   "onnxruntime-react-native": path.resolve(
     projectRoot,
@@ -16,7 +17,7 @@ config.resolver.extraNodeModules = {
   ...config.resolver.extraNodeModules,
 };
 
-// Wrap with NativeWind (must be the final export)
+// Wrap with NativeWind
 module.exports = withNativeWind(config, {
   input: "./app/globals.css",
 });

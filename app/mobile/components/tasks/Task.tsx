@@ -3,8 +3,11 @@ import React, { useEffect, useRef, useState } from "react"; // Added useRef, use
 import { CameraCapturedPicture } from "expo-camera";
 // eslint-disable-next-line import/no-unresolved
 import * as ort from "onnxruntime-react-native";
-import { getModelPath } from "@/constants/model"; // Assuming MODEL_IMAGE_SIZE is also here or not needed directly by Task.tsx
-import { createModelSession, inferenceCapturedPhoto } from "@/utils/model"; // Import new function
+import {
+  createModelSession,
+  getModelPath,
+  inferenceCapturedPhoto,
+} from "@/utils/model"; // Import new function
 
 import AnswerBox from "./task-components/AnswerBox";
 import QuestionBox from "./task-components/QuestionBox";
@@ -45,7 +48,7 @@ const Task = (task: TaskProps) => {
     task.version === 2
       ? { uri: task.possibleAnswers[task.correctAnswerIndex] } // Assuming this is a URI string
       : task.version === 3
-      ? (task.question as any) // Cast as any if task.question is ImageSourcePropType
+      ? { uri: task.possibleAnswers[0] || null } // Cast as any if task.question is ImageSourcePropType
       : null;
 
   const [selectedAnswer, setSelectedAnswer] = React.useState<string | null>(
@@ -111,13 +114,13 @@ const Task = (task: TaskProps) => {
 
       setIsProcessingPhoto(true);
       try {
-        const [predictions] = await inferenceCapturedPhoto(
+        const predictions = await inferenceCapturedPhoto(
           capturedPhoto,
           modelSessionRef.current
         );
         if (predictions && predictions.length > 0) {
           const predictedLetter = predictions[0].label;
-          const probability = predictions[0].probability;
+          const probability = predictions[0].probability * 10;
           console.log(
             `Task v3: Predicted: ${predictedLetter}, Prob: ${probability}, Target: ${correctAnswer}`
           );
@@ -286,7 +289,7 @@ const Task = (task: TaskProps) => {
       <ResultPopup
         visible={popupVisible}
         isSuccess={isSuccess}
-        correctImage={correctImage}
+        correctImage={correctImage as any}
         onDismiss={handlePopupDismiss}
         buttonStyle={buttonStyle}
       />
@@ -296,7 +299,7 @@ const Task = (task: TaskProps) => {
       <QuestionBox text="Show me how you would sign the following:" />
       <View className="w-full flex-row justify-center items-end">
         <Image className="m-8 mt-4 mb-0 w-50%" source={characters.character1} />
-        <TaskBox text={correctAnswer} image={task.question as any} />
+        <TaskBox text={task.question as string} />
       </View>
 
       <View className="w-full h-[1px] bg-grayscale-400 my-8" />
@@ -332,7 +335,7 @@ const Task = (task: TaskProps) => {
       <ResultPopup
         visible={popupVisible}
         isSuccess={isSuccess}
-        correctImage={correctImage}
+        correctImage={correctImage as any}
         onDismiss={handlePopupDismiss}
         taskVersion={task.version}
       />
