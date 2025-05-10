@@ -106,7 +106,7 @@ export async function inferenceCamera(
     const photo = await cameraRef.current.takePictureAsync({
       base64: true,
       skipProcessing: true,
-      quality: 0.3, // TODO: check if this is now faster, moved quality from 0.8 to 0.3 (also check quality of predictions)
+      quality: 0.8, // TODO: check if this is now faster, moved quality from 0.8 to 0.3 (also check quality of predictions)
     });
 
     if (!photo) {
