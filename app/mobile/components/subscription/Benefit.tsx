@@ -3,13 +3,21 @@ import React from "react";
 
 type BenefitProps = {
   icon: ImageSourcePropType;
-  text: string;
+  text?: string;
+  primaryText?: string; // Optional primary-colored text portion
 };
 
-const Benefit = ({ icon, text }: BenefitProps) => {
+const Benefit = ({ icon, text, primaryText }: BenefitProps) => {
   return (
     <View className="flex flex-row justify-between items-center w-full px-4 py-2 m-0">
-      <Text className="text-white text-base font-inter">{text}</Text>
+      {primaryText ? (
+        <Text className="text-lg font-interBold">
+          <Text className="text-primary">{primaryText}</Text>
+          <Text className="text-white"> {text}</Text>
+        </Text>
+      ) : (
+        <Text className="text-white text-lg font-interBold">{text}</Text>
+      )}
       <Image source={icon} className="size-6 mr-12" />
     </View>
   );

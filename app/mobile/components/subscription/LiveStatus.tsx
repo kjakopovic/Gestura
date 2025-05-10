@@ -16,8 +16,8 @@ const LiveStatus = () => {
       benefits: [
         { text: "Infinite Hearts", icon: icons.heart },
         { text: "No Ads", icon: icons.ads },
-        { text: "LIVE COMMUNICATION", icon: icons.people },
-        { text: "Live Profile Badge", icon: icons.badge },
+        { primaryText: "LIVE COMMUNICATION", icon: icons.people },
+        { primaryText: "Live Profile Badge", icon: icons.badge },
       ],
     },
   ];

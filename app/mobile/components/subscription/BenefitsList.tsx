@@ -4,7 +4,8 @@ import { ImageSourcePropType } from "react-native";
 import Benefit from "./Benefit";
 
 type BenefitItem = {
-  text: string;
+  text?: string;
+  primaryText?: string; // Add this new property
   icon: ImageSourcePropType;
 };
 
@@ -40,6 +41,7 @@ const BenefitsList = ({ categories }: BenefitsListProps) => {
                 <Benefit
                   key={`benefit-${categoryIndex}-${index}`}
                   text={benefit.text}
+                  primaryText={benefit.primaryText}
                   icon={benefit.icon}
                 />
               ))}
