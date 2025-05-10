@@ -6,7 +6,7 @@ import { Buffer } from "buffer";
 
 import { LABEL_MAP, MODEL_IMAGE_SIZE } from "@/constants/model";
 import { PredictionResult } from "@/types/model";
-import { CameraView } from "expo-camera";
+import { CameraView, CameraCapturedPicture } from "expo-camera"; // Ensure CameraCapturedPicture is imported
 global.Buffer = Buffer;
 
 /**
@@ -231,6 +231,116 @@ export async function inferenceCamera(
       console.error("Stack trace:", error.stack);
     }
 
+    return [[], 0];
+  }
+}
+
+/**
+ * Takes a CameraCapturedPicture and a pre-created session,
+ * processes the image, turns it into a tensor, and runs inference.
+ */
+export async function inferenceCapturedPhoto(
+  photo: CameraCapturedPicture,
+  session: InferenceSession
+): Promise<[PredictionResult[], number]> {
+  if (!photo || !photo.base64) {
+    console.error("Captured photo or its base64 data is missing.");
+    return [[], 0];
+  }
+
+  try {
+    if (
+      !session ||
+      !session.inputNames ||
+      !session.inputNames[0] ||
+      !session.outputNames ||
+      !session.outputNames[0]
+    ) {
+      console.error(
+        "No valid session, input names, or output names provided for inferenceCapturedPhoto."
+      );
+      return [[], 0];
+    }
+
+    const startTime = Date.now();
+
+    const imageBuffer = Buffer.from(photo.base64, "base64");
+    const decodedImage = decodeJpeg(imageBuffer, { useTArray: true });
+
+    if (!decodedImage || !decodedImage.data) {
+      console.error(
+        "Failed to decode JPEG image or get pixel data from captured photo."
+      );
+      return [[], 0];
+    }
+
+    // Assuming the CameraComponent provides an image that's already appropriately sized
+    // or that MODEL_IMAGE_SIZE is the target. If CameraComponent can output various sizes,
+    // resizing might be needed here if the captured photo isn't 224x224.
+    // For now, assuming it's compatible with MODEL_IMAGE_SIZE.
+    const rgba = new Uint8ClampedArray(
+      decodedImage.data.buffer,
+      decodedImage.data.byteOffset,
+      decodedImage.data.length
+    );
+
+    // Convert RGBA to Tensor
+    const inputTensor = imageDataToTensor(
+      rgba,
+      MODEL_IMAGE_SIZE[0],
+      MODEL_IMAGE_SIZE[1]
+    );
+
+    const feeds: Record<string, Tensor> = {};
+    feeds[session.inputNames[0]] = inputTensor;
+
+    const outputData = await session.run(feeds);
+    const outputTensor = outputData[session.outputNames[0]];
+
+    if (!outputTensor || !outputTensor.data) {
+      console.error(
+        "Inference did not produce a valid output tensor in inferenceCapturedPhoto."
+      );
+      return [[], 0];
+    }
+
+    const predictions: PredictionResult[] = [];
+    const outputArray = outputTensor.data as Float32Array;
+
+    if (outputArray.length === 0) {
+      console.warn("Model output array is empty in inferenceCapturedPhoto.");
+      return [[], 0];
+    }
+
+    let maxScore = -Infinity;
+    let predictedIndex = -1;
+    for (let i = 0; i < outputArray.length; i++) {
+      if (outputArray[i] > maxScore) {
+        maxScore = outputArray[i];
+        predictedIndex = i;
+      }
+    }
+
+    if (predictedIndex !== -1) {
+      const predictedLabel = LABEL_MAP[predictedIndex] || "Unknown";
+      predictions.push({
+        class: predictedIndex,
+        label: predictedLabel,
+        probability: maxScore,
+      });
+    } else {
+      console.warn(
+        "Could not determine a prediction from the model output in inferenceCapturedPhoto."
+      );
+    }
+
+    const inferenceTime = Date.now() - startTime;
+    return [predictions, inferenceTime];
+  } catch (error) {
+    console.error("Error in inferenceCapturedPhoto:", error);
+    if (error instanceof Error && error.stack) {
+      console.error("Stack trace for inferenceCapturedPhoto:", error.stack);
+    }
     return [[], 0];
   }
 }
