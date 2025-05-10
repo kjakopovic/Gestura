@@ -108,7 +108,7 @@ const Achievements = () => {
     <>
       <CustomAppBar title="ACHIEVEMENTS" backButton />
       <ScrollView
-        className="bg-grayscale-800 mt-28 px-10"
+        className="bg-grayscale-800 mt-24 px-10"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl

@@ -158,7 +158,7 @@ const Inventory = () => {
             />
           }
         >
-          <Text className="text-xl text-grayscale-100 font-interBold mt-20">
+          <Text className="text-xl text-grayscale-100 font-interBold mt-24">
             ITEMS
           </Text>
           {items.length === 0 && (

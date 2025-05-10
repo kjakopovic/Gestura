@@ -32,8 +32,7 @@ const ProfileInfoItem = ({
           fontFamily: "Inter",
           paddingVertical: 8,
           textAlign: "right",
-          height: 32,
-          justifyContent: "center",
+          height: 48,
           opacity: disabled ? 0.7 : 1,
         }}
         value={value}

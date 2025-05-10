@@ -36,13 +36,13 @@ const Profile = () => {
         <SafeAreaView>
           <TouchableOpacity
             onPress={() => router.push("/settings")}
-            className="z-10 mx-5"
+            className="z-10 mx-5 mt-4"
           >
             <Image source={icons.cog} className="w-12 h-12" />
           </TouchableOpacity>
           <Image
             source={characters.profileCharacter}
-            className="size-40 self-end z-10 mx-5"
+            className="size-40 mt-9 self-end z-10 mx-5"
           />
         </SafeAreaView>
       </View>
