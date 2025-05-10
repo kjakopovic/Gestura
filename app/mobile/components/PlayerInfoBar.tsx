@@ -24,7 +24,7 @@ const PlayerInfoBar = ({
       <View className="flex flex-row items-center">
         <Image source={icons.coin} className="size-6" />
         <Text className="text-primary text-xl font-interExtraBold ml-2">
-          {coins}
+          {coins > 1000 ? `${(coins / 1000).toFixed(1)}k` : coins}
         </Text>
       </View>
 

@@ -4,17 +4,18 @@ import React from "react";
 import PremiumStatus from "@/components/subscription/PremiumStatus";
 import LiveStatus from "@/components/subscription/LiveStatus";
 import UpgradeToPremium from "@/app/(root)/(premium-options)/UpgradeToPremium";
+import { useUserStore } from "@/store/useUserStore";
 
 const Subscription = () => {
-  let subscriptionLevel = "live"; //hardcodirano
+  const userSubscription = useUserStore((state) => state.user?.subscription);
 
   return (
     <View className="flex-1 bg-grayscale-800">
-      {subscriptionLevel === "premium" && <PremiumStatus />}
+      {userSubscription === 1 && <PremiumStatus />}
 
-      {subscriptionLevel === "live" && <LiveStatus />}
+      {userSubscription === 2 && <LiveStatus />}
 
-      {subscriptionLevel === "none" && <UpgradeToPremium hasButton />}
+      {userSubscription === 0 && <UpgradeToPremium hasButton />}
     </View>
   );
 };

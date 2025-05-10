@@ -1,4 +1,11 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import React from "react";
 
 import { useRouter } from "expo-router";
@@ -6,6 +13,8 @@ import { useRouter } from "expo-router";
 import * as icons from "@/constants/icons";
 
 import CustomButton from "@/components/CustomButton";
+import { api } from "@/lib/api";
+import { useUserStore } from "@/store/useUserStore";
 
 type UpgradeToPremiumProps = {
   hasButton?: boolean;
@@ -13,6 +22,85 @@ type UpgradeToPremiumProps = {
 
 const UpgradeToPremium = ({ hasButton }: UpgradeToPremiumProps) => {
   const router = useRouter();
+
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const setSubscription = useUserStore((state) => state.setSubscription);
+
+  const handleUpgrade = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.patch("/users", {
+        subscription: 1,
+      });
+      if (response.success) {
+        setSubscription(1); // Update the subscription in the store
+        // Handle successful upgrade
+        Alert.alert(
+          "Upgrade Successful",
+          "You have successfully upgraded to Premium!",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                router.back();
+              },
+            },
+          ],
+          { cancelable: false }
+        );
+      } else {
+        // Ensure a string is passed to setError
+        const errorMessage =
+          typeof response.error === "string"
+            ? response.error
+            : response.error &&
+              typeof (response.error as any).message === "string"
+            ? (response.error as any).message
+            : "Unknown error";
+        setError(errorMessage);
+        console.error("Upgrade failed:", response.error); // Log the original error object
+        Alert.alert("Upgrade Failed", errorMessage || "Please try again.");
+      }
+    } catch (err) {
+      // Handle network or other errors
+      console.error("Error during upgrade:", err);
+      let catchErrorMessage = "An error occurred. Please try again.";
+      if (err instanceof Error) {
+        catchErrorMessage = err.message;
+      } else if (typeof err === "string") {
+        catchErrorMessage = err;
+      } else if (err && typeof (err as any).message === "string") {
+        catchErrorMessage = (err as any).message;
+      }
+      setError(catchErrorMessage);
+      Alert.alert("Error", catchErrorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (error) {
+    return (
+      <View className="flex flex-col h-full bg-grayscale-800 justify-center items-center mx-6">
+        <Text className="text-red-500 font-inter">{error}</Text>
+      </View>
+    );
+  }
+  if (loading) {
+    return (
+      <View className="flex flex-col h-full bg-grayscale-800 justify-center items-center mx-6">
+        <ActivityIndicator
+          size="large"
+          color="#A162FF"
+          className="mt-16"
+          style={{ transform: [{ translateY: -50 }] }}
+        />
+      </View>
+    );
+  }
 
   return (
     <View className="flex flex-col h-full bg-grayscale-800 justify-center items-center mx-6">
@@ -79,15 +167,13 @@ const UpgradeToPremium = ({ hasButton }: UpgradeToPremiumProps) => {
       <CustomButton
         text="SUBSCRIBE"
         style="primary"
-        onPress={() => {
-          alert("Upgrade to Premium clicked!");
-        }}
+        onPress={handleUpgrade}
         noMargin={true}
       />
       {hasButton && (
-        <TouchableOpacity className="w-1/2 m-6 mb-24 flex-1 justify-center items-center border border-grayscale-400 rounded-xl">
+        <TouchableOpacity className="w-1/2 m-6 mb-24 justify-center items-center border border-grayscale-400 rounded-xl">
           <Text
-            className="text-grayscale-100 font-inter"
+            className="text-grayscale-100 font-inter p-4"
             onPress={() => {
               router.back();
             }}

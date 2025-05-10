@@ -78,8 +78,6 @@ const Home = () => {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    console.log("Current level", currentLevel);
-
     // Refresh user data and levels in parallel
     await Promise.all([refreshUserData(), refreshLevels()]);
 

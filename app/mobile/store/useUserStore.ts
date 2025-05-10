@@ -14,6 +14,7 @@ interface UserState {
 
   // Actions
   setUser: (userData: UserData) => void;
+  setSubscription: (subscription: number) => void;
   setHearts: (hearts: number) => void;
   setLanguages: (languages: LanguageData[]) => void;
   setSelectedLanguage: (languageId: string) => void;
@@ -42,6 +43,12 @@ export const useUserStore = create<UserState>()((set, get) => ({
   setHearts: (hearts) => {
     set((state) => ({
       user: state.user ? { ...state.user, hearts } : null,
+    }));
+  },
+
+  setSubscription: (subscription) => {
+    set((state) => ({
+      user: state.user ? { ...state.user, subscription } : null,
     }));
   },
 
