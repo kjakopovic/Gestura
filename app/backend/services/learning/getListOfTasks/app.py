@@ -185,11 +185,10 @@ def get_list_of_tasks(dynamodb, section, language_id, subscription):
             )
             section_1, section_2 = get_two_random_sections(CURRENT_MAX_SECTION)
 
-            print(f"\n\nsection_1: {section_1}, section_2: {section_2}\n\n")
-
             tasks_1 = get_tasks_for_section(dynamodb, CURRENT_MAX_SECTION, language_id)
             tasks_2 = get_tasks_for_section(dynamodb, section_1, language_id)
             tasks_3 = get_tasks_for_section(dynamodb, section_2, language_id)
+
 
         # Select tasks based on subscription status
         # Premium users get more advanced tasks (version 3)
@@ -197,6 +196,7 @@ def get_list_of_tasks(dynamodb, section, language_id, subscription):
             selected_tasks_1 = chose_tasks(tasks_1, 3, 3, 2)
             selected_tasks_2 = chose_tasks(tasks_2, 2, 1, 1)
             selected_tasks_3 = chose_tasks(tasks_3, 1, 1, 1)
+
         else:
             selected_tasks_1 = chose_tasks(tasks_1, 4, 4, 0)
             selected_tasks_2 = chose_tasks(tasks_2, 3, 1, 0)
