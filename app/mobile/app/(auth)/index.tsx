@@ -1,7 +1,7 @@
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,7 +11,14 @@ import CustomInput from "@/components/CustomInput";
 import { loginSchema } from "@/schemas/authSchemas";
 import { LoginFormData } from "@/types/types";
 import CustomButton from "@/components/CustomButton";
-import { login } from "@/lib/auth";
+import { getAccessToken, getRefreshToken, login, saveTokens } from "@/lib/auth";
+import { api } from "@/lib/api";
+
+// Define the type for the successful response data
+type RefreshTokenResponseData = {
+  message: string;
+  "x-access-token": string;
+};
 
 const Login = () => {
   const router = useRouter();
@@ -26,6 +33,43 @@ const Login = () => {
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
+
+  useEffect(() => {
+    (async () => {
+      setIsLoading(true);
+      const accessToken = await getAccessToken();
+      const refreshToken = await getRefreshToken();
+
+      if (accessToken && refreshToken) {
+        try {
+          // Specify the expected response data type for the api.get call
+          const response = await api.get<RefreshTokenResponseData>(
+            "/refresh/token"
+          );
+          if (response.success) {
+            console.log("Access token refreshed successfully");
+            if (response.data) {
+              // Use the correct key from the response data type
+              await saveTokens(
+                response.data["x-access-token"], // Access using bracket notation due to hyphen
+                refreshToken
+              );
+              router.replace("/Home");
+            }
+          } else {
+            console.error("Failed to refresh access token:", response.error);
+          }
+        } catch (error) {
+          console.error("Error refreshing access token:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        console.log("No access or refresh token found. User is not logged in.");
+      }
+    })();
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);

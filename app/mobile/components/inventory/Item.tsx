@@ -1,32 +1,82 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState } from "react";
 
 import ChestOpening from "./ChestOpening";
 
 type ItemProps = {
+  itemId: string; // Add itemId
   itemTitle: string;
   icon: string;
   category?: string;
-  onPress: () => Promise<void>; // Changed from () => void
-  activating?: boolean;
+  onPress: (
+    itemId: string,
+    itemCategory?: string
+  ) => Promise<number | undefined>; // This is activateItem
+  fetchInventory: () => Promise<void>; // To refresh inventory after chest modal closes
 };
 
 const Item = ({
+  itemId,
   itemTitle,
   icon,
   category,
-  onPress, // This is activateItem from Inventory.tsx
-  activating,
+  onPress,
+  fetchInventory,
 }: ItemProps) => {
   const [showChestModal, setShowChestModal] = useState(false);
+  const [isOpeningChest, setIsOpeningChest] = useState(false);
+  const [chestPrizeCoins, setChestPrizeCoins] = useState<number | null>(null);
+
+  // For debugging state changes
+  console.log(
+    `Item.tsx (${itemTitle}): Render - showChestModal: ${showChestModal}, chestPrizeCoins: ${chestPrizeCoins}, isOpeningChest: ${isOpeningChest}`
+  );
+
+  const handleOpenChestPress = async () => {
+    if (isOpeningChest) return;
+
+    console.log(`Item.tsx (${itemTitle}): handleOpenChestPress called.`);
+    setIsOpeningChest(true);
+    setChestPrizeCoins(null); // Reset before API call
+    try {
+      const coinsWon = await onPress(itemId, category); // This is activateItem
+      console.log(`Item.tsx (${itemTitle}): activateItem returned:`, coinsWon);
+
+      if (typeof coinsWon === "number") {
+        console.log(
+          `Item.tsx (${itemTitle}): Setting chestPrizeCoins to ${coinsWon} and attempting to show modal.`
+        );
+        setChestPrizeCoins(coinsWon);
+        setShowChestModal(true); // This should trigger the modal
+      } else {
+        console.log(
+          `Item.tsx (${itemTitle}): No valid coinsWon received (${coinsWon}). Modal will not be shown.`
+        );
+        // If activateItem handled an error alert, that's fine.
+        // If it was a silent failure to get coins, this log helps.
+      }
+    } catch (error) {
+      console.error(
+        `Item.tsx (${itemTitle}): Error in handleOpenChestPress after calling onPress:`,
+        error
+      );
+    } finally {
+      setIsOpeningChest(false);
+      console.log(`Item.tsx (${itemTitle}): handleOpenChestPress finished.`);
+    }
+  };
 
   const buttonText =
     category === "chest"
-      ? activating // This prop would need to be passed from Inventory if used for chest opening state
+      ? isOpeningChest
         ? "OPENING..."
         : "OPEN"
-      : activating
-      ? "ACTIVATING..."
       : "ACTIVATE";
 
   return (
@@ -38,32 +88,40 @@ const Item = ({
           {itemTitle}
         </Text>
         <TouchableOpacity
-          className="w-3/4 border border-grayscale-300 rounded-xl"
+          className="w-3/4 border border-grayscale-300 rounded-xl py-1 flex-row justify-center items-center"
           onPress={() => {
             if (category === "chest") {
-              setShowChestModal(true);
-              // Do NOT call onPress() here directly if it hides the modal.
-              // The ChestOpening modal will trigger the actual item activation.
+              handleOpenChestPress();
             } else {
-              onPress(); // For non-chest items, call activateItem directly
+              onPress(itemId, category); // For non-chest items, call activateItem directly
             }
           }}
+          disabled={isOpeningChest && category === "chest"}
         >
-          <Text className="text-xl text-grayscale-300 font-interBold text-center mt-1 pb-1">
+          {isOpeningChest && category === "chest" && (
+            <ActivityIndicator
+              size="small"
+              color="#FFFFFF"
+              style={{ marginRight: 8 }}
+            />
+          )}
+          <Text className="text-xl text-grayscale-300 font-interBold text-center">
             {buttonText}
           </Text>
         </TouchableOpacity>
       </View>
 
-      {showChestModal && category === "chest" && (
+      {showChestModal && category === "chest" && chestPrizeCoins !== null && (
         <ChestOpening
           onClose={() => {
+            console.log(
+              `Item.tsx (${itemTitle}): ChestOpening onClose called.`
+            ); // DEBUG
             setShowChestModal(false);
-            // You might want to refresh inventory data after a chest is opened and closed
-            // This could be done by calling a refresh function passed from Inventory,
-            // or if activateItem (onConfirmOpen) refreshes, it might already be handled.
+            setChestPrizeCoins(null);
+            fetchInventory();
           }}
-          onConfirmOpen={onPress} // Pass the activateItem function to the modal
+          prizeCoins={chestPrizeCoins}
         />
       )}
     </View>

@@ -73,6 +73,16 @@ const Home = () => {
 
   // Handle level press
   const handleLevelPress = (levelId: number) => {
+    if (userStats?.hearts <= 0) {
+      Toast.show({
+        type: "error",
+        text1: "No hearts left",
+        text2: "Please wait for your hearts to refill.",
+        position: "bottom",
+        bottomOffset: 100,
+      });
+      return;
+    }
     navigateToLevel(levelId, languageId);
   };
 

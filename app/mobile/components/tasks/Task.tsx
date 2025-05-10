@@ -62,6 +62,7 @@ const Task = (task: TaskProps) => {
 
   // Load and release model for task version 3
   useEffect(() => {
+    console.log("Task answers", task.possibleAnswers);
     let isActive = true;
     if (task.version === 3) {
       const loadModel = async () => {
@@ -97,7 +98,7 @@ const Task = (task: TaskProps) => {
         modelSessionRef.current = null;
       }
     };
-  }, [task.version]);
+  }, [task.version, task.id]);
 
   const showResults = async () => {
     // Made async for v3

@@ -26,7 +26,7 @@ const Inventory = () => {
   // Get store state
   const { items, userBattlepass, isLoading, error } = useInventoryStore();
 
-  const fetchInventory = async () => {
+  const fetchInventory = useCallback(async () => {
     try {
       setLoading(true);
       const response = await api.get<InventoryApiResponse>("/inventory", {
@@ -34,28 +34,34 @@ const Inventory = () => {
       });
 
       if (response.success && response.data) {
-        // Save to store
         setInventoryFromApi(response.data);
-        console.log("Inventory data loaded into store:", response.data);
       } else {
         setError("Failed to fetch inventory");
-        console.error("Error fetching inventory data:", response.error);
       }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
       setError(errorMessage);
-      console.error("Error fetching inventory data:", error);
     } finally {
       setLoading(false);
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setInventoryFromApi, setLoading, setError]);
 
-  const activateItem = async (itemId: string) => {
-    try {
-      console.log("Activating item with ID:", itemId);
+  const activateItem = async (
+    itemId: string,
+    itemCategory?: string
+  ): Promise<number | undefined> => {
+    // Only set global activating state for non-chest items,
+    // as chests have their own button loading state in Item.tsx
+    if (itemCategory !== "chest") {
       setActivating(true);
-      const response = await api.post(
+    }
+    try {
+      const response = await api.post<{
+        message: string;
+        won_item?: { coins: number; win_percentage: number };
+      }>(
         "/items/consume?item_id=" + itemId,
         {},
         {
@@ -66,40 +72,63 @@ const Inventory = () => {
       if (!response.success) {
         //@ts-ignore
         if (response.error?.status === 400) {
-          Alert.alert(
-            "Oops",
-            "Looks like you can't use this right now!",
-            [{ text: "OK" }],
-            {
-              cancelable: false,
-            }
-          );
-          return;
+          Alert.alert("Oops", "Looks like you can't use this right now!");
+        } else {
+          Alert.alert("Error", "Failed to activate item. Please try again.");
         }
-        console.error("Error activating item:", response.error);
-        return;
+        return undefined;
       }
 
-      Alert.alert(
-        "Item Activated",
-        "You have successfully activated the item.",
-        [
-          {
-            text: "OK",
-            onPress: () => {
-              // Optionally, you can refresh the inventory after activation
-              fetchInventory();
+      if (itemCategory !== "chest") {
+        Alert.alert(
+          "Item Activated",
+          response.data?.message || "You have successfully activated the item.",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                fetchInventory();
+              },
             },
-          },
-        ],
-        { cancelable: false }
-      );
+          ],
+          { cancelable: false }
+        );
+      } else {
+        // For chests, log success, but don't show a disruptive alert here.
+        console.log(
+          "Inventory.tsx: Chest consumption API call successful:",
+          response.data?.message
+        );
+      }
+
+      if (
+        response.data?.won_item &&
+        typeof response.data.won_item.coins === "number"
+      ) {
+        console.log(
+          "Inventory.tsx (activateItem): Returning coins:",
+          response.data.won_item.coins
+        ); // DEBUG
+        return response.data.won_item.coins;
+      }
+      console.log(
+        "Inventory.tsx (activateItem): No coins in won_item or not a number, returning undefined."
+      ); // DEBUG
+      return undefined;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
-      console.error("Error activating item:", errorMessage);
+      Alert.alert("Error", `Failed to activate item: ${errorMessage}`);
+      console.error(
+        "Inventory.tsx (activateItem): Error during API call:",
+        error
+      ); // DEBUG
+      return undefined;
     } finally {
-      setActivating(false);
+      // Only unset global activating state if it was set for non-chest items
+      if (itemCategory !== "chest") {
+        setActivating(false);
+      }
     }
   };
 
@@ -169,10 +198,12 @@ const Inventory = () => {
           {items.map((item) => (
             <Item
               key={item.id}
+              itemId={item.id} // Pass itemId
               itemTitle={item.name}
               icon={item.image_url}
               category={item.category}
-              onPress={() => activateItem(item.id)}
+              onPress={activateItem} // Pass activateItem directly
+              fetchInventory={fetchInventory} // Pass fetchInventory
             />
           ))}
 
