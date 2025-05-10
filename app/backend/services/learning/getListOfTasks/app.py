@@ -185,6 +185,8 @@ def get_list_of_tasks(dynamodb, section, language_id, subscription):
             )
             section_1, section_2 = get_two_random_sections(CURRENT_MAX_SECTION)
 
+            print(f"\n\nsection_1: {section_1}, section_2: {section_2}\n\n")
+
             tasks_1 = get_tasks_for_section(dynamodb, CURRENT_MAX_SECTION, language_id)
             tasks_2 = get_tasks_for_section(dynamodb, section_1, language_id)
             tasks_3 = get_tasks_for_section(dynamodb, section_2, language_id)
@@ -314,8 +316,15 @@ def get_two_random_sections(max_section):
         Returns:
             tuple: Two different randomly selected section numbers
         """
-    logger.info(f"Getting two random sections from 10 to {max_section + 10}")
-    possible_sections = list(range(10, max_section + 10, 10))
+    logger.info(f"Getting two random sections from 10 to {max_section}")
+
+    # If max_section is less than 30, return a fixed set of sections
+    if max_section < 20:
+        return 10, 10
+    elif max_section < 30:
+        return 10, 20
+
+    possible_sections = list(range(10, max_section, 10))
 
     # Shuffle and select two distinct sections
     random.shuffle(possible_sections)

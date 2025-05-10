@@ -270,7 +270,7 @@ class TestGetListOfTasks(BaseTestSetup):
         self.assertEqual(first_task["section"], 10)
 
         updated_user = self.users_table.get_item(Key={'email': 'test@mail.com'})
-        print(f"Updated user: {updated_user}")
+        # print(f"Updated user: {updated_user}")
 
 
     def test_get_list_section_20(self):
@@ -521,7 +521,7 @@ class TestGetListOfTasks(BaseTestSetup):
         self.assertEqual(body["message"], "Tasks fetched successfully")
         self.assertIsInstance(body["tasks"], list)
         self.assertEqual(len(body["tasks"]), 15)
-        print(f"Tasks: {body['tasks']}")
+        # print(f"Tasks: {body['tasks']}")
 
         # Count tasks by section and version
         section_10_tasks = []
@@ -553,6 +553,125 @@ class TestGetListOfTasks(BaseTestSetup):
         self.assertEqual(len(version_1_tasks), 8, "Should have 8 tasks of version 1")
         self.assertEqual(len(version_2_tasks), 7, "Should have 7 tasks of version 2")
         self.assertEqual(len(version_3_tasks), 0, "Should have 0 tasks of version 3")
+
+
+    def test_get_sections_when_max_section_is_10(self):
+        """
+        Test that when max_section is 10, the function returns (10, 10).
+        """
+        # Create tasks for section 10
+        for version in [1, 2]:
+            for i in range(10):
+                self.tasks_table.put_item(Item={
+                    "task_id": f"edge-task-10-{version}-{i}",
+                    "section": 10,
+                    "section_name": "Test Section 10",
+                    "version": version,
+                    "question": f"Edge case test question version {version}",
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0,
+                    "language_id": "it"
+                })
+
+        jwt_token = generate_jwt_token("test@mail.com")
+
+        # Patch the get_two_random_sections function to always return (10, 10)
+        with patch('getListOfTasks.app.get_two_random_sections') as mock_get_sections:
+            mock_get_sections.return_value = (10, 10)
+
+            event = {
+                'headers': {
+                    'Authorization': jwt_token
+                },
+                "queryStringParameters": {
+                    "level": "11",
+                    "language": "it"
+                }
+            }
+
+            response = lambda_handler(event, {})
+            body = json.loads(response['body'])
+
+            self.assertEqual(response['statusCode'], 200)
+            self.assertIn("tasks", body)
+
+            section_10_tasks = [task for task in body["tasks"] if task["section"] == 10]
+            print(f"\n\nSection 10 tasks: {len(section_10_tasks)}")
+
+
+            # All tasks should be from section 10
+            for task in body["tasks"]:
+                self.assertEqual(task["section"], 10)
+
+
+    def test_get_sections_when_max_section_is_20(self):
+        """
+        Test that when max_section is 20, the function returns (10, 20).
+        """
+        # Create tasks for sections 10 and 20
+        for version in [1, 2]:
+            for i in range(10):
+                self.tasks_table.put_item(Item={
+                    "task_id": f"edge-task-10-{version}-{i}",
+                    "section": 10,
+                    "section_name": "Test Section 10",
+                    "version": version,
+                    "question": f"Edge case test question version {version}",
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0,
+                    "language_id": "ru"
+                })
+
+                self.tasks_table.put_item(Item={
+                    "task_id": f"edge-task-20-{version}-{i}",
+                    "section": 20,
+                    "section_name": "Test Section 20",
+                    "version": version,
+                    "question": f"Edge case test question version {version}",
+                    "possible_answers": ["A", "B", "C", "D"],
+                    "correct_answer_index": 0,
+                    "language_id": "ru"
+                })
+
+        jwt_token = generate_jwt_token("test@mail.com")
+
+        # Patch the get_two_random_sections function to return (10, 20)
+        with patch('getListOfTasks.app.get_two_random_sections') as mock_get_sections:
+            mock_get_sections.return_value = (10, 20)
+
+            event = {
+                'headers': {
+                    'Authorization': jwt_token
+                },
+                "queryStringParameters": {
+                    "level": "21",
+                    "language": "ru"
+                }
+            }
+
+            response = lambda_handler(event, {})
+            body = json.loads(response['body'])
+
+            print(f"Response body: {body}")
+
+            self.assertEqual(response['statusCode'], 200)
+            self.assertIn("tasks", body)
+
+            # There should be tasks from both section 10 and 20
+            section_10_tasks = [task for task in body["tasks"] if task["section"] == 10]
+            section_20_tasks = [task for task in body["tasks"] if task["section"] == 20]
+
+            print(f"Total tasks: {len(body['tasks'])}")
+            print(f"Section 10 tasks: {len(section_10_tasks)}")
+            print(f"Section 20 tasks: {len(section_20_tasks)}")
+
+            self.assertEqual(len(body["tasks"]), 15, "Should have 15 tasks in total")
+
+            self.assertGreater(len(section_10_tasks), 0, "Should have tasks from section 10")
+            self.assertGreater(len(section_20_tasks), 0, "Should have tasks from section 20")
+
+            # Verify the total count of tasks
+            self.assertEqual(len(section_10_tasks) + len(section_20_tasks), len(body["tasks"]))
 
 
     def tearDown(self):
