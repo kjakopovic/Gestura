@@ -1,50 +1,23 @@
-import {
-  View,
-  Text,
-  Image,
-  ImageSourcePropType,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
 
 import * as icons from "@/constants/icons";
 
-type ItemType = "hearts" | "coins" | "xp" | "chest" | string;
-
 type ShopOptionProps = {
   title?: string;
-  type: ItemType;
   price: number;
+  image?: string;
   borderless: boolean;
   onPress?: () => void; // Optional onPress function
 };
 
 const ShopOption = ({
+  image,
   title,
-  type,
   price,
   borderless,
   onPress,
 }: ShopOptionProps) => {
-  let icon: ImageSourcePropType;
-
-  switch (type) {
-    case "hearts":
-      icon = icons.heart;
-      break;
-    case "coins":
-      icon = icons.coin;
-      break;
-    case "xp":
-      icon = icons.experience_token;
-      break;
-    case "chest":
-      icon = icons.chest;
-      break;
-    default:
-      icon = icons.error_testing; // Fallback to error if type is unknown
-  }
-
   return (
     <TouchableOpacity
       className={`bg-grayscale-700 w-[40%] h-40 flex flex-col items-center justify-center  ${
@@ -57,7 +30,11 @@ const ShopOption = ({
           {title}
         </Text>
       )}
-      <Image source={icon} className="w-16 h-16 my-2" resizeMode="contain" />
+      <Image
+        source={{ uri: image }}
+        className="w-16 h-16 my-2"
+        resizeMode="contain"
+      />
       <View className="bg-grayscale-800 w-3/4 h-8 rounded-xl border-b border-grayscale-100 flex flex-row items-center justify-center">
         <Image
           source={icons.coin}

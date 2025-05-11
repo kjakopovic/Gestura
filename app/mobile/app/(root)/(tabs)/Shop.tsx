@@ -78,7 +78,7 @@ const Shop = () => {
                         <ShopOption
                           key={item.id}
                           title={item.name}
-                          type={item.category}
+                          image={item.image_url}
                           price={item.price}
                           borderless={false}
                           onPress={() => handlePurchase(item)}
@@ -91,13 +91,14 @@ const Shop = () => {
                       items={coins}
                       renderItem={(coin: ShopItem) => (
                         <CoinsOption
+                          title={coin.name}
                           key={coin.id}
-                          type={
-                            coin.name.includes("Handful") ? "handful" : "bag"
-                          }
+                          image={coin.image_url}
                           price={coin.price}
                           amount={
-                            coin.name.includes("Handful") ? "1000" : "10K"
+                            coin.effect?.coins
+                              ? `${coin.effect.coins} COINS`
+                              : "0 COINS"
                           }
                         />
                       )}
