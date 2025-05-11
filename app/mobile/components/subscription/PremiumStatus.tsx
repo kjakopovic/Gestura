@@ -32,6 +32,7 @@ const PremiumStatus = () => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const setSubscription = useUserStore((state) => state.setSubscription);
+  const userSubscription = useUserStore((state) => state.user?.subscription);
   const router = useRouter();
 
   const handleUpgrade = async () => {
@@ -145,7 +146,7 @@ const PremiumStatus = () => {
   }
 
   return (
-    <View className="flex flex-col bg-grayscale-800 justify-between h-full items-center mx-6 pb-3">
+    <View className="flex flex-col bg-grayscale-800 justify-start h-screen items-center mx-6 pb-3">
       <View className="flex flex-col justify-center items-center">
         <Image source={icons.logo} className="size-44" />
         <Text className="text-grayscale-100 font-inter text-4xl text-center mt-0">
@@ -164,7 +165,7 @@ const PremiumStatus = () => {
         <Text className="text-primary font-interBold">LIVE</Text>
       </Text>
       <TouchableOpacity
-        className="w-1/2 h-12 bg-grayscale-800 justify-center items-center border border-grayscale-400 rounded-xl"
+        className="w-1/2 h-12 my-5 bg-grayscale-800 justify-center items-center border border-grayscale-400 rounded-xl"
         onPress={handleUpgrade}
       >
         <Text className="text-grayscale-100 font-inter text-base">
@@ -177,14 +178,16 @@ const PremiumStatus = () => {
         onPress={handleBackToMenu}
         noMargin
       />
-      <TouchableOpacity
-        className="w-1/2 h-12 bg-grayscale-800 justify-center items-center border border-error rounded-xl"
-        onPress={handleCancelSubscription}
-      >
-        <Text className="text-error font-inter text-base">
-          Cancel Subscription
-        </Text>
-      </TouchableOpacity>
+      {userSubscription === 1 && (
+        <TouchableOpacity
+          className="w-1/2 h-12 mt-5 bg-grayscale-800 justify-center items-center border border-error rounded-xl"
+          onPress={handleCancelSubscription}
+        >
+          <Text className="text-error font-inter text-base">
+            Cancel Subscription
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

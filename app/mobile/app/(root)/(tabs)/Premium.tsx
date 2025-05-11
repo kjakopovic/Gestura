@@ -1,9 +1,9 @@
 import { ScrollView, SafeAreaView } from "react-native";
 import React from "react";
 
-import UpgradeToPremium from "../(premium-options)/UpgradeToPremium";
 import CommChoice from "../(premium-options)/CommChoice";
 import { useUserStore } from "@/store/useUserStore";
+import PremiumStatus from "@/components/subscription/PremiumStatus";
 
 const Premium = () => {
   const userSubscription = useUserStore((state) => state.user?.subscription);
@@ -12,7 +12,7 @@ const Premium = () => {
   return (
     <SafeAreaView className="h-full bg-grayscale-800">
       <ScrollView className="flex-1 w-full mt-28">
-        {hasLive ? <CommChoice /> : <UpgradeToPremium />}
+        {hasLive ? <CommChoice /> : <PremiumStatus />}
       </ScrollView>
     </SafeAreaView>
   );
