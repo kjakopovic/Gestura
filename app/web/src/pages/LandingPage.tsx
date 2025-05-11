@@ -9,14 +9,17 @@ import {
   PricingType,
 } from "@/components/common";
 import { Dialog } from "@/components/elements";
-import { APP_ROUTES } from "@/constants/common";
+import { APP_ROUTES, HelperFunctionResponse } from "@/constants/common";
 import { images } from "@/constants/images";
+import { useAuth } from "@/hooks/useAuth";
 import useMediaQuery from "@/hooks/useMediaQuery";
-import { redirectToGoogleStore, redirectToBuy } from "@/utils/common";
+import { redirectToGoogleStore } from "@/utils/common";
+import { handlePatchUserSubscription } from "@/utils/user";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+  const auth = useAuth();
   const IS_MOBILE = useMediaQuery("(max-width: 700px)");
   const [openDialog, setOpenDialog] = useState(false);
   const navigate = useNavigate();
@@ -126,11 +129,29 @@ const LandingPage = () => {
           />
           <Pricing
             type={PricingType.PREMIUM_PLUS}
-            onStartClick={() => redirectToBuy(navigate)}
+            onStartClick={async () => {
+              const response = await handlePatchUserSubscription(auth, 2);
+
+              if (response === HelperFunctionResponse.SUCCESS) {
+                alert("Subscription updated to Live successfully!");
+                navigate(APP_ROUTES.MAIN_PAGE);
+              } else {
+                alert("Please login to update your subscription");
+              }
+            }}
           />
           <Pricing
             type={PricingType.PREMIUM}
-            onStartClick={() => redirectToBuy(navigate)}
+            onStartClick={async () => {
+              const response = await handlePatchUserSubscription(auth, 1);
+
+              if (response === HelperFunctionResponse.SUCCESS) {
+                alert("Subscription updated to Premium successfully!");
+                navigate(APP_ROUTES.MAIN_PAGE);
+              } else {
+                alert("Please login to update your subscription");
+              }
+            }}
           />
         </div>
       </section>

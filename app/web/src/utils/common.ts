@@ -1,7 +1,7 @@
 import { APP_ROUTES } from "@/constants/common";
 import { NavigateFunction } from "react-router-dom";
 
-export const BACKEND_AUTH_API = import.meta.env.VITE_BACKEND_AUTH_API || "";
+export const BACKEND_USER_API = import.meta.env.VITE_BACKEND_AUTH_API || "";
 export const APP_STAGE = import.meta.env.VITE_STAGE || "";
 
 export const redirectToBuy = (navigate: NavigateFunction) => {
@@ -27,7 +27,7 @@ export const redirectToOtherPage = (
 
 export const handleThirdPartyLogin = async (type_of_service: string) => {
   window.open(
-    `${BACKEND_AUTH_API}/login/third-party?type_of_service=${type_of_service}&platform=web`,
+    `${BACKEND_USER_API}/login/third-party?type_of_service=${type_of_service}&platform=web`,
     "_self"
   );
 };

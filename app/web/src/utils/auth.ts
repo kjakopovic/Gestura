@@ -1,5 +1,5 @@
 import axios from "axios";
-import { APP_STAGE, BACKEND_AUTH_API } from "./common";
+import { APP_STAGE, BACKEND_USER_API } from "./common";
 import { NavigateFunction } from "react-router-dom";
 import { APP_ROUTES, HelperFunctionResponse } from "@/constants/common";
 import * as Yup from "yup";
@@ -47,7 +47,7 @@ export const handleLogin = async (
 
   try {
     const { data, status } = await axios.post(
-      `${BACKEND_AUTH_API}/${APP_STAGE}/login`,
+      `${BACKEND_USER_API}/${APP_STAGE}/login`,
       { email, password },
       {
         headers: {
@@ -102,7 +102,7 @@ export const handleRegister = async (
     }
 
     const { data, status } = await axios.post(
-      `${BACKEND_AUTH_API}/${APP_STAGE}/register`,
+      `${BACKEND_USER_API}/${APP_STAGE}/register`,
       { email, password, username },
       {
         headers: {
@@ -144,7 +144,7 @@ export const handleForgotPasswordRequest = async (
 
   try {
     const { data, status } = await axios.post(
-      `${BACKEND_AUTH_API}/${APP_STAGE}/forgot-password/request`,
+      `${BACKEND_USER_API}/${APP_STAGE}/forgot-password/request`,
       { email },
       {
         headers: {
@@ -197,7 +197,7 @@ export const handleForgotPasswordValidate = async (
 
   try {
     const { data, status } = await axios.post(
-      `${BACKEND_AUTH_API}/${APP_STAGE}/forgot-password/validate`,
+      `${BACKEND_USER_API}/${APP_STAGE}/forgot-password/validate`,
       { email, code },
       {
         headers: {
@@ -254,7 +254,7 @@ export const handlePasswordChange = async (
     }
 
     const { data, status } = await axios.post(
-      `${BACKEND_AUTH_API}/${APP_STAGE}/forgot-password/reset`,
+      `${BACKEND_USER_API}/${APP_STAGE}/forgot-password/reset`,
       { email, code, password },
       {
         headers: {
@@ -288,7 +288,7 @@ export const handleRefreshToken = async (
 ): Promise<string | null> => {
   try {
     const { data, status } = await axios.get(
-      `${BACKEND_AUTH_API}/${APP_STAGE}/refresh/token`,
+      `${BACKEND_USER_API}/${APP_STAGE}/refresh/token`,
       {
         headers: {
           "Content-Type": "application/json",
