@@ -1,7 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
 
-import * as hands from "@/constants/hand-signs";
+import * as icons from "@/constants/icons";
 
 type AnswerBoxProps = {
   onPress: (text: string) => void;
@@ -28,7 +28,7 @@ const AnswerBox = ({
     ? typeof image === "string"
       ? { uri: image }
       : image
-    : hands.error_testing;
+    : icons.error_testing;
 
   return (
     <View>

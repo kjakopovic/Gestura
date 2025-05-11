@@ -1,7 +1,7 @@
 import { View, Text, Image } from "react-native";
 import React from "react";
 
-import * as hands from "@/constants/hand-signs";
+import * as icons from "@/constants/icons";
 
 type AchievementProps = {
   title: string;
@@ -20,7 +20,7 @@ const Achievement = ({
     ? typeof icon === "string"
       ? { uri: icon }
       : icon
-    : hands.error_testing;
+    : icons.error_testing;
 
   return (
     <View className="m-2 w-full flex-row items-center justify-start px-4 py-2">
