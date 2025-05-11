@@ -31,23 +31,19 @@ const AnswerBox = ({
     : icons.error_testing;
 
   return (
-    <View>
-      <TouchableOpacity
-        className={`flex-row w-36 h-36 rounded-xl border border-grayscale-400 items-center justify-center my-4 pt-4 ${
-          isSelected ? "bg-grayscale-500" : "bg-grayscale-800"
-        }`}
-        onPress={handlePress}
-      >
-        {/* <Text className="text-white text-8xl font-interExtraBold">{text}</Text> */}
-        {image ? (
-          <Image source={imageSource} className="size-32" />
-        ) : (
-          <Text className="text-white text-8xl font-interExtraBold">
-            {text}
-          </Text>
-        )}
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity
+      className={`flex-row w-[40%] h-40 rounded-xl border border-grayscale-400 items-center justify-center my-4 pt-4 ${
+        isSelected ? "bg-grayscale-500" : "bg-grayscale-800"
+      }`}
+      onPress={handlePress}
+    >
+      {/* <Text className="text-white text-8xl font-interExtraBold">{text}</Text> */}
+      {image ? (
+        <Image source={imageSource} className="size-32" />
+      ) : (
+        <Text className="text-white text-8xl font-interExtraBold">{text}</Text>
+      )}
+    </TouchableOpacity>
   );
 };
 
