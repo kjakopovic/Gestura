@@ -7,8 +7,8 @@ type QuestionBoxProps = {
 
 const QuestionBox = ({ text }: QuestionBoxProps) => {
   return (
-    <View>
-      <Text className="m-8 w-96 h-100% rounded-xl border border-grayscale-400 items-center justify-center text-grayscale-100 font-inter text-xl p-6 text-center">
+    <View className="px-5 w-full pt-2">
+      <Text className="w-full h-100% rounded-xl border border-grayscale-400 items-center justify-center text-grayscale-100 font-inter text-xl p-6 text-center">
         {text}
       </Text>
     </View>

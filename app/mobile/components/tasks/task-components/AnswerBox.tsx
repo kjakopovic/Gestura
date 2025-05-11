@@ -33,7 +33,7 @@ const AnswerBox = ({
   return (
     <View>
       <TouchableOpacity
-        className={`flex-row w-40 h-40 rounded-xl border border-grayscale-400 items-center justify-center m-4 pt-4 ${
+        className={`flex-row w-36 h-36 rounded-xl border border-grayscale-400 items-center justify-center my-4 pt-4 ${
           isSelected ? "bg-grayscale-500" : "bg-grayscale-800"
         }`}
         onPress={handlePress}

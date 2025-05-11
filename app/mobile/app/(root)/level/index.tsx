@@ -121,6 +121,7 @@ const LevelScreen = () => {
           <TaskComplete stats={completionStats} onContinue={goToHome} />
         ) : (
           <Task
+            key={`task-${currentTask.id}-${currentTask.version}`}
             {...currentTask}
             onComplete={() => handleTaskComplete(true)}
             onFailure={() => handleTaskComplete(false)}

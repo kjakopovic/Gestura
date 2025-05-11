@@ -6,6 +6,7 @@ import {
   CameraCapturedPicture,
 } from "expo-camera";
 import { Button, Text, TouchableOpacity, View, Image } from "react-native";
+import { MODEL_IMAGE_SIZE } from "@/constants/model";
 
 interface CameraComponentProps {
   onSavePhoto: (photo: CameraCapturedPicture) => void;
@@ -63,11 +64,11 @@ export default function CameraComponent({
   return (
     <View className="w-full items-center flex z-10">
       {photo ? (
-        <View className="w-full relative" style={{ height: 400 }}>
+        <View className="relative" style={{ height: 224, width: 224 }}>
           <Image
             source={{ uri: photo.uri }}
-            className="w-full h-full"
-            resizeMode="contain"
+            className="w-full h-full rounded-xl"
+            style={{ resizeMode: "cover" }}
           />
           <View className="absolute bottom-4 left-0 right-0 flex-row justify-center space-x-4 px-4">
             <TouchableOpacity
@@ -87,14 +88,15 @@ export default function CameraComponent({
       ) : (
         <CameraView
           style={{
-            width: "95%",
-            height: 400,
+            width: 224,
+            height: 224,
             zIndex: 20,
             paddingBottom: 20,
             borderRadius: 20,
             alignItems: "center",
             justifyContent: "flex-end",
           }}
+          pictureSize={`${MODEL_IMAGE_SIZE[0]}x${MODEL_IMAGE_SIZE[1]}`}
           facing={facing}
           ref={cameraRef}
           onCameraReady={() => setCameraReady(true)}

@@ -41,7 +41,10 @@ const Task = (task: TaskProps) => {
 
   // For v1 and v2, correctAnswer is a string.
   // For v3, correctAnswer is the target letter string (e.g., "C") the user should sign.
-  const correctAnswer = task.possibleAnswers[task.correctAnswerIndex];
+  const correctAnswer =
+    task.version === 3
+      ? task.question.toString()
+      : task.possibleAnswers[task.correctAnswerIndex];
 
   // For v3, task.question is expected to be an ImageSourcePropType (e.g., hands.letter_c)
   const correctImage =
@@ -63,6 +66,10 @@ const Task = (task: TaskProps) => {
 
   // Load and release model for task version 3
   useEffect(() => {
+    setShowCamera(true);
+    setCapturedPhoto(null);
+    setIsProcessingPhoto(false);
+
     console.log("Task answers", task.possibleAnswers);
     let isActive = true;
     if (task.version === 3) {
@@ -170,11 +177,17 @@ const Task = (task: TaskProps) => {
   };
 
   const handleContinue = () => {
+    console.log("Continue pressed");
     if (popupVisible) {
+      console.log("Popup is visible, handling continue");
       setPopupVisible(false);
       if (isSuccess && task.onComplete) {
+        console.log("Task completed successfully");
+        console.log(isSuccess);
         task.onComplete();
       } else if (!isSuccess && task.onFailure) {
+        console.log("Task failed", task.onFailure);
+        console.log(isSuccess);
         task.onFailure();
       }
     } else {
@@ -224,14 +237,14 @@ const Task = (task: TaskProps) => {
       : "base"; // Default for v3, ResultPopup will use its own logic based on isSuccess
 
   return task.version === 1 ? (
-    <View className="flex-1 justify-center items-start">
+    <View className="flex-col justify-center items-center h-screen">
       <QuestionBox text="What letter does this symbol represent?" />
       <View className="w-full flex-row justify-center items-end">
-        <Image className="m-8 mt-4 mb-0 w-50%" source={characters.character1} />
+        <Image className="mb-0 w-50%" source={characters.character1} />
         <TaskBox image={task.question as any} />
       </View>
 
-      <View className="w-full h-[1px] bg-grayscale-400 mb-8" />
+      <View className="w-full h-[1px] bg-grayscale-400 mb-3" />
 
       <View className="w-full flex-row flex-wrap justify-evenly m-0">
         {task.possibleAnswers.map((answer, index) => (
@@ -248,6 +261,8 @@ const Task = (task: TaskProps) => {
         onPress={handleContinue}
         text="CONTINUE"
         style="base"
+        noMargin
+        className="mt-2"
         disabled={isButtonDisabled()}
       />
 
@@ -260,14 +275,14 @@ const Task = (task: TaskProps) => {
       />
     </View>
   ) : task.version === 2 ? (
-    <View className="flex-1 justify-center items-start">
+    <View className="flex-col justify-center items-center h-screen">
       <QuestionBox text="What symbol does this letter represent?" />
       <View className="w-full flex-row justify-center items-end">
-        <Image className="m-8 mt-4 mb-0 w-50%" source={characters.character1} />
+        <Image className="mb-0 w-50%" source={characters.character1} />
         <TaskBox text={task.question as string} />
       </View>
 
-      <View className="w-full h-[1px] bg-grayscale-400 mb-8" />
+      <View className="w-full h-[1px] bg-grayscale-400 mb-3" />
 
       <View className="w-full m-0">
         <View className="flex-row flex-wrap justify-evenly w-full">
@@ -286,6 +301,8 @@ const Task = (task: TaskProps) => {
         onPress={handleContinue}
         text="CONTINUE"
         style="base"
+        noMargin
+        className="mt-2"
         disabled={isButtonDisabled()}
       />
 
@@ -298,14 +315,14 @@ const Task = (task: TaskProps) => {
       />
     </View>
   ) : task.version === 3 ? (
-    <View className="flex-1 justify-start items-start pt-5">
+    <View className="flex-col justify-center items-center h-screen">
       <QuestionBox text="Show me how you would sign the following:" />
       <View className="w-full flex-row justify-center items-end">
-        <Image className="m-8 mt-4 mb-0 w-50%" source={characters.character1} />
+        <Image className="mb-0 w-50%" source={characters.character1} />
         <TaskBox text={task.question as string} />
       </View>
 
-      <View className="w-full h-[1px] bg-grayscale-400 my-8" />
+      <View className="w-full h-[1px] bg-grayscale-400 mb-8" />
 
       <CameraComponent
         onSavePhoto={handleSavePhoto}
