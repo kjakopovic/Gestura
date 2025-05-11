@@ -4,7 +4,6 @@ import {
   View,
   ActivityIndicator,
   RefreshControl,
-  Dimensions,
 } from "react-native";
 import Toast, { ErrorToast } from "react-native-toast-message";
 
