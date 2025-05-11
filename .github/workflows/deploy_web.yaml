@@ -69,6 +69,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Run Dependencies Setup
+        uses: ./.github/composite/common_build_setup
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
+
       # Deploy
       - name: Deploy to ECS
         uses: ./.github/composite/deploy_ecs_service
