@@ -177,17 +177,11 @@ const Task = (task: TaskProps) => {
   };
 
   const handleContinue = () => {
-    console.log("Continue pressed");
     if (popupVisible) {
-      console.log("Popup is visible, handling continue");
       setPopupVisible(false);
       if (isSuccess && task.onComplete) {
-        console.log("Task completed successfully");
-        console.log(isSuccess);
         task.onComplete();
       } else if (!isSuccess && task.onFailure) {
-        console.log("Task failed", task.onFailure);
-        console.log(isSuccess);
         task.onFailure();
       }
     } else {
