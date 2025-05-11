@@ -36,9 +36,10 @@ def lambda_handler(event, context):
         logger.debug(f"User with email {email} not found.")
         return build_response(404, {"message": "User not found."})
 
-    is_premium = check_users_subscription()
+    is_premium = check_users_subscription(user_item, wanted_status=1)
+    is_live = check_users_subscription(user_item, wanted_status=2)
 
-    if is_premium:
+    if is_premium or is_live:
         logger.debug(f"User {email} is a premium user, unlimited hearts.")
 
         return build_response(
