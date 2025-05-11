@@ -4,6 +4,7 @@ import {
   View,
   ActivityIndicator,
   RefreshControl,
+  Dimensions,
 } from "react-native";
 import Toast, { ErrorToast } from "react-native-toast-message";
 
@@ -35,7 +36,10 @@ const useScrollHandler = (onScrollEnd: () => void) => {
   return {
     onScroll: ({ nativeEvent }: { nativeEvent: any }) => {
       const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-      const paddingToBottom = 500;
+
+      const { height: deviceHeight } = Dimensions.get("window");
+      const paddingToBottom = deviceHeight * 0.25;
+
       if (
         layoutMeasurement.height + contentOffset.y >=
         contentSize.height - paddingToBottom
