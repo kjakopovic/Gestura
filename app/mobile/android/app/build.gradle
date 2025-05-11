@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.mar1n.mobile'
+    namespace 'com.mar1n.gestura'
     defaultConfig {
-        applicationId 'com.mar1n.mobile'
+        applicationId 'com.mar1n.gestura'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

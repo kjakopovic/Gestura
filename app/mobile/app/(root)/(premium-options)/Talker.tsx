@@ -35,3 +35,16 @@
 // };
 
 // export default Talker;
+
+import { View, Text } from "react-native";
+import React from "react";
+
+const Talker = () => {
+  return (
+    <View>
+      <Text>Talker</Text>
+    </View>
+  );
+};
+
+export default Talker;

@@ -7,7 +7,6 @@ export default function PremiumOptionsLayout() {
       <Stack.Screen name="UpgradeToPremium" />
       <Stack.Screen name="CommChoice" />
       <Stack.Screen name="Signer" />
-      <Stack.Screen name="Talker" />
     </Stack>
   );
 }

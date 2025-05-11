@@ -27,7 +27,7 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
-        <data android:scheme="com.mar1n.mobile"/>
+        <data android:scheme="com.mar1n.gestura"/>
       </intent-filter>
     </activity>
   </application>
