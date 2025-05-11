@@ -8,8 +8,8 @@ on:
     paths:
       - "app/web/**"
       - ".github/composite/deploy_ecs_service/**"
-      - ".github/task_definitions/frontend/**"
-      - ".github/workflows/deploy_frontend.yaml"
+      - ".github/task_definitions/web/**"
+      - ".github/workflows/deploy_web.yaml"
 
 env:
   # Global environment variables
