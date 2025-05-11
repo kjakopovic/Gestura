@@ -27,16 +27,16 @@ const Profile = () => {
   const router = useRouter();
 
   return (
-    <>
+    <SafeAreaView className="bg-grayscale-800 gap-3 h-full">
       <View className="w-full bg-grayscale-800 h-[27vh] z-10 top-0">
         <Image
           source={images.profilegradient}
-          className="w-full h-[27vh] rounded-b-3xl z-1 absolute"
+          className="w-full h-full rounded-b-3xl z-1 absolute"
         />
         <SafeAreaView className="flex flex-row h-full justify-between">
           <TouchableOpacity
             onPress={() => router.push("/settings")}
-            className="z-10 ml-7 mt-7"
+            className="z-10 ml-7"
           >
             <Image source={icons.cog} className="w-12 h-12" />
           </TouchableOpacity>
@@ -46,54 +46,52 @@ const Profile = () => {
           />
         </SafeAreaView>
       </View>
-      <SafeAreaView className="bg-grayscale-800 gap-3 h-[73vh]">
-        <View className="w-full flex items-center justify-center z-10">
-          <View className="flex-row justify-between items-center w-[90%]">
-            <View className="flex flex-col items-start justify-center">
-              <Text className="text-white text-3xl font-interExtraBold">
-                {profileInfo.username}
-              </Text>
-              <Text className="text-white text-lg font-interLight">
-                {profileInfo.email}
-              </Text>
-            </View>
-            <Image source={icons.badge} className="w-16 h-16 mr-2" />
+      <View className="w-full flex items-center justify-center z-10">
+        <View className="flex-row justify-between items-center w-[90%]">
+          <View className="flex flex-col items-start justify-center">
+            <Text className="text-white text-3xl font-interExtraBold">
+              {profileInfo.username}
+            </Text>
+            <Text className="text-white text-lg font-interLight">
+              {profileInfo.email}
+            </Text>
           </View>
+          <Image source={icons.badge} className="w-16 h-16 mr-2" />
         </View>
-        <View className="w-full flex items-center justify-center z-10">
-          <View className="w-[75%] flex-row justify-between items-center">
-            <CircularProgressIndicator
-              progress={profileInfo.xpProgress}
-              level={profileInfo.level}
-              type="Your"
-              style="secondary"
-            />
-            <CircularProgressIndicator
-              progress={profileInfo.battlePassXp % 100}
-              level={Math.floor(profileInfo.battlePassXp / 100) || 1}
-              type="Battlepass"
-              style="primary"
-            />
-          </View>
-        </View>
-        <View className="flex-col items-center z-10">
-          <ProfileOption
-            title="Words"
-            icon={icons.book}
-            onPress={() => {
-              router.push("/Words");
-            }}
+      </View>
+      <View className="w-full flex items-center justify-center z-10">
+        <View className="w-[75%] flex-row justify-between items-center">
+          <CircularProgressIndicator
+            progress={profileInfo.xpProgress}
+            level={profileInfo.level}
+            type="Your"
+            style="secondary"
           />
-          <ProfileOption
-            title="Achievements"
-            icon={icons.trophy}
-            onPress={() => {
-              router.push("/Achievements");
-            }}
+          <CircularProgressIndicator
+            progress={profileInfo.battlePassXp % 100}
+            level={Math.floor(profileInfo.battlePassXp / 100) || 1}
+            type="Battlepass"
+            style="primary"
           />
         </View>
-      </SafeAreaView>
-    </>
+      </View>
+      <View className="flex-col items-center z-10">
+        <ProfileOption
+          title="Words"
+          icon={icons.book}
+          onPress={() => {
+            router.push("/Words");
+          }}
+        />
+        <ProfileOption
+          title="Achievements"
+          icon={icons.trophy}
+          onPress={() => {
+            router.push("/Achievements");
+          }}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 

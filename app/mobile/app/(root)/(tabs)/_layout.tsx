@@ -41,7 +41,7 @@ const TabsLayout = () => {
               width: 10,
               height: 10,
             },
-            height: 90,
+            height: 75,
           },
         }}
       >
