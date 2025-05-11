@@ -15,7 +15,6 @@ import * as icons from "@/constants/icons";
 import CustomButton from "@/components/CustomButton";
 import { api } from "@/lib/api";
 import { useUserStore } from "@/store/useUserStore";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 type UpgradeToPremiumProps = {
   hasButton?: boolean;
@@ -99,7 +98,7 @@ const UpgradeToPremium = ({ hasButton }: UpgradeToPremiumProps) => {
   }
 
   return (
-    <View className="flex flex-col h-full bg-grayscale-800 justify-between items-center mx-6 pb-3">
+    <View className="flex flex-col h-screen justify-start items-center mx-6 pb-3">
       <View className="flex flex-col justify-center items-center">
         <Image source={icons.logo} className="size-44" />
         <Text className="text-white font-inter text-4xl text-center mt-0">
@@ -160,12 +159,7 @@ const UpgradeToPremium = ({ hasButton }: UpgradeToPremiumProps) => {
         </View>
       </View>
 
-      <CustomButton
-        text="SUBSCRIBE"
-        style="primary"
-        onPress={handleUpgrade}
-        noMargin={true}
-      />
+      <CustomButton text="SUBSCRIBE" style="primary" onPress={handleUpgrade} />
       {hasButton && (
         <TouchableOpacity className="w-1/2 justify-center items-center border border-grayscale-400 rounded-xl">
           <Text
