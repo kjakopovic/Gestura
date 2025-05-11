@@ -14,7 +14,7 @@ on:
 env:
   # Global environment variables
   AWS_REGION: "eu-central-1"
-  ECS_CLUSTER: HandsOfHope
+  ECS_CLUSTER: gestura-web-prod
 
   # Service paths
 
