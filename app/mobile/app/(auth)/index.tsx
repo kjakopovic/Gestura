@@ -65,6 +65,7 @@ const Login = () => {
           setIsLoading(false);
         }
       } else {
+        setIsLoading(false);
         console.log("No access or refresh token found. User is not logged in.");
       }
     })();
