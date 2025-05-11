@@ -466,19 +466,20 @@ def check_active_items(user, dynamodb):
 def get_xp_multiplier(active_items):
     """
     Calculate the XP multiplier based on active items.
+    Only applies the highest multiplier instead of stacking them.
 
     Args:
         active_items: List of user's activated items
 
     Returns:
-        Total XP multiplier (default 1.0 if no multipliers found)
+        Maximum XP multiplier (default 1.0 if no multipliers found)
     """
     if not active_items:
         return Decimal("1.0")
 
-    multiplier = Decimal("1.0")
+    max_multiplier = Decimal("1.0")
 
-    # Apply multiplier for each active item
+    # Find the maximum multiplier from all active items
     for item in active_items:
         # Check if item has effects with a multiplier and is an XP boost
         if (
@@ -486,11 +487,13 @@ def get_xp_multiplier(active_items):
             and "effects" in item
             and "multiplier" in item["effects"]
         ):
+            # Update max_multiplier if this item has a higher multiplier
+            item_multiplier = item["effects"]["multiplier"]
+            max_multiplier = max(max_multiplier, item_multiplier)
 
-            multiplier *= item["effects"]["multiplier"]
 
-    logger.info(f"XP multiplier: {multiplier}")
-    return multiplier
+    logger.info(f"XP multiplier: {max_multiplier}")
+    return max_multiplier
 
 
 def update_user_achievements(
