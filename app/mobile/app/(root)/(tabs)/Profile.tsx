@@ -27,7 +27,7 @@ const Profile = () => {
   const router = useRouter();
 
   return (
-    <SafeAreaView className="bg-grayscale-800 gap-3 h-full">
+    <SafeAreaView className="bg-grayscale-800 gap-3 h-[calc(100vh-75px)] pb-10 flex-col justify-between">
       <View className="w-full bg-grayscale-800 h-[27vh] z-10 top-0">
         <Image
           source={images.profilegradient}
