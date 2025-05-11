@@ -39,7 +39,6 @@ const Register = () => {
       const result = await registerUser(data);
 
       if (result.success) {
-        console.log("Registration successful");
         router.replace("/Home");
       } else {
         setErrorMessage(

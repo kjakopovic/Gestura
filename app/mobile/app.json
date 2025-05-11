@@ -1,23 +1,29 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "Gestura",
+    "slug": "gestura",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.mar1n.mobile"
+    "icon": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "fit",
+      "backgroundColor": "#161719"
+    },
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "backgroundColor": "#161719"
     },
     "android": {
+      "package": "com.mar1n.gestura",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.mar1n.mobile"
+        "resizeMode": "fit",
+        "backgroundColor": "#161719"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.mar1n.gestura",
+      "supportsTablet": true
     },
     "web": {
       "bundler": "metro",
@@ -29,16 +35,17 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "image": "./assets/images/icon.png",
+          "resizeMode": "cover",
+          "backgroundColor": "#161719"
         }
       ],
       "onnxruntime-react-native"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic"
   }
 }

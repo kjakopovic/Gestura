@@ -4,6 +4,7 @@ import React from "react";
 type CustomButtonProps = {
   onPress: () => void;
   text: string;
+  className?: string;
   style?: "base" | "success" | "error" | "fail" | "primary";
   noMargin?: boolean;
   disabled?: boolean;
@@ -15,6 +16,7 @@ const CustomButton = ({
   style,
   disabled,
   noMargin,
+  className,
   ...rest
 }: CustomButtonProps) => {
   return (
@@ -29,7 +31,7 @@ const CustomButton = ({
           : "border-error bg-error/10"
       } rounded-2xl ${noMargin ? "" : "mt-16"} ${
         disabled ? "opacity-50" : "opacity-100"
-      }`}
+      } ${className}`}
       onPress={onPress}
       disabled={disabled}
       {...rest}

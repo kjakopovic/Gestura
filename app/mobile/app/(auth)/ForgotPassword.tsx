@@ -146,7 +146,6 @@ const ForgotPassword = () => {
 
       if (result.success) {
         // Navigate to login or show success message
-        console.log("Password reset successful");
         router.push("/(auth)");
       } else {
         setErrorMessage(

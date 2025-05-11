@@ -2,11 +2,11 @@
   {
     "id": "usa",
     "name": "American (ASL)",
-    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/languageFlag/usa.png"
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/languageFlag/usa-1.png"
   },
   {
     "id": "hr",
     "name": "Croatian (HZJ)",
-    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/languageFlag/croatia.png"
+    "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/languageFlag/croatia-1.png"
   }
 ]

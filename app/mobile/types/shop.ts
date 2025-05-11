@@ -6,11 +6,13 @@ export type ShopData = {
 };
 
 export type ShopItem = {
+  image_url: string;
   category: string;
   id: string;
   price: number;
   name: string;
   effect?: {
+    coins?: number;
     seconds_in_use: number;
     multiplier: number;
   };

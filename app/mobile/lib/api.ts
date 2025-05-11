@@ -81,13 +81,6 @@ export async function apiCall<T = any>(
       requestOptions.body = JSON.stringify(options.body);
     }
 
-    console.log("Making API call:", {
-      url,
-      method,
-      headers,
-      body: options.body,
-    });
-
     // Make the request
     const response = await fetch(url, requestOptions);
 

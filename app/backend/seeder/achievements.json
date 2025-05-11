@@ -29,7 +29,7 @@
     "type": "words",
     "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/achievements/people.png",
     "title": "We've got a long way ahead of us",
-    "description": "Learn your first 10 letters"
+    "description": "Learn your first 20 letters"
   },
   {
     "id": "92894022-7a78-47c2-b47b-4a5ef5a28f11",
@@ -37,6 +37,6 @@
     "type": "words",
     "image_url": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/achievements/confetti.png",
     "title": "A Motivational Beginning",
-    "description": "Learn your first 3 letters"
+    "description": "Learn your first 10 letters"
   }
 ]

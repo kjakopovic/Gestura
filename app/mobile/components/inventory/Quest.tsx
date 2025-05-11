@@ -11,6 +11,7 @@ type QuestProps = {
 };
 
 const Quest = ({ title, progress, maxProgress, iconName }: QuestProps) => {
+  // eslint-disable-next-line import/namespace
   const icon = icons[iconName as keyof typeof icons] || icons.error_testing;
 
   const isComplete = progress >= maxProgress;

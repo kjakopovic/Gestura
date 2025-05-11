@@ -7,9 +7,10 @@ import * as characters from "@/constants/characters";
 type ChestOptionProps = {
   chestPrice: number;
   onPress?: () => void; // Optional onPress function
+  image?: string;
 };
 
-const ChestOption = ({ chestPrice, onPress }: ChestOptionProps) => {
+const ChestOption = ({ chestPrice, onPress, image }: ChestOptionProps) => {
   const text = "Get clothing for your Character!";
 
   return (
@@ -17,7 +18,12 @@ const ChestOption = ({ chestPrice, onPress }: ChestOptionProps) => {
       className="bg-grayscale-700 w-full h-44 flex flex-row items-start justify-center border border-grayscale-400 border-b-2 rounded-xl"
       onPress={onPress}
     >
-      <ShopOption type="chest" price={chestPrice} borderless={true} />
+      <ShopOption
+        price={chestPrice}
+        borderless={true}
+        onPress={onPress}
+        image={image}
+      />
       <View className="flex flex-col w-1/2 h-full items-center justify-center m-1">
         <Text className="text-primary text-lg font-interBold text-center">
           {text}

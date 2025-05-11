@@ -22,7 +22,6 @@ export const useTaskLogic = ({
 
   const handleAnswerPress = (text: string) => {
     setSelectedAnswer(text);
-    console.log("Answer pressed!");
   };
 
   const showResults = () => {

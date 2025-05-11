@@ -1,21 +1,22 @@
-import { View } from "react-native";
 import React from "react";
 
 import PremiumStatus from "@/components/subscription/PremiumStatus";
 import LiveStatus from "@/components/subscription/LiveStatus";
 import UpgradeToPremium from "@/app/(root)/(premium-options)/UpgradeToPremium";
+import { useUserStore } from "@/store/useUserStore";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Subscription = () => {
-  let subscriptionLevel = "live"; //hardcodirano
+  const userSubscription = useUserStore((state) => state.user?.subscription);
 
   return (
-    <View className="flex-1 bg-grayscale-800">
-      {subscriptionLevel === "premium" && <PremiumStatus />}
+    <SafeAreaView className="bg-grayscale-800 h-full">
+      {userSubscription === 1 && <PremiumStatus />}
 
-      {subscriptionLevel === "live" && <LiveStatus />}
+      {userSubscription === 2 && <LiveStatus />}
 
-      {subscriptionLevel === "none" && <UpgradeToPremium hasButton />}
-    </View>
+      {userSubscription === 0 && <UpgradeToPremium hasButton />}
+    </SafeAreaView>
   );
 };
 

@@ -1,8 +1,13 @@
-import { View, Image, Text } from "react-native";
-import React, { useEffect } from "react";
-// Don't use router here - let parent components handle navigation
-// import { router } from "expo-router";
+import { View, Image, Text, Alert } from "react-native"; // Added Alert
+import React, { useEffect, useRef, useState } from "react"; // Added useRef, useState
 import { CameraCapturedPicture } from "expo-camera";
+// eslint-disable-next-line import/no-unresolved
+import * as ort from "onnxruntime-react-native";
+import {
+  createModelSession,
+  getModelPath,
+  inferenceCapturedPhoto,
+} from "@/utils/model"; // Import new function
 
 import AnswerBox from "./task-components/AnswerBox";
 import QuestionBox from "./task-components/QuestionBox";
@@ -11,7 +16,6 @@ import CustomButton from "../CustomButton";
 import ResultPopup from "./task-components/ResultPopup";
 
 import * as characters from "@/constants/characters";
-import * as hands from "@/constants/hand-signs";
 import CameraComponent from "../CameraComponent";
 
 interface TaskProps {
@@ -19,7 +23,7 @@ interface TaskProps {
   section: number;
   sectionName: string;
   version: number;
-  question: string;
+  question: string | number; // For v3, this is the image (e.g., hands.letter_c) or its identifier
   possibleAnswers: string[];
   correctAnswerIndex: number;
   onComplete?: () => void;
@@ -27,16 +31,27 @@ interface TaskProps {
 }
 
 const Task = (task: TaskProps) => {
+  const modelSessionRef = useRef<ort.InferenceSession | null>(null);
+  const [isModelLoading, setIsModelLoading] = useState(false);
+  const [isProcessingPhoto, setIsProcessingPhoto] = useState(false); // For v3 inference
+
   const handleAnswerPress = (text: string) => {
     setSelectedAnswer(text);
   };
 
-  const correctAnswer = task.possibleAnswers[task.correctAnswerIndex];
+  // For v1 and v2, correctAnswer is a string.
+  // For v3, correctAnswer is the target letter string (e.g., "C") the user should sign.
+  const correctAnswer =
+    task.version === 3
+      ? task.question.toString()
+      : task.possibleAnswers[task.correctAnswerIndex];
+
+  // For v3, task.question is expected to be an ImageSourcePropType (e.g., hands.letter_c)
   const correctImage =
     task.version === 2
-      ? { uri: task.possibleAnswers[task.correctAnswerIndex] }
+      ? { uri: task.possibleAnswers[task.correctAnswerIndex] } // Assuming this is a URI string
       : task.version === 3
-      ? hands.letter_c
+      ? { uri: task.possibleAnswers[0] || null } // Cast as any if task.question is ImageSourcePropType
       : null;
 
   const [selectedAnswer, setSelectedAnswer] = React.useState<string | null>(
@@ -46,44 +61,129 @@ const Task = (task: TaskProps) => {
   const [popupVisible, setPopupVisible] = React.useState(false);
   const [capturedPhoto, setCapturedPhoto] =
     React.useState<CameraCapturedPicture | null>(null);
-  const [showCamera, setShowCamera] = React.useState(true);
+  //eslint-disable-next-line
+  const [showCamera, setShowCamera] = React.useState(true); // For v3, camera is initially shown
 
-  // Handle result and call appropriate callback - remove any automatic timers
+  // Load and release model for task version 3
   useEffect(() => {
-    // We're not going to automatically call the callbacks
-    // The ResultPopup will handle the dismissal, and then the user will manually continue
-  }, [popupVisible, isSuccess, task]);
+    setShowCamera(true);
+    setCapturedPhoto(null);
+    setIsProcessingPhoto(false);
 
-  const showResults = () => {
+    let isActive = true;
     if (task.version === 3) {
-      const success = Math.random() > 0.5;
-      setIsSuccess(success);
-    } else if (task.version === 2) {
-      setIsSuccess(parseInt(selectedAnswer!) === task.correctAnswerIndex);
-    } else {
-      setIsSuccess(selectedAnswer === correctAnswer);
+      const loadModel = async () => {
+        setIsModelLoading(true);
+        try {
+          const modelPath = await getModelPath();
+          if (!modelPath) {
+            if (isActive) Alert.alert("Error", "Task Model: Path not found.");
+            setIsModelLoading(false);
+            return;
+          }
+          const session = await createModelSession(modelPath);
+          if (isActive) {
+            modelSessionRef.current = session;
+          }
+        } catch (error) {
+          console.error("Task Model: Failed to load for v3", error);
+          if (isActive) Alert.alert("Error", "Task Model: Failed to load.");
+        } finally {
+          if (isActive) setIsModelLoading(false);
+        }
+      };
+      loadModel();
     }
 
-    setPopupVisible(true);
+    return () => {
+      isActive = false;
+      if (modelSessionRef.current) {
+        modelSessionRef.current.release();
+        modelSessionRef.current = null;
+      }
+    };
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [task.version, task.id]);
+
+  const showResults = async () => {
+    // Made async for v3
+    if (task.version === 3) {
+      if (!capturedPhoto) {
+        Alert.alert("Error", "Please take a photo first.");
+        return;
+      }
+      if (!modelSessionRef.current) {
+        Alert.alert("Error", "Model not ready. Please wait or try again.");
+        return;
+      }
+      if (isProcessingPhoto) return;
+
+      setIsProcessingPhoto(true);
+      try {
+        const predictions = await inferenceCapturedPhoto(
+          capturedPhoto,
+          modelSessionRef.current
+        );
+        if (predictions && predictions.length > 0) {
+          const predictedLetter = predictions[0].label;
+          const probability = predictions[0].probability * 10;
+
+          // Ensure correctAnswer is defined and is a string for comparison
+          if (typeof correctAnswer === "string") {
+            const success =
+              predictedLetter.toUpperCase() === correctAnswer.toUpperCase() &&
+              probability > 0.5;
+            setIsSuccess(success);
+          } else {
+            console.error(
+              "Task v3: correctAnswer is not a string for comparison."
+            );
+            setIsSuccess(false); // Default to failure if correctAnswer is not set up as expected
+          }
+        } else {
+          setIsSuccess(false); // No prediction or empty prediction
+          Alert.alert(
+            "Verification Failed",
+            "Could not verify the sign. Please try again."
+          );
+        }
+      } catch (error) {
+        console.error("Task v3: Error during inference", error);
+        setIsSuccess(false);
+        Alert.alert("Error", "An error occurred during verification.");
+      } finally {
+        setIsProcessingPhoto(false);
+        setPopupVisible(true); // Show popup after processing
+      }
+    } else if (task.version === 2) {
+      // Ensure selectedAnswer is not null and is a string before parsing
+      const isCorrect =
+        selectedAnswer !== null &&
+        parseInt(selectedAnswer, 10) === task.correctAnswerIndex;
+      setIsSuccess(isCorrect);
+      setPopupVisible(true);
+    } else {
+      // version 1
+      setIsSuccess(selectedAnswer === correctAnswer);
+      setPopupVisible(true);
+    }
   };
 
   const handleContinue = () => {
     if (popupVisible) {
       setPopupVisible(false);
-      // After dismissing the popup, now we can call the appropriate callback
       if (isSuccess && task.onComplete) {
         task.onComplete();
       } else if (!isSuccess && task.onFailure) {
         task.onFailure();
       }
     } else {
-      showResults();
+      showResults(); // This will now handle async for v3
     }
   };
 
   const handlePopupDismiss = () => {
     setPopupVisible(false);
-    // After dismissing the popup, now we can call the appropriate callback
     if (isSuccess && task.onComplete) {
       task.onComplete();
     } else if (!isSuccess && task.onFailure) {
@@ -92,9 +192,8 @@ const Task = (task: TaskProps) => {
   };
 
   const handleSavePhoto = (photo: CameraCapturedPicture) => {
-    console.log("Photo saved:", photo.uri);
-    console.log(showCamera);
     setCapturedPhoto(photo);
+    // setShowCamera(false);
   };
 
   const handleCloseCamera = () => {
@@ -103,30 +202,35 @@ const Task = (task: TaskProps) => {
 
   const isButtonDisabled = () => {
     if (task.version === 3) {
-      return capturedPhoto === null;
+      return capturedPhoto === null || isModelLoading || isProcessingPhoto;
     } else {
       return selectedAnswer === null;
     }
   };
 
+  // For v1 and v2, buttonStyle depends on selectedAnswer.
+  // For v3, buttonStyle in ResultPopup is determined by isSuccess after inference.
   const buttonStyle =
-    task.version === 2
-      ? parseInt(selectedAnswer || "-1") === task.correctAnswerIndex
+    task.version === 1
+      ? selectedAnswer === correctAnswer
         ? "success"
         : "fail"
-      : selectedAnswer === correctAnswer
-      ? "success"
-      : "fail";
+      : task.version === 2
+      ? selectedAnswer !== null &&
+        parseInt(selectedAnswer, 10) === task.correctAnswerIndex
+        ? "success"
+        : "fail"
+      : "base"; // Default for v3, ResultPopup will use its own logic based on isSuccess
 
   return task.version === 1 ? (
-    <View className="flex-1 justify-center items-start">
+    <View className="flex-col justify-center items-center h-screen">
       <QuestionBox text="What letter does this symbol represent?" />
       <View className="w-full flex-row justify-center items-end">
-        <Image className="m-8 mt-4 mb-0 w-50%" source={characters.character1} />
-        <TaskBox image={task.question} />
+        <Image className="mb-0 w-50%" source={characters.character1} />
+        <TaskBox image={task.question as any} />
       </View>
 
-      <View className="w-full h-[1px] bg-grayscale-400 mb-8" />
+      <View className="w-full h-[1px] bg-grayscale-400 mb-3" />
 
       <View className="w-full flex-row flex-wrap justify-evenly m-0">
         {task.possibleAnswers.map((answer, index) => (
@@ -143,6 +247,8 @@ const Task = (task: TaskProps) => {
         onPress={handleContinue}
         text="CONTINUE"
         style="base"
+        noMargin
+        className="mt-2"
         disabled={isButtonDisabled()}
       />
 
@@ -155,14 +261,14 @@ const Task = (task: TaskProps) => {
       />
     </View>
   ) : task.version === 2 ? (
-    <View className="flex-1 justify-center items-start">
+    <View className="flex-col justify-center items-center h-screen">
       <QuestionBox text="What symbol does this letter represent?" />
       <View className="w-full flex-row justify-center items-end">
-        <Image className="m-8 mt-4 mb-0 w-50%" source={characters.character1} />
-        <TaskBox text={task.question} />
+        <Image className="mb-0 w-50%" source={characters.character1} />
+        <TaskBox text={task.question as string} />
       </View>
 
-      <View className="w-full h-[1px] bg-grayscale-400 mb-8" />
+      <View className="w-full h-[1px] bg-grayscale-400 mb-3" />
 
       <View className="w-full m-0">
         <View className="flex-row flex-wrap justify-evenly w-full">
@@ -181,23 +287,25 @@ const Task = (task: TaskProps) => {
         onPress={handleContinue}
         text="CONTINUE"
         style="base"
+        noMargin
+        className="mt-2"
         disabled={isButtonDisabled()}
       />
 
       <ResultPopup
         visible={popupVisible}
         isSuccess={isSuccess}
-        correctImage={correctImage}
+        correctImage={correctImage as any}
         onDismiss={handlePopupDismiss}
         buttonStyle={buttonStyle}
       />
     </View>
   ) : task.version === 3 ? (
-    <View className="flex-1 justify-start items-start">
+    <View className="flex-col justify-center items-center h-screen">
       <QuestionBox text="Show me how you would sign the following:" />
       <View className="w-full flex-row justify-center items-end">
-        <Image className="m-8 mt-4 mb-0 w-50%" source={characters.character1} />
-        <TaskBox image={task.question} />
+        <Image className="mb-0 w-50%" source={characters.character1} />
+        <TaskBox text={task.question as string} />
       </View>
 
       <View className="w-full h-[1px] bg-grayscale-400 mb-8" />
@@ -206,12 +314,25 @@ const Task = (task: TaskProps) => {
         onSavePhoto={handleSavePhoto}
         onCloseCamera={handleCloseCamera}
       />
+      {capturedPhoto && (
+        <View className="w-full items-center my-2">
+          <Text className="text-white">
+            Photo captured! Press Continue to verify.
+          </Text>
+        </View>
+      )}
 
       <View className="w-full items-center mt-5">
         <CustomButton
           noMargin
           onPress={handleContinue}
-          text="CONTINUE"
+          text={
+            isProcessingPhoto
+              ? "VERIFYING..."
+              : isModelLoading
+              ? "MODEL LOADING..."
+              : "CONTINUE"
+          }
           style="base"
           disabled={isButtonDisabled()}
         />
@@ -220,9 +341,8 @@ const Task = (task: TaskProps) => {
       <ResultPopup
         visible={popupVisible}
         isSuccess={isSuccess}
-        correctImage={correctImage}
+        correctImage={correctImage as any}
         onDismiss={handlePopupDismiss}
-        buttonStyle={isSuccess ? "success" : "error"}
         taskVersion={task.version}
       />
     </View>

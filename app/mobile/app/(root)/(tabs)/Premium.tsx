@@ -1,17 +1,18 @@
 import { ScrollView, SafeAreaView } from "react-native";
 import React from "react";
 
-// import LiveComm from "../(premium-options)/LiveComm";
-import UpgradeToPremium from "../(premium-options)/UpgradeToPremium";
 import CommChoice from "../(premium-options)/CommChoice";
+import { useUserStore } from "@/store/useUserStore";
+import PremiumStatus from "@/components/subscription/PremiumStatus";
 
 const Premium = () => {
-  const hasPremium = false; // ovo replaceat za stvarnim premium statusom
+  const userSubscription = useUserStore((state) => state.user?.subscription);
+  const hasLive = userSubscription === 2;
 
   return (
-    <SafeAreaView className="flex-1 bg-grayscale-800">
-      <ScrollView className="flex-1">
-        {hasPremium ? <CommChoice /> : <UpgradeToPremium />}
+    <SafeAreaView className="h-full bg-grayscale-800">
+      <ScrollView className="flex-1 w-full mt-28">
+        {hasLive ? <CommChoice /> : <PremiumStatus />}
       </ScrollView>
     </SafeAreaView>
   );

@@ -48,23 +48,6 @@ const PurchaseModal = ({
     }
   }, [visible]);
 
-  const getIcon = (type: string) => {
-    switch (type?.toLowerCase()) {
-      case "hearts":
-        return icons.heart;
-      case "xp":
-        return icons.experience_token;
-      case "coins":
-        return icons.coin;
-      case "chest":
-        return icons.chest;
-      case "bag":
-        return icons.bag_coins;
-      default:
-        return icons.error_testing;
-    }
-  };
-
   const itemType = item?.category || item?.type || "";
   const itemPrice = price || item?.price || 0;
   const canAfford = userCoins >= itemPrice;
@@ -145,7 +128,7 @@ const PurchaseModal = ({
         <View className="w-full h-2/5 flex flex-col items-center justify-center">
           <View className="w-52 h-52 flex flex-row items-center justify-center bg-grayscale-700 rounded-xl border-2 border-grayscale-400 border-b-4 m-6">
             <Image
-              source={getIcon(itemType)}
+              source={{ uri: item?.image_url }}
               className="size-40"
               resizeMode="contain"
             />

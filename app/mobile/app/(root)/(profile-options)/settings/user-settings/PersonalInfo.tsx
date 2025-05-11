@@ -45,7 +45,7 @@ const PersonalInfo = () => {
   return (
     <>
       <CustomAppBar title="PERSONAL INFO" backButton />
-      <ScrollView className="bg-grayscale-800 mt-24 px-10">
+      <ScrollView className="bg-grayscale-800 mt-24 px-5">
         <SafeAreaView className="bg-grayscale-800 flex-1 items-center justify-center">
           <ProfileImage
             character={characters.profileCharacterFace}

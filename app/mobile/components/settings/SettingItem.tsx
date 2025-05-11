@@ -41,7 +41,13 @@ const SettingItem = ({
       onPress={onPress}
     >
       {/* Show image on left for types other than select */}
-      {image && type !== "select" && <Image source={image} className="mr-4" />}
+      {image && type !== "select" && (
+        <Image
+          source={image}
+          className="mr-4"
+          style={{ width: 24, height: 24, resizeMode: "contain" }}
+        />
+      )}
 
       <Text
         className={`flex-1 text-lg font-interBold text-grayscale-100 ${
@@ -68,8 +74,8 @@ const SettingItem = ({
       {image && type === "select" && (
         <Image
           source={image}
-          className="ml-2"
-          style={{ width: 24, height: 24 }}
+          className="size-7"
+          style={{ resizeMode: "contain" }}
         />
       )}
     </TouchableOpacity>

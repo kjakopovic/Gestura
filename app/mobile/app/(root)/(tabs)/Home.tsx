@@ -12,6 +12,7 @@ import LevelMap from "@/components/levels/LevelMap";
 import { useLevel } from "@/hooks/useLevel";
 import { useUserData } from "@/hooks/useUserData";
 import { navigateToLevel } from "@/utils/navigationUtils";
+import { useScrollHandler } from "@/hooks/useScrollHandler";
 
 const toastConfig = {
   error: (props: any) => (
@@ -28,23 +29,6 @@ const toastConfig = {
     />
   ),
   // You can customize other toast types similarly
-};
-
-// Extract scroll handler to a separate function
-const useScrollHandler = (onScrollEnd: () => void) => {
-  return {
-    onScroll: ({ nativeEvent }: { nativeEvent: any }) => {
-      const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-      const paddingToBottom = 200;
-      if (
-        layoutMeasurement.height + contentOffset.y >=
-        contentSize.height - paddingToBottom
-      ) {
-        onScrollEnd();
-      }
-    },
-    scrollEventThrottle: 400,
-  };
 };
 
 const Home = () => {
@@ -73,13 +57,21 @@ const Home = () => {
 
   // Handle level press
   const handleLevelPress = (levelId: number) => {
+    if (userStats?.hearts <= 0) {
+      Toast.show({
+        type: "error",
+        text1: "No hearts left",
+        text2: "Please wait for your hearts to refill.",
+        position: "bottom",
+        bottomOffset: 100,
+      });
+      return;
+    }
     navigateToLevel(levelId, languageId);
   };
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    console.log("Current level", currentLevel);
-
     // Refresh user data and levels in parallel
     await Promise.all([refreshUserData(), refreshLevels()]);
 
