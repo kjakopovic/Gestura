@@ -68,8 +68,8 @@ const Shop = () => {
                     {userCoins}
                   </Text>
                 </View>
-                <View className="w-full flex-row items-center justify-center">
-                  <View className="w-[95%]">
+                <View className="w-full flex-row items-center justify-center px-10">
+                  <View className="w-full">
                     {/* Shop Items Section */}
                     <ShopSection
                       title="ITEMS"
@@ -136,10 +136,10 @@ const ShopSection = ({
   renderItem: (item: ShopItem) => React.ReactNode;
 }) => (
   <View className="w-full flex flex-col items-center justify-start mb-10">
-    <Text className="text-grayscale-100 text-2xl font-interExtraBold pb-3">
+    <Text className="text-grayscale-100 text-2xl font-interExtraBold pb-10">
       {title}
     </Text>
-    <View className="w-full h-auto flex flex-wrap flex-row gap-5 items-center justify-center">
+    <View className="w-full h-auto flex flex-wrap flex-row items-center justify-between">
       {items.map(renderItem)}
     </View>
   </View>

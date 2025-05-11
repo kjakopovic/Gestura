@@ -14,6 +14,7 @@ import { ApiTasksResponse } from "@/types/types";
 import { LevelTask } from "@/hooks/useLevelTasks";
 import { convertApiTaskToLevelTask } from "@/utils/levelTaskUtils";
 import { useLevelStatsStore } from "@/store/useLevelStatsStore";
+import CustomButton from "@/components/CustomButton";
 
 const LevelScreen = () => {
   const { completeLevel } = useLevel();
@@ -102,9 +103,13 @@ const LevelScreen = () => {
   if (error || tasks.length === 0) {
     return (
       <View className="w-full h-full bg-grayscale-800 flex items-center justify-center p-4">
-        <Text className="text-white text-lg text-center mb-4">
-          {error || "No tasks available for this level."}
+        <Text className="text-white text-xl font-interSemiBold text-center mb-4">
+          {error || "Coming soon..."}
         </Text>
+        <Text className="text-white text-lg font-inter text-center">
+          Please check back later or try a different level.
+        </Text>
+        <CustomButton text="Go to Home" onPress={goToHome} />
       </View>
     );
   }
