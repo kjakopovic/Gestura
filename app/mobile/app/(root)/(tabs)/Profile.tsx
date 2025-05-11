@@ -28,51 +28,55 @@ const Profile = () => {
 
   return (
     <>
-      <View className="w-full bg-grayscale-800 h-72 z-10 top-0">
+      <View className="w-full bg-grayscale-800 h-[27vh] z-10 top-0">
         <Image
           source={images.profilegradient}
-          className="w-full h-72 rounded-b-2xl z-1 absolute"
+          className="w-full h-[27vh] rounded-b-3xl z-1 absolute"
         />
-        <SafeAreaView>
+        <SafeAreaView className="flex flex-row h-full justify-between">
           <TouchableOpacity
             onPress={() => router.push("/settings")}
-            className="z-10 mx-5 mt-4"
+            className="z-10 ml-7 mt-7"
           >
             <Image source={icons.cog} className="w-12 h-12" />
           </TouchableOpacity>
           <Image
             source={characters.profileCharacter}
-            className="size-40 mt-9 self-end z-10 mx-5"
+            className="size-40 self-end z-10 mr-5"
           />
         </SafeAreaView>
       </View>
-      <ScrollView className="bg-grayscale-800">
-        <View className="flex-row justify-between items-center mx-5 z-10 mt-5">
-          <View className="flex flex-col items-start justify-center">
-            <Text className="text-white text-3xl font-interExtraBold">
-              {profileInfo.username}
-            </Text>
-            <Text className="text-white text-lg font-interLight">
-              {profileInfo.email}
-            </Text>
+      <SafeAreaView className="bg-grayscale-800 gap-3 h-[73vh]">
+        <View className="w-full flex items-center justify-center z-10">
+          <View className="flex-row justify-between items-center w-[90%]">
+            <View className="flex flex-col items-start justify-center">
+              <Text className="text-white text-3xl font-interExtraBold">
+                {profileInfo.username}
+              </Text>
+              <Text className="text-white text-lg font-interLight">
+                {profileInfo.email}
+              </Text>
+            </View>
+            <Image source={icons.badge} className="w-16 h-16 mr-2" />
           </View>
-          <Image source={icons.badge} className="w-16 h-16 mr-2" />
         </View>
-        <View className="flex-row justify-between items-center mx-16 mt-7 z-10">
-          <CircularProgressIndicator
-            progress={profileInfo.xpProgress}
-            level={profileInfo.level}
-            type="Your"
-            style="secondary"
-          />
-          <CircularProgressIndicator
-            progress={profileInfo.battlePassXp % 100}
-            level={Math.floor(profileInfo.battlePassXp / 100) || 1}
-            type="Battlepass"
-            style="primary"
-          />
+        <View className="w-full flex items-center justify-center z-10">
+          <View className="w-[75%] flex-row justify-between items-center">
+            <CircularProgressIndicator
+              progress={profileInfo.xpProgress}
+              level={profileInfo.level}
+              type="Your"
+              style="secondary"
+            />
+            <CircularProgressIndicator
+              progress={profileInfo.battlePassXp % 100}
+              level={Math.floor(profileInfo.battlePassXp / 100) || 1}
+              type="Battlepass"
+              style="primary"
+            />
+          </View>
         </View>
-        <View className="flex-col items-center mt-7 z-10">
+        <View className="flex-col items-center z-10">
           <ProfileOption
             title="Words"
             icon={icons.book}
@@ -88,7 +92,7 @@ const Profile = () => {
             }}
           />
         </View>
-      </ScrollView>
+      </SafeAreaView>
     </>
   );
 };
