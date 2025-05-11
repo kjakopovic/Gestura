@@ -457,6 +457,72 @@ class TestConsumeItem(BaseTestSetup):
             self.assertEqual(len(fetched_user["items_inventory"]), 1)
 
 
+    def test_cannot_activate_multiple_xp_boost_items(self):
+        """
+        Test response when trying to activate multiple XP boost items.
+        """
+        # Create a user with an already active XP boost
+        current_time = datetime.now(timezone.utc)
+        expiry_time = current_time + timedelta(hours=1)
+
+        self.xp_boost_user = {
+            "email": "multiple_xp@mail.com",
+            "xp": Decimal('100'),
+            "items_inventory": [
+                "xp-boost-2",  # Another XP boost item in inventory
+            ],
+            "activated_items": [
+                {
+                    "category": "xp",
+                    "effects": {
+                        "multiplier": Decimal('1.5')
+                    },
+                    "expires_at": expiry_time.isoformat()
+                }
+            ]
+        }
+
+        # Create a second XP boost item
+        self.xp_boost_item2 = {
+            "id": "xp-boost-2",
+            "name": "XP Booster 2",
+            "image_url": "https://example.com/images/xp_boost2.png",
+            "price": Decimal('200.00'),
+            "category": "xp",
+            "effect": {
+                "multiplier": Decimal('2'),
+                "seconds_in_use": Decimal('3600')  # 1 hour duration
+            }
+        }
+
+        # Add the user and item to their respective tables
+        self.users_table.put_item(Item=self.xp_boost_user)
+        self.items_table.put_item(Item=self.xp_boost_item2)
+
+        jwt_token = generate_jwt_token("multiple_xp@mail.com")
+
+        event = {
+            'headers': {'Authorization': jwt_token},
+            'queryStringParameters': {
+                'item_id': 'xp-boost-2'
+            }
+        }
+
+        # Try to activate the second XP boost
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+
+        # Should receive error
+        self.assertEqual(response['statusCode'], 400)
+        self.assertEqual(body["message"], "User already has an active XP boost.")
+
+        # Verify the user still has only one active item and the inventory still contains the unused item
+        fetched_user = self.users_table.get_item(Key={'email': "multiple_xp@mail.com"})['Item']
+        self.assertEqual(len(fetched_user["activated_items"]), 1)
+        self.assertEqual(fetched_user["activated_items"][0]["effects"]["multiplier"], Decimal('1.5'))
+        self.assertEqual(len(fetched_user["items_inventory"]), 1)
+
+
     def tearDown(self):
         self.users_resource_patcher.stop()
         self.items_resource_patcher.stop()
