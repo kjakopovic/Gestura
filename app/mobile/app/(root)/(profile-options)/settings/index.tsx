@@ -1,6 +1,5 @@
 import { ScrollView, View } from "react-native";
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
 import CustomAppBar from "@/components/CustomAppBar";
@@ -66,20 +65,15 @@ const Settings = () => {
   return (
     <>
       <CustomAppBar title="SETTINGS" backButton />
-      <View className="bg-grayscale-800 h-full pt-36 px-10 gap-2">
+      <ScrollView className="bg-grayscale-800 h-full pt-36 px-10 gap-2 mt-10">
         <View className="flex flex-col gap-y-7">
           <SettingSection title="APP SETTINGS" items={APP_SETTINGS} />
           <SettingSection title="USER SETTINGS" items={USER_SETTINGS} />
         </View>
         <View>
-          <CustomButton
-            onPress={handleLogout}
-            text="LOG OUT"
-            style="error"
-            noMargin
-          />
+          <CustomButton onPress={handleLogout} text="LOG OUT" style="error" />
         </View>
-      </View>
+      </ScrollView>
     </>
   );
 };
