@@ -35,7 +35,7 @@ const useScrollHandler = (onScrollEnd: () => void) => {
   return {
     onScroll: ({ nativeEvent }: { nativeEvent: any }) => {
       const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-      const paddingToBottom = 200;
+      const paddingToBottom = 500;
       if (
         layoutMeasurement.height + contentOffset.y >=
         contentSize.height - paddingToBottom
@@ -43,7 +43,7 @@ const useScrollHandler = (onScrollEnd: () => void) => {
         onScrollEnd();
       }
     },
-    scrollEventThrottle: 400,
+    scrollEventThrottle: 200,
   };
 };
 
