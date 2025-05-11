@@ -33,31 +33,18 @@ const Item = ({
   const [isOpeningChest, setIsOpeningChest] = useState(false);
   const [chestPrizeCoins, setChestPrizeCoins] = useState<number | null>(null);
 
-  // For debugging state changes
-  console.log(
-    `Item.tsx (${itemTitle}): Render - showChestModal: ${showChestModal}, chestPrizeCoins: ${chestPrizeCoins}, isOpeningChest: ${isOpeningChest}`
-  );
-
   const handleOpenChestPress = async () => {
     if (isOpeningChest) return;
 
-    console.log(`Item.tsx (${itemTitle}): handleOpenChestPress called.`);
     setIsOpeningChest(true);
     setChestPrizeCoins(null); // Reset before API call
     try {
       const coinsWon = await onPress(itemId, category); // This is activateItem
-      console.log(`Item.tsx (${itemTitle}): activateItem returned:`, coinsWon);
 
       if (typeof coinsWon === "number") {
-        console.log(
-          `Item.tsx (${itemTitle}): Setting chestPrizeCoins to ${coinsWon} and attempting to show modal.`
-        );
         setChestPrizeCoins(coinsWon);
         setShowChestModal(true); // This should trigger the modal
       } else {
-        console.log(
-          `Item.tsx (${itemTitle}): No valid coinsWon received (${coinsWon}). Modal will not be shown.`
-        );
         // If activateItem handled an error alert, that's fine.
         // If it was a silent failure to get coins, this log helps.
       }
@@ -68,7 +55,6 @@ const Item = ({
       );
     } finally {
       setIsOpeningChest(false);
-      console.log(`Item.tsx (${itemTitle}): handleOpenChestPress finished.`);
     }
   };
 
@@ -114,9 +100,6 @@ const Item = ({
       {showChestModal && category === "chest" && chestPrizeCoins !== null && (
         <ChestOpening
           onClose={() => {
-            console.log(
-              `Item.tsx (${itemTitle}): ChestOpening onClose called.`
-            ); // DEBUG
             setShowChestModal(false);
             setChestPrizeCoins(null);
             fetchInventory();

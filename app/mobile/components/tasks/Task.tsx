@@ -70,7 +70,6 @@ const Task = (task: TaskProps) => {
     setCapturedPhoto(null);
     setIsProcessingPhoto(false);
 
-    console.log("Task answers", task.possibleAnswers);
     let isActive = true;
     if (task.version === 3) {
       const loadModel = async () => {
@@ -85,7 +84,6 @@ const Task = (task: TaskProps) => {
           const session = await createModelSession(modelPath);
           if (isActive) {
             modelSessionRef.current = session;
-            console.log("Task Model: Session created for v3.");
           }
         } catch (error) {
           console.error("Task Model: Failed to load for v3", error);
@@ -100,9 +98,7 @@ const Task = (task: TaskProps) => {
     return () => {
       isActive = false;
       if (modelSessionRef.current) {
-        modelSessionRef.current
-          .release()
-          .then(() => console.log("Task Model: Session released for v3."));
+        modelSessionRef.current.release();
         modelSessionRef.current = null;
       }
     };
@@ -131,9 +127,6 @@ const Task = (task: TaskProps) => {
         if (predictions && predictions.length > 0) {
           const predictedLetter = predictions[0].label;
           const probability = predictions[0].probability * 10;
-          console.log(
-            `Task v3: Predicted: ${predictedLetter}, Prob: ${probability}, Target: ${correctAnswer}`
-          );
 
           // Ensure correctAnswer is defined and is a string for comparison
           if (typeof correctAnswer === "string") {
@@ -199,7 +192,6 @@ const Task = (task: TaskProps) => {
   };
 
   const handleSavePhoto = (photo: CameraCapturedPicture) => {
-    console.log("Photo saved for task v3:", photo.uri);
     setCapturedPhoto(photo);
     // setShowCamera(false);
   };

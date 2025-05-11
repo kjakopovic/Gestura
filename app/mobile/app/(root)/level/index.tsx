@@ -69,7 +69,6 @@ const LevelScreen = () => {
 
   // Handle level completion
   const handleLevelComplete = (levelId: number, stats: any) => {
-    console.log(`Level ${levelId} completed with stats:`, stats);
     completeLevel(levelId);
   };
 

@@ -84,7 +84,6 @@ const BattlePass = () => {
         setClaiming(false);
       }
       // Show reward dialog or claim the reward
-      console.log(`Claiming level ${level.level} reward: ${level.coins} coins`);
     }
   };
 

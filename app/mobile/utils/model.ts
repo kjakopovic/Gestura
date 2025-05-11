@@ -30,7 +30,6 @@ export const createModelSession = async (
       //@ts-ignore
       graphOptimizationLevel: "all",
     });
-    console.log("Model loaded with CPU execution provider");
     return session;
   } catch (e) {
     console.error("Failed to create inference session:", e);

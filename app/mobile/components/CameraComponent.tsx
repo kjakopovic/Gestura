@@ -20,6 +20,7 @@ export default function CameraComponent({
   const [facing, setFacing] = useState<CameraType>("front");
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState<CameraCapturedPicture | null>(null);
+  //eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [cameraReady, setCameraReady] = useState<boolean>(false);
   const cameraRef = useRef<CameraView | null>(null);
 
@@ -41,7 +42,6 @@ export default function CameraComponent({
   }
 
   async function takePicture() {
-    console.log("Taking picture...", cameraReady);
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync({
         quality: 1,
@@ -53,7 +53,6 @@ export default function CameraComponent({
       }
       setPhoto(photo);
       onSavePhoto(photo);
-      console.log(photo.uri);
     }
   }
 

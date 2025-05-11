@@ -47,7 +47,6 @@ const Login = () => {
             "/refresh/token"
           );
           if (response.success) {
-            console.log("Access token refreshed successfully");
             if (response.data) {
               // Use the correct key from the response data type
               await saveTokens(
@@ -66,7 +65,6 @@ const Login = () => {
         }
       } else {
         setIsLoading(false);
-        console.log("No access or refresh token found. User is not logged in.");
       }
     })();
     //eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,7 +78,6 @@ const Login = () => {
       const result = await login(data);
 
       if (result.success) {
-        console.log("Login successful");
         router.replace("/Home");
       } else {
         setErrorMessage(

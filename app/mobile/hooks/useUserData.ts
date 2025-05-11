@@ -38,16 +38,11 @@ export const useUserData = () => {
         const rawData = result.data.users;
         const totalXp = rawData.xp || 0;
 
-        console.log("Total XP:", rawData.battlepass);
-
         // Calculate level and remaining XP
         const level = Math.floor(totalXp / 300) + 1;
         const remainingXp = totalXp % 300;
 
         const xpProgress = (remainingXp / 300) * 100;
-
-        console.log("Level:", level);
-        console.log("Remaining XP:", remainingXp);
 
         // Create merged data with proper XP calculation
         const mergedData = {

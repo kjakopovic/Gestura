@@ -166,7 +166,6 @@ export const verifyResetCode = async (
       data.digit4 +
       data.digit5 +
       data.digit6;
-    console.log("Verification Code:", code);
 
     // Here you would make an API call to your backend
     // to verify the reset code for the specific email

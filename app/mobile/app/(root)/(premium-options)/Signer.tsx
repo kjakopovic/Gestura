@@ -28,7 +28,6 @@ const Signer = () => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
-      console.log("Camera permission status:", status);
     })();
   }, []);
 
@@ -44,18 +43,12 @@ const Signer = () => {
     let intervalId: NodeJS.Timeout | null = null;
 
     const setupDetection = async () => {
-      console.log("Starting ASL model setup...");
-      console.log("Camera ready state:", cameraReady);
-      console.log("Camera ref state:", !!cameraRef?.current);
-
       if (!cameraReady || !cameraRef.current) {
-        console.log("Camera not ready yet, will try again when ready");
         return;
       }
 
       try {
         const ASL_MODEL_PATH = await getModelPath();
-        console.log("Model path loaded:", !!ASL_MODEL_PATH);
 
         // Create session and WAIT for it to be ready
         const session = await ort.InferenceSession.create(ASL_MODEL_PATH!, {
@@ -67,7 +60,6 @@ const Signer = () => {
         if (!isActive) return;
 
         modelSessionRef.current = session;
-        console.log("ASL model session created successfully");
 
         // Start detection interval AFTER model is loaded
         let isProcessing = false;
@@ -90,11 +82,8 @@ const Signer = () => {
               if (predictions && predictions.length > 0) {
                 // Check that predictions is properly defined before accessing
                 if (!predictions || !Array.isArray(predictions)) {
-                  console.log("No valid predictions received");
                   return;
                 }
-
-                console.log("Predictions received:", predictions.length);
 
                 if (predictions.length > 0) {
                   const letter = predictions[0].label;
@@ -111,19 +100,12 @@ const Signer = () => {
                     setSpokenLetters((prev) => [...prev, letter]);
                     lastSentTimeRef.current = now;
 
-                    console.log("Detected letter:", letter);
-                    console.log("Spoken letters:", [
-                      ...lastLettersRef.current,
-                      letter,
-                    ]);
-
                     lastLettersRef.current.push(letter);
                     if (lastLettersRef.current.length > 2) {
                       lastLettersRef.current.shift();
                     }
                   }
                 } else {
-                  console.log("No predictions found");
                 }
               }
             })
@@ -138,7 +120,6 @@ const Signer = () => {
         }, DETECTION_INTERVAL_MS);
 
         detectIntervalRef.current = intervalId;
-        console.log("Detection interval started");
       } catch (error) {
         console.error("Failed to set up ASL model:", error);
       }
@@ -150,14 +131,12 @@ const Signer = () => {
       isActive = false;
       if (intervalId) {
         clearInterval(intervalId);
-        console.log("Detection interval cleared");
       }
 
       // Add this block to properly release the model
       if (modelSessionRef.current) {
         modelSessionRef.current
           .release()
-          .then(() => console.log("Signer: Model session released"))
           .catch((err) =>
             console.error("Signer: Error releasing model session:", err)
           );

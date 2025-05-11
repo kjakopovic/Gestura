@@ -95,25 +95,15 @@ const Inventory = () => {
         );
       } else {
         // For chests, log success, but don't show a disruptive alert here.
-        console.log(
-          "Inventory.tsx: Chest consumption API call successful:",
-          response.data?.message
-        );
       }
 
       if (
         response.data?.won_item &&
         typeof response.data.won_item.coins === "number"
       ) {
-        console.log(
-          "Inventory.tsx (activateItem): Returning coins:",
-          response.data.won_item.coins
-        ); // DEBUG
         return response.data.won_item.coins;
       }
-      console.log(
-        "Inventory.tsx (activateItem): No coins in won_item or not a number, returning undefined."
-      ); // DEBUG
+
       return undefined;
     } catch (error) {
       const errorMessage =
