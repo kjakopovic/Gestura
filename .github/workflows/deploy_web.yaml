@@ -21,7 +21,7 @@ env:
   # ECS setup for the web service
   PROD_WEB_ECR_REPOSITORY: gestura/web/prod
   PROD_WEB_ECS_SERVICE: gestura-web-prod
-  PROD_WEB_ECS_TASK_DEFINITION: .github/task_definitions/gestura-web-prod.json
+  PROD_WEB_ECS_TASK_DEFINITION: .github/task_definitions/web/gestura-web-prod.json
   PROD_WEB_CONTAINER_NAME: gestura-web-prod
 
   # DEVELOP_WEB_ECR_REPOSITORY: hands-of-hope-develop/docs
