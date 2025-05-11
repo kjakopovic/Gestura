@@ -58,6 +58,7 @@ const Task = (task: TaskProps) => {
   const [popupVisible, setPopupVisible] = React.useState(false);
   const [capturedPhoto, setCapturedPhoto] =
     React.useState<CameraCapturedPicture | null>(null);
+  //eslint-disable-next-line
   const [showCamera, setShowCamera] = React.useState(true); // For v3, camera is initially shown
 
   // Load and release model for task version 3
@@ -98,6 +99,7 @@ const Task = (task: TaskProps) => {
         modelSessionRef.current = null;
       }
     };
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task.version, task.id]);
 
   const showResults = async () => {

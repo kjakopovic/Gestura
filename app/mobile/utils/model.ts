@@ -1,3 +1,4 @@
+//eslint-disable-next-line
 import { InferenceSession } from "onnxruntime-react-native";
 import { Tensor } from "onnxruntime-common";
 import { Asset } from "expo-asset";
