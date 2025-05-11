@@ -66,22 +66,20 @@ const Settings = () => {
   return (
     <>
       <CustomAppBar title="SETTINGS" backButton />
-      <ScrollView className="bg-grayscale-800 mt-24 px-10">
-        <SafeAreaView className="bg-grayscale-800 flex-1">
-          <View className="flex flex-col gap-y-7">
-            <SettingSection title="APP SETTINGS" items={APP_SETTINGS} />
-            <SettingSection title="USER SETTINGS" items={USER_SETTINGS} />
-          </View>
-          <View className="mt-10">
-            <CustomButton
-              onPress={handleLogout}
-              text="LOG OUT"
-              style="error"
-              noMargin
-            />
-          </View>
-        </SafeAreaView>
-      </ScrollView>
+      <View className="bg-grayscale-800 h-full pt-36 px-10 gap-2">
+        <View className="flex flex-col gap-y-7">
+          <SettingSection title="APP SETTINGS" items={APP_SETTINGS} />
+          <SettingSection title="USER SETTINGS" items={USER_SETTINGS} />
+        </View>
+        <View>
+          <CustomButton
+            onPress={handleLogout}
+            text="LOG OUT"
+            style="error"
+            noMargin
+          />
+        </View>
+      </View>
     </>
   );
 };

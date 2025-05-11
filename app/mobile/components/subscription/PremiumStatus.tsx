@@ -135,41 +135,36 @@ const PremiumStatus = () => {
       </View>
     );
   }
+
   if (loading) {
     return (
-      <View className="flex flex-col bg-grayscale-800 justify-center items-center mx-6">
-        <ActivityIndicator
-          size="large"
-          color="#A162FF"
-          className="absolute top-1/2"
-          style={{ transform: [{ translateY: -50 }] }}
-        />
+      <View className="flex flex-col h-full bg-grayscale-800 justify-center items-center mx-6">
+        <ActivityIndicator size="large" color="#A162FF" />
       </View>
     );
   }
-  // Render the PremiumStatus component
 
   return (
-    <View className="flex flex-col bg-grayscale-800 justify-center items-center mx-6">
+    <View className="flex flex-col bg-grayscale-800 justify-between h-full items-center mx-6 pb-3">
       <View className="flex flex-col justify-center items-center">
-        <Image source={icons.logo} className="size-44 m-2 mt-20" />
-        <Text className="text-grayscale-100 font-inter text-4xl text-center m-8 mt-0">
+        <Image source={icons.logo} className="size-44" />
+        <Text className="text-grayscale-100 font-inter text-4xl text-center mt-0">
           Your journey is on its way with{" "}
           <Text className="text-grayscale-100 font-interBold">Premium</Text>!
         </Text>
       </View>
       <View className="flex flex-row justify-start items-center w-full">
-        <Text className="text-grayscale-100 font-interLight text-lg m-2">
+        <Text className="text-grayscale-100 font-interLight text-lg m-1">
           You get:
         </Text>
       </View>
       <BenefitsList categories={benefitCategories} />
-      <Text className="text-grayscale-100 text-2xl font-interMedium text-center px-6 mb-6">
+      <Text className="text-grayscale-100 text-2xl font-interMedium text-center px-6">
         You could still get more benefits with{" "}
         <Text className="text-primary font-interBold">LIVE</Text>
       </Text>
       <TouchableOpacity
-        className="w-1/2 h-12 bg-grayscale-800 justify-center items-center border border-grayscale-400 rounded-xl mb-6"
+        className="w-1/2 h-12 bg-grayscale-800 justify-center items-center border border-grayscale-400 rounded-xl"
         onPress={handleUpgrade}
       >
         <Text className="text-grayscale-100 font-inter text-base">
@@ -183,7 +178,7 @@ const PremiumStatus = () => {
         noMargin
       />
       <TouchableOpacity
-        className="w-1/2 h-12 bg-grayscale-800 justify-center items-center border border-error rounded-xl mt-6"
+        className="w-1/2 h-12 bg-grayscale-800 justify-center items-center border border-error rounded-xl"
         onPress={handleCancelSubscription}
       >
         <Text className="text-error font-inter text-base">

@@ -99,13 +99,8 @@ const LiveStatus = () => {
   }
   if (loading) {
     return (
-      <View className="flex flex-col bg-grayscale-800 justify-center items-center mx-6">
-        <ActivityIndicator
-          size="large"
-          color="#A162FF"
-          className="absolute top-1/2"
-          style={{ transform: [{ translateY: -50 }] }}
-        />
+      <View className="flex flex-col bg-grayscale-800 h-full justify-center items-center mx-6">
+        <ActivityIndicator size="large" color="#A162FF" />
       </View>
     );
   }
@@ -113,7 +108,7 @@ const LiveStatus = () => {
   return (
     <View className="flex flex-col bg-grayscale-800 justify-center items-center mx-6">
       <View className="flex flex-col justify-center items-center">
-        <Image source={icons.logoG} className="size-44 m-2 mt-20" />
+        <Image source={icons.logoG} className="size-44" />
         <Text className="text-grayscale-100 font-inter text-4xl text-center m-8 mt-0">
           Your journey is aided with{" "}
           <Text className="text-primary font-interBold">Live</Text>!

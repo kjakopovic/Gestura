@@ -15,6 +15,7 @@ import * as icons from "@/constants/icons";
 import CustomButton from "@/components/CustomButton";
 import { api } from "@/lib/api";
 import { useUserStore } from "@/store/useUserStore";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type UpgradeToPremiumProps = {
   hasButton?: boolean;
@@ -92,29 +93,24 @@ const UpgradeToPremium = ({ hasButton }: UpgradeToPremiumProps) => {
   if (loading) {
     return (
       <View className="flex flex-col h-full bg-grayscale-800 justify-center items-center mx-6">
-        <ActivityIndicator
-          size="large"
-          color="#A162FF"
-          className="mt-16"
-          style={{ transform: [{ translateY: -50 }] }}
-        />
+        <ActivityIndicator size="large" color="#A162FF" />
       </View>
     );
   }
 
   return (
-    <View className="flex flex-col h-full bg-grayscale-800 justify-center items-center mx-6">
+    <View className="flex flex-col h-full bg-grayscale-800 justify-between items-center mx-6 pb-3">
       <View className="flex flex-col justify-center items-center">
-        <Image source={icons.logo} className="size-44 m-2 mt-20" />
-        <Text className="text-white font-inter text-4xl text-center m-8 mt-0">
+        <Image source={icons.logo} className="size-44" />
+        <Text className="text-white font-inter text-4xl text-center mt-0">
           Embark on a journey using{" "}
           <Text className="text-white font-interBold">Premium</Text>!
         </Text>
       </View>
       <View className="flex flex-row justify-start items-center w-full">
-        <Text className="text-white font-interLight text-lg m-2">You get:</Text>
+        <Text className="text-white font-interLight text-lg m-1">You get:</Text>
       </View>
-      <View className="flex flex-col justify-start items-center w-full border-2 border-grayscale-400 rounded-xl mb-8">
+      <View className="flex flex-col justify-start items-center w-full border-2 border-grayscale-400 rounded-xl">
         <View className="flex flex-col justify-center items-center w-full">
           <View className="flex flex-row justify-start items-center w-full">
             <Text className="text-white font-interBold text-base px-2 mx-4 border-b-2 border-l-2 border-r-2 rounded-b-xl border-grayscale-400">
@@ -171,7 +167,7 @@ const UpgradeToPremium = ({ hasButton }: UpgradeToPremiumProps) => {
         noMargin={true}
       />
       {hasButton && (
-        <TouchableOpacity className="w-1/2 m-6 mb-24 justify-center items-center border border-grayscale-400 rounded-xl">
+        <TouchableOpacity className="w-1/2 justify-center items-center border border-grayscale-400 rounded-xl">
           <Text
             className="text-grayscale-100 font-inter p-4"
             onPress={() => {
