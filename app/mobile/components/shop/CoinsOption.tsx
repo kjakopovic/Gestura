@@ -28,7 +28,7 @@ const CoinsOption = ({ type, price, amount }: CoinsOptionProps) => {
   }
 
   return (
-    <View className="bg-grayscale-700 w-40 h-40 flex flex-col items-center justify-between p-2 border border-grayscale-400 border-b-2 rounded-xl">
+    <View className="bg-grayscale-700 w-[40%] h-40 flex flex-col items-center justify-between p-2 border border-grayscale-400 border-b-2 rounded-xl">
       <Text className="text-grayscale-100 text-xl font-interBold text-center m-1">
         {title}
       </Text>

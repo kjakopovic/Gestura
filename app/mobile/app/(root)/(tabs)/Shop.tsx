@@ -68,49 +68,54 @@ const Shop = () => {
                     {userCoins}
                   </Text>
                 </View>
-
-                {/* Shop Items Section */}
-                <ShopSection
-                  title="ITEMS"
-                  items={shopItems}
-                  renderItem={(item: ShopItem) => (
-                    <ShopOption
-                      key={item.id}
-                      title={item.name}
-                      type={item.category}
-                      price={item.price}
-                      borderless={false}
-                      onPress={() => handlePurchase(item)}
+                <View className="w-full flex-row items-center justify-center">
+                  <View className="w-[95%]">
+                    {/* Shop Items Section */}
+                    <ShopSection
+                      title="ITEMS"
+                      items={shopItems}
+                      renderItem={(item: ShopItem) => (
+                        <ShopOption
+                          key={item.id}
+                          title={item.name}
+                          type={item.category}
+                          price={item.price}
+                          borderless={false}
+                          onPress={() => handlePurchase(item)}
+                        />
+                      )}
                     />
-                  )}
-                />
-
-                {/* Coins Section */}
-                <ShopSection
-                  title="COINS"
-                  items={coins}
-                  renderItem={(coin: ShopItem) => (
-                    <CoinsOption
-                      key={coin.id}
-                      type={coin.name.includes("Handful") ? "handful" : "bag"}
-                      price={coin.price}
-                      amount={coin.name.includes("Handful") ? "1000" : "10K"}
+                    {/* Coins Section */}
+                    <ShopSection
+                      title="COINS"
+                      items={coins}
+                      renderItem={(coin: ShopItem) => (
+                        <CoinsOption
+                          key={coin.id}
+                          type={
+                            coin.name.includes("Handful") ? "handful" : "bag"
+                          }
+                          price={coin.price}
+                          amount={
+                            coin.name.includes("Handful") ? "1000" : "10K"
+                          }
+                        />
+                      )}
                     />
-                  )}
-                />
-
-                {/* Chests Section */}
-                <ShopSection
-                  title="CHESTS"
-                  items={chests}
-                  renderItem={(chest: ShopItem) => (
-                    <ChestOption
-                      key={chest.id}
-                      chestPrice={chest.price}
-                      onPress={() => handlePurchase(chest)}
+                    {/* Chests Section */}
+                    <ShopSection
+                      title="CHESTS"
+                      items={chests}
+                      renderItem={(chest: ShopItem) => (
+                        <ChestOption
+                          key={chest.id}
+                          chestPrice={chest.price}
+                          onPress={() => handlePurchase(chest)}
+                        />
+                      )}
                     />
-                  )}
-                />
+                  </View>
+                </View>
               </View>
             </ScrollView>
           </>
@@ -131,10 +136,10 @@ const ShopSection = ({
   renderItem: (item: ShopItem) => React.ReactNode;
 }) => (
   <View className="w-full flex flex-col items-center justify-start mb-10">
-    <Text className="text-grayscale-100 text-2xl font-interExtraBold">
+    <Text className="text-grayscale-100 text-2xl font-interExtraBold pb-3">
       {title}
     </Text>
-    <View className="w-full flex flex-row flex-wrap gap-y-10 items-center justify-between px-12 my-8">
+    <View className="w-full h-auto flex flex-wrap flex-row gap-5 items-center justify-center">
       {items.map(renderItem)}
     </View>
   </View>

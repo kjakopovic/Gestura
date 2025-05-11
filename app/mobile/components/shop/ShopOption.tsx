@@ -47,7 +47,7 @@ const ShopOption = ({
 
   return (
     <TouchableOpacity
-      className={`bg-grayscale-700 w-40 h-40 flex flex-col items-center justify-center  ${
+      className={`bg-grayscale-700 w-[40%] h-40 flex flex-col items-center justify-center  ${
         borderless ? "" : "border border-grayscale-400 border-b-2"
       } rounded-xl`}
       onPress={onPress}
