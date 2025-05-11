@@ -13,6 +13,7 @@ import LevelMap from "@/components/levels/LevelMap";
 import { useLevel } from "@/hooks/useLevel";
 import { useUserData } from "@/hooks/useUserData";
 import { navigateToLevel } from "@/utils/navigationUtils";
+import { useScrollHandler } from "@/hooks/useScrollHandler";
 
 const toastConfig = {
   error: (props: any) => (
@@ -29,26 +30,6 @@ const toastConfig = {
     />
   ),
   // You can customize other toast types similarly
-};
-
-// Extract scroll handler to a separate function
-const useScrollHandler = (onScrollEnd: () => void) => {
-  return {
-    onScroll: ({ nativeEvent }: { nativeEvent: any }) => {
-      const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-
-      const { height: deviceHeight } = Dimensions.get("window");
-      const paddingToBottom = deviceHeight * 0.25;
-
-      if (
-        layoutMeasurement.height + contentOffset.y >=
-        contentSize.height - paddingToBottom
-      ) {
-        onScrollEnd();
-      }
-    },
-    scrollEventThrottle: 200,
-  };
 };
 
 const Home = () => {
