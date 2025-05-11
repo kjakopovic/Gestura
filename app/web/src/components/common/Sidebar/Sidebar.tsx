@@ -38,7 +38,10 @@ const Sidebar = ({ selected, setSelected }: Props) => {
           <img
             src={icons.logoText}
             alt="Gestura logo image with a hand showing OK but G instead of O"
-            className="w-[150px] items-center mt-1 justify-center"
+            className="w-[150px] items-center mt-1 justify-center hover:bg-background-900 cursor-pointer p-2 rounded-lg"
+            onClick={() => {
+              navigate("/");
+            }}
           />
         </div>
         {options.map((option, index) => (
