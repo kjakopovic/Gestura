@@ -1,19 +1,81 @@
-# HandsOfHope
+# Gestura
 
-Korisnik 1 govori rijec stol znakovnim jezikom, slovo po slovo se šalje mom modelu, moj model procesira slovo
-i pošalje to korisniku 2, korisnik 2 kada primi slovo u text obliku posalje to u text-to-speech i dobije audio.
-(tako rijesavamo problem lošeg interneta)
+<div align="center">
+  <img src="https://via.placeholder.com/150?text=Gestura" alt="Gestura Logo" width="150"/>
+  <p><strong>Learn, Communicate, and Connect through Sign Language</strong></p>
+</div>
 
-yoloV11n sa image classification datasetom sa kagglea, moze se exportat u tfjs formatu:
-https://www.kaggle.com/code/fitztata/yolov8-asl-recognition-model-explainability
+## 📱 Overview
 
-https://docs.ultralytics.com/tasks/detect/#predict
+Gestura is a comprehensive platform that makes Sign Language accessible to everyone. Through interactive lessons, real-time translation, and a gamified learning experience, users can learn Sign Language efficiently while enjoying their progress.
 
-za docs o modelu:
-https://chatgpt.com/share/68012c0f-58e4-8004-b5d7-77a33433b38d
+The core functionality enables real-time sign language communication:
 
-Additional links to datasets:
-[text](https://www.kaggle.com/datasets/mrgeislinger/asl-rgb-depth-fingerspelling-spelling-it-out)
-https://www.kaggle.com/datasets/lexset/synthetic-asl-alphabet
-[text](https://www.kaggle.com/datasets/debashishsau/aslamerican-sign-language-aplhabet-dataset)
-[text](https://www.kaggle.com/datasets/risangbaskoro/wlasl-processed)
+- A user signs words using ASL, letter by letter
+- Our ML model processes each letter in real-time
+- Recipients receive the text and can hear it through text-to-speech
+- This approach ensures reliable communication even with poor internet connectivity
+
+## ✨ Features
+
+### 💯 Core Features
+
+- **Progressive Learning Path**: Step-by-step lessons for mastering ASL
+- **Real-time Sign Detection**: Advanced ML model for detecting and translating hand signs
+- **Personalized User Journey**: Track progress, unlock achievements, and collect rewards
+
+### 🌟 Premium Features
+
+- **Live Communication**: Real-time sign language translation for conversation
+- **Signer Mode**: Convert hand signs to text instantly
+- **Talker Mode**: Convert text to signs for two-way communication
+- **Unlimited Hearts**: Continue learning without interruption
+
+### 🎮 Gamification
+
+- **Battle Pass**: Seasonal content with rewards and challenges
+- **Shop**: Customize your experience with coins and items
+- **Achievements**: Complete challenges to earn badges and rewards
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- **Mobile**: React Native with Expo Router
+- **Web**: React with Vite
+- **Styling**: Tailwind CSS / NativeWind
+- **State Management**: Custom stores with Zustand
+
+### Backend
+
+- **API**: AWS Lambda serverless functions
+- **Database**: DynamoDB
+- **Realtime Communication**: WebSockets with API Gateway
+- **Authentication**: Custom token-based auth
+
+### Machine Learning
+
+- **Framework**: ONNX Runtime
+- **Model**: YOLOv11n with image classification for ASL recognition
+- **Dataset**: Multiple ASL datasets from Kaggle (see ML Resources section)
+- **Inference**: On-device processing for privacy and speed
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Python 3.12+
+- Docker
+- AWS CLI (for deployment)
+
+### Installation
+
+#### Mobile App
+
+```bash
+cd app/mobile
+npm install
+npx expo prebuild --clear
+npx expo run:android/ios --device
+```
