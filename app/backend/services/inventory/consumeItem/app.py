@@ -96,9 +96,10 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
     item_category = item_info.get("category", "").lower()
     item_effects = item_info.get("effect", {})
 
-    # Prepare for DynamoDB update
+    # Prepare for DynamoDB update and response
     update_parts = []
     expression_attribute_values = {}
+    response_data = {"message": "Item consumed successfully."}
 
     # Process item based on its category
     if item_category == "coins":
@@ -131,6 +132,7 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
 
     elif item_category == "chest":
         # Open chest to get a random item based on win percentages
+        logger.info(f"Item {item_id} is a chest item. Opening chest.")
         possible_items = item_effects.get("items", [])
         if not possible_items:
             logger.error(f"Item {item_id} has no possible items.")
@@ -138,13 +140,20 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
 
         # Select a random item from the chest based on win percentages
         won_item = select_random_item_from_chest(possible_items)
+        won_item = convert_decimal_to_float(won_item)
         logger.info(f"User {email} won {won_item} from chest {item_id}")
 
+        response_data["won_item"] = won_item
+
         if "coins" in won_item:
-            # If the won item is coins, add them to user's balance
+            logger.info(f"User {email} won coins: {won_item['coins']}")
+            won_coins = won_item.get("coins", 0)
             user_coins = user.get("coins", 0)
+
+            new_user_coins = user_coins + Decimal(str(won_coins))
+
             update_parts.append("coins = :coins")
-            expression_attribute_values[":coins"] = user_coins + won_item["coins"]
+            expression_attribute_values[":coins"] = new_user_coins
         else:
             # If the won item is not coins, add it to user's inventory
             logger.info(f"Adding item {won_item} to user's inventory")
@@ -223,7 +232,7 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
     )
 
     logger.info(f"Item {item_id} consumed successfully for user {email}.")
-    return build_response(200, {"message": "Item consumed successfully."})
+    return build_response(200, response_data)
 
 
 def get_user_by_email(dynamodb, email):
@@ -268,6 +277,7 @@ def select_random_item_from_chest(chest_items):
 
     # Select a random item based on weights (win percentages)
     chosen_item = random.choices(items, weights=weights, k=1)[0]
+    # win_percentage = convert_decimal_to_float(chosen_item.get("win_percentage", 0))
     logger.info(f"Chosen item: {chosen_item}")
 
     return chosen_item

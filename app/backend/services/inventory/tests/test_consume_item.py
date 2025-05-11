@@ -355,6 +355,8 @@ class TestConsumeItem(BaseTestSetup):
             response = lambda_handler(event, {})
             body = json.loads(response['body'])
 
+            print(f"\nResponse: {response}")
+
             self.assertEqual(response['statusCode'], 200)
             self.assertEqual(body["message"], "Item consumed successfully.")
 
@@ -430,6 +432,8 @@ class TestConsumeItem(BaseTestSetup):
 
             response = lambda_handler(event, {})
             body = json.loads(response['body'])
+
+            print(f"Response: {response}")
 
             self.assertEqual(response['statusCode'], 200)
             self.assertEqual(body["message"], "Item consumed successfully.")
