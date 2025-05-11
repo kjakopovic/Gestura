@@ -3,7 +3,7 @@ import React from "react";
 
 type CoinsOptionProps = {
   title: string;
-  amount: string;
+  amount?: string;
   price: number;
   image?: string;
 };
@@ -16,9 +16,6 @@ const CoinsOption = ({ title, price, amount, image }: CoinsOptionProps) => {
       </Text>
       <View className="flex flex-row items-center justify-center">
         <Image source={{ uri: image }} className="size-8" />
-        <Text className="text-primary text-2xl font-interExtraBold m-1 mx-2">
-          {amount}
-        </Text>
       </View>
       <View className="bg-grayscale-800 w-3/4 h-8 rounded-xl border-b border-grayscale-100 flex flex-col items-center justify-center">
         <Text className="text-grayscale-100 text-xl font-interExtraBold">

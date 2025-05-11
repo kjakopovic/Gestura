@@ -95,11 +95,6 @@ const Shop = () => {
                           key={coin.id}
                           image={coin.image_url}
                           price={coin.price}
-                          amount={
-                            coin.effect?.coins
-                              ? `${coin.effect.coins} COINS`
-                              : "0 COINS"
-                          }
                         />
                       )}
                     />
@@ -109,6 +104,7 @@ const Shop = () => {
                       items={chests}
                       renderItem={(chest: ShopItem) => (
                         <ChestOption
+                          image={chest.image_url}
                           key={chest.id}
                           chestPrice={chest.price}
                           onPress={() => handlePurchase(chest)}
