@@ -195,9 +195,9 @@ const Inventory = () => {
               No items available
             </Text>
           )}
-          {items.map((item) => (
+          {items.map((item, index) => (
             <Item
-              key={item.id}
+              key={index}
               itemId={item.id} // Pass itemId
               itemTitle={item.name}
               icon={item.image_url}
