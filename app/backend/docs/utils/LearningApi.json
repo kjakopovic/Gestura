@@ -1,0 +1,54 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "version" : "1.0",
+    "title" : "LearningApi-develop"
+  },
+  "host" : "vrv48qwb1h.execute-api.eu-central-1.amazonaws.com",
+  "basePath" : "/develop",
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/" : {
+      "get" : {
+        "responses" : { },
+        "x-amazon-apigateway-integration" : {
+          "httpMethod" : "POST",
+          "uri" : "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-central-1:333855566543:function:learning-develop-HealthcheckFunction-tYBLX6d7469f/invocations",
+          "passthroughBehavior" : "when_no_match",
+          "type" : "aws_proxy"
+        }
+      }
+    },
+    "/levels/complete" : {
+      "post" : {
+        "responses" : { },
+        "x-amazon-apigateway-integration" : {
+          "httpMethod" : "POST",
+          "uri" : "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-central-1:333855566543:function:learning-develop-CompleteLevelFunction-cYCgaaYyb00C/invocations",
+          "passthroughBehavior" : "when_no_match",
+          "type" : "aws_proxy"
+        }
+      }
+    },
+    "/tasks" : {
+      "get" : {
+        "responses" : { },
+        "x-amazon-apigateway-integration" : {
+          "httpMethod" : "POST",
+          "uri" : "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-central-1:333855566543:function:learning-develop-GetListOfTasksFunction-q62ahAJhFktW/invocations",
+          "passthroughBehavior" : "when_no_match",
+          "type" : "aws_proxy"
+        }
+      },
+      "post" : {
+        "responses" : { },
+        "x-amazon-apigateway-integration" : {
+          "httpMethod" : "POST",
+          "uri" : "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-central-1:333855566543:function:learning-develop-CreateTaskFunction-iFMDTl1zZQer/invocations",
+          "passthroughBehavior" : "when_no_match",
+          "type" : "aws_proxy"
+        }
+      }
+    }
+  }
+}

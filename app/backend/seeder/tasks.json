@@ -1,0 +1,2402 @@
+[
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "76c5d8a4-a877-4da2-8443-151dcbeceb39",
+    "section": 10,
+    "possible_answers": ["T", "D", "J", "Z"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "O",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "b8bf1edc-af6e-41aa-8360-fb47e8aaef78",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "F",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "ef6221fb-6bd0-48d8-bfd6-7ccc3ceb8bb5",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "O",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "be16ba41-5320-4b33-a85a-7e7e859df2c5",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "W",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "30e34632-d669-4bc5-af38-eeaebc230775",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "C",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "cb61b852-d73e-4322-b340-81231d49c818",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "077e2f79-e5c0-4bd2-97f2-701d5eaee7dc",
+    "section": 10,
+    "possible_answers": ["Q", "R", "E", "K"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "E",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "b9d37b71-5f83-4da1-a7ed-b896ef698ea3",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "cf4929d2-ac8b-4c4f-a074-d929e1dd194b",
+    "section": 10,
+    "possible_answers": ["G", "P", "E", "U"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "86fd5492-5ce3-4e55-ab8c-3fa6081e805b",
+    "section": 10,
+    "possible_answers": ["Z", "O", "F", "T"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "J",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "16b9f818-8971-40a2-9620-261616ba4289",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "I",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "86b8f940-60ad-4845-a92a-834e6d00af81",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "824a0da8-a5a7-4cc9-b996-467f412a4207",
+    "section": 10,
+    "possible_answers": ["R", "Z", "F", "H"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "R",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "f0deae84-e8f5-40b9-bfc0-3b96c31ff0c5",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "L",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "b064cd4e-dca9-4d23-a1e0-de56a5a7a9fe",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/S.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "72905d85-5967-44e6-b020-9721d378d459",
+    "section": 10,
+    "possible_answers": ["V", "U", "S", "K"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "066fcc35-d6ab-4f50-8117-45a70f08a59f",
+    "section": 10,
+    "possible_answers": ["E", "Z", "K", "W"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "B",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "329c6589-e73e-4b4b-ad07-7aac7b8af4c2",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "Z",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "2d2e66c8-e8bd-42aa-8787-c3f5f732c403",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "c77f784e-2656-46b4-ba0c-68b9f79bf828",
+    "section": 10,
+    "possible_answers": ["L", "B", "R", "C"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/S.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "e3859cd9-308b-45ed-95d5-c1f9dfdbe772",
+    "section": 10,
+    "possible_answers": ["T", "U", "I", "S"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Q.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "785460fe-f400-488b-a89a-c0edfa2749c7",
+    "section": 10,
+    "possible_answers": ["T", "Q", "W", "R"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "Z",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "c95e0d98-283c-4086-a3cf-40a885b61719",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "X",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "ee5b9c03-a34f-4861-9f7f-eac24bff894f",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "Z",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "b0a64400-d1d0-487e-b56e-ffc4a323abfc",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "Y",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "3dd83971-b0c0-4f59-b55f-80d1bf144764",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "772f0eb9-e539-4123-a7e2-b320a61f50b5",
+    "section": 10,
+    "possible_answers": ["Y", "H", "O", "X"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "R",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "dbab2d3f-195e-4f00-9709-c67a7c16738e",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Q.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "be2202e0-cfd3-46c5-b331-f0ac87b49ced",
+    "section": 10,
+    "possible_answers": ["A", "U", "V", "Z"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "581d489b-25ed-498d-aaeb-0715f02171d1",
+    "section": 10,
+    "possible_answers": ["H", "K", "P", "X"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "375692e5-1db2-4221-947c-b2f3cf8b7250",
+    "section": 10,
+    "possible_answers": ["A", "Y", "R", "T"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "H",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "b42e0e56-f5ec-4810-9930-460b91333dd6",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "bc789a95-b4e4-4b8b-9a59-223e7b12c91a",
+    "section": 10,
+    "possible_answers": ["L", "E", "Y", "N"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "6a4fb1f2-44ab-4f4d-92e4-d71813d29267",
+    "section": 10,
+    "possible_answers": ["R", "U", "G", "Z"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "X",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "0de95a6f-8727-48cd-b86b-bc07cd07b646",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "2694fd0d-bb69-4b59-a64d-4815382063c4",
+    "section": 10,
+    "possible_answers": ["G", "F", "R", "O"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "F",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "73564de4-5c1b-4029-ad85-d65b1726ced6",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "8ecb66ae-6bd9-4a11-9f0d-98a510930f95",
+    "section": 10,
+    "possible_answers": ["B", "Z", "H", "X"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "40590720-235c-4093-a7c7-4122a42483d1",
+    "section": 10,
+    "possible_answers": ["H", "T", "F", "Y"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "6e724758-ab7e-4f3f-a610-a15193556426",
+    "section": 10,
+    "possible_answers": ["P", "F", "G", "S"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "7bf692fa-01de-4156-966e-7de92db5b4dd",
+    "section": 10,
+    "possible_answers": ["L", "P", "G", "E"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "A",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "261ee58f-a1cd-4ec2-84b9-2c35b17eb5b1",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "502c530d-79cb-49b7-a909-20f887b05c37",
+    "section": 10,
+    "possible_answers": ["X", "U", "P", "L"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "97d67284-146f-4994-b658-61d67565c8fa",
+    "section": 10,
+    "possible_answers": ["K", "J", "Y", "V"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "a3f79494-db56-4dd3-af70-2c26986d5e90",
+    "section": 10,
+    "possible_answers": ["H", "M", "Y", "J"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "993fb5e9-942f-4f55-a4b2-89aad2b74694",
+    "section": 10,
+    "possible_answers": ["Z", "T", "X", "E"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "c44b4d23-22d9-4557-8b3d-6fe156f9c010",
+    "section": 10,
+    "possible_answers": ["W", "E", "C", "I"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "a7493ec6-669d-4f87-a73b-be5ebfbc14f9",
+    "section": 10,
+    "possible_answers": ["B", "C", "S", "A"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "V",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "4a18bbf6-22f0-487a-a61f-e7171799a0b9",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "7153e95d-5644-4374-82c7-a26c96836038",
+    "section": 10,
+    "possible_answers": ["Y", "I", "L", "K"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "H",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "ee58b3a7-5bf4-456e-bb01-acd36ed41d57",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "I",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "e07fdbac-edbe-42ec-8cf4-5c4563d2dd67",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "L",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "815b9c2a-afa7-40dc-a340-95b777a65163",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "c19c191d-d042-4266-8c9c-d5e5b3be5b3e",
+    "section": 10,
+    "possible_answers": ["Y", "H", "N", "D"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "7b846d0c-b749-4902-95bf-b5635f8e48e3",
+    "section": 10,
+    "possible_answers": ["T", "P", "Q", "W"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "ef82ed6e-5d12-4c2f-8ef7-147aa9df0471",
+    "section": 10,
+    "possible_answers": ["W", "C", "Q", "I"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "F",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "0b3f7954-a8ac-424f-83e2-94fc47848700",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "W",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "4cf077ae-323f-4d9f-ad04-8020d3301941",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "d4b38609-8fba-4049-a251-ec1a4e6fc0d0",
+    "section": 10,
+    "possible_answers": ["Q", "M", "B", "E"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "0a73c663-ad42-455e-91b9-ba34abdaaacf",
+    "section": 10,
+    "possible_answers": ["K", "L", "O", "U"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "49d0d6b2-b3c0-4b73-8f60-5cc891637261",
+    "section": 10,
+    "possible_answers": ["I", "V", "K", "U"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "E",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "9217ea57-04eb-4a34-8ea5-6052026da609",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "S",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "e0cb36c0-9e37-41dd-9cad-c073f29e150c",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/S.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "2ec1214a-4bd2-4cb7-860a-40f022f248f8",
+    "section": 10,
+    "possible_answers": ["G", "P", "I", "F"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "B",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "fe2b2f70-df27-47f7-9c48-cddeeb56b700",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "5f26565f-daa2-4545-a889-047d22ca8ab2",
+    "section": 10,
+    "possible_answers": ["U", "P", "V", "X"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "X",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "7860c6e3-4f47-40d8-a8eb-0b32307cfea4",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "K",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "84b53edd-7ca3-4cf4-ad8d-bbb98c92f4d9",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "I",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "9fa84548-6833-42de-9911-7d53dcffa4fc",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "af052f18-129a-4944-bb2f-0c2884ee0512",
+    "section": 10,
+    "possible_answers": ["R", "J", "G", "F"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "64243122-b958-4048-99a2-1482b6c65b04",
+    "section": 10,
+    "possible_answers": ["G", "S", "P", "O"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "Q",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "1628bb68-f35f-4412-842a-9dc3fb835cca",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Q.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "V",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "dc33553a-f8a1-4292-8139-3a5a3e47b6fb",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "P",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "970dcea0-ef41-48ba-a088-9b93912dafb0",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "C",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "6a447d16-25a4-4f28-9b4b-567e1315f03f",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "f348f5ee-2b04-4f31-b169-7c9103e0e068",
+    "section": 10,
+    "possible_answers": ["A", "R", "I", "B"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "d1cacf45-94ea-40e7-9730-b90b3a644fce",
+    "section": 10,
+    "possible_answers": ["V", "Q", "P", "O"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "O",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "d0dedfda-0cb9-4748-ae53-5b236606bc9f",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "05ba5097-0550-4f2f-9d21-f4fdc97f9abf",
+    "section": 10,
+    "possible_answers": ["V", "Z", "K", "W"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "J",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "75b5568e-b60d-440b-a1b2-aea79e8deb3c",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "G",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "9fdcd1f9-2c79-4a29-b510-8082fb23fab8",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "280d32d8-8701-430e-8a0a-b6eb510d99a4",
+    "section": 10,
+    "possible_answers": ["E", "S", "C", "V"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "be6277fc-e65e-4097-bf8c-90fe575e7820",
+    "section": 10,
+    "possible_answers": ["E", "A", "U", "D"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "ceaa99fb-c8bc-49d0-baa2-4c19d919de28",
+    "section": 10,
+    "possible_answers": ["O", "P", "R", "K"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "cde32bc3-1cf3-4c91-8a5f-87a562e8e0d9",
+    "section": 10,
+    "possible_answers": ["B", "T", "J", "O"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "65ff389a-7ca9-425a-b210-a6a7b508fc4b",
+    "section": 10,
+    "possible_answers": ["V", "Q", "W", "K"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/S.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "363e01ca-079e-4ba4-b04b-15f1c387bd06",
+    "section": 10,
+    "possible_answers": ["V", "S", "J", "P"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "S",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "7e956726-8b2a-45a0-8432-df869e5742aa",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/S.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "P",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "f0417428-cc4d-463f-b4a0-62f2df087cde",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "A",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "2095d05d-931a-4ec9-842f-aa8f77155eeb",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "bd91c320-95a1-4210-bc09-fad5e49c3889",
+    "section": 10,
+    "possible_answers": ["K", "O", "C", "V"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "E",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "4a47f116-a4a9-43d3-b0db-066c7d69783f",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "7b179be0-43db-4809-8414-e0991ec1ca19",
+    "section": 10,
+    "possible_answers": ["C", "P", "Q", "I"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "48de16b2-8124-4ee7-b44a-0995f77acf74",
+    "section": 10,
+    "possible_answers": ["I", "J", "U", "C"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "U",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "3701d287-feb4-4752-a542-8c846c82d3c2",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "0e4a791d-04a3-41ba-b0e1-cabd434c50ba",
+    "section": 10,
+    "possible_answers": ["W", "F", "R", "O"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "a47bab0a-0064-4b64-89a9-c9a63c15d054",
+    "section": 10,
+    "possible_answers": ["A", "Z", "V", "Y"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "G",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "7ab5b5ec-dab9-4d60-9ea5-76892b45392a",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "1c9ec6f1-54bd-426e-980c-62bfb319da3b",
+    "section": 10,
+    "possible_answers": ["Z", "A", "R", "B"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "P",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "6a6fa467-7bd7-46e0-bed6-a804a5d2c967",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "Y",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "a7a2ba90-2482-445d-a5e8-165029dc586b",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "cefb45ad-9b6f-4154-af0c-4e51605ef250",
+    "section": 10,
+    "possible_answers": ["P", "I", "V", "W"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "1bf56df0-15ee-4491-b49c-1ce48c02319a",
+    "section": 10,
+    "possible_answers": ["V", "D", "Q", "G"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "49a6d6da-ad27-49a6-b5cc-edb8d4669bd7",
+    "section": 10,
+    "possible_answers": ["L", "C", "T", "R"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "S",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "1ab514c1-ff54-4897-9490-b18a3f1202c9",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/S.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Q.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "05b9f253-3876-4f7f-968d-8b8a7cf3d9b4",
+    "section": 10,
+    "possible_answers": ["H", "Z", "W", "Q"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "P",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "8c55c2b6-f23e-4192-8570-1525ab795f54",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "cc9f5dc5-d58d-4235-9a3f-c5634a62c2ed",
+    "section": 10,
+    "possible_answers": ["Z", "H", "N", "D"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "23388949-ad50-416e-8079-80c6d40d0739",
+    "section": 10,
+    "possible_answers": ["P", "G", "D", "K"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "B",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "4e705fa9-5348-4598-b308-2c3541a6996a",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "O",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "9237cc09-d024-401e-879a-b6f1b6d88bc8",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "cc909894-bd09-4238-b7a8-0c3a22822903",
+    "section": 10,
+    "possible_answers": ["K", "O", "R", "F"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "U",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "ef5f615a-f1ba-44ee-85a3-afb0ba0955fc",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "S",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "e651e9f3-3f0c-4baf-b107-78540afb9d39",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/S.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "318f6d99-d680-483f-b1d0-a40b8b74acf8",
+    "section": 10,
+    "possible_answers": ["J", "X", "G", "P"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Q.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "0cd3f28e-4860-4aef-9bb5-bf30f5bf06c0",
+    "section": 10,
+    "possible_answers": ["Q", "S", "Z", "P"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "K",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "d96a7146-7cf1-4acc-8209-2de8b1663aef",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "11a123d8-df71-4484-83d4-dd3d38cfd09a",
+    "section": 10,
+    "possible_answers": ["F", "G", "Z", "K"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/S.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "1ff6e022-cf83-4650-80e5-396f2de3fee6",
+    "section": 10,
+    "possible_answers": ["S", "Z", "F", "H"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "68012028-6c49-48ef-878b-a5d00f2d22c4",
+    "section": 10,
+    "possible_answers": ["Z", "A", "B", "G"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "Q",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "aebe80cf-8ebd-4ed9-b335-8385b44c797e",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/S.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Q.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "e451da03-f526-436b-934f-3f054a478fb4",
+    "section": 10,
+    "possible_answers": ["B", "A", "U", "T"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Q.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "71d1c29e-1e42-4333-9f0a-b6d34ce175e4",
+    "section": 10,
+    "possible_answers": ["H", "G", "Q", "E"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "A",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "91311ea1-4cbd-4006-89cb-84e3141f20a9",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "a2133852-9b57-4899-af4d-a467ef9e3ab4",
+    "section": 10,
+    "possible_answers": ["V", "K", "E", "U"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "V",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "f07688b6-f268-48ac-afd6-f429d2899e80",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "8b682e94-6f7e-41be-9e70-c43ec9051457",
+    "section": 10,
+    "possible_answers": ["K", "O", "C", "W"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "K",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "87edea59-ee5d-4003-bf32-9e8be663283a",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "999b8160-c946-443e-b834-486777e00395",
+    "section": 10,
+    "possible_answers": ["F", "R", "E", "J"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "U",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "bfa6f5be-0626-44f9-9dc4-0768bd334964",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "b4870a73-e0c6-413b-972f-de0f7742ce98",
+    "section": 10,
+    "possible_answers": ["H", "Z", "W", "R"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Q.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "32b0ee0c-c93b-47fe-9baa-4d0c784afe3c",
+    "section": 10,
+    "possible_answers": ["I", "P", "Q", "F"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "fd05318e-d6f5-4ea6-8333-c78471b0475d",
+    "section": 10,
+    "possible_answers": ["A", "I", "B", "H"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "5567b95f-b122-4d97-98f5-4fba695e18d6",
+    "section": 10,
+    "possible_answers": ["S", "A", "U", "T"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "G",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "031e04f1-2091-4987-b375-b81990771581",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/S.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "L",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "c254bb96-a378-47a7-920c-bc0f914a015b",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "905e602d-6eb4-48fd-8c60-c53e52f83321",
+    "section": 10,
+    "possible_answers": ["W", "U", "P", "L"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "306107ed-300c-43be-82ec-99267184de55",
+    "section": 10,
+    "possible_answers": ["V", "P", "E", "K"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "8d9b3c8c-500b-4aed-85bc-8acd0cd8156b",
+    "section": 10,
+    "possible_answers": ["P", "T", "R", "I"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "I",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "f04981b8-fc7b-492b-a238-84af330b69ef",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "C",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "a1bfd4c7-2e9b-4ab5-855b-aeeded6d0600",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "aec487ac-124c-4d23-b066-2250df5ca13a",
+    "section": 10,
+    "possible_answers": ["F", "E", "T", "C"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "E",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "23eeb39b-d948-4f4f-9670-3d2fcb273402",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "Y",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "086e0593-c869-428c-b00a-c275e8679f04",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "c6df130d-342d-4e5e-9c41-3c0184909d49",
+    "section": 10,
+    "possible_answers": ["F", "P", "E", "W"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "8d6589e9-a1a9-4443-b1a3-e9ec6e0fe337",
+    "section": 10,
+    "possible_answers": ["H", "T", "F", "X"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "Y",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "f1990c85-483f-4720-a3d6-a0db7fc16528",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Y.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "K",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "65e7aa2f-d943-400e-a74d-bfb0993379df",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "K",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "9d36a3c3-f80d-41f5-9d85-3f2ebd7d6a17",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "eedbc49a-e96b-4d6c-811e-80d5e778e093",
+    "section": 10,
+    "possible_answers": ["X", "T", "S", "Y"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "R",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "b2506cbc-e455-400b-a373-460da6ca5203",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "6cee4cf2-15c3-4db0-b370-b74b0ca0b3c2",
+    "section": 10,
+    "possible_answers": ["J", "O", "E", "I"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "69b9f3f2-b891-4382-ba35-8d51861e8b67",
+    "section": 10,
+    "possible_answers": ["L", "S", "D", "H"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "X",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "4d5a50d2-d46d-4010-a1c8-e4e7ac843ebc",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "Q",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "590ec779-adca-4b05-a270-a7fab32a5968",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Q.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "4700237e-dab4-457a-8ddd-d42c1ae8676b",
+    "section": 10,
+    "possible_answers": ["H", "P", "E", "X"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "W",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "f20453f4-2229-4e7b-b869-b85a7beb349e",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "W",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "0fd0fa94-75ce-499c-9c0c-c1b1038666db",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "A",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "a495cb63-2cfb-4792-b6de-cb7454b94d39",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "R",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "bd0b7ce0-06ba-488b-a921-1ec4d5dd81dd",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "2f3e227c-7834-4c8a-9db0-bc17edef222c",
+    "section": 10,
+    "possible_answers": ["M", "A", "J", "Z"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "H",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "4a1c5116-d546-4b2a-984f-e2e460b6821f",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/O.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "J",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "a825266c-7478-418c-9d40-454ab3d6da22",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/K.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "X",
+    "correct_answer_index": 0,
+    "version": 2,
+    "task_id": "2378b04d-2a37-4ac7-a05e-759488140402",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "54483e2c-2543-41e8-982f-24595cb2f2d6",
+    "section": 10,
+    "possible_answers": ["Z", "A", "R", "H"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "a45733ae-304d-4156-a96f-2ec91d5ad9d7",
+    "section": 10,
+    "possible_answers": ["U", "E", "F", "I"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "075cafa5-58f7-4838-a6f5-f132fb518b7d",
+    "section": 10,
+    "possible_answers": ["E", "H", "N", "C"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "5d2bbefe-0f7b-48cf-911d-a26c405be636",
+    "section": 10,
+    "possible_answers": ["T", "U", "I", "S"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "66eb160d-e7eb-465b-9c63-f1bde6f8fd62",
+    "section": 10,
+    "possible_answers": ["D", "S", "C", "V"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "56b01d62-1ec4-4cff-b9a0-f804a770aa77",
+    "section": 10,
+    "possible_answers": ["H", "Z", "D", "P"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "46cb8669-93c6-4b84-b5df-0ddb21618a6d",
+    "section": 10,
+    "possible_answers": ["P", "L", "R", "K"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "49331a29-233c-4aac-852b-ce0cca222d94",
+    "section": 10,
+    "possible_answers": ["E", "L", "O", "X"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "94ecffaa-7efc-4d74-8414-c7ec62f063a3",
+    "section": 10,
+    "possible_answers": ["H", "W", "S", "G"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/L.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "b9af3298-d63b-4b3d-930f-118f189f2ce4",
+    "section": 10,
+    "possible_answers": ["Y", "K", "W", "L"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "B",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "84c94b4e-3d7a-4b61-b94e-8b1027f82109",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "6867fcf3-64db-43ba-9853-bf0481a43853",
+    "section": 10,
+    "possible_answers": ["G", "P", "U", "X"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "29b71bdc-4fe3-42d3-b106-c89b430ddbfc",
+    "section": 10,
+    "possible_answers": ["E", "C", "A", "D"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "U",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "63d226fd-e754-4fd4-9781-1f41c13289b6",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/U.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/V.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "31c7b2ed-d891-4c57-8abd-c6b7adaf4498",
+    "section": 10,
+    "possible_answers": ["T", "Z", "V", "R"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "9a4fbba6-9c88-4bc8-9712-f92342856139",
+    "section": 10,
+    "possible_answers": ["N", "M", "H", "G"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/P.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "f3fe0b70-1eb3-4c13-9895-93470d86a770",
+    "section": 10,
+    "possible_answers": ["U", "S", "Z", "P"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "05ff6156-8cb5-4992-a209-001bb3f834f4",
+    "section": 10,
+    "possible_answers": ["N", "C", "R", "B"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "24bb4284-e10c-4861-8812-08c1dc2e2b8e",
+    "section": 10,
+    "possible_answers": ["A", "D", "G", "T"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "F",
+    "correct_answer_index": 3,
+    "version": 2,
+    "task_id": "f48d6012-4165-4637-8e68-3fd28583995b",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/I.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/F.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/B.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "eda4b543-e74f-4e27-adb4-d1794818c970",
+    "section": 10,
+    "possible_answers": ["L", "B", "R", "J"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png",
+    "correct_answer_index": 2,
+    "version": 1,
+    "task_id": "a0f3314a-8fe8-4e7d-aa00-2e58117b3e4e",
+    "section": 10,
+    "possible_answers": ["J", "R", "W", "E"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "C",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "ee2e29d1-80fe-45b1-9754-df64386afdb3",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "G",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "de3a0967-0b38-4ca9-a259-333b82cd8146",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/G.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/R.png",
+    "correct_answer_index": 3,
+    "version": 1,
+    "task_id": "3c708fcb-d54e-4fc1-a70e-c219042714ae",
+    "section": 10,
+    "possible_answers": ["H", "C", "A", "R"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/X.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "85dad90d-56cc-4ae9-a1f5-5a7417d85977",
+    "section": 10,
+    "possible_answers": ["A", "X", "R", "E"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "Z",
+    "correct_answer_index": 1,
+    "version": 2,
+    "task_id": "e8cb5876-6b0e-4c6b-83f9-286e3d3f7978",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/W.png"
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/E.png",
+    "correct_answer_index": 1,
+    "version": 1,
+    "task_id": "c8eaf3c4-60ef-4475-92a4-2bfa562285ae",
+    "section": 10,
+    "possible_answers": ["U", "E", "H", "K"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "H",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "ba543ca0-3e86-4c19-b19b-a45fa6896c03",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/H.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/S.png",
+    "correct_answer_index": 0,
+    "version": 1,
+    "task_id": "995af7b6-1577-4be5-a59b-a4da81cc19f1",
+    "section": 10,
+    "possible_answers": ["S", "K", "J", "T"],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "Q",
+    "correct_answer_index": 0,
+    "version": 3,
+    "task_id": "6cad5cc3-798d-45fa-bd45-83330e620a3f",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Q.png",
+      "",
+      "",
+      ""
+    ],
+    "language_id": "usa"
+  },
+  {
+    "section_name": "Alphabet",
+    "question": "J",
+    "correct_answer_index": 2,
+    "version": 2,
+    "task_id": "d8353ba8-7c38-47ec-b651-2e2f674fcb93",
+    "section": 10,
+    "possible_answers": [
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/C.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/A.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/J.png",
+      "https://gestura-sign-language.s3.eu-central-1.amazonaws.com/asl/Z.png"
+    ],
+    "language_id": "usa"
+  }
+]

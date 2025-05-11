@@ -1,0 +1,21 @@
+export const APP_ROUTES = {
+  WEBCAM: "/webcam",
+  MAIN_PAGE: "/main-page",
+  LOGIN: "/login",
+  SIGNUP: "/signup",
+  FORGOT_PASSWORD: "/forgot-password",
+  LANDING_PAGE: "/",
+  AUTH_CALLBACK: "/callback",
+  BUY: "/buy",
+  LICENSE: "/license",
+  ABOUT: "/about",
+  NEWS: "/news",
+  HELP: "/help",
+  CONTACT: "/contact",
+  NOT_FOUND: "*",
+};
+
+export enum HelperFunctionResponse {
+  SUCCESS = "success",
+  ERROR = "error",
+}

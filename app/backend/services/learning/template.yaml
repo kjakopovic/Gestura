@@ -1,0 +1,143 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  This service contains all apis related to learning functionalities and tasks.
+
+Parameters:
+  StageName:
+    Type: String
+    Description: Stage of app deployment (develop, prod)
+    Default: prod
+  LayerStackName:
+    Type: String
+    Description: Name of the stack where the layer is deployed
+    Default: layers
+  JwtSecretName:
+    Type: String
+    Description: Name of the secret in Secrets Manager that contains the JWT secret
+    Default: auth
+  SecretsRegionName:
+    Type: String
+    Description: Region name where the secrets are stored
+    Default: eu-central-1
+  CurrentMaxSection:
+    Type: Number
+    Description: Current max section number
+    Default: 10
+
+Globals:
+  Function:
+    Timeout: 60
+    MemorySize: 512
+
+Resources:
+  LearningApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub "LearningApi-${StageName}"
+      StageName: !Ref StageName
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'*'"
+        AllowMethods: "'*'"
+      Auth:
+        ApiKeyRequired: false
+
+  # Lambdas
+  HealthcheckFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: healthcheck/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Events:
+        HealthcheckEndpoint:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId: !Ref LearningApi
+
+  GetListOfTasksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: getListOfTasks/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          TASKS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-TasksTable"
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          LANGUAGES_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-LanguagesTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          CURRENT_MAX_SECTION: !Ref CurrentMaxSection
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        GetListOfTasksEndpoint:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: GET
+            RestApiId: !Ref LearningApi
+
+  CompleteLevelFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: completeLevel/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          LANGUAGES_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-LanguagesTable"
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          BATTLEPASS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-BattlepassTable"
+          ACHIEVEMENTS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-AchievementsTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        CompleteLevelEndpoint:
+          Type: Api
+          Properties:
+            Path: /levels/complete
+            Method: POST
+            RestApiId: !Ref LearningApi
+
+Outputs:
+  LearningApiUrl:
+    Description: "API Gateway endpoint URL for Learning microservice apis"
+    Value: !Sub "https://${LearningApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"

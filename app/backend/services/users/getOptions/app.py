@@ -1,0 +1,65 @@
+import logging
+
+from common import build_response, convert_decimal_to_float
+from middleware import middleware
+from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE, _LAMBDA_LANGUAGES_TABLE_RESOURCE
+from auth import get_email_from_jwt_token
+
+logger = logging.getLogger("GetOptions")
+logger.setLevel(logging.DEBUG)
+
+
+@middleware
+def lambda_handler(event, context):
+    logger.debug(f"Received event {event}")
+
+    # Extract and validate user identity from JWT token
+    jwt_token = event.get("headers").get("x-access-token")
+    email = get_email_from_jwt_token(jwt_token)
+
+    if not email:
+        logger.error(f"Invalid email in jwt token {email}")
+        return build_response(400, {"message": "Invalid email in jwt token"})
+
+    # Initialize DynamoDB resources
+    global _LAMBDA_USERS_TABLE_RESOURCE, _LAMBDA_LANGUAGES_TABLE_RESOURCE
+    users_dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
+    languages_dynamodb = LambdaDynamoDBClass(_LAMBDA_LANGUAGES_TABLE_RESOURCE)
+
+    # Retrieve user profile data and list of available languages
+    user = get_user_by_email(users_dynamodb, email)
+    available_languages = get_all_languages(languages_dynamodb)
+
+    if not user:
+        logger.debug(f"User with email {email} not found.")
+        return build_response(404, {"message": "User not found."})
+
+    user_data = convert_decimal_to_float(user)
+    return build_response(
+        200,
+        {
+            "message": "User info fetched successfully",
+            "users": user_data,
+            "languages": available_languages,
+        }
+    )
+
+
+def get_user_by_email(dynamodb, email):
+    logger.info(f"Getting user by email {email}")
+    user = dynamodb.table.get_item(Key={"email": email})
+
+    # Remove password from the returned data
+    user_item = user.get("Item", {})
+    if user_item:
+        del user_item["password"]
+
+    return user_item
+
+
+def get_all_languages(languages_dynamodb):
+    logger.info(f"Getting all languages")
+    languages = languages_dynamodb.table.scan()
+
+    languages_items = languages.get("Items", [])
+    return languages_items

@@ -1,0 +1,49 @@
+# TYPESCRIPT/JAVASCRIPT
+**/node_modules/
+
+# AWS SAM
+**/.aws-sam/
+
+# COMMON
+**/.env
+
+# PYTHON
+**/*venv/
+**/__pycache__/
+
+# AI
+**/ai/**/data/
+**/ai/**/data.zip
+**/runs/
+**/yolo11n-cls.pt
+**/yolo11n.pt
+**/otherDatasets/
+**/converted_images/
+
+# Logs
+**/logs
+**/*.log
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*
+**/lerna-debug.log*
+
+**/dist
+**/dist-ssr
+**/*.local
+
+# MOBILE
+**/mobile/**/ios/
+**/mobile/**/android/
+
+# Editor directories and files
+**/.vscode/*
+**/!.vscode/extensions.json
+**/.idea/*
+**/.DS_Store
+**/*.suo
+**/*.ntvs*
+**/*.njsproj
+**/*.sln
+**/*.sw?

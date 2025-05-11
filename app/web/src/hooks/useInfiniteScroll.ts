@@ -25,7 +25,7 @@ function useInfiniteScroll(loadMore: () => void) {
     container.addEventListener("scroll", () => handleScroll(container));
     return () =>
       container.removeEventListener("scroll", () => handleScroll(container));
-  }, []);
+  }, [handleScroll]);
 }
 
 export default useInfiniteScroll;

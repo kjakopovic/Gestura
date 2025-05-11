@@ -1,0 +1,85 @@
+import {
+  Text,
+  ImageSourcePropType,
+  Image,
+  Switch,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React from "react";
+
+type SettingItemProps = {
+  title: string;
+  type: "toggle" | "select" | "button";
+  value?: boolean;
+  selected?: boolean;
+  disabled?: boolean;
+  image?: ImageSourcePropType;
+  onPress?: () => void;
+  onChange?: (value: boolean) => void;
+};
+
+const SettingItem = ({
+  title,
+  type,
+  value,
+  selected,
+  image,
+  disabled,
+  onPress,
+  onChange,
+}: SettingItemProps) => {
+  return (
+    <TouchableOpacity
+      className={`flex-row items-center rounded-2xl my-2 p-4 border ${
+        type === "button"
+          ? "border-grayscale-400"
+          : type === "select" && selected
+          ? "border-success"
+          : "border-grayscale-400"
+      }`}
+      onPress={onPress}
+    >
+      {/* Show image on left for types other than select */}
+      {image && type !== "select" && (
+        <Image
+          source={image}
+          className="mr-4"
+          style={{ width: 24, height: 24, resizeMode: "contain" }}
+        />
+      )}
+
+      <Text
+        className={`flex-1 text-lg font-interBold text-grayscale-100 ${
+          type === "button" ? "ml-10" : ""
+        }`}
+      >
+        {title}
+      </Text>
+
+      {type === "toggle" && (
+        <View className="border border-grayscale-300 rounded-full p-[1px]">
+          <Switch
+            value={value}
+            onValueChange={onChange}
+            thumbColor={value ? "#89E219" : "#FF4B4B"}
+            trackColor={{ false: "transparent", true: "transparent" }}
+            ios_backgroundColor="transparent"
+            disabled={disabled}
+          />
+        </View>
+      )}
+
+      {/* Show image on right for select type */}
+      {image && type === "select" && (
+        <Image
+          source={image}
+          className="size-7"
+          style={{ resizeMode: "contain" }}
+        />
+      )}
+    </TouchableOpacity>
+  );
+};
+
+export default SettingItem;

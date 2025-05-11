@@ -1,0 +1,51 @@
+{
+  "expo": {
+    "name": "Gestura",
+    "slug": "gestura",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "fit",
+      "backgroundColor": "#161719"
+    },
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "backgroundColor": "#161719"
+    },
+    "android": {
+      "package": "com.mar1n.gestura",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "resizeMode": "fit",
+        "backgroundColor": "#161719"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.mar1n.gestura",
+      "supportsTablet": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/icon.png",
+          "resizeMode": "cover",
+          "backgroundColor": "#161719"
+        }
+      ],
+      "onnxruntime-react-native"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic"
+  }
+}

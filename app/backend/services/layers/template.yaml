@@ -1,4 +1,11 @@
 AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  StageName:
+    Type: String
+    Description: Stage of app deployment (develop, prod)
+    Default: prod
 
 Resources:
   CommonLayer:
@@ -10,9 +17,218 @@ Resources:
     Metadata:
       BuildMethod: python3.12
 
+  CommonLayerLatestParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /layers/common/latest
+      Type: String
+      Value: !Ref CommonLayer
+
+  # Tables
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "users-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+        - AttributeName: username
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: username-index
+          KeySchema:
+            - AttributeName: username
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  TasksTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "tasks-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: task_id
+          AttributeType: S
+        - AttributeName: section
+          AttributeType: N
+        - AttributeName: language_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: task_id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: section-language-index
+          KeySchema:
+            - AttributeName: section
+              KeyType: HASH
+            - AttributeName: language_id
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  LanguagesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "languages-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  ConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "connections-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+        - AttributeName: connection_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: "HASH"
+      GlobalSecondaryIndexes:
+        - IndexName: "ConnectionIdIndex"
+          KeySchema:
+            - AttributeName: connection_id
+              KeyType: "HASH"
+          Projection:
+            ProjectionType: "ALL"
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      SSESpecification:
+        SSEEnabled: True
+
+  ChatRoomTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "chatRooms-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: chat_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: chat_id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  ItemsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "items-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  BattlepassTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "battlepass-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: season
+          AttributeType: S
+      KeySchema:
+        - AttributeName: season
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  AchievementsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "achievements-${StageName}"
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: type
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: type-index
+          KeySchema:
+            - AttributeName: type
+              KeyType: HASH
+          Projection:
+            ProjectionType: "ALL"
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
 Outputs:
-  CommonLayerArn:
-    Description: "ARN of the Layer with all the common code"
-    Value: !Ref CommonLayer
+  UsersTable:
+    Description: "DynamoDB table for users"
+    Value: !Ref UsersTable
     Export:
-      Name: !Sub "${AWS::StackName}-CommonLayerArn"
+      Name: !Sub "${AWS::StackName}-UsersTable"
+  TasksTable:
+    Description: "DynamoDB table for tasks"
+    Value: !Ref TasksTable
+    Export:
+      Name: !Sub "${AWS::StackName}-TasksTable"
+  LanguagesTable:
+    Description: "DynamoDB table for languages"
+    Value: !Ref LanguagesTable
+    Export:
+      Name: !Sub "${AWS::StackName}-LanguagesTable"
+  ConnectionsTable:
+    Description: "DynamoDB table for connections"
+    Value: !Ref ConnectionsTable
+    Export:
+      Name: !Sub "${AWS::StackName}-ConnectionsTable"
+  ChatRoomTable:
+    Description: "DynamoDB table for chat rooms"
+    Value: !Ref ChatRoomTable
+    Export:
+      Name: !Sub "${AWS::StackName}-ChatRoomTable"
+  ItemsTable:
+    Description: "DynamoDB table for items"
+    Value: !Ref ItemsTable
+    Export:
+      Name: !Sub "${AWS::StackName}-ItemsTable"
+  BattlepassTable:
+    Description: "DynamoDB table for battlepass"
+    Value: !Ref BattlepassTable
+    Export:
+      Name: !Sub "${AWS::StackName}-BattlepassTable"
+  AchievementsTable:
+    Description: "DynamoDB table for achievements"
+    Value: !Ref AchievementsTable
+    Export:
+      Name: !Sub "${AWS::StackName}-AchievementsTable"

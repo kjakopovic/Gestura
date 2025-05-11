@@ -1,0 +1,400 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: serverless WebSocket + REST API for chat rooms (Python)
+
+Parameters:
+  SecretsRegionName:
+    Type: String
+    Description: Region name where the secrets are stored
+    Default: eu-central-1
+  JwtSecretName:
+    Type: String
+    Description: Name of the secret in Secrets Manager that contains the JWT secret
+    Default: auth
+  LayerStackName:
+    Type: String
+    Description: Name of the stack where the layer is deployed
+    Default: layers
+  StageName:
+    Type: String
+    Description: Stage of app deployment (develop, prod)
+    Default: prod
+
+# Global Settings
+Globals:
+  Function:
+    Timeout: 60
+    MemorySize: 512
+
+Resources:
+  # Websocket API setup
+  WebSocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: WebSocketApi
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: "$request.body.action"
+
+  # Connect
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: $connect
+      AuthorizationType: NONE
+      OperationName: ConnectRoute
+      Target: !Join
+        - "/"
+        - - "integrations"
+          - !Ref ConnectInteg
+
+  ConnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketApi
+      Description: Connect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OnConnectFunction.Arn}/invocations
+
+  # Disconnect
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      OperationName: DisconnectRoute
+      Target: !Join
+        - "/"
+        - - "integrations"
+          - !Ref DisconnectInteg
+
+  DisconnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketApi
+      Description: Disconnect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OnDisconnectFunction.Arn}/invocations
+
+  # Start Sharing
+  StartSharingRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: start-sharing
+      AuthorizationType: NONE
+      OperationName: StartSharingRoute
+      Target: !Join
+        - "/"
+        - - integrations
+          - !Ref StartSharingInteg
+
+  StartSharingInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketApi
+      Description: Start Sharing Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${StartSharingFunction.Arn}/invocations
+
+  # Stop Sharing
+  StopSharingRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: stop-sharing
+      AuthorizationType: NONE
+      OperationName: StopSharingRoute
+      Target: !Join
+        - "/"
+        - - integrations
+          - !Ref StopSharingInteg
+
+  StopSharingInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketApi
+      Description: Stop Sharing Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${StopSharingFunction.Arn}/invocations
+
+  # Join Room
+  JoinRoomRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: join-room
+      AuthorizationType: NONE
+      OperationName: JoinRoomRoute
+      Target: !Join
+        - "/"
+        - - integrations
+          - !Ref JoinRoomInteg
+
+  JoinRoomInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketApi
+      Description: Join Room Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${JoinRoomFunction.Arn}/invocations
+
+  # Create Room
+  CreateRoomRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: create-room
+      AuthorizationType: NONE
+      OperationName: CreateRoomRoute
+      Target: !Join
+        - "/"
+        - - integrations
+          - !Ref CreateRoomInteg
+
+  CreateRoomInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketApi
+      Description: Create Room Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateRoomFunction.Arn}/invocations
+
+  Deployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+      - ConnectRoute
+      - StartSharingRoute
+      - StopSharingRoute
+      - DisconnectRoute
+      - JoinRoomRoute
+      - CreateRoomRoute
+    Properties:
+      ApiId: !Ref WebSocketApi
+
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: !Ref StageName
+      DeploymentId: !Ref Deployment
+      ApiId: !Ref WebSocketApi
+
+  # Lambda functions
+  OnConnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./onConnectWss
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Environment:
+        Variables:
+          CONNECTIONS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+
+  OnConnectPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketApi
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref OnConnectFunction
+      Principal: apigateway.amazonaws.com
+
+  OnDisconnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./onDisconnectWss
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Environment:
+        Variables:
+          CONNECTIONS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
+          CHAT_ROOM_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
+          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "execute-api:*"
+              Resource: "*"
+
+  OnDisconnectPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketApi
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref OnDisconnectFunction
+      Principal: apigateway.amazonaws.com
+
+  StartSharingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./startSharingWss
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Environment:
+        Variables:
+          CONNECTIONS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
+          CHAT_ROOM_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
+          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "execute-api:*"
+              Resource: "*"
+
+  StartSharingPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketApi
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref StartSharingFunction
+      Principal: apigateway.amazonaws.com
+
+  StopSharingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./stopSharingWss
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Environment:
+        Variables:
+          CONNECTIONS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ConnectionsTable"
+          CHAT_ROOM_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
+          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "execute-api:*"
+              Resource: "*"
+
+  StopSharingPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketApi
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref StopSharingFunction
+      Principal: apigateway.amazonaws.com
+
+  JoinRoomFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./joinRoomWss
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Environment:
+        Variables:
+          CHAT_ROOM_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
+          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "execute-api:*"
+              Resource: "*"
+
+  JoinRoomPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketApi
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref JoinRoomFunction
+      Principal: apigateway.amazonaws.com
+
+  CreateRoomFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./createRoomWss
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Environment:
+        Variables:
+          CHAT_ROOM_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-ChatRoomTable"
+          WEBSOCKET_ENDPOINT: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "execute-api:*"
+              Resource: "*"
+
+  CreateRoomPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketApi
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref CreateRoomFunction
+      Principal: apigateway.amazonaws.com
+
+Outputs:
+  WebSocketURI:
+    Description: "The WSS Protocol URI to connect to"
+    Value: !Sub "wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"

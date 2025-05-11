@@ -1,0 +1,102 @@
+name: Build And Test Backend
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "app/backend/**"
+      - ".github/composite/common_build_setup/**"
+      - ".github/composite/deploy_ecs_service/**"
+      - ".github/composite/deploy_lambda_service/**"
+      - ".github/task_definitions/backend/**"
+      - ".github/workflows/deploy_backend.yaml"
+
+env:
+  AWS_REGION: "eu-central-1"
+  USERS_SERVICE_PATH: app/backend/services/users
+  LEARNING_SERVICE_PATH: app/backend/services/learning
+  SHOP_SERVICE_PATH: app/backend/services/shop
+  INVENTORY_SERVICE_PATH: app/backend/services/inventory
+
+jobs:
+  test_users:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: false
+
+      - name: Run Dependencies Setup
+        uses: ./.github/composite/common_build_setup
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
+
+      - name: Run Tests
+        uses: ./.github/composite/run_backend_tests
+        with:
+          service_path: ${{ env.USERS_SERVICE_PATH }}
+
+  test_learning:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: false
+
+      - name: Run Dependencies Setup
+        uses: ./.github/composite/common_build_setup
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
+
+      - name: Run Tests
+        uses: ./.github/composite/run_backend_tests
+        with:
+          service_path: ${{ env.LEARNING_SERVICE_PATH }}
+
+  test_shop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: false
+
+      - name: Run Dependencies Setup
+        uses: ./.github/composite/common_build_setup
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
+
+      - name: Run Tests
+        uses: ./.github/composite/run_backend_tests
+        with:
+          service_path: ${{ env.SHOP_SERVICE_PATH }}
+
+  test_inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: false
+
+      - name: Run Dependencies Setup
+        uses: ./.github/composite/common_build_setup
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ env.AWS_REGION }}
+
+      - name: Run Tests
+        uses: ./.github/composite/run_backend_tests
+        with:
+          service_path: ${{ env.INVENTORY_SERVICE_PATH }}

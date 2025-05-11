@@ -1,0 +1,472 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  This service contains all apis related to auth and user management.
+
+Parameters:
+  StageName:
+    Type: String
+    Description: Stage of app deployment (develop, prod)
+    Default: prod
+  LayerStackName:
+    Type: String
+    Description: Name of the stack where the layer is deployed
+    Default: layers
+  JwtSecretName:
+    Type: String
+    Description: Name of the secret in Secrets Manager that contains the JWT secret
+    Default: auth
+  ThirdPartyClientsSecretName:
+    Type: String
+    Description: Name of the secret in Secrets Manager that contains the third party clients secrets
+    Default: python-lambda-app/prod/third-party-secrets
+  SecretsRegionName:
+    Type: String
+    Description: Region name where the secrets are stored
+    Default: eu-central-1
+  FrontendCallbackUrl:
+    Type: String
+    Description: When third party login is used, this is the url where the user will be redirected after login on web platform
+    Default: http://localhost:5173
+  MobileCallbackUrl:
+    Type: String
+    Description: When third party login is used, this is the url where the user will be redirected after login on mobile platform
+    Default: http://localhost:5173
+  SourceEmail:
+    Type: String
+    Description: The email address that will be used as the sender for the password reset emails
+    Default: nolanilisic@gmail.com
+
+Globals:
+  Function:
+    Timeout: 60
+    MemorySize: 512
+
+Resources:
+  UsersApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub "UsersApi-${StageName}"
+      StageName: !Ref StageName
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'*'"
+        AllowMethods: "'*'"
+      Auth:
+        ApiKeyRequired: false
+
+  # Lambdas
+  HealthcheckFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: healthcheck/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Events:
+        HealthcheckEndpoint:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId: !Ref UsersApi
+
+  LoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: login/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        LoginEndpoint:
+          Type: Api
+          Properties:
+            Path: /login
+            Method: POST
+            RestApiId: !Ref UsersApi
+
+  RegisterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: register/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        RegisterEndpoint:
+          Type: Api
+          Properties:
+            Path: /register
+            Method: POST
+            RestApiId: !Ref UsersApi
+
+  ForgotPasswordRequestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: forgotPasswordRequest/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          SOURCE_EMAIL: !Ref SourceEmail
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+                - ses:SendEmail
+                - ses:SendRawEmail
+              Resource: "*"
+      Events:
+        ForgotPasswordRequestEndpoint:
+          Type: Api
+          Properties:
+            Path: /forgot-password/request
+            Method: POST
+            RestApiId: !Ref UsersApi
+
+  ValidateResetCodeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: validateResetCode/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        ForgotPasswordRequestEndpoint:
+          Type: Api
+          Properties:
+            Path: /forgot-password/validate
+            Method: POST
+            RestApiId: !Ref UsersApi
+
+  ForgotResetPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: forgotResetPassword/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        ForgotPasswordRequestEndpoint:
+          Type: Api
+          Properties:
+            Path: /forgot-password/reset
+            Method: POST
+            RestApiId: !Ref UsersApi
+
+  GetOptionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: getOptions/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          LANGUAGES_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-LanguagesTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        GetOptionsEndpoint:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: GET
+            RestApiId: !Ref UsersApi
+
+  UpdateUserInfoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: updateUserInfo/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          LANGUAGES_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-LanguagesTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        GetUserInfoEndpoint:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: PATCH
+            RestApiId: !Ref UsersApi
+
+  ConsumeHeartFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: consumeHeart/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          HEARTS_REFILL_RATE_HOURS: 3
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        GetUserInfoEndpoint:
+          Type: Api
+          Properties:
+            Path: /hearts/consume
+            Method: PATCH
+            RestApiId: !Ref UsersApi
+
+  GetHeartsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: getHearts/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          HEARTS_REFILL_RATE_HOURS: 3
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        GetUserInfoEndpoint:
+          Type: Api
+          Properties:
+            Path: /hearts
+            Method: GET
+            RestApiId: !Ref UsersApi
+
+  ThirdPartyLoginRequestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: thirdPartyRequestLogin/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Environment:
+        Variables:
+          THIRD_PARTY_CLIENTS_SECRET_NAME: !Ref ThirdPartyClientsSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        ThirdPartyLoginRequestEndpoint:
+          Type: Api
+          Properties:
+            Path: /login/third-party
+            Method: GET
+            RestApiId: !Ref UsersApi
+
+  ThirdPartyLoginValidateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: thirdPartyConfirmLogin/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          THIRD_PARTY_CLIENTS_SECRET_NAME: !Ref ThirdPartyClientsSecretName
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+          FRONTEND_CALLBACK_URL: !Ref FrontendCallbackUrl
+          MOBILE_CALLBACK_URL: !Ref MobileCallbackUrl
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+                - "s3:*"
+              Resource: "*"
+      Events:
+        ThirdPartyLoginValidateEndpoint:
+          Type: Api
+          Properties:
+            Path: /login/third-party/confirm
+            Method: GET
+            RestApiId: !Ref UsersApi
+
+  RefreshTokenFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: refreshToken/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !ImportValue
+            Fn::Sub: "${LayerStackName}-${StageName}-UsersTable"
+          JWT_SECRET_NAME: !Ref JwtSecretName
+          SECRETS_REGION_NAME: !Ref SecretsRegionName
+      Layers:
+        - !Sub "{{resolve:ssm:/layers/common/latest}}"
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+                - "secretsmanager:GetSecretValue"
+              Resource: "*"
+      Events:
+        RegisterEndpoint:
+          Type: Api
+          Properties:
+            Path: /refresh/token
+            Method: GET
+            RestApiId: !Ref UsersApi
+
+Outputs:
+  UsersApiUrl:
+    Description: "API Gateway endpoint URL for Users microservice apis"
+    Value: !Sub "https://${UsersApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"

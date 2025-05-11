@@ -1,36 +1,77 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --breakpoint-xxs: 300px;
   --breakpoint-xs: 500px;
   --breakpoint-sm: 700px;
   --breakpoint-md: 850px;
+  --breakpoint-xl: 1325px;
   --breakpoint-xxl: 1500px;
   --breakpoint-xxxl: 1800px;
-  --color-primary-100: #52ff66;
-  --color-primary-200: #00b315;
-  --color-primary-300: #009c12;
-  --color-primary-400: #007a0e;
-  --color-primary-500: #00630b;
-  --color-primary-600: #005209;
-  --color-primary-700: #004207;
-  --color-primary-800: #003005;
-  --color-primary-900: #002404;
-  --color-background-100: #8f8f8f;
-  --color-background-200: #7d7d7d;
-  --color-background-300: #6b6b6b;
-  --color-background-400: #5c5c5c;
-  --color-background-500: #525252;
-  --color-background-600: #4a4a4a;
-  --color-background-700: #3d3d3d;
-  --color-background-800: #2e2e2e;
-  --color-background-900: #1f1f1f;
+  --color-primary: #ffc800;
+  --color-success: #89e219;
+  --color-error: #ff4b4b;
+  --color-background-100: #f5f5f5;
+  --color-background-200: #ababab;
+  --color-background-300: #999999;
+  --color-background-400: #5f5f5f;
+  --color-background-500: #363636;
+  --color-background-600: #1c1c1c;
+  --color-background-700: #1b1c1d;
+  --color-background-800: #161719;
+  --color-background-900: #000000;
+}
+
+@layer base {
+  .gestura-text-button-normal {
+    font-family: "Inter", sans-serif;
+    font-size: 18px;
+    font-weight: normal;
+  }
+
+  .gestura-text-button-bold {
+    font-family: "Inter", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .gestura-text-landing-title {
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+  }
+
+  .gestura-text-landing-subtitle {
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+  }
+
+  .gestura-text-footer {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+  }
 }
 
 body,
 #root {
   min-height: 100vh;
-  color: white;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+:-webkit-autofill,
+:-webkit-autofill:hover,
+:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff !important;
+
+  -webkit-box-shadow: 0 0 0 1000px #1e1e1e inset !important;
+  box-shadow: 0 0 0 1000px #1e1e1e inset !important;
+
+  border: none !important;
 }
 
 /* Global scrollbar styles */
@@ -46,5 +87,4 @@ body,
 
 *::-webkit-scrollbar-track {
   background: #2e2e2e;
-  border-radius: 10px;
 }
