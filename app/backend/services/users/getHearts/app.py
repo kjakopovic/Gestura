@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from common import build_response
 from middleware import middleware
 from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
-from auth import get_email_from_jwt_token
+from auth import get_email_from_jwt_token, check_users_subscription
 
 logger = logging.getLogger("GetHearts")
 logger.setLevel(logging.DEBUG)
@@ -139,6 +139,13 @@ def get_user_by_email(dynamodb, email):
     user = dynamodb.table.get_item(Key={"email": email})
 
     user_item = user.get("Item", {})
+
+    is_premium = check_users_subscription(user_item, wanted_status=1)
+    is_live = check_users_subscription(user_item, wanted_status=2)
+
+    if is_premium or is_live:
+        logger.info(f"User {email} is premium or live, skipping heart check")
+        return 5, None
 
     if user_item:
         hearts = user_item.get("hearts", 5)

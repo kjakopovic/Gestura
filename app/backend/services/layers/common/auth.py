@@ -130,3 +130,5 @@ def check_users_subscription(user, wanted_status: int) -> bool:
             f"Subscription expired at {exp_dt.isoformat()}, now is {now.isoformat()}"
         )
         return False
+
+    return True

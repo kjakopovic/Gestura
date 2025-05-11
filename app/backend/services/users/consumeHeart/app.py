@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from common import build_response
 from middleware import middleware
 from boto import LambdaDynamoDBClass, _LAMBDA_USERS_TABLE_RESOURCE
-from auth import get_email_from_jwt_token
+from auth import get_email_from_jwt_token, check_users_subscription
 
 logger = logging.getLogger("ConsumeHeart")
 logger.setLevel(logging.DEBUG)
@@ -31,12 +31,27 @@ def lambda_handler(event, context):
     dynamodb = LambdaDynamoDBClass(_LAMBDA_USERS_TABLE_RESOURCE)
 
     # Retrieve user's hearts data from database
-    user_data = get_user_by_email(dynamodb, email)
-    if not user_data:
+    user_item = get_user_by_email(dynamodb, email)
+    if not user_item:
         logger.debug(f"User with email {email} not found.")
         return build_response(404, {"message": "User not found."})
 
-    hearts, hearts_next_refill = user_data
+    is_premium = check_users_subscription(user_item, wanted_status=1)
+    is_live = check_users_subscription(user_item, wanted_status=2)
+
+    if is_premium or is_live:
+        logger.debug(f"User {email} is a premium user, unlimited hearts.")
+
+        return build_response(
+            200,
+            {
+                "message": "Heart consumed successfully",
+                "data": {"hearts": 5, "hearts_next_refill": None},
+            },
+        )
+
+    hearts = user_item.get("hearts", 5)
+    hearts_next_refill = user_item.get("hearts_next_refill", None)
 
     # Check if user has any hearts to consume
     if hearts == 0:
@@ -129,10 +144,7 @@ def get_user_by_email(dynamodb, email):
     user_item = user.get("Item", {})
 
     if user_item:
-        # Default to 5 hearts if not previously set
-        hearts = user_item.get("hearts", 5)
-        hearts_next_refill = user_item.get("hearts_next_refill", None)
-        return hearts, hearts_next_refill
+        return user_item
     else:
         logger.error(f"User with email {email} not found")
         return None

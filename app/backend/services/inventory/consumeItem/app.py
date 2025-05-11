@@ -196,6 +196,32 @@ def consume_item(users_dynamodb, items_dynamodb, email, item_id):
             # User already has activated items - add new item to list
             logger.debug(f"User {email} has activated items. Adding new activated item {item_id}.")
 
+            current_time = datetime.now(timezone.utc)
+
+            # Filter out expired items
+            valid_activated_items = [
+                item for item in activated_items
+                if datetime.fromisoformat(item.get("expires_at", "")) > current_time
+            ]
+
+            # Check if there was any cleanup needed
+            if len(valid_activated_items) < len(activated_items):
+                logger.info(
+                    f"Removed {len(activated_items) - len(valid_activated_items)} expired items for user {email}")
+                activated_items = valid_activated_items
+
+            # Check if trying to activate an XP boost when one is already active
+            if item_category == "xp":
+                active_xp_boost = [
+                    item for item in activated_items
+                    if item.get("category") == "xp" and
+                       datetime.fromisoformat(item.get("expires_at", "")) > current_time
+                ]
+
+                if active_xp_boost:
+                    logger.warning(f"User {email} already has an active XP boost.")
+                    return build_response(400, {"message": "User already has an active XP boost."})
+
             # Calculate item expiration time based on seconds_in_use value
             seconds_in_use = item_effects.get("seconds_in_use", 0)
             seconds_in_use = int(seconds_in_use)
