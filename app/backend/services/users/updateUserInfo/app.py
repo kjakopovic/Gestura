@@ -14,6 +14,7 @@ from middleware import middleware
 from boto3.dynamodb.conditions import Key
 from auth import get_email_from_jwt_token
 from typing import Optional
+from datetime import datetime, timezone, timedelta
 
 
 logger = logging.getLogger("UpdateUserInfo")
@@ -122,6 +123,14 @@ def update_user(dynamodb, email, request):
     if request.subscription is not None:
         update_parts.append("subscription = :subscription")
         expression_attribute_values[":subscription"] = request.subscription
+
+        if request.subscription != 0:
+            update_parts.append(
+                "subscription_expiration_date = :subscription_expiration_date"
+            )
+            expression_attribute_values[":subscription_expiration_date"] = (
+                datetime.now(timezone.utc) + timedelta(days=30)
+            ).isoformat()
 
     if request.username is not None:
         update_parts.append("username = :username")
