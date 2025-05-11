@@ -889,6 +889,85 @@ class TestCompleteLevel(BaseTestSetup):
         # print(f"\nNew achievements: {body['new_achievements']}")
 
 
+    def test_complete_level_with_multiple_xp_multipliers(self):
+        """
+        Test level completion with multiple XP multipliers, where only the max should apply.
+        """
+        self.multiplier_user = {
+            "email": "multiplier@mail.com",
+            "xp": 10,
+            "coins": 5,
+            "current_level": {
+                "en": 1,
+                "de": 1
+            },
+            "activated_items": [
+                {
+                    "category": "xp",
+                    "effects": {
+                        "multiplier": Decimal('1.5')
+                    },
+                    "expires_at": (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()
+                },
+                {
+                    "category": "xp",
+                    "effects": {
+                        "multiplier": Decimal('2.0')
+                    },
+                    "expires_at": (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()
+                }
+            ],
+            "letters_learned": {}
+        }
+        self.users_table.put_item(Item=self.multiplier_user)
+
+        email = "multiplier@mail.com"
+        jwt_token = generate_jwt_token(email)
+
+        # Get initial user state
+        initial_user = self.users_table.get_item(Key={'email': email})['Item']
+        initial_xp = Decimal(str(initial_user.get('xp', 0)))
+        initial_coins = Decimal(str(initial_user.get('coins', 0)))
+
+        # Define level completion request
+        versions = [1, 2, 3]
+        body_data = {
+            "correct_answers_versions": versions,
+            "started_at": "2023-10-01T12:00:00Z",
+            "finished_at": "2023-10-01T12:30:00Z",
+            "language_id": "en",
+            "letters_learned": ["A", "B", "C"]
+        }
+        event = {
+            'headers': {
+                'Authorization': jwt_token
+            },
+            "body": json.dumps(body_data)
+        }
+
+        # Complete level
+        response = lambda_handler(event, {})
+        body = json.loads(response['body'])
+        self.assertEqual(response['statusCode'], 200)
+        self.assertEqual(body['message'], "Level completed successfully")
+
+        # Get updated user
+        updated_user = self.users_table.get_item(Key={'email': email})['Item']
+        updated_xp = Decimal(str(updated_user.get('xp', 0)))
+        updated_coins = Decimal(str(updated_user.get('coins', 0)))
+        # Calculate expected rewards based on the algorithm with max multiplier
+        xp_map = {1: 2, 2: 3, 3: 5}
+        base_xp_increase = sum(xp_map.get(v, 0) for v in versions)
+        max_multiplier = Decimal('2.0')
+        expected_xp_increase = base_xp_increase * max_multiplier
+
+        expected_xp = initial_xp + expected_xp_increase
+        expected_coins = initial_coins + Decimal(str(int(base_xp_increase * 1.5)))
+        # Verify XP and coins were awarded correctly
+        self.assertEqual(updated_xp, expected_xp,
+                         f"Expected XP to be {expected_xp} (base {base_xp_increase} × multiplier {max_multiplier}), got {updated_xp}")
+
+
     def _scan_table(self, table):
         """Helper method to scan entire table contents."""
         response = table.scan()
