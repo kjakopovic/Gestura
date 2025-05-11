@@ -26,7 +26,7 @@ export const handleGetUserSubscription = async (
     }
 
     return data.users.subscription;
-  } catch (error) {
+  } catch {
     return 0;
   }
 };
@@ -57,7 +57,7 @@ export const handlePatchUserSubscription = async (
     }
 
     return HelperFunctionResponse.SUCCESS;
-  } catch (error) {
+  } catch {
     return HelperFunctionResponse.ERROR;
   }
 };
