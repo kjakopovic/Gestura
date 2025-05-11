@@ -2,7 +2,6 @@ import ads from "@/assets/icons/ads.png";
 import apple from "@/assets/icons/apple.png";
 import arrowBack from "@/assets/icons/arrow-back.png";
 import badge from "@/assets/icons/badge.png";
-import bag_coins from "@/assets/icons/bag_coins.png";
 import book from "@/assets/icons/book.png";
 import bp_chest from "@/assets/icons/bp_chest.png";
 import bp_chestBW from "@/assets/icons/bp_chestBW.png";
@@ -33,14 +32,13 @@ import star1 from "@/assets/icons/star1.png";
 import star2 from "@/assets/icons/star2.png";
 import starTrophy from "@/assets/icons/star-trophy.png";
 import trophy from "@/assets/icons/trophy.png";
-
+import people from "@/assets/icons/people.png";
 
 export {
   ads,
   apple,
   arrowBack,
   badge,
-  bag_coins,
   book,
   bp_chest,
   bp_chestBW,
@@ -71,4 +69,5 @@ export {
   star2,
   starTrophy,
   trophy,
+  people,
 };
