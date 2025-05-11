@@ -3,6 +3,7 @@ import React from "react";
 
 import * as icons from "@/constants/icons";
 import HeartRefillTimer from "./HeartRefillTimer";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type PlayerInfoBarProps = {
   level: number;
@@ -20,8 +21,8 @@ const PlayerInfoBar = ({
   heartsNextRefill,
 }: PlayerInfoBarProps) => {
   return (
-    <View className="w-full bg-grayscale-700 shadow-sm shadow-grayscale-400 rounded-b-xl flex flex-row items-center justify-between px-6 pt-12">
-      <View className="flex flex-row items-center">
+    <SafeAreaView className="w-full bg-grayscale-700 shadow-sm shadow-grayscale-400 rounded-b-xl flex flex-row items-center justify-between px-6 pt-2">
+      <View className="flex flex-row items-center w-28">
         <Image source={icons.coin} className="size-6" />
         <Text className="text-primary text-xl font-interExtraBold ml-2">
           {coins > 1000 ? `${(coins / 1000).toFixed(1)}k` : coins}
@@ -29,7 +30,7 @@ const PlayerInfoBar = ({
       </View>
 
       {/* Level and Progress bar */}
-      <View className="flex-1 items-center justify-center mx-10 mb-5">
+      <View className="flex-1 mx-auto w-10 items-center justify-center mb-5">
         <Text className="text-secondary text-2xl font-interExtraBold mb-1">
           {level}
         </Text>
@@ -40,7 +41,7 @@ const PlayerInfoBar = ({
           ></View>
         </View>
       </View>
-      <View className="flex flex-col items-center">
+      <View className="flex flex-col items-end justify-center w-28">
         <View className="flex flex-row items-center">
           <Text className="text-error text-xl font-interExtraBold">
             {hearts}
@@ -49,7 +50,7 @@ const PlayerInfoBar = ({
         </View>
         {hearts < 5 && <HeartRefillTimer refillTimestamp={heartsNextRefill!} />}
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
