@@ -1,5 +1,6 @@
 {
   "expo": {
+    "sdkVersion": "52.0.46",
     "name": "Gestura",
     "slug": "gestura",
     "version": "1.0.0",
@@ -56,6 +57,14 @@
       "typedRoutes": true
     },
     "scheme": "myapp",
-    "userInterfaceStyle": "automatic"
+    "userInterfaceStyle": "automatic",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "6c67ee59-f83a-4f71-9053-fd43a27d67b0"
+      }
+    }
   }
 }

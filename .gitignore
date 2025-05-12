@@ -36,6 +36,7 @@
 # MOBILE
 **/mobile/**/ios/
 **/mobile/**/android/
+**/eas.*
 
 # Editor directories and files
 **/.vscode/*
