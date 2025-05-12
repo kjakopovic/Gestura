@@ -40,7 +40,17 @@
           "backgroundColor": "#161719"
         }
       ],
-      "onnxruntime-react-native"
+      "onnxruntime-react-native",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "applicationAttributes": {
+              "android:usesCleartextTraffic": true
+            }
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
